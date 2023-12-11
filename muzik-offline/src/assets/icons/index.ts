@@ -1,14 +1,11 @@
 import Next_page from './Arrows/Next_page';
 import Prev_page from './Arrows/Prev_page';
 import Search from './General/Search';
-import Home_icon from './General/Home_icon';
-import Bar_chart from './Charts/Bar_chart';
 import Microphone from './Media/Microphone';
 import Disk from './Media/Disk';
 import LayersThree from './General/LayersThree';
 import Menu from './General/Menu';
 import MusicalNote from './Media/MusicalNote';
-import Empty_user from './Profiles/Empty_user';
 import ChevronLeft from './Arrows/ChevronLeft';
 import ChevronRight from './Arrows/ChevronRight';
 import Pause from './Media/Pause';
@@ -47,10 +44,11 @@ import UserProfilesDown from './Profiles/UserProfilesDown';
 import Check from './General/Check';
 import Cross from './General/Cross';
 import UserProfileAdd from './Profiles/UserProfileAdd';
+import Empty_user from './Profiles/Empty_user';
 
 export {
-    Next_page, Prev_page, Search, Home_icon, Bar_chart, 
-    Microphone, Disk, LayersThree, Menu, MusicalNote, Empty_user, 
+    Next_page, Prev_page, Search, 
+    Microphone, Disk, LayersThree, Menu, MusicalNote, 
     ChevronLeft, ChevronRight, Pause, Repeat, Shuffle, SkipBack, 
     SkipFwd, VolumeMax, VolumeMin, ExplicitIcon, DotHorizontal,
     Play, ChevronDown, ComponentIcon, InformationCircleContained,
@@ -58,5 +56,5 @@ export {
     Note, UserProfileBlack, CancelRight, ArrowRefresh, Heart, HeartFull,
     ArrowCurveLeftRight, ArrowCurveRightUp, ChromeCast, Star, StarFull,
     UserProfiles, UserProfileX, UserProfileUp, UserProfilesDown, 
-    Check, Cross, UserProfileAdd
+    Check, Cross, UserProfileAdd, Empty_user
 }

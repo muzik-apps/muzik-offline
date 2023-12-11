@@ -8,7 +8,7 @@ import { SavedObject, emptySavedObject } from "@database/index";
 
 type AppMusicPlayerProps = {
     openPlayer: () => void;
-    toggleFloatingLHNState: () => void;
+    toggleFloatingHNState: () => void;
 }
 
 const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusicPlayerProps) => {
@@ -75,7 +75,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                     </div>
                 </div>
                 <div className="more_controls_cast_and_volume_controller">
-                    <motion.div className="more_icon" whileTap={{scale: 0.98}} onClick={props.toggleFloatingLHNState}>
+                    <motion.div className="more_icon" whileTap={{scale: 0.98}} onClick={props.toggleFloatingHNState}>
                         <DotHorizontal />
                     </motion.div>
                     <motion.div className="cast_icon" whileTap={{scale: 0.98}}>

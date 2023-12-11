@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from 'framer-motion';
-import "@styles/components/music/LyricsHistoryUpcoming.scss";
+import "@styles/components/music/HistoryUpcoming.scss";
 import { contextMenuEnum, mouse_coOrds, songDetails } from "types";
 import { song8 } from "@assets/index";
 import { GeneralContextMenu, SongCardResizable } from "@components/index";
@@ -112,7 +112,7 @@ const song_queue: songDetails[] = [
   }
 ]
 
-const LyricsHistoryUpcoming = () => {
+const HistoryUpcoming = () => {
   const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
   const [songMenuToOpen, setSongMenuToOpen] = useState<songDetails | null>(null);
   const [selectedView, setSelectedView] = useState<string>("Lyrics_tab");
@@ -126,23 +126,9 @@ const LyricsHistoryUpcoming = () => {
 }
 
   return (
-    <div className="LyricsHistoryUpcoming">
+    <div className="HistoryUpcoming">
       {
-        selectedView === "Lyrics_tab" ?
-        <div className="Lyrics_view">
-          <p>Lyrics</p>
-          <h4>Lorem ipsum dolor sit amet ultrices</h4>
-          <h5>Viverra eu urna tortor erat maximus semper class</h5>
-          <h4>Si morbi porta parturient risus odio semper himenaeos elit velit tortor.</h4>
-          <h4>Nibh vitae eget porttitor dis ut id augue lacinia posuere nostra.</h4>
-          <h4>Aliquam nunc id at sollicitudin accumsan lacus dui dolor.</h4>
-          <h4>Aliquam quis nec sem quam egestas vitae sociosqu velit penatibus feugiat.</h4>
-          <h4>Si morbi porta parturient risus odio semper himenaeos elit velit tortor.</h4>
-          <h4>Nibh vitae eget porttitor dis ut id augue lacinia posuere nostra.</h4>
-          <h4>Aliquam nunc id at sollicitudin accumsan lacus dui dolor.</h4>
-          <h4>Aliquam quis nec sem quam egestas vitae sociosqu velit penatibus feugiat.</h4>
-        </div>
-        : selectedView === "Upcoming_tab" ?
+        selectedView === "Upcoming_tab" ?
           <div className="Upcoming_view">
             
           </div>
@@ -151,11 +137,7 @@ const LyricsHistoryUpcoming = () => {
             
           </div>
       }
-      <div className="LyricsHistoryUpcoming_tabs">
-        <motion.div className="Lyrics_tab" onClick={() => selectView("Lyrics_tab")} whileTap={{scale: 0.98}}>
-          {selectedView === "Lyrics_tab" && <div className="selected"/>}
-          <h3>Lyrics</h3>
-        </motion.div>
+      <div className="HistoryUpcoming_tabs">
         <motion.div className="Upcoming_tab" onClick={() => selectView("Upcoming_tab")} whileTap={{scale: 0.98}}>
           {selectedView === "Upcoming_tab" && <div className="selected"/>}
           <h3>Upcoming songs</h3>
@@ -168,7 +150,7 @@ const LyricsHistoryUpcoming = () => {
 
       {
           songMenuToOpen && (
-              <div className="LyricsHistoryNextFloating-ContextMenu-container" 
+              <div className="HistoryUpcoming-ContextMenu-container" 
               onMouseUp={() => {
                   setSongMenuToOpen(null);
                   setCoords({xPos: 0, yPos: 0});
@@ -192,4 +174,4 @@ const LyricsHistoryUpcoming = () => {
   )
 }
 
-export default LyricsHistoryUpcoming
+export default HistoryUpcoming

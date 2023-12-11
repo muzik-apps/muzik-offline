@@ -1,13 +1,10 @@
 import GeneralSettings from './GeneralSettings';
 import AppearanceSettings from './AppearanceSettings';
-import LyricsHistoryNextFloating from './LyricsHistoryNextFloating';
-import ProfileDetails from './ProfileDetails';
+import HistoryNextFloating from './HistoryNextFloating';
 import UserRecentSong from './UserRecentSong';
 import UserVisiblePlaylists from './UserVisiblePlaylists';
-import UserFriends from './UserFriends';
-import UserFavorites from './UserFavorites';
 
 export {
-    GeneralSettings, AppearanceSettings, LyricsHistoryNextFloating,
-    ProfileDetails, UserRecentSong, UserVisiblePlaylists, UserFriends, UserFavorites
+    GeneralSettings, AppearanceSettings, HistoryNextFloating,
+    UserRecentSong, UserVisiblePlaylists
 }

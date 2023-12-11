@@ -1,8 +1,8 @@
 import { contextMenuButtons, contextMenuEnum } from "types";
 import { FunctionComponent } from "react";
-import { AddToPlaylistButton, FavoriteButton, HeartButton, PlayButton,
-    PlayLaterButton, PlayNextButton, ShowArtistButton, ShowChartButton,
-    ShowGenreButton, ShowPlaylistButton, UnFavoriteButton, UnHeartButton,
+import { AddToPlaylistButton, PlayButton,
+    PlayLaterButton, PlayNextButton, ShowArtistButton, 
+    ShowGenreButton, ShowPlaylistButton, 
     ShowAlbumButton } from "@components/index";
 import "@styles/components/context_menu/GeneralContextMenu.scss";
 
@@ -50,18 +50,9 @@ const GeneralContextMenu: FunctionComponent<GeneralContextMenuProps> = (props: G
             <PlayButton title={props.title} chooseOption={logger}/>
             <PlayNextButton chooseOption={logger}/>
             <PlayLaterButton chooseOption={logger}/>
-            {   
-                (props.CMtype === contextMenuEnum.SongCM || props.CMtype === contextMenuEnum.AlbumCM) &&
-                (props.hearted ? <UnHeartButton chooseOption={logger}/> : <HeartButton chooseOption={logger}/>)
-            }
             {(props.CMtype === contextMenuEnum.ArtistCM) && <ShowArtistButton title={props.title} chooseOption={logger}/>}
-            {   
-                (props.CMtype === contextMenuEnum.ArtistCM) &&
-                (props.favourited ? <UnFavoriteButton chooseOption={logger}/> : <FavoriteButton chooseOption={logger}/> )
-            }
             {((props.CMtype === contextMenuEnum.ArtistCM) || (props.CMtype === contextMenuEnum.SongCM) || (props.CMtype === contextMenuEnum.AlbumCM)) 
                     && <AddToPlaylistButton chooseOption={logger}/>}
-            {(props.CMtype === contextMenuEnum.ChartsCM) && <ShowChartButton  title={props.title} chooseOption={logger}/>}
             {(props.CMtype === contextMenuEnum.GenreCM) && <ShowGenreButton  title={props.title} chooseOption={logger}/>}
             {(props.CMtype === contextMenuEnum.PlaylistCM) && <ShowPlaylistButton  title={props.title} chooseOption={logger}/>}
             {(props.CMtype === contextMenuEnum.AlbumCM) && <ShowAlbumButton  title={props.title} chooseOption={logger}/>}

@@ -7,14 +7,14 @@ import { type } from '@tauri-apps/api/os';
 import useLocalStorageState from "use-local-storage-state";
 import { SavedObject, SavedWallpaper, emptySavedObject, emptyWallpaper } from "@database/index";
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
-import { LyricsHistoryNextFloating } from "@layouts/index";
+import { HistoryNextFloating } from "@layouts/index";
 import { OSTYPEenum } from "types";
 import { AnimatePresence } from "framer-motion";
 
 const App = () => {
   const [openSettings, setOpenSettings] = useState<boolean>(false);
   const [FSplayerState, setFSplayerState] = useState<boolean>(false);
-  const [FloatingLHNState, setFloatingLHNState] = useState<boolean>(false);
+  const [FloatingHNState, setFloatingHNState] = useState<boolean>(false);
   const [local_store, setStore] = useLocalStorageState<SavedObject>("SavedObject-offline", {defaultValue: emptySavedObject});
   const [wallpaper,] = useLocalStorageState<SavedWallpaper>("SavedWallpaper-offline", {defaultValue: emptyWallpaper});
 
@@ -26,7 +26,7 @@ const App = () => {
 
   function closePlayer(){setFSplayerState(false);}
 
-  function toggleFloatingLHNState(){setFloatingLHNState(!FloatingLHNState);}
+  function toggleFloatingHNState(){setFloatingHNState(!FloatingHNState);}
 
   function detectKeyPress(this: Window, ev: any){
     if(ev.target.id !== "gsearch")console.log(ev.key);
@@ -82,7 +82,7 @@ const App = () => {
               </div>
             </div>
             <div className="app_music_player_container">
-              <AppMusicPlayer openPlayer={openPlayer} toggleFloatingLHNState={toggleFloatingLHNState}/>
+              <AppMusicPlayer openPlayer={openPlayer} toggleFloatingHNState={toggleFloatingHNState}/>
             </div>
             <div className="app_settings">
               <Settings openSettings={openSettings} closeSettings={closeSetting}/>
@@ -91,7 +91,7 @@ const App = () => {
               <FSMusicPlayer openPlayer={FSplayerState} closePlayer={closePlayer}/>
             </div>
             <div className="lyrics_next_history">
-              <LyricsHistoryNextFloating FloatingLHNState={FloatingLHNState} toggleFloatingLHNState={toggleFloatingLHNState}/>
+              <HistoryNextFloating FloatingHNState={FloatingHNState} toggleFloatingHNState={toggleFloatingHNState}/>
             </div>
           </div>
       </div>

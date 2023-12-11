@@ -1,13 +1,8 @@
 import { OSTYPEenum } from "types";
 
 export interface SavedObject{
-    StreamingSource: string,
     LaunchTab: string,
-    FriendList: string,
-    SongHistory: string,
-    RightSideBar: string,
     AppActivityDiscord: string,
-    PrivacyStatus: boolean,
     BGColour: string,
     ThemeColour: string,
     PlayerBar: boolean,
@@ -21,13 +16,8 @@ export interface SavedObject{
 }
 
 export const emptySavedObject: SavedObject = {
-    StreamingSource: "Online Streaming",
     LaunchTab: "Home page",
-    FriendList: "Yes",
-    SongHistory: "Yes",
-    RightSideBar: "Yes",
     AppActivityDiscord: "No",
-    PrivacyStatus: true,
     BGColour: "black_linear",
     ThemeColour: "blueberry",
     PlayerBar: true,

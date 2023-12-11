@@ -5,7 +5,7 @@ import {min_w_10,min_w_12,min_w_15,min_w_20,min_w_24,min_w_30,max_w_10,max_w_12,
     close_w_10,close_w_12,close_w_15,close_w_20,close_w_24,close_w_30
 } from "@icons/windows_icons";
 import "@styles/components/navbar/Header.scss";
-import { Prev_page, Next_page, Search, Cross, SettingsIcon } from "@icons/index";
+import { Prev_page, Next_page, Search, Cross, Empty_user } from "@icons/index";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { App_logo } from "@logos/index";
@@ -98,8 +98,8 @@ const HeaderWindows: FunctionComponent<HeaderWindowsProps> = (props: HeaderWindo
             </div>
             <div className="user_controls">
                 <motion.div className="user_account" whileTap={{scale: 0.97}} whileHover={{scale: 1.03}} onClick={props.toggleSettings}>
-                    <SettingsIcon />
-                    <h2>Settings</h2>
+                    <Empty_user />
+                    <h2>settings</h2>
                 </motion.div>
                 <div className="window_controls_section">
                     <div className="button_area" id="minimize">

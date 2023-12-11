@@ -1,5 +1,5 @@
 import "@styles/components/navbar/Header.scss";
-import { Prev_page, Next_page, Search, Cross, SettingsIcon } from "@icons/index";
+import { Prev_page, Next_page, Search, Cross, Empty_user } from "@icons/index";
 import { motion } from "framer-motion";
 import { FunctionComponent, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -54,8 +54,8 @@ const HeaderLinuxOS: FunctionComponent<HeaderLinuxOSProps> = (props: HeaderLinux
             </div>
             <div className="user_controls">
                 <motion.div className="user_account" whileTap={{scale: 0.97}} whileHover={{scale: 1.03}} onClick={props.toggleSettings}>
-                    <SettingsIcon />
-                    <h2>Settings</h2>
+                    <Empty_user />
+                    <h2>settings</h2>
                 </motion.div>
             </div>
         </div>

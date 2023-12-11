@@ -3,7 +3,7 @@ import "@styles/components/music/FSMusicPlayer.scss";
 import { artist } from "@assets/index";
 import { FunctionComponent, useState } from "react";
 import { appWindow } from '@tauri-apps/api/window';
-import { LyricsHistoryUpcoming, MainMusicPlayer } from "@components/index";
+import { HistoryUpcoming, MainMusicPlayer } from "@components/index";
 import useLocalStorageState from "use-local-storage-state";
 import { SavedObject, emptySavedObject } from "@database/index";
 import { OSTYPEenum } from "types";
@@ -90,7 +90,7 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
                                 <MainMusicPlayer />
                             </div>
                             <div className="lyrics_history_upcoming">
-                                <LyricsHistoryUpcoming />
+                                <HistoryUpcoming />
                             </div>
                         </div>
                     </div>

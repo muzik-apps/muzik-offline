@@ -1,6 +1,6 @@
-import { LayersThree, Menu, Microphone, MusicalNote, Note, UserProfile } from "@assets/icons";
+import { LayersThree, Menu, Microphone, MusicalNote } from "@assets/icons";
 import { SearchNavigator } from "@components/index";
-import {UserVisiblePlaylists, UserRecentSong, UserFriends, UserFavorites} from "@layouts/index";
+import {UserVisiblePlaylists, UserRecentSong} from "@layouts/index";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import "@styles/pages/SearchPage.scss";
@@ -22,7 +22,6 @@ const SearchPage = () => {
                 <SearchNavigator icon={Microphone} text={"artists"} selected={selected} select={setSelectedF}/>
                 <SearchNavigator icon={LayersThree} text={"albums"} selected={selected} select={setSelectedF}/>
                 <SearchNavigator icon={Menu} text={"playlists"} selected={selected} select={setSelectedF}/>
-                <SearchNavigator icon={UserProfile} text={"users"} selected={selected} select={setSelectedF}/>
             </div>
             <div className="content-container">
                 {
@@ -32,10 +31,8 @@ const SearchPage = () => {
                         <UserVisiblePlaylists />
                     : selected === "albums" ?
                         <UserVisiblePlaylists />
-                    : selected === "playlists" ?
+                    : 
                         <UserVisiblePlaylists />
-                    :
-                        <UserFriends />
                 }
             </div>
         </motion.div>

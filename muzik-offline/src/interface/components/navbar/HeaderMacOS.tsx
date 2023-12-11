@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Prev_page, Next_page, Search, Cross, SettingsIcon } from "@icons/index";
+import { Prev_page, Next_page, Search, Cross, Empty_user } from "@icons/index";
 import { App_logo } from "@logos/index";
 import { FunctionComponent, useState } from 'react';
 
@@ -53,8 +53,8 @@ const HeaderMacOS: FunctionComponent<HeaderMacOSProps>  = (props: HeaderMacOSPro
             </div>
             <div className="user_controls">
                 <motion.div className="user_account" whileTap={{scale: 0.97}} whileHover={{scale: 1.03}} onClick={props.toggleSettings}>
-                    <SettingsIcon />
-                    <h2>Settings</h2>
+                    <Empty_user />
+                    <h2>settings</h2>
                 </motion.div>
             </div>
         </div>

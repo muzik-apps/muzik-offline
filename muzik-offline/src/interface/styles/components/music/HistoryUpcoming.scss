@@ -1,45 +1,11 @@
 @import "../../constants/constants";
 
-.LyricsHistoryUpcoming{
+.HistoryUpcoming{
     display: flex;
     flex-direction: column;
     align-items: center;
     width: calc(350px + 5vw);
     height: 80vh;
-
-    .Lyrics_view{
-        height: 85%;
-        margin-bottom: 20px;
-        overflow-y: auto;
-        p{
-            font-size: 12px;
-            height: 15px;
-            font-family: 'inter-italic-regular', sans-serif;
-            font-style: italic;
-        }
-
-        h4, h5{
-            font-size: 25px;
-            white-space: wrap;
-            overflow: hidden;
-            color: $gray-600;
-            margin-top: 15px;
-            margin-bottom: 15px;
-            border-radius: 10px;
-        }
-
-        h4:hover, h5:hover{
-            background: $on-hover-song;
-        }
-
-        h4:active, h5:active{
-            background: $gray-stroke-20;
-        }
-
-        h5{
-            color: $white-900;
-        }
-    }
 
     .Upcoming_view{
         height: 85%;
@@ -55,12 +21,12 @@
         overflow-y: auto;
     }
 
-    .LyricsHistoryUpcoming_tabs{
+    .HistoryUpcoming_tabs{
         width: 350px;
         display: flex;
         justify-content: space-evenly;
 
-        .Lyrics_tab, .Upcoming_tab, .History_tab{
+        .Upcoming_tab, .History_tab{
             justify-content: center;
             align-items: center;
             border-radius: 15px;
@@ -85,9 +51,17 @@
             }
         }
 
-        .Lyrics_tab:hover, .Upcoming_tab:hover, .History_tab:hover{
+        .Upcoming_tab:hover, .History_tab:hover{
             opacity: 0.8;
         }
-
     }
+}
+
+.HistoryUpcoming-ContextMenu-container{
+    width: 100vw;
+    height: calc(100vh - 32px);
+    position: fixed;
+    z-index: $z-index-9000;
+    top: 32px;
+    left: 0px;
 }

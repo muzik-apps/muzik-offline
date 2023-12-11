@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 import { contextMenuButtons } from 'types';
-import { ArrowCurveLeftRight, ArrowCurveRightUp, Bar_chart, Disk, Heart, HeartFull, LayersThree, Menu, Microphone, Play, Star, StarFull } from '@assets/icons';
+import { ArrowCurveLeftRight, ArrowCurveRightUp, Disk, LayersThree, Menu, Microphone, Play } from '@assets/icons';
 import { motion } from 'framer-motion';
 
 type ContextMenuButtonsProps = {
@@ -44,38 +44,12 @@ export const ShowArtistButton: FunctionComponent<ContextMenuButtonsProps> = (pro
     )
 }
 
-export const FavoriteButton: FunctionComponent<ContextMenuButtonsProps> = (props: ContextMenuButtonsProps) => {
-    return (
-        <motion.div className="Star" whileTap={{scale: 0.98}} onMouseDown={() => props.chooseOption(contextMenuButtons.Favorite)}>
-            <Star />
-            <p>Favorite</p>
-        </motion.div>
-    )
-}
-
-export const UnFavoriteButton: FunctionComponent<ContextMenuButtonsProps> = (props: ContextMenuButtonsProps) => {
-    return (
-        <motion.div className="StarFull" whileTap={{scale: 0.98}} onMouseDown={() => props.chooseOption(contextMenuButtons.UnFavorite)}>
-            <StarFull />
-            <p>Unfavorite</p>
-        </motion.div>
-    )
-}
 
 export const AddToPlaylistButton: FunctionComponent<ContextMenuButtonsProps> = (props: ContextMenuButtonsProps) => {
     return (
         <motion.div className="Add_to_playlist" whileTap={{scale: 0.98}} onMouseDown={() => props.chooseOption(contextMenuButtons.AddToPlaylist)}>
             <Menu />
             <p>Add to playlist</p>
-        </motion.div>
-    )
-}
-
-export const ShowChartButton: FunctionComponent<ContextMenuButtonsProps> = (props: ContextMenuButtonsProps) => {
-    return (
-        <motion.div className="Charts" whileTap={{scale: 0.98}} onMouseDown={() => props.chooseOption(contextMenuButtons.ShowChart)}>
-            <Bar_chart />
-            <p>Show "{props.title}"</p>
         </motion.div>
     )
 }
@@ -94,24 +68,6 @@ export const ShowPlaylistButton: FunctionComponent<ContextMenuButtonsProps> = (p
         <motion.div className="ShowPlaylist" whileTap={{scale: 0.98}} onMouseDown={() => props.chooseOption(contextMenuButtons.ShowPlaylist)}>
             <Menu />
             <p>Show "{props.title}"</p>
-        </motion.div>
-    )
-}
-
-export const UnHeartButton: FunctionComponent<ContextMenuButtonsProps> = (props: ContextMenuButtonsProps) => {
-    return (
-        <motion.div className="HeartFull" whileTap={{scale: 0.98}} onMouseDown={() => props.chooseOption(contextMenuButtons.UnHeart)}>
-            <HeartFull />
-            <p>Remove from library</p>
-        </motion.div>
-    )
-}
-
-export const HeartButton: FunctionComponent<ContextMenuButtonsProps> = (props: ContextMenuButtonsProps) => {
-    return (
-        <motion.div className="Heart" whileTap={{scale: 0.98}} onMouseDown={() => props.chooseOption(contextMenuButtons.Heart)}>
-            <Heart />
-            <p>Add to library</p>
         </motion.div>
     )
 }
