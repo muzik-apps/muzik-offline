@@ -1,0 +1,52 @@
+@import "../constants/constants";
+
+.settings_section{
+    position: fixed;
+    min-width: 980px;
+    width: 100%;
+    height: calc(110vh - 40px);
+    overflow: hidden;
+    display: flex;
+    z-index: $z-index-9000;
+    user-select: none;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border: 1px solid $songs-container-border-col;
+    background: var(--var-songs-container-bg-col);
+    backdrop-filter: var(--var-bg-blur-150);
+
+    .settings_navigator{
+        width: 157px;
+        margin-left: 40px;
+        margin-top: 15px;
+        .title{
+            display: flex;
+            height: 32px;
+            align-items: center;
+            margin-bottom: 10px;
+            svg{
+                margin-left: 4px;
+                margin-right: 4px;
+                cursor: pointer;
+                margin-top: 3px;
+            }
+
+            svg:hover{
+                opacity: 0.8;
+            }
+
+            h1{
+                height: 24px;
+                font-size: 16px;
+            }
+        }
+    }
+
+    .settings_panel{
+        margin-left: 15px;
+        margin-top: 15px;
+        margin-right: 40px;
+        width: calc(100% - 252px);
+        height: calc(100vh - 70px);
+    }
+}

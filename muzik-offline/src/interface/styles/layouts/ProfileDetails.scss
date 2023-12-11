@@ -1,0 +1,70 @@
+@import "../constants/constants";
+
+.UserProfile{
+    height: 100%;
+    .profile_img{
+        width: 250px;
+        height: 250px;
+        border-radius: 50px;
+        position: relative;
+
+        .first_cover, .second_cover{
+            width: 250px;
+            height: 250px;
+            border-radius: 20px;
+            flex-shrink: 0;
+            display: flex;
+            overflow: hidden;
+            justify-content: center;
+            align-items: center;
+
+            img{
+                display: inline;
+                min-width: 100%;
+                margin: 0 auto;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .first_cover{
+            filter: $bg-blur-150;
+        }
+
+        .second_cover{
+            margin-top: -250px;
+            position: absolute;
+            box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+        }
+    }
+
+    .username{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 24px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        width: 250px;
+
+        h2{
+            font-size: 22px;
+        }
+
+        svg{
+            margin-left: 33px;
+            path{
+                fill: $red-900;
+            }
+        }
+    }
+
+    h3{
+        height: calc(100% - 390px);
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 250px;
+        font-size: 16px;
+        white-space: wrap;
+    }
+}

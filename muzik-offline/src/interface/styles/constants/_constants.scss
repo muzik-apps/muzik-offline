@@ -1,0 +1,194 @@
+
+:root{
+    color: #ececec;/*white-900*/
+    font-family: 'inter-regular', sans-serif;
+    background-color: #252525;/*background*/
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+    --root-app-theme-col: #9fa8fd;//default theme is blueberry
+    --root-app-navigator-hover-col: #505050;//default color is white in blueberry theme
+    --wallpaper-foreground-top-value-opacity: 0.50;
+    --wallpaper-foreground-bottom-value-opacity: 0.80;
+    scroll-behavior: smooth;
+}
+
+[data-theme='saucy'] {
+    --root-app-theme-col: #ff5555;
+    --root-app-navigator-hover-col: #ececec;
+}
+
+[data-theme='salmon'] {
+    --root-app-theme-col: #fd9f9f;
+    --root-app-navigator-hover-col: #505050;
+}
+
+[data-theme='violet'] {
+    --root-app-theme-col: #d49ffd;
+    --root-app-navigator-hover-col: #505050;
+}
+
+[data-theme='lime'] {
+    --root-app-theme-col: #acfd9f;
+    --root-app-navigator-hover-col: #505050;
+}
+
+[data-theme='sunny'] {
+    --root-app-theme-col: #fbfd9f;
+    --root-app-navigator-hover-col: #505050;
+}
+
+[data-theme='ubuntu'] {
+    --root-app-theme-col: #ff6b00;
+    --root-app-navigator-hover-col: #ececec;
+}
+
+[data-theme='blueberry'] {
+    --root-app-theme-col: #9fa8fd;
+    --root-app-navigator-hover-col: #505050;
+}
+
+//add more themes...
+
+
+//wallpaper opacity values
+[wallpaper-opacity='10']{
+    --wallpaper-foreground-top-value-opacity: 0.625;
+    --wallpaper-foreground-bottom-value-opacity: 1.0;
+}
+
+[wallpaper-opacity='8']{
+    --wallpaper-foreground-top-value-opacity: 0.50;
+    --wallpaper-foreground-bottom-value-opacity: 0.8;
+}
+
+[wallpaper-opacity='6']{
+    --wallpaper-foreground-top-value-opacity: 0.375;
+    --wallpaper-foreground-bottom-value-opacity: 0.6;
+}
+
+[wallpaper-opacity='4']{
+    --wallpaper-foreground-top-value-opacity: 0.25;
+    --wallpaper-foreground-bottom-value-opacity: 0.4;
+}
+
+[wallpaper-opacity='2']{
+    --wallpaper-foreground-top-value-opacity: 0.125;
+    --wallpaper-foreground-bottom-value-opacity: 0.2;
+}
+
+[wallpaper-opacity='0']{
+    --wallpaper-foreground-top-value-opacity: 0;
+    --wallpaper-foreground-bottom-value-opacity: 0;
+}
+
+
+  /* colors */
+$bg-dark-overlay: #252525cc;
+$black-linear: linear-gradient(180deg, #252525 0%, rgba(37, 37, 37, 0.80) 49.48%);
+$pink_blue_gradient: linear-gradient(263deg, #B47CFB 25.87%, #FB7C93 100%);
+$blue_purple_gradient: linear-gradient(270deg, #79C1D4 4.55%, #9433E0 49.85%, #3A95E9 93.3%);
+$blur-element: #00000059;
+$btn-clickable: #b6b6b633;
+$flags-blur: #9292924d;
+$glass-music-bar-bg: #00000005;
+$on-hover-song: #92929226;
+$songs-container-bg-col: #2525251a;
+$songs-container-border-col: #b6b6b61a;
+$ubuntu-orange: #e95420;
+$black-1000: #000000;
+$blue-300: #9fa8fd;
+$gray-1000: #252525;
+$gray-600: #a0a0a0;
+$gray-700: #868686;
+$gray-900: #505050;
+$gray-stroke-20: #aeaeae33;
+$green-300: #acfd9f;
+$orange-1000: #ff6b00;
+$purple-300: #d49ffd;
+$red-300: #fd9f9f;
+$red-900: #ff5555;
+$white-500: #bcbcbc;
+$white-900: #ececec;
+$yellow-300: #fbfd9f;
+$app-theme-col: var(--root-app-theme-col);
+$root-app-navigator-hover-col: var(--root-app-navigator-hover-col);
+
+/* bg-blur/100 */
+$bg-blur-100: blur(50px);
+/* bg-blur/150 */
+$bg-blur-150: blur(75px);
+/* layer-blur/0 */
+$layer-blur-300: blur(0px);//on windows and macos, value is 0px
+
+$z-index-9999: 9999;
+$z-index-9500: 9500;
+$z-index-9250: 9250;
+$z-index-9000: 9000;
+$z-index-8000: 8000;
+$z-index-7000: 7000;
+
+/*scrollbars*/
+::-webkit-scrollbar { 
+    width: 6px; 
+    z-index: $z-index-9999;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    border-radius: 15px;
+    z-index: $z-index-9999;
+    margin-bottom: 85px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: $app-theme-col;
+    border-radius: 15px;
+    z-index: $z-index-9999;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: $app-theme-col;
+    z-index: $z-index-9999; 
+}
+
+/* Handle on active */
+::-webkit-scrollbar-thumb:active {
+    background: $app-theme-col;
+    z-index: $z-index-9999; 
+}
+
+
+// just some configs
+
+.app_container{
+    --var-glass-music-bar-bg: $glass-music-bar-bg;
+    --var-songs-container-bg-col: $songs-container-bg-col;
+    --var-flags-blur: $flags-blur;
+    /* bg-blur/100 */
+    --var-bg-blur-100: blur(50px);
+    /* bg-blur/150 */
+    --var-bg-blur-150: blur(75px);
+    /* layer-blur/300 */
+    --var-layer-blur-300: blur(0px);//on windows and macos, value is 0px
+
+    --var-right-side-bar-width-expanded: 224px;
+    --var-right-side-bar-width-minimized: 223px;
+    --var-right-side-bar-width-smallest: 100px;
+}
+
+.linux-config{
+    --var-glass-music-bar-bg: #252525;
+    --var-songs-container-bg-col: #252525;
+    --var-flags-blur: #252525;
+    /* bg-blur/100 */
+    --var-bg-blur-100: blur(0px);
+    /* bg-blur/150 */
+    --var-bg-blur-150: blur(0px);
+    /* layer-blur/300 */
+    --var-layer-blur-300: blur(50px);//on linux, value is 150px
+}

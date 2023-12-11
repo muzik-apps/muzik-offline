@@ -1,0 +1,155 @@
+@import "../../constants/constants";
+
+.Header{
+    min-width: 980px;
+    width: 100%;
+    height: 32px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    z-index: $z-index-9000;
+    user-select: none;
+    justify-content: space-between;
+    
+    .app_logo{
+        display: flex;
+        height: 32px;
+        align-items: center;
+        margin-left: 60px;
+    }
+
+    .app_navigation{
+        display: flex;
+        height: 32px;
+        align-items: center;
+        width: 82px;
+        justify-content: space-between;
+        .navigators{
+            cursor: pointer;
+        }
+
+        .navigators:hover{
+            opacity: 0.8;
+        }
+    }
+
+    .searchbar{
+        display: flex;
+        height: 32px;
+        align-items: center;
+
+        input[type="text"]{
+            min-width: 250px;
+            height: 30px;
+            border: none;
+            padding: 0px 0px 0px 0px;
+            padding-left: 4px;
+            padding-right: 4px;
+            outline: none;
+            background: transparent;
+            border-radius: 13px;
+            font-size: 14px;
+            font-family: 'inter-italic-regular', sans-serif;
+            font-style: italic;
+            color: $white-900;
+            margin-left: 15px;
+            margin-top: 2px;
+        }
+
+        div{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    .user_controls{
+        display: flex;
+
+        .user_account{
+            display: flex;
+            height: 32px;
+            align-items: center;
+            margin-right: 20px;
+            cursor: pointer;
+            .user_image{
+                height: 30px;
+                width: 30px;
+                margin-top: 2px;
+                border-radius: 13px;
+                display: flex;
+                overflow: hidden;
+                justify-content: center;
+                align-items: center;
+
+                img{
+                    display: inline;
+                    min-width: 100%;
+                    margin: 0 auto;
+                    height: 100%;
+                    object-fit: cover;
+                }
+            }
+    
+            h2{
+                font-size: 16px;
+                margin-left: 6px;
+            }
+        }
+    
+        .window_controls_section{
+            display: flex;
+            width: 120px;
+            height: 32px;
+    
+            .button_area, #maximize{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 15px;
+                height: 32px;
+                width: 40px;
+            }
+    
+            .inter_changeable_btn {
+                height: 32px;
+                width: 40px;
+    
+                #restore{
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    margin-right: 40px;
+                    visibility: hidden;
+    
+                    .restore_sub_area{
+                        height: 32px;
+                        width: 40px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        border-radius: 15px;
+                    }
+                    .restore_sub_area:hover{
+                        background: #bdbdbd26;
+                    }
+                }
+            }
+            
+            #minimize:hover, #maximize:hover {
+                background: #92929226;
+            }
+            
+            #minimize:active, #maximize:active{
+                background: #bdbdbd26;
+            }
+    
+            #close:hover{background: #FF5555;}
+    
+            #close:active{background: #F1707A;}
+            
+        }
+    }
+
+
+}

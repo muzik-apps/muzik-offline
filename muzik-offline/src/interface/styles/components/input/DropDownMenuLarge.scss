@@ -1,0 +1,22 @@
+@import "../../constants/constants";
+
+.DropDownMenuLarge{
+    width: 146px;
+    border-radius: 10px;
+    background: $app-theme-col;
+    padding: 5px;
+    z-index: $z-index-8000;
+    height: 0px;
+    opacity: 0;
+
+    div{
+        h4{
+            font-size: 13px;
+            height: 13px;
+            margin-top: 9px;
+            margin-bottom: 9px;
+            width: 100%;
+            color: $root-app-navigator-hover-col;
+        }
+    }
+}

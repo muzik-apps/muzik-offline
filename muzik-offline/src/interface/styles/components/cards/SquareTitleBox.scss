@@ -1,0 +1,43 @@
+@import "../../constants/constants";
+
+.SquareTitleBox{
+    width: 125px;
+    height: 150px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 40px;
+
+    .title_cover{
+        width: 125px;
+        height: 125px;
+        display: flex;
+        overflow: hidden;
+        justify-content: center;
+        align-items: center;
+        border-radius: 25px;
+
+        img{
+            display: inline;
+            min-width: 100%;
+            margin: 0 auto;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    h3{
+        width: 105px;
+        font-size: 12px;
+        height: 16px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: 18px;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    h3:hover{
+        opacity: 0.8;
+    }
+}

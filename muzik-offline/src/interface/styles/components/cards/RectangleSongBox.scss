@@ -1,0 +1,119 @@
+@import "../../constants/constants";
+
+.RectangleSongBox{
+    width: calc(100% - 5px);
+    height: 50px;
+    display: flex;
+    align-items: center;
+    border-radius: 20px;
+    margin-bottom: 6px;
+
+    .index{
+        margin-left: 5px;
+        width: 12px;
+        margin-right: 2px;
+        font-size: 10px;
+    }
+
+    .song_cover{
+        width: 40pz;
+        height: 40px;
+        display: flex;
+        overflow: hidden;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+
+        img{
+            display: inline;
+            min-width: 100%;
+            margin: 0 auto;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    .song_name{
+        margin-left: 14px;
+        width: calc(100% - 282px);
+        overflow-x: hidden;
+        h3{
+            font-size: 13px;
+            height: 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            width: fit-content;
+            max-width: 100%;
+        }
+
+        h3:hover{
+            opacity: 0.8;
+        }
+
+        p{
+            margin-top: -11px;
+            font-size: 9px;
+            height: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            font-family: 'inter-italic-regular', sans-serif;
+            font-style: italic;
+            width: fit-content;
+            max-width: 100%;
+        }
+
+        p:hover{
+            opacity: 0.8;
+        }
+    }
+
+    .ExplicitIcon{
+        margin-right: 23px;
+    }
+
+    .length{
+        margin-right: 25px;
+        font-size: 13px;
+        width: 36px;
+        overflow-x: hidden;
+    }
+
+    .PlayIcon{
+        margin-right: 23px;
+        svg{
+            path{
+                fill: $app-theme-col;
+            }
+        }
+    }
+
+    .HeartFullIcon{
+        svg{
+            path{
+                fill: $app-theme-col;
+                stroke: $app-theme-col;
+            }
+        }
+    }
+
+    .HeartIcon{
+        svg{
+            path{
+                stroke: $app-theme-col;
+            }
+        }
+    }
+}
+
+.RectangleSongBox:hover, .RectangleSongBox-selected{
+    background: $on-hover-song;
+    backdrop-filter: var(--var-bg-blur-150);
+}
+
+.RectangleSongBox:active{
+    opacity: 0.9;
+}

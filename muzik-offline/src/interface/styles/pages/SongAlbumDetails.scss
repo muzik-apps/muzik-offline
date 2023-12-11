@@ -1,0 +1,228 @@
+@import "../constants/constants";
+
+.SongAlbumDetails{
+    margin-top: 23px;
+    min-width: 859px;
+    width: calc(100vw - var(--var-right-side-bar-width-expanded));
+    height: calc(100vh - 55px);
+    overflow-x: visible;
+    overflow-y: visible;
+
+    .header_content{
+        display: flex;
+        margin-bottom: 20px;
+
+        .cover_art{
+            width: 250px;
+            height: 250px;
+            border-radius: 50px;
+            position: relative;
+
+            .first_cover, .second_cover{
+                width: 250px;
+                height: 250px;
+                border-radius: 20px;
+                flex-shrink: 0;
+                display: flex;
+                overflow: hidden;
+                justify-content: center;
+                align-items: center;
+    
+                img{
+                    display: inline;
+                    min-width: 100%;
+                    margin: 0 auto;
+                    height: 100%;
+                    object-fit: cover;
+                }
+            }
+    
+            .first_cover{
+                filter: $bg-blur-150;
+            }
+    
+            .second_cover{
+                margin-top: -250px;
+                position: absolute;
+                box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+            }
+        }
+
+        .details{
+            margin-left: 45px;
+            width: calc(100% - 295px);
+
+            h2{
+                font-size: 20px;
+                margin-top: 68px;
+                height: 23px;
+            }
+
+            .artist_details{
+                display: flex;
+                margin-top: 20px;
+                height: 40px;
+                align-items: center;
+
+                .artist_profile{
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 10px;
+                    flex-shrink: 0;
+                    display: flex;
+                    overflow: hidden;
+                    justify-content: center;
+                    align-items: center;
+        
+                    img{
+                        display: inline;
+                        min-width: 100%;
+                        margin: 0 auto;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+                }
+
+                h3{
+                    margin-left: 15px;
+                    font-size: 16px;
+                    font-family: 'inter-italic-regular', sans-serif;
+                    font-style: italic;
+                    height: 19px;
+                }
+            }
+
+            h4{
+                margin-top: 12px;
+                font-size: 14px;
+                font-family: 'inter-italic-regular', sans-serif;
+                font-style: italic;
+                height: 17px;
+            }
+
+            .action_buttons{
+                display: flex;
+
+                .PlayIcon, .HeartFullIcon, .HeartIcon{
+                    display: flex;
+                    background: $btn-clickable;
+                    backdrop-filter: var(--var-bg-blur-150);
+                    height: 34px;
+                    border-radius: 15px;
+                    justify-content: center;
+                    padding-left: 25px;
+                    padding-right: 25px;
+                    align-items: center;
+                    margin-right: 20px;
+
+                    svg{
+                        margin-right: 2.5px;
+                    }
+
+                    p{
+                        margin-left: 2.5px;
+                    }
+                }
+
+                .PlayIcon{
+                    svg{
+                        path{
+                            fill: $app-theme-col;
+                        }
+                    }
+                }
+            
+                .HeartFullIcon{
+                    svg{
+                        path{
+                            fill: $app-theme-col;
+                            stroke: $app-theme-col;
+                        }
+                    }
+                }
+            
+                .HeartIcon{
+                    svg{
+                        path{
+                            stroke: $app-theme-col;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .main_content{
+        min-width: 859px;
+        width: calc(100vw - var(--var-right-side-bar-width-expanded));
+        height: calc(100vh - 395px);
+        overflow-x: hidden;
+        overflow-y: scroll;
+
+        .footer_content{
+            h4{
+                width: 100%;
+                font-size: 13px;
+                height: 16px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+    
+            p{
+                width: 100%;
+                font-size: 10px;
+                height: 13px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+
+}
+
+.SongAlbumDetails-ContextMenu-container{
+    width: 100vw;
+    height: calc(100vh - 32px);
+    position: fixed;
+    z-index: $z-index-9000;
+    top: 32px;
+    left: 0px;
+}
+
+@media only screen and (max-width: 1300px){
+    .SongAlbumDetails{
+        min-width: 759px;
+        width: calc(100vw - var(--var-right-side-bar-width-expanded));
+
+        .main_content, .footer_content{
+            min-width: 759px;
+            width: calc(100vw - var(--var-right-side-bar-width-expanded));
+        }
+    }
+}
+
+@media only screen and (max-width: 1180px){
+    .SongAlbumDetails{
+        min-width: 759px;
+        width: calc(100vw - var(--var-right-side-bar-width-minimized));
+
+        .main_content, .footer_content{
+            min-width: 759px;
+            width: calc(100vw - var(--var-right-side-bar-width-minimized));
+        }
+    }
+}
+
+@media only screen and (max-width: 1046px){
+    .SongAlbumDetails{
+        min-width: 759px;
+        width: calc(100vw - var(--var-right-side-bar-width-smallest));
+
+        .main_content, .footer_content{
+            min-width: 759px;
+            width: calc(100vw - var(--var-right-side-bar-width-smallest));
+        }
+    }
+}

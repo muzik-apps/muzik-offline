@@ -1,0 +1,83 @@
+@import "../../constants/constants";
+
+.SongCardSmall{
+    width: 222px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+
+    .song_cover{
+        width: 40px;
+        height: 40px;
+        display: flex;
+        overflow: hidden;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+
+        img{
+            display: inline;
+            min-width: 100%;
+            margin: 0 auto;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    .song_name{
+        width: 91px;
+        height: 50px;
+        margin-left: 5px;
+        h3, p{
+            width: 91px;
+            font-size: 12px;
+            height: 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+        }
+
+        h3:hover, p:hover{
+            opacity: 0.8;
+        }
+
+        p{
+            font-size: 9px;
+            height: 12px;
+        }
+    }
+
+    .svg_app_theme_path{
+        svg{
+            path{
+                stroke: $app-theme-col;
+            }
+        }
+    }
+
+    .svg_app_theme_fill{
+        svg{
+            path{
+                fill: $app-theme-col;
+            }
+        }
+    }
+
+    .ExplicitIcon_placeholder{
+        margin-left: 5px;
+        width: 16px;
+        margin-right: 5px;
+    }
+
+    margin-bottom: 5px;
+}
+
+.SongCardSmall-ContextMenu-container{
+    width: 100vw;
+    height: calc(100vh - 32px);
+    position: fixed;
+    z-index: $z-index-9000;
+    top: 32px;
+    left: 0px;
+}

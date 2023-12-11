@@ -1,0 +1,19 @@
+@import "../constants/constants";
+
+.UserRecentSong{
+    margin-top: 20px;
+    .UserRecentSong-container{
+        height: calc(100vh - 125px);
+        width: 100%;
+        overflow-y: scroll;
+    }
+
+    .UserRecentSong-ContextMenu-container{
+        width: 100vw;
+        height: calc(100vh - 32px);
+        position: fixed;
+        z-index: $z-index-9000;
+        top: 32px;
+        left: 0px;
+    }
+}

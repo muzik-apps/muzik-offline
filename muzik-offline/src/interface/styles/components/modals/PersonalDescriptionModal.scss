@@ -1,0 +1,31 @@
+@import "../../constants/constants";
+
+.PersonalDescriptionModal{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background: $blur-element;
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    .modal{
+        width: 500px;
+        height: 350px;
+        padding: 20px;
+        box-sizing: border-box;
+        border: 1px solid $songs-container-border-col;
+        background: $gray-1000;
+        border-radius: 20px;
+        font-size: 16px;
+        resize: none;
+        overflow-y: auto;
+        color: $white-900;
+    }
+}
+
+.PersonalDescriptionModal-visible{
+    display: flex;
+}

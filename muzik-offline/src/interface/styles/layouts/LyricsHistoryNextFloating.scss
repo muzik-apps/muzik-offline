@@ -1,0 +1,112 @@
+@import "../constants/constants";
+
+.LyricsHistoryNextFloating{
+    position: fixed;
+    width: 234px;
+    height: calc(100vh - 152px);
+    z-index: $z-index-8000;
+    user-select: none;
+    border-radius: 20px;
+    border: 1px solid $songs-container-border-col;
+    background: var(--var-songs-container-bg-col);
+    backdrop-filter: var(--var-bg-blur-150);
+    padding: 9px;
+    top: 47px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .Lyrics_view{
+        height: 92.5%;
+        overflow-y: auto;
+        p{
+            font-size: 12px;
+            height: 15px;
+            font-family: 'inter-italic-regular', sans-serif;
+            font-style: italic;
+        }
+
+        h4, h5{
+            font-size: 25px;
+            white-space: wrap;
+            overflow: hidden;
+            color: $gray-600;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            margin-right: 3px;
+        }
+
+        h4:hover, h5:hover{
+            background: $on-hover-song;
+        }
+
+        h4:active, h5:active{
+            background: $gray-stroke-20;
+        }
+
+        h5{
+            color: $white-900;
+        }
+    }
+
+    .Upcoming_view{
+        height: 92.5%;
+        overflow-y: auto;
+    }
+
+    .History_view{
+        height: 92.5%;
+        overflow-y: auto;
+    }
+
+    .LyricsHistoryUpcoming_tabs{
+        width: 230px;
+        display: flex;
+        justify-content: space-evenly;
+
+        .Lyrics_tab, .Upcoming_tab, .History_tab{
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            position: relative;
+            width: 73px;
+            height: 34px;
+
+            .selected{
+                background: $white-900;
+                position: absolute;
+                border-radius: 15px;
+                inset: 0;
+            }
+
+            h3{
+                position: relative;
+                color: $white-900;
+                mix-blend-mode: exclusion;
+                font-size: 12px;
+                text-align: center;
+                margin-top: 9px;
+            }
+        }
+
+        .Lyrics_tab:hover, .Upcoming_tab:hover, .History_tab:hover{
+            opacity: 0.8;
+        }
+    }
+}
+
+@media only screen and (max-width: 1250px){
+    .LyricsHistoryNextFloating{
+        margin-right: -12px;
+    }
+}
+
+.LyricsHistoryNextFloating-ContextMenu-container{
+    width: 100vw;
+    height: calc(100vh - 32px);
+    position: fixed;
+    z-index: $z-index-9000;
+    top: 32px;
+    left: 0px;
+}

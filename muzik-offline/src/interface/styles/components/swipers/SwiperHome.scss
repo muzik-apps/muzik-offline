@@ -1,0 +1,80 @@
+@import "../../constants/constants";
+
+.SwiperHome{
+    height: 281px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    min-width: 859px;
+    width: calc(100vw - var(--var-right-side-bar-width-expanded));
+
+    .right-slider, .left-slider{
+        cursor: pointer;
+    }
+
+    .right-slider:hover, .left-slider:hover{
+        opacity: 0.8;
+    }
+
+    .swiper-frame{
+        margin-left: 7px;
+        margin-right: 7px;
+        height: 281px;
+        min-width: 797px;
+        width: calc(100vw - var(--var-right-side-bar-width-expanded) - 62px);
+        .swiper-slide{
+            height: 250px;
+            margin-top: 15px;
+            width: 435px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 30px;
+            overflow: hidden;
+
+            img{
+                display: inline;
+                min-width: 100%;
+                margin: 0 auto;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 1300px){
+    .SwiperHome{
+        min-width: 759px;
+        width: calc(100vw - var(--var-right-side-bar-width-expanded));
+
+        .swiper-frame{
+            min-width: 697px;
+            width: calc(100vw - var(--var-right-side-bar-width-expanded) - 62px);
+        }
+    }
+}
+
+@media only screen and (max-width: 1180px){
+    .SwiperHome{
+        min-width: 759px;
+        width: calc(100vw - var(--var-right-side-bar-width-minimized));
+        
+        .swiper-frame{
+            min-width: 697px;
+            width: calc(100vw - var(--var-right-side-bar-width-minimized) - 62px);
+        }
+    }
+}
+
+@media only screen and (max-width: 1046px){
+    .SwiperHome{
+        min-width: 759px;
+        width: calc(100vw - var(--var-right-side-bar-width-smallest));
+        
+        .swiper-frame{
+            min-width: 697px;
+            width: calc(100vw - var(--var-right-side-bar-width-smallest) - 62px);
+        }
+    }
+}

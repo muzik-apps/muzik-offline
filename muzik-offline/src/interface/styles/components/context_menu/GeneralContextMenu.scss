@@ -1,0 +1,42 @@
+@import "../../constants/constants";
+
+.GeneralContextMenu{
+    position: fixed;
+    width: 155px;
+    height: fit-content;
+    z-index: $z-index-9250;
+    user-select: none;
+    border-radius: 20px;
+    border: 1px solid $songs-container-border-col;
+    background: var(--var-songs-container-bg-col);
+    backdrop-filter: var(--var-bg-blur-150);
+    padding: 9px;
+
+    .Play, .PlayNext, .PlayLater, .ShowArtist, .Star, .Add_to_playlist,
+    .StarFull, .Charts, .Genre, .ShowPlaylist, .HeartFull, .Heart, .ShowAlbum{
+        display: flex;
+        height: 34px;
+        border-radius: 10px;
+        align-items: center;
+        margin-bottom: 2.5px;
+        margin-top: 2.5px;
+        overflow-y: hidden;
+
+        svg{
+            margin-right: 2.5px;
+        }
+
+        p{
+            margin-left: 2.5px;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 128.5px;
+        }
+    }
+
+    .PlayIcon:hover, .PlayNext:hover, .PlayLater:hover, .HeartFullIcon:hover, .HeartIcon:hover, .Add_to_playlist:hover{
+        opacity: 0.8;
+    }
+}

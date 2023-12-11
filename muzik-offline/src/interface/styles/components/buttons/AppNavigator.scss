@@ -1,0 +1,69 @@
+@import "../../constants/constants";
+
+.App_navigator{
+    display: flex;
+    width: 157px;
+    height: 34px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+    transition: all 0.1s ease-in-out;
+
+    h2{
+        font-size: 13px;
+        margin-left: 9px;
+        transition: all 0.1s ease-in-out;
+    }
+
+    svg{
+        margin-left: 33px;
+        path{
+            transition: all 0.1s ease-in-out;
+        }
+    }
+}
+
+.App_navigator:hover{
+    background: $app-theme-col;
+
+    h2{
+        color: $root-app-navigator-hover-col;
+    }
+
+    svg{
+        path{
+            stroke: $root-app-navigator-hover-col;
+        }
+    }
+}
+
+.Selected_App_navigator{
+    background: $app-theme-col;
+
+    h2{
+        color: $root-app-navigator-hover-col;
+    }
+
+    svg{
+        path{
+            stroke: $root-app-navigator-hover-col;
+        }
+    }
+}
+
+@media only screen and (max-width: 1046px){
+    .App_navigator{
+        width: 34px;
+        border-radius: 14px;
+        justify-content: center;
+        margin-left: 10px;
+
+        svg{
+            margin-left: 0px;
+        }
+        h2{
+            display: none;
+            margin-left: 0px;
+        }
+    }
+}

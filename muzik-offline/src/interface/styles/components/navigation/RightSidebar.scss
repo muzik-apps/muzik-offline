@@ -1,0 +1,90 @@
+@import "../../constants/constants";
+
+.RightSidebar{
+    margin-top: 16px;
+    margin-right: 16px;
+    margin-left: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 20px;
+    border: 1px solid $songs-container-border-col;
+    height: calc(100vh - 136px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .friends_activity{
+        width: 222px;
+        h1{
+            font-size: 16px;
+            margin-bottom: 7px;
+        }
+
+        .more_friends, .more_friends_small{
+            margin-top: -8px;
+            width: 172px;
+            height: 34px;
+            background: $app-theme-col;
+            border-radius: 15px;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            h2{
+                font-size: 13px;
+                text-align: center;
+                color: $root-app-navigator-hover-col;
+            }
+        }
+
+        .more_friends_small{
+            width: 50px;
+            display: none;
+        }
+    }
+
+    .user_activity{
+        width: 222px;
+        margin-top: 0px;
+        overflow-y: hidden;
+        h1{
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+    }
+}
+
+@media only screen and (max-width: 1250px){
+    .RightSidebar{
+        margin-right: 0px;
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+        padding-left: 3px;
+        padding-right: 3px;
+        .friends_activity{
+            width: fit-content;
+            .more_friends{
+                display: none;
+            }
+
+            .more_friends_small{
+                display: flex;
+            }
+        }
+
+        .user_activity{
+            display: none;
+        }
+    }
+}
+
+.SongCardSmall-ContextMenu-container{
+    width: 100vw;
+    height: calc(100vh - 32px);
+    position: fixed;
+    z-index: $z-index-9000;
+    top: 32px;
+    left: 0px;
+}

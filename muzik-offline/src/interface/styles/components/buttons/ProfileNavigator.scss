@@ -1,0 +1,71 @@
+@import "../../constants/constants";
+
+.ProfileNavigator{
+    display: flex;
+    width: 116px;
+    height: 34px;
+    border-radius: 15px;
+    align-items: center;
+    transition: all 0.1s ease-in-out;
+    margin-right: 11px;
+    margin-left: 2px;
+    justify-content: center;
+
+    h2{
+        font-size: 13px;
+        transition: all 0.1s ease-in-out;
+        margin-right: 2.5px;
+    }
+
+    svg{
+        margin-left: 2.5px;
+        path{
+            transition: all 0.1s ease-in-out;
+        }
+    }
+}
+
+.ProfileNavigator:hover{
+    background: $app-theme-col;
+
+    h2{
+        color: $root-app-navigator-hover-col;
+    }
+
+    svg{
+        path{
+            stroke: $root-app-navigator-hover-col;
+        }
+    }
+}
+
+.Selected_ProfileNavigator{
+    background: $app-theme-col;
+
+    h2{
+        color: $root-app-navigator-hover-col;
+    }
+
+    svg{
+        path{
+            stroke: $root-app-navigator-hover-col;
+        }
+    }
+}
+
+@media only screen and (max-width: 1046px){
+    .ProfileNavigator{
+        width: 34px;
+        border-radius: 14px;
+        justify-content: center;
+        margin-left: 10px;
+
+        svg{
+            margin-left: 0px;
+        }
+        h2{
+            display: none;
+            margin-right: 0px;
+        }
+    }
+}

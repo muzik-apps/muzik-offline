@@ -1,0 +1,55 @@
+@import "../../constants/constants";
+
+.FriendsNavigator{
+    display: flex;
+    width: 150px;
+    height: 34px;
+    border-radius: 15px;
+    align-items: center;
+    transition: all 0.1s ease-in-out;
+    margin-right: 15px;
+    margin-left: 5px;
+
+    h2{
+        font-size: 13px;
+        transition: all 0.1s ease-in-out;
+        margin-right: 8px;
+        margin-left: 8px;
+        width: 102px;
+        text-align: center;
+    }
+
+    svg{
+        path{
+            transition: all 0.1s ease-in-out;
+        }
+    }
+}
+
+.FriendsNavigator:hover{
+    background: $app-theme-col;
+
+    h2{
+        color: $root-app-navigator-hover-col;
+    }
+
+    svg{
+        path{
+            stroke: $root-app-navigator-hover-col;
+        }
+    }
+}
+
+.Selected_FriendsNavigator{
+    background: $app-theme-col;
+
+    h2{
+        color: $root-app-navigator-hover-col;
+    }
+
+    svg{
+        path{
+            stroke: $root-app-navigator-hover-col;
+        }
+    }
+}

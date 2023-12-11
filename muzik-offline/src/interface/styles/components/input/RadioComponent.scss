@@ -1,0 +1,31 @@
+@import "../../constants/constants";
+
+.radio_component{
+    width: 119px;
+    border-radius: 16px;
+    height: 50px;
+    background: $on-hover-song;
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    padding-left: 13px;
+    padding-right: 18px;
+    justify-content: space-between;
+
+    h4{
+        font-size: 13px;
+        height: 13px;
+    }
+
+    .radio-display{
+        width: 15px;
+        height: 15px;
+        border-radius: 6px;
+        background: $flags-blur;
+    }
+
+    .selected{
+        background: $app-theme-col;
+    }
+}

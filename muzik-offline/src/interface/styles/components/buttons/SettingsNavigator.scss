@@ -1,0 +1,53 @@
+@import "../../constants/constants";
+
+.SettingsNavigator{
+    display: flex;
+    width: 157px;
+    height: 34px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+    transition: all 0.1s ease-in-out;
+
+    svg{
+        margin-left: 33px;
+        path{
+            transition: all 0.1s ease-in-out;
+        }
+    }
+    
+    h2{
+        font-size: 13px;
+        margin-left: 9px;
+        transition: all 0.1s ease-in-out;
+    }
+
+}
+
+.SettingsNavigator:hover{
+    background: $app-theme-col;
+
+    h2{
+        color: $root-app-navigator-hover-col;
+    }
+
+    svg{
+        path{
+            stroke: $root-app-navigator-hover-col;
+        }
+    }
+}
+
+.Selected_Settings_navigator{
+    background: $app-theme-col;
+    
+    svg{
+        path{
+            stroke: $root-app-navigator-hover-col;
+        }
+    }
+
+    h2{
+        color: $root-app-navigator-hover-col;
+    }
+}

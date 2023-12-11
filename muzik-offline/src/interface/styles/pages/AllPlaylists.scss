@@ -1,0 +1,135 @@
+@import "../constants/constants";
+
+.AllPlaylists{
+    margin-top: 23px;
+    min-width: 859px;
+    width: calc(100vw - var(--var-right-side-bar-width-expanded));
+    height: calc(100vh - 55px);
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    .AllPlaylists_title{
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 10px;
+
+        h1{
+            font-size: 16px;
+            margin-top: 0px;
+        }
+
+        .sort_selector{
+            display: flex;
+            margin-right: 54px;
+
+            h2{
+                font-size: 13px;
+                margin-top: 0px;
+                width: 92px;
+                margin-right: 13px;
+            }
+
+            .sort_dropdown_container{
+                position: relative;
+                overflow: visible;
+                
+                .sort_dropdown{
+                    width: 150px;
+                    height: 24px;
+                    border-radius: 10px;
+                    background: $app-theme-col;
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-end;
+
+                    h4{
+                        font-size: 13px;
+                        height: 13px;
+                        margin-top: 11px;
+                        color: $root-app-navigator-hover-col;
+                    }
+                    
+                    .chevron_icon{
+                        width: 24px;
+                        height: 24px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin-left: 9px;
+                        margin-right: 8px;
+                        svg{
+                            path{
+                                stroke: $root-app-navigator-hover-col;
+                            }
+                        }
+                    }
+                }
+
+                .DropDownMenu_container{
+                    position: absolute;
+                    top: 28px;
+                    z-index: $z-index-8000;
+                }
+            }
+        }
+
+    }
+
+    .AllPlaylists_container{
+        min-width: 859px;
+        width: calc(100vw - var(--var-right-side-bar-width-expanded));
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 150px);
+        grid-template-rows: repeat(auto-fill, 205px);
+        justify-content: space-between;
+    }
+
+    .bottom_margin{
+        height: 85px;
+    }
+}
+
+@media only screen and (max-width: 1300px){
+    .AllPlaylists{
+        min-width: 759px;
+        width: calc(100vw - var(--var-right-side-bar-width-expanded));
+
+        .AllPlaylists_container{
+            min-width: 759px;
+            width: calc(100vw - var(--var-right-side-bar-width-expanded));
+        }
+    }
+}
+
+.AllPlaylists-ContextMenu-container{
+    width: 100vw;
+    height: calc(100vh - 32px);
+    position: fixed;
+    z-index: $z-index-9000;
+    top: 32px;
+    left: 0px;
+}
+
+@media only screen and (max-width: 1180px){
+    .AllPlaylists{
+        min-width: 759px;
+        width: calc(100vw - var(--var-right-side-bar-width-minimized));
+
+        .AllPlaylists_container{
+            min-width: 759px;
+            width: calc(100vw - var(--var-right-side-bar-width-minimized));
+        }
+    }
+}
+
+@media only screen and (max-width: 1046px){
+    .AllPlaylists{
+        min-width: 759px;
+        width: calc(100vw - var(--var-right-side-bar-width-smallest));
+
+        .AllPlaylists_container{
+            min-width: 759px;
+            width: calc(100vw - var(--var-right-side-bar-width-smallest));
+        }
+    }
+}

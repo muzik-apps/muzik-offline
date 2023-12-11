@@ -1,0 +1,29 @@
+@import "../../constants/constants";
+
+.LeftSidebar{
+    margin-top: 16px;
+    margin-left: 16px;
+    margin-right: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border: 1px solid $songs-container-border-col;
+    height: calc(100vh - 136px);
+    border-radius: 20px;
+
+    .user_library{
+        h1{
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+    }
+}
+
+@media only screen and (max-width: 1046px){
+    .LeftSidebar{
+        margin-left: 0px;
+        padding-left: 3px;
+        padding-right: 3px;
+        border-bottom-left-radius: 0px;
+        border-top-left-radius: 0px;
+    }
+}

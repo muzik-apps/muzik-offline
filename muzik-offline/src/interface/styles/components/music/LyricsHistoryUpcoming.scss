@@ -1,0 +1,93 @@
+@import "../../constants/constants";
+
+.LyricsHistoryUpcoming{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(350px + 5vw);
+    height: 80vh;
+
+    .Lyrics_view{
+        height: 85%;
+        margin-bottom: 20px;
+        overflow-y: auto;
+        p{
+            font-size: 12px;
+            height: 15px;
+            font-family: 'inter-italic-regular', sans-serif;
+            font-style: italic;
+        }
+
+        h4, h5{
+            font-size: 25px;
+            white-space: wrap;
+            overflow: hidden;
+            color: $gray-600;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+
+        h4:hover, h5:hover{
+            background: $on-hover-song;
+        }
+
+        h4:active, h5:active{
+            background: $gray-stroke-20;
+        }
+
+        h5{
+            color: $white-900;
+        }
+    }
+
+    .Upcoming_view{
+        height: 85%;
+        width: calc(350px + 5vw);
+        margin-bottom: 20px;
+        overflow-y: auto;
+    }
+
+    .History_view{
+        height: 85%;
+        width: calc(350px + 5vw);
+        margin-bottom: 20px;
+        overflow-y: auto;
+    }
+
+    .LyricsHistoryUpcoming_tabs{
+        width: 350px;
+        display: flex;
+        justify-content: space-evenly;
+
+        .Lyrics_tab, .Upcoming_tab, .History_tab{
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            position: relative;
+            width: 130px;
+            height: 34px;
+
+            .selected{
+                background: $white-900;
+                position: absolute;
+                border-radius: 15px;
+                inset: 0;
+            }
+
+            h3{
+                position: relative;
+                color: $white-900;
+                mix-blend-mode: exclusion;
+                font-size: 12px;
+                margin-top: 9px;
+                text-align: center;
+            }
+        }
+
+        .Lyrics_tab:hover, .Upcoming_tab:hover, .History_tab:hover{
+            opacity: 0.8;
+        }
+
+    }
+}

@@ -1,0 +1,36 @@
+@import "../constants/constants";
+
+.SearchPage{
+    margin-top: 23px;
+    min-width: 859px;
+    width: calc(100vw - var(--var-right-side-bar-width-expanded));
+    height: calc(100vh - 55px);
+    overflow: visible;
+
+    .SearchPage-navigator{
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 15px;
+    }
+}
+
+@media only screen and (max-width: 1300px){
+    .SearchPage{
+        min-width: 759px;
+        width: calc(100vw - var(--var-right-side-bar-width-expanded));
+    }
+}
+
+@media only screen and (max-width: 1180px){
+    .SearchPage{
+        min-width: 759px;
+        width: calc(100vw - var(--var-right-side-bar-width-minimized));
+    }
+}
+
+@media only screen and (max-width: 1046px){
+    .SearchPage{
+        min-width: 759px;
+        width: calc(100vw - var(--var-right-side-bar-width-smallest));
+    }
+}

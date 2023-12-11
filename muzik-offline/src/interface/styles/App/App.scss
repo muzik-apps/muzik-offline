@@ -1,0 +1,89 @@
+@import "../constants/constants";
+
+html{
+    height: 100vh;
+    width: 100vw;
+    min-width: 980px;
+    min-height: 623px;
+    overflow-x: hidden;
+    overflow: overlay;
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+    min-width: 980px;
+    min-height: 623px;
+    overflow: hidden;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: overlay;
+    -webkit-user-select: none;  /* Chrome all / Safari all */
+    -moz-user-select: none;     /* Firefox all */
+    -ms-user-select: none;      /* IE 10+ */
+    user-select: none;          /* Likely future */ 
+}
+
+.app_container{
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    min-width: 980px;
+    min-height: 623px;
+    overflow: hidden;
+    position: relative;
+
+    .background_img{
+        width: 100vw;
+        height: 100vh;
+        min-width: 980px;
+        min-height: 623px;
+        overflow: hidden;
+        margin: 0;
+        display: flex;
+
+        img{
+            display: inline;
+            min-width: 100%;
+            margin: 0 auto;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    .dark_background{
+        background: $black-linear;
+    }
+
+    .pink_blue_gradient{
+        background: $pink_blue_gradient;
+    }
+
+    .blue_purple_gradient{
+        background: $blue_purple_gradient;
+    }
+
+    .app_darkness_layer{
+        width: 100vw;
+        height: 100vh;
+        min-width: 980px;
+        min-height: 623px;
+        overflow: hidden;
+        margin-top: -100vh;
+        position: absolute;
+        .main_app_container{
+            display: flex;
+            justify-content: space-between;
+        }
+    }
+    
+    .image_layer{
+        background: var(--image-bg-layer, linear-gradient(180deg, rgba(37, 37, 37, var(--wallpaper-foreground-top-value-opacity)) 0%, rgba(37, 37, 37, var(--wallpaper-foreground-bottom-value-opacity)) 87.93%));
+    }
+
+    .color_layer{
+        background: $bg-dark-overlay;
+    }
+}

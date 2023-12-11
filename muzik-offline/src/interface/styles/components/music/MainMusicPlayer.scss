@@ -1,0 +1,232 @@
+@import "../../constants/constants";
+
+.main_music_player{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .song_cover_art{
+        width: 300px;
+        height: 300px;
+        border-radius: 50px;
+        position: relative;
+        margin-top: 2vh;
+        .first_cover, .second_cover{
+            width: 300px;
+            height: 300px;
+            border-radius: 50px;
+            flex-shrink: 0;
+            display: flex;
+            overflow: hidden;
+            justify-content: center;
+            align-items: center;
+
+            img{
+                display: inline;
+                min-width: 100%;
+                margin: 0 auto;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .first_cover{
+            filter: $bg-blur-150;
+        }
+
+        .second_cover{
+            margin-top: -300px;
+            position: absolute;
+            box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+        }
+    }
+
+    .song_details{
+        height: 50px;
+        width: calc(300px + 5vw);
+        h2{
+            width: calc(300px + 5vw);
+            font-size: 15px;
+            height: 18px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        h3{
+            width: calc(300px + 5vw);
+            font-size: 9px;
+            height: 15px;
+            overflow: hidden;
+            font-family: 'inter-italic-regular', sans-serif;
+            font-style: italic;
+            text-overflow: ellipsis;
+            margin-top: -3px;
+        }
+    }
+
+    .Controls{
+        width: 220px;
+        display: flex;
+        margin-top: 5vh;
+        justify-content: space-around;
+        height: 24px;
+        .control_icon:hover{
+            opacity: 0.8;
+        }
+    }
+
+    .Seeker{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+        width: calc(300px + 10vw);
+        height: 10px;
+        margin-top: 4vh;
+        p{
+            font-size: 13px;
+            color: $white-500;
+        }
+
+        input[type="range"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: calc(300px + 4vw);
+            height: 2px;
+            background: $white-900;
+            border-radius: 5px;
+            margin-left: 5px;
+            margin-right: 5px;
+            background-image: linear-gradient($app-theme-col, $app-theme-col);
+            background-size: 50% 100%;
+            background-repeat: no-repeat;
+            border-radius: 5px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 5px;
+            width: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 2px 0 #555;
+            transition: transform 0.2s ease-in-out;
+            background: $app-theme-col;
+        }
+
+        input[type="range"]::-moz-range-thumb  {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 5px;
+            width: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 2px 0 #555;
+            transition: transform 0.2s ease-in-out;
+            background: $app-theme-col;
+        }
+
+        input[type="range"]:hover::-webkit-slider-thumb {
+            background: $app-theme-col;
+            transform: scale(3);
+        }
+
+        input[type="range"]:hover::-moz-range-thumb  {
+            background: $app-theme-col;
+            transform: scale(3);
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track  {
+            -webkit-appearance: none;
+            appearance: none;
+            box-shadow: none;
+            border: none;
+            background: transparent;
+        }
+
+        input[type="range"]::-moz-range-track  {
+            -webkit-appearance: none;
+            appearance: none;
+            box-shadow: none;
+            border: none;
+            background: transparent;
+        }
+    }
+
+    .volume_controller{
+        display: flex;
+        width: calc(200px + 7vw);
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 5vh;
+
+        input[type="range"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: calc(200px + 1vw);
+            height: 2px;
+            background: $white-900;
+            border-radius: 5px;
+            margin-left: 5px;
+            margin-right: 5px;
+            background-image: linear-gradient($app-theme-col, $app-theme-col);
+            background-size: 50% 100%;//change this to change highlighted area
+            background-repeat: no-repeat;
+            border-radius: 5px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 5px;
+            width: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 2px 0 #555;
+            transition: transform 0.2s ease-in-out;
+            background: $app-theme-col;
+        }
+
+        input[type="range"]::-moz-range-thumb  {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 5px;
+            width: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 2px 0 #555;
+            transition: transform 0.2s ease-in-out;
+            background: $app-theme-col;
+        }
+
+        input[type="range"]:hover::-webkit-slider-thumb {
+            background: $app-theme-col;
+            transform: scale(3);
+        }
+
+        input[type="range"]:hover::-moz-range-thumb  {
+            background: $app-theme-col;
+            transform: scale(3);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track  {
+            -webkit-appearance: none;
+            appearance: none;
+            box-shadow: none;
+            border: none;
+            background: transparent;
+        }
+
+        input[type=range]::-moz-range-track  {
+            -webkit-appearance: none;
+            appearance: none;
+            box-shadow: none;
+            border: none;
+            background: transparent;
+        }
+
+        .volume_icon:hover{
+            opacity: 0.8;
+        }
+    }
+}
