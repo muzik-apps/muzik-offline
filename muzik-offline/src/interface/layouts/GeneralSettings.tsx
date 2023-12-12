@@ -5,7 +5,7 @@ import { SavedObject, emptySavedObject, viewableSideEl, viewableSideElements } f
 import { ChevronDown, Disk, LayersThree, Menu, Microphone, MusicalNote } from "@assets/icons";
 import { selectedGeneralSettingEnum } from "types";
 import { useState } from "react";
-import { DropDownMenuLarge, RadioComponent } from "@components/index";
+import { DropDownMenuLarge, RadioComponent, DirectoriesModal } from "@components/index";
 
 const settings_data: {
     key: number;
@@ -44,6 +44,7 @@ const GeneralSettings = () => {
     const [selectedGeneralSetting, setselectedGeneralSetting] = useState<selectedGeneralSettingEnum>(selectedGeneralSettingEnum.Nothing);
     const [local_store, setStore] = useLocalStorageState<SavedObject>("SavedObject-offline", {defaultValue: emptySavedObject});
     const [viewableEl, setviewableEl] = useLocalStorageState<viewableSideEl>("viewableEl", {defaultValue: viewableSideElements});
+    const [CDisOpen, setCDModalState] = useState<boolean>(false);
 
     function toggleDropDown(arg: selectedGeneralSettingEnum){
         if(arg === selectedGeneralSetting)setselectedGeneralSetting(selectedGeneralSettingEnum.Nothing);
@@ -53,6 +54,10 @@ const GeneralSettings = () => {
     function setStoreValue(arg: string, type: string){
         setStore({ ... local_store, [type] : arg});
         setselectedGeneralSetting(selectedGeneralSettingEnum.Nothing);
+    }
+
+    function captureDirectories(arg: string){
+        setCDModalState(false);
     }
 
     function setViewableEl(value: boolean, type: string){setviewableEl({...viewableEl, [type]: value})}
@@ -84,6 +89,12 @@ const GeneralSettings = () => {
                     </div>)
                 }
                 <div className="setting">
+                    <h3>Description</h3>
+                    <div className="description_container">
+                        <motion.h4 whileTap={{scale: 0.98}} onClick={() => setCDModalState(true)}>click here to change directories</motion.h4>
+                    </div>
+                </div>
+                <div className="setting">
                     <h3>Viewable side elements</h3>
                 </div>
                 <div className="my_library">
@@ -97,6 +108,7 @@ const GeneralSettings = () => {
                     </div>
                 </div>
             </div>
+            <DirectoriesModal isOpen={CDisOpen} closeModal={() => setCDModalState(false)} respondAndCloseModal={captureDirectories}/>
         </div>
     )
 }

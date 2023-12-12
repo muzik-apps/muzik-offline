@@ -75,6 +75,24 @@
                 top: 55px;
                 z-index: $z-index-9250;
             }
+
+            .description_container{
+                width: 300px;
+                height: 40px;
+                border-radius: 10px;
+                background: $gray-stroke-20;
+                border: none;
+                outline: none;
+                padding: 0px 0px 0px 0px;
+                padding-left: 4px;
+                padding-right: 4px;
+                font-size: 13px;
+                color: $white-900;
+                font-family: 'inter-italic-regular', sans-serif;
+                font-style: italic;
+                display: flex;
+                align-items: center;
+            }
         }
 
         .my_library{
