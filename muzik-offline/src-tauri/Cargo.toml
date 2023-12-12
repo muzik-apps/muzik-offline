@@ -16,6 +16,8 @@ tauri-build = { version = "1.5", features = [] }
 tauri = { version = "1.5", features = [ "os-all", "window-minimize", "window-unmaximize", "window-set-resizable", "window-start-dragging", "window-hide", "window-set-fullscreen", "window-maximize", "window-show", "window-close", "window-unminimize", "shell-open"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+id3 = "1.10.0"
+mp3-duration = "0.1.10"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

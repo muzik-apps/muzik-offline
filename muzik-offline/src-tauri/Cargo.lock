@@ -1233,6 +1233,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "id3"
+version = "1.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bf8550abe8a02c044e8f4162c8ddb4020fc65b5e7771ad9b80c25e13ed4536b6"
+dependencies = [
+ "bitflags 2.4.1",
+ "byteorder",
+ "flate2",
+]
+
+[[package]]
 name = "ident_case"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1571,9 +1582,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "mp3-duration"
+version = "0.1.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "348bdc7300502f0801e5b57c448815713cd843b744ef9bda252a2698fdf90a0f"
+dependencies = [
+ "thiserror",
+]
+
+[[package]]
 name = "muzik-offline"
 version = "0.0.0"
 dependencies = [
+ "id3",
+ "mp3-duration",
  "serde",
  "serde_json",
  "tauri",
