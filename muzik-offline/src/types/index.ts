@@ -23,7 +23,6 @@ export enum OSTYPEenum{
 
 export enum contextMenuEnum{
     ArtistCM = "ArtistCM",
-    ChartsCM = "ChartsCM",
     GenreCM = "GenreCM",
     PlaylistCM = "PlaylistCM",
     SongCM = "SongCM",
@@ -35,15 +34,27 @@ export enum contextMenuButtons{
     PlayNext = "PlayNext",
     PlayLater = "PlayLater",
     ShowArtist = "ShowArtist",
-    Favorite = "Favorite",
-    UnFavorite = "UnFavorite",
     AddToPlaylist = "AddToPlaylist",
-    ShowChart = "ShowChart",
     ShowGenre = "ShowGenre",
     ShowPlaylist = "ShowPlaylist",
-    Heart = "Heart",
-    UnHeart ="UnHeart",
-    ShowAlbum = "ShowAlbum"
+    ShowAlbum = "ShowAlbum",
+    ShowInfo = "ShowInfo",
+}
+
+export interface Song{
+    id: number,
+    title: string,
+    artist: string,
+    album: string,
+    genre: string,
+    year: number,
+    duration: string,
+    path: string,
+    cover: string,
+    date_recorded: string,
+    date_released: string,
+    file_size: number,
+    file_type: string,
 }
 
 export interface songDetails {

@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 import { contextMenuButtons } from 'types';
-import { ArrowCurveLeftRight, ArrowCurveRightUp, Disk, LayersThree, Menu, Microphone, Play } from '@assets/icons';
+import { ArrowCurveLeftRight, ArrowCurveRightUp, Disk, InformationCircleContained, LayersThree, Menu, Microphone, Play } from '@assets/icons';
 import { motion } from 'framer-motion';
 
 type ContextMenuButtonsProps = {
@@ -77,6 +77,15 @@ export const ShowAlbumButton: FunctionComponent<ContextMenuButtonsProps> = (prop
         <motion.div className="ShowAlbum" whileTap={{scale: 0.98}} onMouseDown={() => props.chooseOption(contextMenuButtons.ShowAlbum)}>
             <LayersThree />
             <p>Show "{props.title}"</p>
+        </motion.div>
+    )
+}
+
+export const ShowInfoButton: FunctionComponent<ContextMenuButtonsProps> = (props: ContextMenuButtonsProps) => {
+    return (
+        <motion.div className="ShowInfo" whileTap={{scale: 0.98}} onMouseDown={() => props.chooseOption(contextMenuButtons.ShowInfo)}>
+            <InformationCircleContained />
+            <p>Properties</p>
         </motion.div>
     )
 }

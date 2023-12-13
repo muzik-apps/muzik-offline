@@ -164,8 +164,7 @@ const HistoryUpcoming = () => {
                   <GeneralContextMenu 
                       xPos={co_ords.xPos} 
                       yPos={co_ords.yPos} 
-                      title={songMenuToOpen.songName} 
-                      hearted={songMenuToOpen.hearted}
+                      title={songMenuToOpen.songName}
                       CMtype={contextMenuEnum.SongCM}/>
               </div>
           )

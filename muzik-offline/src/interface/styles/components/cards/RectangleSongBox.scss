@@ -71,15 +71,15 @@
         }
     }
 
-    .ExplicitIcon{
-        margin-right: 23px;
-    }
-
-    .length{
+    .length, .year{
         margin-right: 25px;
         font-size: 13px;
         width: 36px;
         overflow-x: hidden;
+    }
+
+    .length{
+        width: 46px;
     }
 
     .PlayIcon{
@@ -87,23 +87,6 @@
         svg{
             path{
                 fill: $app-theme-col;
-            }
-        }
-    }
-
-    .HeartFullIcon{
-        svg{
-            path{
-                fill: $app-theme-col;
-                stroke: $app-theme-col;
-            }
-        }
-    }
-
-    .HeartIcon{
-        svg{
-            path{
-                stroke: $app-theme-col;
             }
         }
     }

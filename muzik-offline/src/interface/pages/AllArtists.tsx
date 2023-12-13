@@ -187,8 +187,7 @@ const AllArtists = () => {
                         <GeneralContextMenu 
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
-                            title={artistMenuToOpen.artist_name} 
-                            favourited={artistMenuToOpen.favourited}
+                            title={artistMenuToOpen.artist_name}
                             CMtype={contextMenuEnum.ArtistCM}/>
                     </div>
                 )

@@ -1,25 +1,39 @@
 use std::fs::{self};
 use id3::{Tag, TagLike};
 use mp3_duration;
+use serde_json::Value;
 
-use crate::components::{Song, Dir};
+use crate::components::Song;
 
 pub fn decode_directories(paths_as_json: &str) -> Vec<String> {
-    let paths_converted_or_err: Result<Dir, serde_json::Error> = serde_json::from_str(paths_as_json);
-    
-    match paths_converted_or_err{
-        Ok(paths_converted) => {return paths_converted.directories},
+    let parsed_json: Result<Value, serde_json::Error> = serde_json::from_str(paths_as_json);
+
+    match parsed_json {
+        Ok(parsed_json) => {
+            // Ensure the parsed JSON is an array
+            if let Value::Array(array) = parsed_json {
+                // Convert each element to a String
+                let string_vec: Vec<String> = array
+                    .iter()
+                    .filter_map(|v| v.as_str().map(|s| s.to_string()))
+                    .collect();
+
+                return string_vec;
+            } else {
+                return Vec::new();
+            }
+        },
         Err(_) => {return Vec::new()},
     }
 }
 
-pub fn get_songs_in_path(dir_path: &str) -> Vec<Song>{
+pub fn get_songs_in_path(dir_path: &str, song_id: &mut i32) -> Vec<Song>{
     let mut songs: Vec<Song> = Vec::new();
 
     match fs::read_dir(dir_path) {
         Ok(paths) => {
             for path in paths {
-                match read_from_path(path.as_ref().unwrap().path().to_str().unwrap()) {
+                match read_from_path(path.as_ref().unwrap().path().to_str().unwrap(), song_id) {
                     Ok(mut song_data) => {
                         //FILE SIZE
                         song_data.file_size = 0;//TODO: PLEASE FIX THIS
@@ -39,11 +53,12 @@ pub fn get_songs_in_path(dir_path: &str) -> Vec<Song>{
     songs 
 }
 
-fn read_from_path(path: &str) -> Result<Song, Box<dyn std::error::Error>> {
+fn read_from_path(path: &str,  song_id: &mut i32) -> Result<Song, Box<dyn std::error::Error>> {
     let tag = Tag::read_from_path(path)?;
+    *song_id += 1;
 
     let mut song_meta_data = Song {
-        id: 0,
+        id: *song_id,
         title: String::from(""),
         artist: String::from(""),
         album: String::from(""),

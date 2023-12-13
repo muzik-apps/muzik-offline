@@ -132,18 +132,10 @@
                     }
                 }
             
-                .HeartFullIcon{
+                .ShuffleIcon{
                     svg{
                         path{
                             fill: $app-theme-col;
-                            stroke: $app-theme-col;
-                        }
-                    }
-                }
-            
-                .HeartIcon{
-                    svg{
-                        path{
                             stroke: $app-theme-col;
                         }
                     }

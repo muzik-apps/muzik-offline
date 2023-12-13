@@ -1,57 +1,11 @@
 import { useState } from "react";
-import { artist1, largealbumpic, song8 } from "@assets/index";
+import { artist1, largealbumpic } from "@assets/index";
 import { GeneralContextMenu, RectangleSongBox } from "@components/index";
 import "@styles/pages/SongAlbumDetails.scss";
 import { motion } from "framer-motion";
-import { Heart, HeartFull, Play } from "@assets/icons";
-import { contextMenuEnum, mouse_coOrds } from "types";
-
-const songs: {
-    key: number;
-    cover: string;
-    songName: string;
-    artist: string;
-    explicitStatus: boolean;
-    length: number | string;
-    hearted: boolean;
-}[] = [
-  {
-    key: 0,
-    cover: song8,
-    songName: "Sample Song 1",
-    artist: "Artist 1",
-    explicitStatus: true,
-    length: "01:28",
-    hearted: false
-  },
-  {
-    key: 1,
-    cover: song8,
-    songName: "Sample Song 2",
-    artist: "Artist 1",
-    explicitStatus: true,
-    length: "00:28",
-    hearted: false
-  },
-  {
-    key: 2,
-    cover: song8,
-    songName: "Sample Song 3 feat Sample Artist 1 & Sample Artist 2",
-    artist: "Artist 1",
-    explicitStatus: true,
-    length: "01:28",
-    hearted: true
-  },
-  {
-    key: 3,
-    cover: song8,
-    songName: "Sample Song 4",
-    artist: "Artist 1",
-    explicitStatus: true,
-    length: "01:28",
-    hearted: true
-  },
-]
+import { Play, Shuffle } from "@assets/icons";
+import { Song, contextMenuEnum, mouse_coOrds } from "types";
+import useLocalStorageState from "use-local-storage-state";
 
 const album: {
     cover: string | null;
@@ -78,27 +32,16 @@ const album: {
 const SongAlbumDetails = () => {
     const [selected, setSelected] = useState<number>(0);
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-    const [songMenuToOpen, setSongMenuToOpen] = useState<{
-        key: number;
-        cover: string;
-        songName: string;
-        artist: string;
-        explicitStatus: boolean;
-        length: number | string;
-        hearted: boolean;
-    } | null>(null);
+    const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
+    const [songMenuToOpen, setSongMenuToOpen] = useState<Song | null>(null);
 
     function selectThisSong(index: number){ setSelected(index); }
 
     function calculateListenTime(len: number){return "";}
 
-    function changeSongAlbumHeartedState(arg: boolean){}
-
-    function changeSongsHeartedState(arg: boolean){}
-
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
-        const matching_song = songs.find(song => { return song.key === key; })
+        const matching_song = SongList.find(song => { return song.id === key; })
         setSongMenuToOpen(matching_song ? matching_song : null);
     }
 
@@ -130,33 +73,25 @@ const SongAlbumDetails = () => {
                             <Play />
                             <p>play</p>
                         </motion.div>
-                        {   album.hearted ?
-                            <motion.div className="HeartFullIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
-                                <HeartFull />
-                                <p>remove from library</p>
-                            </motion.div>
-                            :
-                            <motion.div className="HeartIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
-                                    <Heart />
-                                    <p>add to library</p>
-                            </motion.div>
-                        }
+                        <motion.div className="ShuffleIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
+                            <Shuffle />
+                            <p>Shuffle</p>
+                        </motion.div>
                     </div>
                 </div>
             </div>
             <div className="main_content">
                 {
-                    songs.map((song, index) =>
+                    SongList.map((song, index) =>
                         <RectangleSongBox 
-                            key={song.key}
-                            keyV={song.key}
+                            key={song.id}
+                            keyV={song.id}
                             index={index + 1} 
                             cover={song.cover} 
-                            songName={song.songName} 
-                            artist={song.artist} 
-                            explicitStatus={song.explicitStatus} 
-                            length={song.length} 
-                            hearted={song.hearted} 
+                            songName={song.title} 
+                            artist={song.artist}
+                            length={song.duration} 
+                            year={song.year}
                             selected={selected === index + 1 ? true : false}
                             selectThisSong={selectThisSong}
                             setMenuOpenData={setMenuOpenData}/>
@@ -183,8 +118,7 @@ const SongAlbumDetails = () => {
                         <GeneralContextMenu 
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
-                            title={songMenuToOpen.songName} 
-                            hearted={songMenuToOpen.hearted}
+                            title={songMenuToOpen.title}
                             CMtype={contextMenuEnum.SongCM}/>
                     </div>
                 )

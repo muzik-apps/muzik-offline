@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import "@styles/layouts/GeneralSettings.scss";
 import useLocalStorageState from 'use-local-storage-state';
-import { SavedObject, emptySavedObject, viewableSideEl, viewableSideElements } from "@database/index";
+import { SavedObject, emptySavedObject, viewableSideEl, viewableSideElements, SavedDirectories, emptyDirectories } from "@database/index";
 import { ChevronDown, Disk, LayersThree, Menu, Microphone, MusicalNote } from "@assets/icons";
 import { selectedGeneralSettingEnum } from "types";
 import { useState } from "react";
@@ -44,6 +44,7 @@ const GeneralSettings = () => {
     const [selectedGeneralSetting, setselectedGeneralSetting] = useState<selectedGeneralSettingEnum>(selectedGeneralSettingEnum.Nothing);
     const [local_store, setStore] = useLocalStorageState<SavedObject>("SavedObject-offline", {defaultValue: emptySavedObject});
     const [viewableEl, setviewableEl] = useLocalStorageState<viewableSideEl>("viewableEl", {defaultValue: viewableSideElements});
+    const [dir, setDir] = useLocalStorageState<SavedDirectories>("directories", {defaultValue: emptyDirectories});
     const [CDisOpen, setCDModalState] = useState<boolean>(false);
 
     function toggleDropDown(arg: selectedGeneralSettingEnum){
@@ -56,7 +57,8 @@ const GeneralSettings = () => {
         setselectedGeneralSetting(selectedGeneralSettingEnum.Nothing);
     }
 
-    function captureDirectories(arg: string){
+    function respondAndCloseModal(arg: string[]){
+        setDir({ ... dir, Dir : arg});
         setCDModalState(false);
     }
 
@@ -89,8 +91,8 @@ const GeneralSettings = () => {
                     </div>)
                 }
                 <div className="setting">
-                    <h3>Description</h3>
-                    <div className="description_container">
+                    <h3>Directories</h3>
+                    <div className="directories_container">
                         <motion.h4 whileTap={{scale: 0.98}} onClick={() => setCDModalState(true)}>click here to change directories</motion.h4>
                     </div>
                 </div>
@@ -108,7 +110,7 @@ const GeneralSettings = () => {
                     </div>
                 </div>
             </div>
-            <DirectoriesModal isOpen={CDisOpen} closeModal={() => setCDModalState(false)} respondAndCloseModal={captureDirectories}/>
+            <DirectoriesModal value={dir.Dir} isOpen={CDisOpen} respondAndCloseModal={respondAndCloseModal}/>
         </div>
     )
 }

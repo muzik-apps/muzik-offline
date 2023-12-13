@@ -15,18 +15,18 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn get_all_songs(paths_as_json_array: &str) -> String {
+fn get_all_songs(paths_as_json_array: &str) -> Result<String, String> {
     let paths_as_vec = decode_directories(paths_as_json_array);
 
     let mut songs: Vec<Song> = Vec::new();
-
-    for path in paths_as_vec{
-        songs.extend(get_songs_in_path(&path));
+    let mut song_id: i32 = 0;
+    for path in &paths_as_vec{
+        songs.extend(get_songs_in_path(&path, &mut song_id));
     }
 
     match serde_json::to_string(&songs){
-        Ok(json) => {return json},
-        Err(_) => {return "".to_owned();},
+        Ok(json) => { Ok(json.into())},
+        Err(_) => {Err("{\"error\":\"failed to parse json object\"}".into())},
     }
 }
 

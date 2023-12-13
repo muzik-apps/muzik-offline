@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 #[derive(Serialize)]
 pub struct Song {
@@ -15,9 +15,4 @@ pub struct Song {
     pub date_released: String,
     pub file_size: i32,
     pub file_type: String,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Dir {
-    pub directories: Vec<String>,
 }

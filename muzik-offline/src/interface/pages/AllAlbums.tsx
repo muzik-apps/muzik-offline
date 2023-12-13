@@ -135,8 +135,7 @@ const AllAlbums = () => {
                         <GeneralContextMenu 
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
-                            title={albumMenuToOpen.title} 
-                            hearted={true}
+                            title={albumMenuToOpen.title}
                             CMtype={contextMenuEnum.AlbumCM}/>
                     </div>
                 )

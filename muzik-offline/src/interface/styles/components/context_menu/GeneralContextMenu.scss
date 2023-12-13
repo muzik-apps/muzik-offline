@@ -12,8 +12,8 @@
     backdrop-filter: var(--var-bg-blur-150);
     padding: 9px;
 
-    .Play, .PlayNext, .PlayLater, .ShowArtist, .Star, .Add_to_playlist,
-    .StarFull, .Charts, .Genre, .ShowPlaylist, .HeartFull, .Heart, .ShowAlbum{
+    .Play, .PlayNext, .PlayLater, .ShowArtist, .Add_to_playlist,
+    .Genre, .ShowPlaylist, .ShowAlbum, .ShowInfo{
         display: flex;
         height: 34px;
         border-radius: 10px;
@@ -36,7 +36,8 @@
         }
     }
 
-    .PlayIcon:hover, .PlayNext:hover, .PlayLater:hover, .HeartFullIcon:hover, .HeartIcon:hover, .Add_to_playlist:hover{
+    .Play:hover, .PlayNext:hover, .PlayLater:hover, .ShowArtist:hover, .Add_to_playlist:hover,
+    .Genre:hover, .ShowPlaylist:hover, .ShowAlbum:hover, .ShowInfo:hover{
         opacity: 0.8;
     }
 }

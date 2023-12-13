@@ -4,11 +4,12 @@ import { AllGenres, AllPlaylists, AllTracks, Settings, SongAlbumDetails,
   AllAlbums, AllArtists, SearchPage } from "@pages/index";
 import { useEffect, useState } from "react";
 import { type } from '@tauri-apps/api/os';
+import { invoke } from '@tauri-apps/api/tauri';
 import useLocalStorageState from "use-local-storage-state";
-import { SavedObject, SavedWallpaper, emptySavedObject, emptyWallpaper } from "@database/index";
+import { SavedDirectories, SavedObject, SavedWallpaper, emptyDirectories, emptySavedObject, emptyWallpaper } from "@database/index";
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { HistoryNextFloating } from "@layouts/index";
-import { OSTYPEenum } from "types";
+import { OSTYPEenum, Song } from "types";
 import { AnimatePresence } from "framer-motion";
 
 const App = () => {
@@ -17,6 +18,8 @@ const App = () => {
   const [FloatingHNState, setFloatingHNState] = useState<boolean>(false);
   const [local_store, setStore] = useLocalStorageState<SavedObject>("SavedObject-offline", {defaultValue: emptySavedObject});
   const [wallpaper,] = useLocalStorageState<SavedWallpaper>("SavedWallpaper-offline", {defaultValue: emptyWallpaper});
+  const [dir,] = useLocalStorageState<SavedDirectories>("directories", {defaultValue: emptyDirectories});
+  const [, setSongList] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
 
   function closeSetting(){if(openSettings === true)setOpenSettings(false);}
 
@@ -42,6 +45,17 @@ const App = () => {
     checkOSType();
     return () => {  window.removeEventListener("keydown", detectKeyPress); }
   }, [])
+
+  useEffect(() => {
+    const reloadSongs = () => {
+      invoke("get_all_songs", { pathsAsJsonArray: JSON.stringify(dir.Dir) })
+        .then((message: any) => setSongList(JSON.parse(message)))
+        .catch((error) => console.log(error));
+    }
+
+    reloadSongs();
+  }, [dir])
+  
 
   return (
     <Router>

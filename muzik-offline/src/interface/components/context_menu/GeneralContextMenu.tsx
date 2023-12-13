@@ -3,7 +3,8 @@ import { FunctionComponent } from "react";
 import { AddToPlaylistButton, PlayButton,
     PlayLaterButton, PlayNextButton, ShowArtistButton, 
     ShowGenreButton, ShowPlaylistButton, 
-    ShowAlbumButton } from "@components/index";
+    ShowAlbumButton, 
+    ShowInfoButton} from "@components/index";
 import "@styles/components/context_menu/GeneralContextMenu.scss";
 
 type GeneralContextMenuProps = {
@@ -13,8 +14,6 @@ type GeneralContextMenuProps = {
     yPos: number;
     title: string;
     CMtype: contextMenuEnum;
-    favourited?: boolean;
-    hearted?: boolean;
 }
 
 const GeneralContextMenu: FunctionComponent<GeneralContextMenuProps> = (props: GeneralContextMenuProps) => {
@@ -38,7 +37,7 @@ const GeneralContextMenu: FunctionComponent<GeneralContextMenuProps> = (props: G
         else if(props.CMtype === contextMenuEnum.ArtistCM || props.CMtype === contextMenuEnum.AlbumCM){//6 items
             scmHeight = 280;
         }
-        else if(props.CMtype === contextMenuEnum.ChartsCM || props.CMtype === contextMenuEnum.PlaylistCM || props.CMtype === contextMenuEnum.GenreCM){//4 items
+        else if(props.CMtype === contextMenuEnum.PlaylistCM || props.CMtype === contextMenuEnum.GenreCM){//4 items
             scmHeight = 210;
         }
         if(props.overRideY)return yPos;
@@ -56,6 +55,7 @@ const GeneralContextMenu: FunctionComponent<GeneralContextMenuProps> = (props: G
             {(props.CMtype === contextMenuEnum.GenreCM) && <ShowGenreButton  title={props.title} chooseOption={logger}/>}
             {(props.CMtype === contextMenuEnum.PlaylistCM) && <ShowPlaylistButton  title={props.title} chooseOption={logger}/>}
             {(props.CMtype === contextMenuEnum.AlbumCM) && <ShowAlbumButton  title={props.title} chooseOption={logger}/>}
+            <ShowInfoButton chooseOption={logger}/>
         </div >
     )
 }
