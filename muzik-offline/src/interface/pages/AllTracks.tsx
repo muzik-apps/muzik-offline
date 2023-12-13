@@ -1,4 +1,4 @@
-import { Song, contextMenuEnum, mouse_coOrds } from "types";
+import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { ChevronDown } from "@assets/icons";
@@ -26,6 +26,10 @@ const AllTracks = () => {
         setCoords(n_co_ords);
         const matching_song = SongList.find(song => { return song.id === key; })
         setSongMenuToOpen(matching_song ? matching_song : null);
+    }
+
+    function chooseOption(arg: contextMenuButtons){
+    
     }
     
     return (
@@ -107,7 +111,8 @@ const AllTracks = () => {
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
                             title={songMenuToOpen.title}
-                            CMtype={contextMenuEnum.SongCM}/>
+                            CMtype={contextMenuEnum.SongCM}
+                            chooseOption={chooseOption}/>
                     </div>
                 )
             }

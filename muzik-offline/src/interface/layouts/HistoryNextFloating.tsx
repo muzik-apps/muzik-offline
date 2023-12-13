@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 import { FunctionComponent, useState } from "react";
 import "@styles/layouts/HistoryNextFloating.scss";
 import { GeneralContextMenu, SongCardResizable } from "@components/index";
-import { song8 } from "@assets/index";
-import { contextMenuEnum, mouse_coOrds, songDetails } from "types";
+import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
+import useLocalStorageState from "use-local-storage-state";
 
 type HistoryNextFloatingProps = {
     FloatingHNState: boolean;
@@ -15,124 +15,22 @@ const variants={
     closed: {right: "-300px"},
 }
 
-const song_queue: songDetails[] = [
-    {
-        key: 1,
-        cover: song8,
-        songName: "Sample Song 1",
-        artist: "Sample artist 5",
-        explicitStatus: true,
-        hearted: true
-    },
-    {
-        key: 2,
-        cover: song8,
-        songName: "Sample Song 2",
-        artist: "Sample artist 5",
-        explicitStatus: true,
-        hearted: true
-    },
-    {
-        key: 3,
-        cover: song8,
-        songName: "Sample Song 3",
-        artist: "Sample artist 5",
-        explicitStatus: true,
-        hearted: true
-    },
-    {
-        key: 4,
-        cover: song8,
-        songName: "Sample Song 4",
-        artist: "Sample artist 5",
-        explicitStatus: true,
-        hearted: true
-    },
-    {
-        key: 5,
-        cover: song8,
-        songName: "Sample Song 5",
-        artist: "Sample artist 5",
-        explicitStatus: true,
-        hearted: true
-    },
-    {
-        key: 6,
-        cover: song8,
-        songName: "Sample Song 6",
-        artist: "Sample artist 5",
-        explicitStatus: true,
-        hearted: true
-    },
-    {
-        key: 7,
-        cover: song8,
-        songName: "Sample Song 8",
-        artist: "Sample artist 5",
-        explicitStatus: true,
-        hearted: true
-    },
-    {
-        key: 8,
-        cover: song8,
-        songName: "Sample Song 9",
-        artist: "Sample artist 5",
-        explicitStatus: true,
-        hearted: true
-    },
-    {
-        key: 9,
-        cover: song8,
-        songName: "Sample Song 10",
-        artist: "Sample artist 5",
-        explicitStatus: true,
-        hearted: true
-    },
-    {
-        key: 10,
-        cover: song8,
-        songName: "Sample Song 11",
-        artist: "Sample artist 5",
-        explicitStatus: true,
-        hearted: true
-    },
-    {
-        key: 11,
-        cover: song8,
-        songName: "Sample Song 11",
-        artist: "Sample artist 5",
-        explicitStatus: true,
-        hearted: true
-    },
-    {
-        key: 12,
-        cover: song8,
-        songName: "Sample Song 12",
-        artist: "Sample artist 5",
-        explicitStatus: true,
-        hearted: true
-    },
-    {
-        key: 13,
-        cover: song8,
-        songName: "Sample Song 13",
-        artist: "Sample artist 5",
-        explicitStatus: true,
-        hearted: true
-    }
-]
-
 const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props: HistoryNextFloatingProps) => {
     const [selectedView, setSelectedView] = useState<string>("Upcoming_tab");
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-    const [songMenuToOpen, setSongMenuToOpen] = useState<songDetails | null>(null);
+    const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
+    const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
 
     function selectView(arg: string){setSelectedView(arg);}
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
-        const matching_song = song_queue.find(song => { return song.key === key; })
+        const matching_song = SongList.find(song => { return song.id === key; })
         setSongMenuToOpen(matching_song ? matching_song : null);
+    }
+
+    function chooseOption(arg: contextMenuButtons){
+    
     }
 
     return (
@@ -146,14 +44,13 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
                     selectedView === "Upcoming_tab" ?
                     <div className="Upcoming_view">
                         {
-                            song_queue.map((song) => 
+                            SongList.map((song) => 
                                 <SongCardResizable 
-                                    key={song.key}
+                                    key={song.id}
                                     cover={song.cover} 
-                                    songName={song.songName}
+                                    songName={song.title}
                                     artist={song.artist}
-                                    explicitStatus={song.explicitStatus}
-                                    keyV={song.key}
+                                    keyV={song.id}
                                     setMenuOpenData={setMenuOpenData}
                                     />
                             )
@@ -162,14 +59,13 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
                     :
                     <div className="History_view">
                         {
-                            song_queue.map((song) => 
+                            SongList.map((song) => 
                                 <SongCardResizable 
-                                    key={song.key}
+                                    key={song.id}
                                     cover={song.cover} 
-                                    songName={song.songName}
+                                    songName={song.title}
                                     artist={song.artist}
-                                    explicitStatus={song.explicitStatus}
-                                    keyV={song.key}
+                                    keyV={song.id}
                                     setMenuOpenData={setMenuOpenData}
                                     />
                             )
@@ -204,8 +100,9 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
                         <GeneralContextMenu 
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
-                            title={songMenuToOpen.songName}
-                            CMtype={contextMenuEnum.SongCM}/>
+                            title={songMenuToOpen.title}
+                            CMtype={contextMenuEnum.SongCM}
+                            chooseOption={chooseOption}/>
                     </div>
                 )
             }

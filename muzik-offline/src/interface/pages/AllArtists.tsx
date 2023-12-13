@@ -3,7 +3,7 @@ import { useState } from "react";
 import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu } from "@components/index";
 import { ChevronDown } from "@assets/icons";
 import "@styles/pages/AllArtists.scss";
-import { mouse_coOrds, contextMenuEnum, artistDetails } from "types";
+import { mouse_coOrds, contextMenuEnum, artistDetails, contextMenuButtons } from "types";
 import { artist1, artist2, artist3, artist4, artist5 } from "@assets/index";
 
 const artists: artistDetails[] = [
@@ -134,6 +134,10 @@ const AllArtists = () => {
         const matching_artist = artists.find(artist => { return artist.key === key; })
         setArtistMenuToOpen(matching_artist ? matching_artist : null);
     }
+
+    function chooseOption(arg: contextMenuButtons){
+    
+    }
     
     return (
         <motion.div className="AllArtists"
@@ -188,7 +192,8 @@ const AllArtists = () => {
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
                             title={artistMenuToOpen.artist_name}
-                            CMtype={contextMenuEnum.ArtistCM}/>
+                            CMtype={contextMenuEnum.ArtistCM}
+                            chooseOption={chooseOption}/>
                     </div>
                 )
             }

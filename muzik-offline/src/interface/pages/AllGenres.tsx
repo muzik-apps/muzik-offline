@@ -3,7 +3,7 @@ import { useState } from "react";
 import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu } from "@components/index";
 import { ChevronDown } from "@assets/icons";
 import "@styles/pages/AllGenres.scss";
-import { mouse_coOrds, genreDetails, contextMenuEnum } from "types";
+import { mouse_coOrds, genreDetails, contextMenuEnum, contextMenuButtons } from "types";
 import { playlist1, playlist2, playlist3, playlist4, playlist5, playlist6, playlist7, playlist8 } from "@assets/index";
 
 const genres: genreDetails[] = [
@@ -74,6 +74,10 @@ const AllGenres = () => {
         const matching_genre = genres.find(genre => { return genre.key === key; })
         setGenreMenuToOpen(matching_genre ? matching_genre : null);
     }
+
+    function chooseOption(arg: contextMenuButtons){
+    
+    }
     
     return (
         <motion.div className="AllGenres"
@@ -128,7 +132,8 @@ const AllGenres = () => {
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
                             title={genreMenuToOpen.title} 
-                            CMtype={contextMenuEnum.GenreCM}/>
+                            CMtype={contextMenuEnum.GenreCM}
+                            chooseOption={chooseOption}/>
                     </div>
                 )
             }

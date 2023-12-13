@@ -57,15 +57,6 @@ export interface Song{
     file_type: string,
 }
 
-export interface songDetails {
-    key: number;
-    cover: string;
-    songName: string;
-    artist: string;
-    explicitStatus: boolean;
-    hearted: boolean
-}
-
 export interface artistDetails {
     key: number;
     cover: string;
@@ -73,11 +64,12 @@ export interface artistDetails {
     favourited: boolean
 }
 
-export interface playlistDetails {
+export interface playlist {
     key: number;
     cover: string;
     title: string;
     dateCreated: string;
+    tracksPaths: string[];
 }
 
 export interface genreDetails {
@@ -86,12 +78,10 @@ export interface genreDetails {
     title: string;
 }
 
-export interface albumDetails {
+export interface album {
     key: number;
     cover: string;
     title: string;
-    dateAdded: string;
-    hearted: true;
 }
 
 export interface mouse_coOrds {

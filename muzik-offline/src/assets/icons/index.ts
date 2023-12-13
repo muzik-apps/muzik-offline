@@ -45,7 +45,10 @@ import Check from './General/Check';
 import Cross from './General/Cross';
 import UserProfileAdd from './Profiles/UserProfileAdd';
 import Empty_user from './Profiles/Empty_user';
-import NullMusicCover from './Media/NullMusicCover';
+import NullMusicCoverOne from './Media/NullMusicCoverOne';
+import NullMusicCoverTwo from './Media/NullMusicCoverTwo';
+import NullMusicCoverThree from './Media/NullMusicCoverThree';
+import NullMusicCoverFour from './Media/NullMusicCoverFour';
 
 export {
     Next_page, Prev_page, Search, 
@@ -57,5 +60,6 @@ export {
     Note, UserProfileBlack, CancelRight, ArrowRefresh, Heart, HeartFull,
     ArrowCurveLeftRight, ArrowCurveRightUp, ChromeCast, Star, StarFull,
     UserProfiles, UserProfileX, UserProfileUp, UserProfilesDown, 
-    Check, Cross, UserProfileAdd, Empty_user, NullMusicCover
+    Check, Cross, UserProfileAdd, Empty_user, NullMusicCoverOne,
+    NullMusicCoverTwo, NullMusicCoverThree, NullMusicCoverFour
 }

@@ -4,7 +4,7 @@ import { GeneralContextMenu, RectangleSongBox } from "@components/index";
 import "@styles/pages/SongAlbumDetails.scss";
 import { motion } from "framer-motion";
 import { Play, Shuffle } from "@assets/icons";
-import { Song, contextMenuEnum, mouse_coOrds } from "types";
+import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
 import useLocalStorageState from "use-local-storage-state";
 
 const album: {
@@ -43,6 +43,10 @@ const SongAlbumDetails = () => {
         setCoords(n_co_ords);
         const matching_song = SongList.find(song => { return song.id === key; })
         setSongMenuToOpen(matching_song ? matching_song : null);
+    }
+
+    function chooseOption(arg: contextMenuButtons){
+    
     }
 
     return (
@@ -119,7 +123,8 @@ const SongAlbumDetails = () => {
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
                             title={songMenuToOpen.title}
-                            CMtype={contextMenuEnum.SongCM}/>
+                            CMtype={contextMenuEnum.SongCM}
+                            chooseOption={chooseOption}/>
                     </div>
                 )
             }

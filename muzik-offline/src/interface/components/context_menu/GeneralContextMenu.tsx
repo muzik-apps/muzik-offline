@@ -14,13 +14,10 @@ type GeneralContextMenuProps = {
     yPos: number;
     title: string;
     CMtype: contextMenuEnum;
+    chooseOption: (option: contextMenuButtons) => void;
 }
 
 const GeneralContextMenu: FunctionComponent<GeneralContextMenuProps> = (props: GeneralContextMenuProps) => {
-    function logger(option: contextMenuButtons){
-        console.log("test");
-    }
-
     function getXCoord(xPos: number){
         const winWidth: number = window.innerWidth - 20;
         const scmWidth: number = 155;
@@ -46,16 +43,16 @@ const GeneralContextMenu: FunctionComponent<GeneralContextMenuProps> = (props: G
 
     return (
         <div className="GeneralContextMenu" style={{top: getYCoord(props.yPos), left: getXCoord(props.xPos)}}>
-            <PlayButton title={props.title} chooseOption={logger}/>
-            <PlayNextButton chooseOption={logger}/>
-            <PlayLaterButton chooseOption={logger}/>
-            {(props.CMtype === contextMenuEnum.ArtistCM) && <ShowArtistButton title={props.title} chooseOption={logger}/>}
+            <PlayButton title={props.title} chooseOption={props.chooseOption}/>
+            <PlayNextButton chooseOption={props.chooseOption}/>
+            <PlayLaterButton chooseOption={props.chooseOption}/>
+            {(props.CMtype === contextMenuEnum.ArtistCM) && <ShowArtistButton title={props.title} chooseOption={props.chooseOption}/>}
             {((props.CMtype === contextMenuEnum.ArtistCM) || (props.CMtype === contextMenuEnum.SongCM) || (props.CMtype === contextMenuEnum.AlbumCM)) 
-                    && <AddToPlaylistButton chooseOption={logger}/>}
-            {(props.CMtype === contextMenuEnum.GenreCM) && <ShowGenreButton  title={props.title} chooseOption={logger}/>}
-            {(props.CMtype === contextMenuEnum.PlaylistCM) && <ShowPlaylistButton  title={props.title} chooseOption={logger}/>}
-            {(props.CMtype === contextMenuEnum.AlbumCM) && <ShowAlbumButton  title={props.title} chooseOption={logger}/>}
-            <ShowInfoButton chooseOption={logger}/>
+                    && <AddToPlaylistButton chooseOption={props.chooseOption}/>}
+            {(props.CMtype === contextMenuEnum.GenreCM) && <ShowGenreButton  title={props.title} chooseOption={props.chooseOption}/>}
+            {(props.CMtype === contextMenuEnum.PlaylistCM) && <ShowPlaylistButton  title={props.title} chooseOption={props.chooseOption}/>}
+            {(props.CMtype === contextMenuEnum.AlbumCM) && <ShowAlbumButton  title={props.title} chooseOption={props.chooseOption}/>}
+            <ShowInfoButton chooseOption={props.chooseOption}/>
         </div >
     )
 }

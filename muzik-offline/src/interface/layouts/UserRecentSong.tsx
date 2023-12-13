@@ -1,5 +1,5 @@
 import { RectangleSongBox, GeneralContextMenu } from "@components/index";
-import { mouse_coOrds, contextMenuEnum, Song } from "types";
+import { mouse_coOrds, contextMenuEnum, Song, contextMenuButtons } from "types";
 import { useState } from "react";
 import "@styles/layouts/UserRecentSong.scss";
 import useLocalStorageState from "use-local-storage-state";
@@ -16,6 +16,10 @@ const UserRecentSong = () => {
         setCoords(n_co_ords);
         const matching_song = SongList.find(song => { return song.id === key; })
         setSongMenuToOpen(matching_song ? matching_song : null);
+    }
+
+    function chooseOption(arg: contextMenuButtons){
+    
     }
 
     return (
@@ -55,7 +59,8 @@ const UserRecentSong = () => {
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
                             title={songMenuToOpen.title}
-                            CMtype={contextMenuEnum.SongCM}/>
+                            CMtype={contextMenuEnum.SongCM}
+                            chooseOption={chooseOption}/>
                     </div>
                 )
             }

@@ -33,10 +33,16 @@ import playlist5 from "./playlists/playlist5.png";
 import playlist6 from "./playlists/playlist6.png";
 import playlist7 from "./playlists/playlist7.png";
 import playlist8 from "./playlists/playlist8.png";
+import NullCoverOne from './playlists/NullCoverOne';
+import NullCoverThree from './playlists/NullCoverThree';
+import NullCoverTwo from './playlists/NullCoverTwo';
+import NullCoverFour from './playlists/NullCoverFour';
 
 export { artist, artist1 ,artist2 ,artist3 ,artist4 ,artist5, song_art, song1, song2
     , song3, song4, song5, song6, song7, song8, song9,
     largealbumpic,
     dance, electronic, hiphop, jazz, rnb,
-    playlist1 ,playlist2 ,playlist3 ,playlist4 ,playlist5 ,playlist6 ,playlist7 ,playlist8
+    playlist1 ,playlist2 ,playlist3 ,playlist4 ,playlist5 ,playlist6 ,playlist7 ,playlist8,
+
+    NullCoverOne, NullCoverTwo, NullCoverThree, NullCoverFour
 }

@@ -1,7 +1,7 @@
-use std::fs::{self};
 use id3::{Tag, TagLike};
 use mp3_duration;
 use serde_json::Value;
+use tokio::fs;
 
 use crate::components::Song;
 
@@ -27,20 +27,20 @@ pub fn decode_directories(paths_as_json: &str) -> Vec<String> {
     }
 }
 
-pub fn get_songs_in_path(dir_path: &str, song_id: &mut i32) -> Vec<Song>{
+pub async fn get_songs_in_path(dir_path: &str, song_id: &mut i32) -> Vec<Song>{
     let mut songs: Vec<Song> = Vec::new();
 
-    match fs::read_dir(dir_path) {
-        Ok(paths) => {
-            for path in paths {
-                match read_from_path(path.as_ref().unwrap().path().to_str().unwrap(), song_id) {
+    match fs::read_dir(dir_path).await {
+        Ok(mut paths) => {
+            while let Ok(Some(entry)) = paths.next_entry().await {
+                match read_from_path(entry.path().to_str().unwrap(), song_id).await {
                     Ok(mut song_data) => {
                         //FILE SIZE
                         song_data.file_size = 0;//TODO: PLEASE FIX THIS
-        
+
                         //FILE TYPE
                         song_data.file_type = String::from("mp3");//TODO: PLEASE FIX THIS
-        
+
                         songs.push(song_data);
                     },
                     Err(_) => {},
@@ -53,7 +53,7 @@ pub fn get_songs_in_path(dir_path: &str, song_id: &mut i32) -> Vec<Song>{
     songs 
 }
 
-fn read_from_path(path: &str,  song_id: &mut i32) -> Result<Song, Box<dyn std::error::Error>> {
+async fn read_from_path(path: &str,  song_id: &mut i32) -> Result<Song, Box<dyn std::error::Error>> {
     let tag = Tag::read_from_path(path)?;
     *song_id += 1;
 
@@ -114,9 +114,14 @@ fn read_from_path(path: &str,  song_id: &mut i32) -> Result<Song, Box<dyn std::e
     }
 
     //DURATION
-    let duration = mp3_duration::from_path(&path).unwrap();
-    song_meta_data.duration = duration_to_string(duration);
-
+    match mp3_duration::from_path(&path){
+        Ok(duration) => {
+            song_meta_data.duration = duration_to_string(duration);
+        },
+        Err(_) => {
+            song_meta_data.duration = String::from("00:00");
+        },
+    }
     //PATH
     song_meta_data.path = path.clone().to_owned();
 
