@@ -4,7 +4,6 @@ import HeaderLinuxOS from "./navbar/HeaderLinuxOS";
 import LeftSidebar from './navigation/LeftSidebar';
 import AppMusicPlayer from './music/AppMusicPlayer';
 import FSMusicPlayer from './music/FSMusicPlayer';
-import SquareSongBox from './cards/SquareSongBox';
 import SettingsNavigator from './buttons/SettingsNavigator';
 import DropDownMenuLarge from './input/DropDownMenuLarge';
 import RadioComponent from './input/RadioComponent';
@@ -25,7 +24,7 @@ import { PlayButton, PlayNextButton, PlayLaterButton,
 
 export {
     HeaderWindows, HeaderMacOS, HeaderLinuxOS, AppNavigator, LeftSidebar, AppMusicPlayer, FSMusicPlayer,
-    SquareSongBox, SettingsNavigator, DropDownMenuLarge, RadioComponent, MainMusicPlayer,
+    SettingsNavigator, DropDownMenuLarge, RadioComponent, MainMusicPlayer,
     HistoryUpcoming, SquareTitleBox, DropDownMenuSmall, RectangleSongBox, 
     SongCardResizable, GeneralContextMenu,
     PlayButton, PlayNextButton, PlayLaterButton, ShowArtistButton,

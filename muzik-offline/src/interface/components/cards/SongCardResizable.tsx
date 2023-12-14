@@ -14,7 +14,7 @@ type SongCardResizableProps = {
 const SongCardResizable: FunctionComponent<SongCardResizableProps> = (props: SongCardResizableProps) => {
 
     function getRandomCover(){
-        const modv: number = props.keyV % 3;
+        const modv: number = props.keyV % 4;
         if(modv === 0)return NullMusicCoverOne;
         else if(modv === 1)return NullMusicCoverTwo;
         else if(modv === 2)return NullMusicCoverThree;

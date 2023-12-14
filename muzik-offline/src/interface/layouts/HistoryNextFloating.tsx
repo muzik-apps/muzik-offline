@@ -44,7 +44,7 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
                     selectedView === "Upcoming_tab" ?
                     <div className="Upcoming_view">
                         {
-                            SongList.map((song) => 
+                            SongList.slice(0, 20).map((song) => 
                                 <SongCardResizable 
                                     key={song.id}
                                     cover={song.cover} 
@@ -59,7 +59,7 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
                     :
                     <div className="History_view">
                         {
-                            SongList.map((song) => 
+                            SongList.slice(0, 20).map((song) => 
                                 <SongCardResizable 
                                     key={song.id}
                                     cover={song.cover} 

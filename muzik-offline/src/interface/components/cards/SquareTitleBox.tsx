@@ -13,7 +13,7 @@ type SquareTitleBoxProps = {
 const SquareTitleBox: FunctionComponent<SquareTitleBoxProps> = (props: SquareTitleBoxProps) => {
 
     function getRandomCover(){
-        const modv: number = props.keyV % 3;
+        const modv: number = props.keyV % 4;
         if(modv === 0)return NullCoverOne;
         else if(modv === 1)return NullCoverTwo;
         else if(modv === 2)return NullCoverThree;

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu } from "@components/index";
 import { ChevronDown } from "@assets/icons";
 import "@styles/pages/AllAlbums.scss";
@@ -13,6 +13,7 @@ const AllAlbums = () => {
     const [albums, setAlbums] = useState<album[]>([]);
     const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
     const [albumMenuToOpen, setAlbumMenuToOpen] = useState<album | null>(null);
+    const albumsLoaded = useRef<boolean>(false);
 
     function selectOption(arg: string){
         if(arg !== sort)setSort(arg); 
@@ -21,7 +22,7 @@ const AllAlbums = () => {
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
-        const matching_album = albums.find(album => { return album.key === key; })
+        const matching_album = albums.find(album => { return album.key === key; });
         setAlbumMenuToOpen(matching_album ? matching_album : null);
     }
 
@@ -31,12 +32,26 @@ const AllAlbums = () => {
 
     useEffect(() => {
         const findAlbums = () => {
-            
+            if(albumsLoaded.current === true)return;
+            albumsLoaded.current = true;
+            const uniqueSet: Set<string> = new Set();
+            const albums_list = SongList.map((song) => {
+                if (!uniqueSet.has(song.album)) {
+                    uniqueSet.add(song.album);
+                    return song.album;
+                }
+                return null; // Returning null for elements that are not added to the uniqueArray
+            }).filter((element) => {
+                return element !== null; // Filtering out elements that were not added to the uniqueArray
+            });
+
+            albums_list.map((album_str, index) => { 
+                if(album_str !== null)setAlbums(oldArray => [...oldArray, { key: index, cover: "No cover", title: album_str}]);
+            });
         }
         
         findAlbums();
-    }, [])
-    
+    }, [SongList])
     
     return (
         <motion.div className="AllAlbums"

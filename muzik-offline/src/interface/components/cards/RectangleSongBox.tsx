@@ -19,7 +19,7 @@ type RectangleSongBoxProps = {
 const RectangleSongBox: FunctionComponent<RectangleSongBoxProps> = (props: RectangleSongBoxProps) => {
 
     function getRandomCover(){
-        const modv: number = props.index % 3;
+        const modv: number = props.index % 4;
         if(modv === 0)return NullMusicCoverOne;
         else if(modv === 1)return NullMusicCoverTwo;
         else if(modv === 2)return NullMusicCoverThree;

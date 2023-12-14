@@ -1,68 +1,20 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu } from "@components/index";
 import { ChevronDown } from "@assets/icons";
 import "@styles/pages/AllGenres.scss";
-import { mouse_coOrds, genreDetails, contextMenuEnum, contextMenuButtons } from "types";
-import { playlist1, playlist2, playlist3, playlist4, playlist5, playlist6, playlist7, playlist8 } from "@assets/index";
-
-const genres: genreDetails[] = [
-    {
-        key: 1,
-        cover: playlist1,
-        title: "genre 1",
-
-    },
-    {
-        key: 2,
-        cover: playlist2,
-        title: "genre 2",
-
-    },
-    {
-        key: 3,
-        cover: playlist3,
-        title: "genre 3",
-
-    },
-    {
-        key: 4,
-        cover: playlist4,
-        title: "genre 4",
-
-    },
-    {
-        key: 5,
-        cover: playlist5,
-        title: "genre 5",
-
-    },
-    {
-        key: 6,
-        cover: playlist6,
-        title: "genre 6",
-
-    },
-    {
-        key: 7,
-        cover: playlist7,
-        title: "genre 7",
-
-    },
-    {
-        key: 8,
-        cover: playlist8,
-        title: "genre 8",
-
-    }
-]
+import { mouse_coOrds, contextMenuEnum, contextMenuButtons, Song, genre } from "types";
+import useLocalStorageState from "use-local-storage-state";
 
 const AllGenres = () => {
     
     const [sort, setSort] = useState<string>("Ascending");
     const [openedDDM, setOpenedDDM] = useState<boolean>(false);
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-    const [genreMenuToOpen, setGenreMenuToOpen] = useState<genreDetails | null>(null);
+    const [genreMenuToOpen, setGenreMenuToOpen] = useState<genre | null>(null);
+    const [genres, setAlbums] = useState<genre[]>([]);
+    const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
+    const genresLoaded = useRef<boolean>(false);
 
     function selectOption(arg: string){
         if(arg !== sort)setSort(arg); 
@@ -78,6 +30,29 @@ const AllGenres = () => {
     function chooseOption(arg: contextMenuButtons){
     
     }
+
+    useEffect(() => {
+        const findGenre = () => {
+            if(genresLoaded.current === true)return;
+            genresLoaded.current = true;
+            const uniqueSet: Set<string> = new Set();
+            const genres_list = SongList.map((song) => {
+                if (!uniqueSet.has(song.genre)) {
+                    uniqueSet.add(song.genre);
+                    return song.genre;
+                }
+                return null; // Returning null for elements that are not added to the uniqueArray
+            }).filter((element) => {
+                return element !== null; // Filtering out elements that were not added to the uniqueArray
+            });
+
+            genres_list.map((genre_str, index) => { 
+                if(genre_str !== null)setAlbums(oldArray => [...oldArray, { key: index, cover: "No cover", title: genre_str}]);
+            });
+        }
+        
+        findGenre();
+    }, [SongList])
     
     return (
         <motion.div className="AllGenres"

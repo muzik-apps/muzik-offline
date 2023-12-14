@@ -1,128 +1,20 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu } from "@components/index";
 import { ChevronDown } from "@assets/icons";
 import "@styles/pages/AllArtists.scss";
-import { mouse_coOrds, contextMenuEnum, artistDetails, contextMenuButtons } from "types";
-import { artist1, artist2, artist3, artist4, artist5 } from "@assets/index";
-
-const artists: artistDetails[] = [
-    {
-        key: 0,
-        cover: artist1,
-        artist_name: "artist 1",
-        favourited: true
-    },
-    {
-        key: 1,
-        cover: artist2,
-        artist_name: "artist 1",
-        favourited: false
-    },
-    {
-        key: 2,
-        cover: artist3,
-        artist_name: "artist 1",
-        favourited: true
-    },
-    {
-        key: 3,
-        cover: artist4,
-        artist_name: "artist 1",
-        favourited: true
-    },
-    {
-        key: 4,
-        cover: artist5,
-        artist_name: "artist 1",
-        favourited: true
-    },
-    {
-        key: 5,
-        cover: artist4,
-        artist_name: "artist 1",
-        favourited: false
-    },
-    {
-        key: 6,
-        cover: artist3,
-        artist_name: "artist 1",
-        favourited: true
-    },
-    {
-        key: 7,
-        cover: artist2,
-        artist_name: "artist 1",
-        favourited: true
-    },
-    {
-        key: 8,
-        cover: artist1,
-        artist_name: "artist 1",
-        favourited: false
-    },
-    {
-        key: 9,
-        cover: artist1,
-        artist_name: "artist 1",
-        favourited: true
-    },
-    {
-        key: 10,
-        cover: artist1,
-        artist_name: "artist 1",
-        favourited: false
-    },
-    {
-        key: 11,
-        cover: artist1,
-        artist_name: "artist 1",
-        favourited: false
-    },
-    {
-        key: 12,
-        cover: artist1,
-        artist_name: "artist 1",
-        favourited: false
-    },
-    {
-        key: 13,
-        cover: artist1,
-        artist_name: "artist 1",
-        favourited: false
-    },
-    {
-        key: 14,
-        cover: artist1,
-        artist_name: "artist 1",
-        favourited: false
-    },
-    {
-        key: 15,
-        cover: artist1,
-        artist_name: "artist 1",
-        favourited: false
-    },
-    {
-        key: 16,
-        cover: artist1,
-        artist_name: "artist 1",
-        favourited: false
-    },
-    {
-        key: 17,
-        cover: artist1,
-        artist_name: "artist 1",
-        favourited: false
-    },
-]
+import { mouse_coOrds, contextMenuEnum, artist, contextMenuButtons, Song } from "types";
+import useLocalStorageState from "use-local-storage-state";
 
 const AllArtists = () => {
     
     const [sort, setSort] = useState<string>("Ascending");
     const [openedDDM, setOpenedDDM] = useState<boolean>(false);
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-    const [artistMenuToOpen, setArtistMenuToOpen] = useState<artistDetails | null>(null);
+    const [artistMenuToOpen, setArtistMenuToOpen] = useState<artist | null>(null);
+    const [artists, setArtists] = useState<artist[]>([]);
+    const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
+    const artistsLoaded = useRef<boolean>(false);
 
     function selectOption(arg: string){
         if(arg !== sort)setSort(arg); 
@@ -138,6 +30,29 @@ const AllArtists = () => {
     function chooseOption(arg: contextMenuButtons){
     
     }
+
+    useEffect(() => {
+        const findArtist = () => {
+            if(artistsLoaded.current === true)return;
+            artistsLoaded.current = true;
+            const uniqueSet: Set<string> = new Set();
+            const artists_list = SongList.map((song) => {
+                if (!uniqueSet.has(song.artist)) {
+                    uniqueSet.add(song.artist);
+                    return song.artist;
+                }
+                return null; // Returning null for elements that are not added to the uniqueArray
+            }).filter((element) => {
+                return element !== null; // Filtering out elements that were not added to the uniqueArray
+            });
+
+            artists_list.map((artist_str, index) => { 
+                if(artist_str !== null)setArtists(oldArray => [...oldArray, { key: index, cover: "No cover", artist_name: artist_str}]);
+            });
+        }
+        
+        findArtist();
+    }, [SongList])
     
     return (
         <motion.div className="AllArtists"

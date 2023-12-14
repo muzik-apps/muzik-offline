@@ -78,7 +78,7 @@ const AllTracks = () => {
             </div>
             <div className="AllTracks_container">
                 {
-                    SongList.map((song, index) =>
+                    SongList.slice(0, 20).map((song, index) =>
                         <RectangleSongBox 
                             key={song.id}
                             keyV={song.id}
@@ -93,6 +93,7 @@ const AllTracks = () => {
                             setMenuOpenData={setMenuOpenData}/>
                     )
                 }
+                <div className="AllTracks_container_bottom_margin"/>
             </div>
             {
                 songMenuToOpen && (

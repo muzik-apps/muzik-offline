@@ -1,6 +1,5 @@
 export enum selectedSettingENUM {
     General = "General",
-    Account = "Account",
     Appearance = "Appearance", 
     Security = "Security",
     Advanced = "Advanced",
@@ -57,11 +56,10 @@ export interface Song{
     file_type: string,
 }
 
-export interface artistDetails {
+export interface artist {
     key: number;
     cover: string;
     artist_name: string;
-    favourited: boolean
 }
 
 export interface playlist {
@@ -72,7 +70,7 @@ export interface playlist {
     tracksPaths: string[];
 }
 
-export interface genreDetails {
+export interface genre {
     key: number;
     cover: string;
     title: string;
