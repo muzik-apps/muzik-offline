@@ -7,6 +7,7 @@
     height: calc(100vh - 55px);
     overflow-x: hidden;
     overflow-y: auto;
+    scroll-behavior: auto;
 
     .AllGenres_title{
         display: flex;

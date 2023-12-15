@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { NullCoverFour, NullCoverOne, NullCoverThree, NullCoverTwo } from '@assets/index';
 
 type SquareTitleBoxProps = {
-    cover: string;
+    cover: any | null;
     title: string;
     keyV: number;
     setMenuOpenData: (key: number, co_ords: {xPos: number; yPos: number;}) => void;
@@ -12,7 +12,7 @@ type SquareTitleBoxProps = {
 
 const SquareTitleBox: FunctionComponent<SquareTitleBoxProps> = (props: SquareTitleBoxProps) => {
 
-    function getRandomCover(){
+    function getRandomCover(): () => JSX.Element{
         const modv: number = props.keyV % 4;
         if(modv === 0)return NullCoverOne;
         else if(modv === 1)return NullCoverTwo;
@@ -27,8 +27,8 @@ const SquareTitleBox: FunctionComponent<SquareTitleBoxProps> = (props: SquareTit
             props.setMenuOpenData(props.keyV, {xPos: e.pageX, yPos: e.pageY});
         }}>
             <motion.div className="title_cover" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
-                    { !props.cover || props.cover === "No cover" ?
-                        (getRandomCover())()
+                    { 
+                        !props.cover ? (getRandomCover())()
                         :
                         <img src={props.cover} alt="SquareTitleBox-img" />
                     }

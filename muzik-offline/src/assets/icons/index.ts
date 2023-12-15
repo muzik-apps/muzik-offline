@@ -33,16 +33,23 @@ import NullMusicCoverOne from './Media/NullMusicCoverOne';
 import NullMusicCoverTwo from './Media/NullMusicCoverTwo';
 import NullMusicCoverThree from './Media/NullMusicCoverThree';
 import NullMusicCoverFour from './Media/NullMusicCoverFour';
+import RepeatOne from './Media/RepeatOne';
+import NullCoverNull from '../covers/NullCoverNull';
+import NullArtistCoverOne from './Profiles/NullArtistCoverOne';
+import NullArtistCoverTwo from './Profiles/NullArtistCoverTwo';
+import NullArtistCoverThree from './Profiles/NullArtistCoverThree';
+import NullArtistCoverFour from './Profiles/NullArtistCoverFour';
 
 export {
     Next_page, Prev_page, Search, 
     Microphone, Disk, LayersThree, Menu, MusicalNote, 
-    Pause, Repeat, Shuffle, SkipBack, 
+    Pause, Repeat, Shuffle, SkipBack, RepeatOne,
     SkipFwd, VolumeMax, VolumeMin, ExplicitIcon, DotHorizontal,
     Play, ChevronDown, ComponentIcon, InformationCircleContained,
     Layout, Lock, SettingsIcon,
     CancelRight, ArrowRefresh,
     ArrowCurveLeftRight, ArrowCurveRightUp, ChromeCast,
     Cross, Empty_user, NullMusicCoverOne,
-    NullMusicCoverTwo, NullMusicCoverThree, NullMusicCoverFour
+    NullMusicCoverTwo, NullMusicCoverThree, NullMusicCoverFour, NullCoverNull,
+    NullArtistCoverOne, NullArtistCoverTwo, NullArtistCoverThree, NullArtistCoverFour
 }

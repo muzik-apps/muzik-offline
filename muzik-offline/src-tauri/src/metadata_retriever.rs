@@ -1,8 +1,8 @@
+use std::path::Path;
 use id3::{Tag, TagLike};
 use mp3_duration;
 use serde_json::Value;
-use tokio::fs;
-
+use base64::{Engine as _, engine::general_purpose};
 use crate::components::Song;
 
 pub fn decode_directories(paths_as_json: &str) -> Vec<String> {
@@ -30,20 +30,19 @@ pub fn decode_directories(paths_as_json: &str) -> Vec<String> {
 pub async fn get_songs_in_path(dir_path: &str, song_id: &mut i32) -> Vec<Song>{
     let mut songs: Vec<Song> = Vec::new();
 
-    match fs::read_dir(dir_path).await {
+    match tokio::fs::read_dir(dir_path).await {
         Ok(mut paths) => {
             while let Ok(Some(entry)) = paths.next_entry().await {
-                match read_from_path(entry.path().to_str().unwrap(), song_id).await {
-                    Ok(mut song_data) => {
-                        //FILE SIZE
-                        song_data.file_size = 0;//TODO: PLEASE FIX THIS
-
-                        //FILE TYPE
-                        song_data.file_type = String::from("mp3");//TODO: PLEASE FIX THIS
-
-                        songs.push(song_data);
-                    },
-                    Err(_) => {},
+                match entry.path().to_str(){
+                    Some(full_path) => {
+                        match read_from_path(full_path, song_id).await {
+                            Ok(song_data) => {
+                                songs.push(song_data);
+                            },
+                            Err(_) => {},
+                        }
+                    }
+                    None => {},
                 }
             }
         },
@@ -66,7 +65,7 @@ async fn read_from_path(path: &str,  song_id: &mut i32) -> Result<Song, Box<dyn 
         year: 0,
         duration: String::from(""),
         path: String::from(""),
-        cover: String::from(""),
+        cover: None,
         date_recorded: String::from(""),
         date_released: String::from(""),
         file_size: 0,
@@ -126,7 +125,14 @@ async fn read_from_path(path: &str,  song_id: &mut i32) -> Result<Song, Box<dyn 
     song_meta_data.path = path.clone().to_owned();
 
     //COVER
-    song_meta_data.cover = String::from("No cover");
+    if let Some(cover) = tag.pictures().next() {
+        let picture_as_num = cover.data.to_owned();
+        let base64str = general_purpose::STANDARD.encode(&picture_as_num);
+        song_meta_data.cover = Some(base64str);
+    }
+    else{
+        song_meta_data.cover = None;
+    }
 
     //DATE RECORDED
     //"YYYY-MM-DD-HH-MM-SS"
@@ -144,6 +150,34 @@ async fn read_from_path(path: &str,  song_id: &mut i32) -> Result<Song, Box<dyn 
     }
     else{
         song_meta_data.date_released = String::from("Unknown date recorded");
+    }
+
+    //SIZE
+    let real_path = Path::new(&path);
+    match std::fs::metadata(&real_path) {
+        Ok(metadata) => {
+            song_meta_data.file_size = metadata.len();
+        },
+        Err(_) => {
+            song_meta_data.file_size = 0;
+        },
+    }
+
+    //FILE TYPE
+    match real_path.extension(){
+        Some(wrapped_extension) => {
+            match wrapped_extension.to_str(){
+                Some(unwrapped_extension) => {
+                    song_meta_data.file_type = unwrapped_extension.to_string();
+                },
+                None => {
+                    song_meta_data.file_type = String::from("Unknown file type");
+                },
+            }
+        },
+        None => {
+            song_meta_data.file_type = String::from("Unknown file type");
+        },
     }
 
     Ok(song_meta_data)

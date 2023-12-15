@@ -48,8 +48,12 @@ const App = () => {
 
   useEffect(() => {
     const reloadSongs = () => {
+      setSongList([]);
       invoke("get_all_songs", { pathsAsJsonArray: JSON.stringify(dir.Dir) })
-        .then((message: any) => setSongList(JSON.parse(message)))
+        .then((message: any) => {
+          console.log(JSON.parse(message));
+          setSongList(JSON.parse(message));
+        })
         .catch((error) => console.log(error));
     }
 

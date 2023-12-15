@@ -1,0 +1,23 @@
+@import "../constants/constants";
+
+.SearchGenres{
+    margin-top: 20px;
+    .SearchGenres-container{
+        height: calc(100vh - 125px);
+        width: 100%;
+        overflow-y: scroll;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 150px);
+        grid-template-rows: repeat(auto-fill, 205px);
+        justify-content: space-between;
+    }
+
+    .SearchGenres-ContextMenu-container{
+        width: 100vw;
+        height: calc(100vh - 32px);
+        position: fixed;
+        z-index: $z-index-9000;
+        top: 32px;
+        left: 0px;
+    }
+}

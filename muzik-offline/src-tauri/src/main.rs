@@ -12,6 +12,8 @@ use metadata_retriever::{get_songs_in_path, decode_directories};
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
+    //this serves as an example template whenever new commands are to be created
+    //so don't delete this
 }
 
 #[tauri::command]

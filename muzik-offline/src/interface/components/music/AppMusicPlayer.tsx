@@ -1,10 +1,11 @@
 import {FunctionComponent} from "react";
 import "@styles/components/music/AppMusicPlayer.scss";
-import { artist, song_art } from "@assets/index";
-import {ChromeCast, DotHorizontal, Pause, Repeat, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
+import { NullCoverFour, NullCoverOne, NullCoverThree, NullCoverTwo } from "@assets/index";
+import {ChromeCast, DotHorizontal, NullCoverNull, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
 import { motion } from "framer-motion";
 import useLocalStorageState from "use-local-storage-state";
 import { SavedObject, emptySavedObject } from "@database/index";
+import { Player, emptyPlayer } from "types";
 
 type AppMusicPlayerProps = {
     openPlayer: () => void;
@@ -13,6 +14,7 @@ type AppMusicPlayerProps = {
 
 const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusicPlayerProps) => {
     const [local_store, setStore] = useLocalStorageState<SavedObject>("SavedObject-offline", {defaultValue: emptySavedObject});
+    const [Player, setPlayer] = useLocalStorageState<Player>("Player-offline", {defaultValue: emptyPlayer});
 
     function changeVolume(event : any){
         setStore({ ... local_store, Volume : event.target.value});
@@ -20,9 +22,22 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
     }
 
     function changeSeeker(event : any){
-        setStore({ ... local_store, SongSeeker : event.target.value});
+        if(Player.playingSongMetadata === null){
+            setPlayer({ ... Player, playingPosition : 0});
+        }
+        else {
+            setPlayer({ ... Player, playingPosition : event.target.value});
+        }
         //do backend rust stuff
     }
+
+    function playSong(){if(Player.playingSongMetadata)setPlayer({ ... Player, isPlaying : true});}
+
+    function pauseSong(){setPlayer({ ... Player, isPlaying : false});}
+
+    function shuffleToggle(){setPlayer({ ... Player, isShuffling : !Player.isShuffling});}
+
+    function repeatToggle(){setPlayer({ ... Player, repeatingLevel : Player.repeatingLevel + 1 > 2 ? 0 : (Player.repeatingLevel + 1) as 0 | 1 | 2});}
 
     function changeVolumeBtnPress(isDecreasing: boolean){
         if(isDecreasing === true){
@@ -35,43 +50,75 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
         }
     }
 
+    function getRandomCover(): () => JSX.Element{
+        const id = Player.playingSongMetadata?.id;
+        const modv: number = id ? id % 4 : 0;
+        if(modv === 0)return NullCoverOne;
+        else if(modv === 1)return NullCoverTwo;
+        else if(modv === 2)return NullCoverThree;
+        else return NullCoverFour;
+    }
+
+    function getSeekerPercentage(){
+        return Player.playingPosition.toString();
+    }
+
     return (
         <div className={"app_music_player " + (local_store.PlayerBar ? "app_music_player_border" : "")}>
             <div className="music_cover_art">
-                {!local_store.PlayerBar && (<img src={artist} alt="cover-art" />)}
+                {!local_store.PlayerBar && !Player.playingSongMetadata
+                    && <NullCoverNull />}{/**no song is loaded onto the player */}
+                {!local_store.PlayerBar && Player.playingSongMetadata && Player.playingSongMetadata.cover
+                    && (<img src={""} alt="cover-art" />)}{/**there is cover art */}
+                {!local_store.PlayerBar && Player.playingSongMetadata && !Player.playingSongMetadata.cover
+                    && (getRandomCover())()}{/**the cover art is null */}
             </div>
             <div className="music_art_bg_layer">
                 <div className="art_and_song_details">
                     <motion.div className="mini_art_container" whileTap={{scale: 0.98}} onClick={props.openPlayer}>
-                        <img src={song_art} alt="song-art" />
+                            {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
+                            {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={""} alt="song-art" />)}{/**there is cover art */}
+                            {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover())()}{/**the cover art is null */}
                     </motion.div>
                     <div className="song_details">
-                        <h2>Sample Song feat Sample Artist 3, Sample Artist 4</h2>
-                        <h3>Sample Artist 1 & Sample Artist 2</h3>
+                        <h2>{Player.playingSongMetadata ? Player.playingSongMetadata.title : "No song is playing"}</h2>
+                        <h3>{Player.playingSongMetadata ? Player.playingSongMetadata.artist : "No song is playing"}</h3>
                     </div>
                 </div>
                 <div className="music_controller">
                     <div className="Controls">
-                        <motion.div className="control_icon" whileTap={{scale: 0.98}}>
-                            <Repeat />
+                        <motion.div className={"control_icon" + (Player.repeatingLevel > 0 ? " coloured" : "")} 
+                        whileTap={{scale: 0.98}} onClick={repeatToggle}>
+                            {Player.repeatingLevel === 2 ?
+                                <RepeatOne />
+                                :
+                                <Repeat />
+                            }
                         </motion.div>
                         <motion.div className="control_icon" whileTap={{scale: 0.98}}>
                             <SkipBack />
                         </motion.div>
-                        <motion.div className="control_icon" whileTap={{scale: 0.98}}>
-                            <Pause />
-                        </motion.div>
+                        {Player.isPlaying ?
+                            <motion.div className="control_icon" whileTap={{scale: 0.98}} onClick={pauseSong}>
+                                <Pause />
+                            </motion.div>
+                            :
+                            <motion.div className="control_icon" whileTap={{scale: 0.98}} onClick={playSong}>
+                                <Play />
+                            </motion.div>
+                        }
                         <motion.div className="control_icon" whileTap={{scale: 0.98}}>
                             <SkipFwd />
                         </motion.div>
-                        <motion.div className="control_icon" whileTap={{scale: 0.98}}>
+                        <motion.div className={"control_icon" + (Player.isShuffling ? " coloured" : "")}  
+                        whileTap={{scale: 0.98}} onClick={shuffleToggle}>
                             <Shuffle />
                         </motion.div>
                     </div>
                     <div className="Seeker">
-                        <p>01:37</p>
-                        <input type="range" id="seek-slider" max="100" value={local_store.SongSeeker} onChange={changeSeeker} style={{backgroundSize: local_store.SongSeeker.toString() + "% 100%"}}/>
-                        <p>02:37</p>
+                        <p>{Player.playingSongMetadata ? Player.playingPosition : "~"}</p>
+                        <input type="range" id="seek-slider" max="100" value={Player.playingPosition} onChange={changeSeeker} style={{backgroundSize: getSeekerPercentage() + "% 100%"}}/>
+                        <p>{Player.playingSongMetadata ? Player.playingSongMetadata.duration : "~"}</p>
                     </div>
                 </div>
                 <div className="more_controls_cast_and_volume_controller">

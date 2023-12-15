@@ -1,6 +1,6 @@
-import { LayersThree, Menu, Microphone, MusicalNote } from "@assets/icons";
+import { Disk, LayersThree, Menu, Microphone, MusicalNote } from "@assets/icons";
 import { SearchNavigator } from "@components/index";
-import {UserVisiblePlaylists, UserRecentSong} from "@layouts/index";
+import {SearchAlbums, SearchArtists, SearchGenres, SearchPlaylists, SearchSongs} from "@layouts/index";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import "@styles/pages/SearchPage.scss";
@@ -21,18 +21,21 @@ const SearchPage = () => {
                 <SearchNavigator icon={MusicalNote} text={"songs"} selected={selected} select={setSelectedF}/>
                 <SearchNavigator icon={Microphone} text={"artists"} selected={selected} select={setSelectedF}/>
                 <SearchNavigator icon={LayersThree} text={"albums"} selected={selected} select={setSelectedF}/>
+                <SearchNavigator icon={Disk} text={"genres"} selected={selected} select={setSelectedF}/>
                 <SearchNavigator icon={Menu} text={"playlists"} selected={selected} select={setSelectedF}/>
             </div>
             <div className="content-container">
                 {
                     selected === "songs" ?
-                        <UserRecentSong />
+                        <SearchSongs />
                     : selected === "artists" ?
-                        <UserVisiblePlaylists />
+                        <SearchArtists />
                     : selected === "albums" ?
-                        <UserVisiblePlaylists />
-                    : 
-                        <UserVisiblePlaylists />
+                        <SearchAlbums />
+                    : selected === "genres" ?
+                        <SearchGenres />
+                    :
+                        <SearchPlaylists />
                 }
             </div>
         </motion.div>

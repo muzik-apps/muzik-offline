@@ -5,7 +5,7 @@ import "@styles/components/cards/RectangleSongBox.scss";
 
 type RectangleSongBoxProps = {
     index: number;
-    cover: string;
+    cover: any | null;
     songName: string;
     artist: string;
     length: number | string;
@@ -18,7 +18,7 @@ type RectangleSongBoxProps = {
 
 const RectangleSongBox: FunctionComponent<RectangleSongBoxProps> = (props: RectangleSongBoxProps) => {
 
-    function getRandomCover(){
+    function getRandomCover(): () => JSX.Element{
         const modv: number = props.index % 4;
         if(modv === 0)return NullMusicCoverOne;
         else if(modv === 1)return NullMusicCoverTwo;
@@ -37,10 +37,10 @@ const RectangleSongBox: FunctionComponent<RectangleSongBoxProps> = (props: Recta
             }}>
                 <p className="index">{props.index}</p>
                 <motion.div className="song_cover" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
-                    { !props.cover || props.cover === "No cover" ?
-                        (getRandomCover())()
+                    { 
+                        !props.cover ? (getRandomCover())()
                         :
-                        <img src={props.cover} alt="SquareSongBox-img" />
+                        <img src={`data:image/png;base64,${props.cover}`} alt="SquareSongBox-img" />
                     }
                 </motion.div>
                 <div className="song_name">

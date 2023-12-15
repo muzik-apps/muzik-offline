@@ -2,20 +2,27 @@ import { useState } from "react";
 import { motion } from 'framer-motion';
 import "@styles/components/music/HistoryUpcoming.scss";
 import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
-import { GeneralContextMenu } from "@components/index";
+import { GeneralContextMenu, SongCardResizable } from "@components/index";
 import useLocalStorageState from "use-local-storage-state";
 
 const HistoryUpcoming = () => {
   const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-  const [selectedView, setSelectedView] = useState<string>("Lyrics_tab");
-  const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
-    const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
+  const [selectedView, setSelectedView] = useState<string>("Upcoming_tab");
+  const [SongQueue,] = useLocalStorageState<Song[]>("SongQueue", {defaultValue: []});
+  const [SongHistory,] = useLocalStorageState<Song[]>("SongHistory", {defaultValue: []});
+  const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
 
   function selectView(arg: string){setSelectedView(arg);}
 
-  function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
+  function setMenuOpenData__SongQueue(key: number, n_co_ords: {xPos: number; yPos: number;}){
     setCoords(n_co_ords);
-    const matching_song = SongList.find(song => { return song.id === key; })
+    const matching_song = SongQueue.find(song => { return song.id === key; })
+    setSongMenuToOpen(matching_song ? matching_song : null);
+}
+
+function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos: number;}){
+    setCoords(n_co_ords);
+    const matching_song = SongHistory.find(song => { return song.id === key; })
     setSongMenuToOpen(matching_song ? matching_song : null);
 }
 
@@ -28,11 +35,33 @@ const HistoryUpcoming = () => {
       {
         selectedView === "Upcoming_tab" ?
           <div className="Upcoming_view">
-            
+            {
+                SongQueue.slice(0, 20).map((song) => 
+                    <SongCardResizable 
+                        key={song.id}
+                        cover={song.cover} 
+                        songName={song.title}
+                        artist={song.artist}
+                        keyV={song.id}
+                        setMenuOpenData={setMenuOpenData__SongQueue}
+                        />
+                )
+            }
           </div>
         :
           <div className="History_view">
-            
+            {
+                SongHistory.slice(SongHistory.length - 21, SongHistory.length - 1).map((song) => 
+                    <SongCardResizable 
+                        key={song.id}
+                        cover={song.cover} 
+                        songName={song.title}
+                        artist={song.artist}
+                        keyV={song.id}
+                        setMenuOpenData={setMenuOpenData_SongHistory}
+                        />
+                )
+            }
           </div>
       }
       <div className="HistoryUpcoming_tabs">

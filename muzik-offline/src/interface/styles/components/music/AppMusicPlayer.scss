@@ -34,6 +34,11 @@
             height: 100%;
             object-fit: cover;
         }
+
+        svg{
+            width: 100%;
+            height: 100%;
+        }
     }
 
     .music_art_bg_layer{
@@ -74,6 +79,11 @@
                     height: 100%;
                     object-fit: cover;
                 }
+
+                svg{
+                    width: 100%;
+                    height: 100%;
+                }
             }
     
             .song_details{
@@ -113,6 +123,18 @@
                 height: 24px;
                 .control_icon:hover{
                     opacity: 0.8;
+                }
+            }
+
+            .coloured{
+                svg{
+                    .text{
+                        stroke: none;
+                        fill: $app-theme-col;
+                    }
+                    path{
+                        stroke: $app-theme-col;
+                    }
                 }
             }
 

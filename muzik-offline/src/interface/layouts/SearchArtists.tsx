@@ -1,26 +1,16 @@
-import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu } from "@components/index";
-import { ChevronDown } from "@assets/icons";
-import "@styles/pages/AllArtists.scss";
-import { mouse_coOrds, contextMenuEnum, artist, contextMenuButtons, Song } from "types";
+import { SquareTitleBox, GeneralContextMenu } from "@components/index";
+import { mouse_coOrds, contextMenuEnum, contextMenuButtons, artist, Song } from "types";
+import { useState, useEffect, useRef } from "react";
+import "@styles/layouts/SearchArtists.scss";
 import useLocalStorageState from "use-local-storage-state";
 
-const AllArtists = () => {
-    
-    const [sort, setSort] = useState<string>("Ascending");
-    const [openedDDM, setOpenedDDM] = useState<boolean>(false);
+const SearchArtists = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [artistMenuToOpen, setArtistMenuToOpen] = useState<artist | null>(null);
     const [artists, setArtists] = useState<artist[]>([]);
     const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
 
     const artistsLoaded = useRef<boolean>(false);
-
-    function selectOption(arg: string){
-        if(arg !== sort)setSort(arg); 
-        setOpenedDDM(false);
-    }
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
@@ -55,34 +45,10 @@ const AllArtists = () => {
         
         findArtist();
     }, [SongList])
-    
+
     return (
-        <motion.div className="AllArtists"
-        initial={{scale: 0.9, opacity: 0}}
-        animate={{scale: 1, opacity: 1}}
-        exit={{scale: 0.9, opacity: 0}}>
-            <div className="AllArtists_title">
-                <h1>All artists</h1>
-                <div className="sort_selector">
-                    <h2>Sort A-Z: </h2>
-                    <div className="sort_dropdown_container">
-                        <motion.div className="sort_dropdown" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() => setOpenedDDM(!openedDDM)}>
-                            <h4>{sort}</h4>
-                            <motion.div className="chevron_icon" animate={{rotate: openedDDM ? 180 : 0}}>
-                                <ChevronDown />
-                            </motion.div>
-                        </motion.div>
-                        <div className="DropDownMenu_container">
-                            <DropDownMenuSmall
-                                options={["Ascending", "Descending"]} 
-                                isOpen={openedDDM}
-                                selectOption={selectOption}
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="AllArtists_container">
+        <div className="SearchArtists">
+            <div className="SearchArtists-container">
                     {artists.map((artist) => 
                         <SquareTitleBox 
                         key={artist.key}
@@ -94,7 +60,7 @@ const AllArtists = () => {
             </div>
             {
                 artistMenuToOpen && (
-                    <div className="AllArtists-ContextMenu-container" 
+                    <div className="SearchArtists-ContextMenu-container" 
                     onClick={() => {
                         setArtistMenuToOpen(null);
                         setCoords({xPos: 0, yPos: 0});
@@ -109,14 +75,13 @@ const AllArtists = () => {
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
                             title={artistMenuToOpen.artist_name}
-                            CMtype={contextMenuEnum.ArtistCM}
+                            CMtype={contextMenuEnum.PlaylistCM}
                             chooseOption={chooseOption}/>
                     </div>
                 )
             }
-            <div className="bottom_margin"/>
-        </motion.div>
+        </div>
     )
 }
 
-export default AllArtists
+export default SearchArtists

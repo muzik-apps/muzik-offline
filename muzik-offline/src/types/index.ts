@@ -49,7 +49,7 @@ export interface Song{
     year: number,
     duration: string,
     path: string,
-    cover: string,
+    cover: any | null,
     date_recorded: string,
     date_released: string,
     file_size: number,
@@ -58,13 +58,13 @@ export interface Song{
 
 export interface artist {
     key: number;
-    cover: string;
+    cover: any | null;
     artist_name: string;
 }
 
 export interface playlist {
     key: number;
-    cover: string;
+    cover: any | null;
     title: string;
     dateCreated: string;
     tracksPaths: string[];
@@ -72,17 +72,33 @@ export interface playlist {
 
 export interface genre {
     key: number;
-    cover: string;
+    cover: any | null;
     title: string;
 }
 
 export interface album {
     key: number;
-    cover: string;
+    cover: any | null;
     title: string;
 }
 
 export interface mouse_coOrds {
     xPos: number; 
     yPos: number;
+}
+
+export interface Player{
+    playingSongMetadata: Song | null;
+    isPlaying: boolean;
+    playingPosition: number;
+    isShuffling: boolean;
+    repeatingLevel: 0 | 1 | 2;
+}
+
+export const emptyPlayer: Player = {
+    playingSongMetadata: null,
+    isPlaying: false,
+    playingPosition: 0,
+    isShuffling: false,
+    repeatingLevel: 0,
 }

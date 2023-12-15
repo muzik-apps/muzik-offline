@@ -6,6 +6,7 @@
     width: calc(100vw - var(--var-right-side-bar-width-expanded));
     height: calc(100vh - 55px);
     overflow: hidden;
+    scroll-behavior: auto;
 
     .AllTracks_title{
         display: flex;
@@ -80,10 +81,6 @@
         height: calc(100% - 45px);
         overflow-x: hidden;
         overflow-y: scroll;
-
-        .AllTracks_container_bottom_margin{
-            height: 70px;
-        }
     }
 
     .bottom_margin{

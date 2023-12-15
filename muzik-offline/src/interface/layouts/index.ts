@@ -1,10 +1,14 @@
 import GeneralSettings from './GeneralSettings';
 import AppearanceSettings from './AppearanceSettings';
 import HistoryNextFloating from './HistoryNextFloating';
-import UserRecentSong from './UserRecentSong';
-import UserVisiblePlaylists from './UserVisiblePlaylists';
+import SearchSongs from './SearchSongs';
+import SearchArtists from './SearchArtists';
+import SearchAlbums from './SearchAlbums';
+import SearchGenres from './SearchGenres';
+import SearchPlaylists from './SearchPlaylists';
 
 export {
     GeneralSettings, AppearanceSettings, HistoryNextFloating,
-    UserRecentSong, UserVisiblePlaylists
+    SearchSongs, SearchArtists, SearchAlbums, SearchGenres,
+    SearchPlaylists
 }

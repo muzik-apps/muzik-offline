@@ -10,9 +10,9 @@ pub struct Song {
     pub year: i32,
     pub duration: String,
     pub path: String,
-    pub cover: String,
+    pub cover: Option<String>,
     pub date_recorded: String,
     pub date_released: String,
-    pub file_size: i32,
+    pub file_size: u64,
     pub file_type: String,
 }

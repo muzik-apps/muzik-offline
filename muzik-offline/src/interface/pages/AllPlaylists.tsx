@@ -56,14 +56,14 @@ const AllPlaylists = () => {
                 </div>
             </div>
             <div className="AllPlaylists_container">
-                {PlayListList.map((playlist) => 
-                    <SquareTitleBox 
+                    {PlayListList.map((playlist) =>
+                        <SquareTitleBox 
                         key={playlist.key}
                         cover={playlist.cover} 
                         title={playlist.title}
                         keyV={playlist.key}
-                        setMenuOpenData={setMenuOpenData}
-                    />)}
+                        setMenuOpenData={setMenuOpenData}/>
+                    )}
             </div>
             {
                 playlistMenuToOpen && (

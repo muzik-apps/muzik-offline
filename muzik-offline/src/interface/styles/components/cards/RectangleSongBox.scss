@@ -16,7 +16,7 @@
     }
 
     .song_cover{
-        width: 40pz;
+        width: 40px;
         height: 40px;
         display: flex;
         overflow: hidden;
@@ -79,7 +79,7 @@
     }
 
     .length{
-        width: 46px;
+        width: 48px;
     }
 
     .PlayIcon{
@@ -87,6 +87,7 @@
         svg{
             path{
                 fill: $app-theme-col;
+                stroke: $app-theme-col;
             }
         }
     }

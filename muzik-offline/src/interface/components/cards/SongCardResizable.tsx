@@ -4,7 +4,7 @@ import { DotHorizontal, NullMusicCoverFour, NullMusicCoverOne, NullMusicCoverThr
 import "@styles/components/cards/SongCardResizable.scss";
 
 type SongCardResizableProps = {
-    cover: string;
+    cover: any | null;
     songName: string;
     artist: string;
     keyV: number;
@@ -13,7 +13,7 @@ type SongCardResizableProps = {
 
 const SongCardResizable: FunctionComponent<SongCardResizableProps> = (props: SongCardResizableProps) => {
 
-    function getRandomCover(){
+    function getRandomCover(): () => JSX.Element{
         const modv: number = props.keyV % 4;
         if(modv === 0)return NullMusicCoverOne;
         else if(modv === 1)return NullMusicCoverTwo;
@@ -25,8 +25,8 @@ const SongCardResizable: FunctionComponent<SongCardResizableProps> = (props: Son
         <>
             <div className="SongCardResizable">
                 <motion.div className="song_cover" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
-                    { !props.cover || props.cover === "No cover" ?
-                        (getRandomCover())()
+                    { 
+                        !props.cover ? (getRandomCover())()
                         :
                         <img src={props.cover} alt="-img" />
                     }

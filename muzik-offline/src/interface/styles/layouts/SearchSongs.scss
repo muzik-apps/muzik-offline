@@ -1,14 +1,14 @@
 @import "../constants/constants";
 
-.UserRecentSong{
+.SearchSongs{
     margin-top: 20px;
-    .UserRecentSong-container{
+    .SearchSongs-container{
         height: calc(100vh - 125px);
         width: 100%;
         overflow-y: scroll;
     }
 
-    .UserRecentSong-ContextMenu-container{
+    .SearchSongs-ContextMenu-container{
         width: 100vw;
         height: calc(100vh - 32px);
         position: fixed;

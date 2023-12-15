@@ -1,10 +1,11 @@
 import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { ChevronDown } from "@assets/icons";
 import { DropDownMenuSmall, GeneralContextMenu, RectangleSongBox } from "@components/index";
 import "@styles/pages/AllTracks.scss";
 import useLocalStorageState from "use-local-storage-state";
+import { ViewportList } from 'react-viewport-list';
 
 const AllTracks = () => {
     const [selected, setSelected] = useState<number>(0);
@@ -13,6 +14,8 @@ const AllTracks = () => {
     const [openedDDM, setOpenedDDM] = useState<string | null>(null);
     const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
     const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
+
+    const ref = useRef<HTMLDivElement | null>(null);
 
     function selectThisSong(index: number){ setSelected(index); }
 
@@ -76,23 +79,23 @@ const AllTracks = () => {
                     </div>
                 </div>
             </div>
-            <div className="AllTracks_container">
-                {
-                    SongList.slice(0, 20).map((song, index) =>
+            <div className="AllTracks_container" ref={ref}>
+                <ViewportList viewportRef={ref} items={SongList}>
+                    {(song, index) => (
                         <RectangleSongBox 
-                            key={song.id}
-                            keyV={song.id}
-                            index={index + 1} 
-                            cover={song.cover} 
-                            songName={song.title} 
-                            artist={song.artist}
-                            length={song.duration} 
-                            year={song.year}
-                            selected={selected === index + 1 ? true : false}
-                            selectThisSong={selectThisSong}
-                            setMenuOpenData={setMenuOpenData}/>
-                    )
-                }
+                        key={song.id}
+                        keyV={song.id}
+                        index={index + 1} 
+                        cover={song.cover} 
+                        songName={song.title} 
+                        artist={song.artist}
+                        length={song.duration} 
+                        year={song.year}
+                        selected={selected === index + 1 ? true : false}
+                        selectThisSong={selectThisSong}
+                        setMenuOpenData={setMenuOpenData}/>
+                    )}
+                </ViewportList>
                 <div className="AllTracks_container_bottom_margin"/>
             </div>
             {

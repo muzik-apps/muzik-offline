@@ -1,12 +1,13 @@
 import { motion } from "framer-motion";
 import "@styles/components/music/FSMusicPlayer.scss";
-import { artist } from "@assets/index";
+import { NullCoverFour, NullCoverOne, NullCoverThree, NullCoverTwo } from "@assets/index";
 import { FunctionComponent, useState } from "react";
 import { appWindow } from '@tauri-apps/api/window';
 import { HistoryUpcoming, MainMusicPlayer } from "@components/index";
 import useLocalStorageState from "use-local-storage-state";
 import { SavedObject, emptySavedObject } from "@database/index";
-import { OSTYPEenum } from "types";
+import { OSTYPEenum, Player, emptyPlayer } from "types";
+import { NullCoverNull } from "@assets/icons";
 
 type FSMusicPlayerProps = {
     openPlayer: boolean;
@@ -23,6 +24,7 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
     const [wasMaximized, setMaximized] = useState<boolean>(false);
     const [appFS, setappFS] = useState<boolean>(false);
     const [local_store,] = useLocalStorageState<SavedObject>("SavedObject-offline", {defaultValue: emptySavedObject});
+    const [Player,] = useLocalStorageState<Player>("Player-offline", {defaultValue: emptyPlayer});
 
     async function switchtoFS(){
         const isMaximized: boolean = await appWindow.isMaximized();
@@ -46,6 +48,15 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
         }
     }
 
+    function getRandomCover(): () => JSX.Element{
+        const id = Player.playingSongMetadata?.id;
+        const modv: number = id ? id % 4 : 0;
+        if(modv === 0)return NullCoverOne;
+        else if(modv === 1)return NullCoverTwo;
+        else if(modv === 2)return NullCoverThree;
+        else return NullCoverFour;
+    }
+
     return (
         <motion.div className="FSMusicPlayer"
             animate={props.openPlayer ? "open" : "closed"}
@@ -58,11 +69,15 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
                                 className="image-container"
                                 animate={{ rotate: 360 }}
                                 transition={{ ease: "linear", duration: 40, repeat: Infinity, repeatType: "reverse"}}>
-                                    <img src={artist} alt="song-cover-art"/>
+                                    {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
+                                    {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={""} alt="song-art" />)}{/**there is cover art */}
+                                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover())()}{/**the cover art is null */}
                             </motion.div>)
                         : props.openPlayer && !local_store.AnimateBackground ?
                             <div className="image-container">
-                                <img src={artist} alt="song-cover-art"/>
+                                {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
+                                {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={""} alt="song-art" />)}{/**there is cover art */}
+                                {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover())()}{/**the cover art is null */}
                             </div>
                         :
                             <></>

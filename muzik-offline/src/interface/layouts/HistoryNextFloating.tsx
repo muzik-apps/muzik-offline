@@ -18,14 +18,21 @@ const variants={
 const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props: HistoryNextFloatingProps) => {
     const [selectedView, setSelectedView] = useState<string>("Upcoming_tab");
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-    const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
+    const [SongQueue,] = useLocalStorageState<Song[]>("SongQueue", {defaultValue: []});
+    const [SongHistory,] = useLocalStorageState<Song[]>("SongHistory", {defaultValue: []});
     const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
 
     function selectView(arg: string){setSelectedView(arg);}
 
-    function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
+    function setMenuOpenData__SongQueue(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
-        const matching_song = SongList.find(song => { return song.id === key; })
+        const matching_song = SongQueue.find(song => { return song.id === key; })
+        setSongMenuToOpen(matching_song ? matching_song : null);
+    }
+
+    function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos: number;}){
+        setCoords(n_co_ords);
+        const matching_song = SongHistory.find(song => { return song.id === key; })
         setSongMenuToOpen(matching_song ? matching_song : null);
     }
 
@@ -44,14 +51,14 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
                     selectedView === "Upcoming_tab" ?
                     <div className="Upcoming_view">
                         {
-                            SongList.slice(0, 20).map((song) => 
+                            SongQueue.slice(0, 20).map((song) => 
                                 <SongCardResizable 
                                     key={song.id}
                                     cover={song.cover} 
                                     songName={song.title}
                                     artist={song.artist}
                                     keyV={song.id}
-                                    setMenuOpenData={setMenuOpenData}
+                                    setMenuOpenData={setMenuOpenData__SongQueue}
                                     />
                             )
                         }
@@ -59,14 +66,14 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
                     :
                     <div className="History_view">
                         {
-                            SongList.slice(0, 20).map((song) => 
+                            SongHistory.slice(SongHistory.length - 21, SongHistory.length - 1).map((song) => 
                                 <SongCardResizable 
                                     key={song.id}
                                     cover={song.cover} 
                                     songName={song.title}
                                     artist={song.artist}
                                     keyV={song.id}
-                                    setMenuOpenData={setMenuOpenData}
+                                    setMenuOpenData={setMenuOpenData_SongHistory}
                                     />
                             )
                         }

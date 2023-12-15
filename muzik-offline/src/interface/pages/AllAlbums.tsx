@@ -13,6 +13,7 @@ const AllAlbums = () => {
     const [albums, setAlbums] = useState<album[]>([]);
     const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
     const [albumMenuToOpen, setAlbumMenuToOpen] = useState<album | null>(null);
+    
     const albumsLoaded = useRef<boolean>(false);
 
     function selectOption(arg: string){
@@ -33,10 +34,11 @@ const AllAlbums = () => {
     useEffect(() => {
         const findAlbums = () => {
             if(albumsLoaded.current === true)return;
+            if(SongList.length === 0)return;
             albumsLoaded.current = true;
             const uniqueSet: Set<string> = new Set();
             const albums_list = SongList.map((song) => {
-                if (!uniqueSet.has(song.album)) {
+                if(!uniqueSet.has(song.album)){
                     uniqueSet.add(song.album);
                     return song.album;
                 }
@@ -46,7 +48,7 @@ const AllAlbums = () => {
             });
 
             albums_list.map((album_str, index) => { 
-                if(album_str !== null)setAlbums(oldArray => [...oldArray, { key: index, cover: "No cover", title: album_str}]);
+                if(album_str !== null)setAlbums(oldArray => [...oldArray, { key: index, cover: null, title: album_str}]);
             });
         }
         
@@ -82,12 +84,12 @@ const AllAlbums = () => {
             <div className="AllAlbums_container">
                 {albums.map((album) => 
                     <SquareTitleBox 
-                        key={album.key}
-                        cover={album.cover} 
-                        title={album.title}
-                        keyV={album.key}
-                        setMenuOpenData={setMenuOpenData}
-                    />)}
+                    key={album.key}
+                    cover={album.cover} 
+                    title={album.title}
+                    keyV={album.key}
+                    setMenuOpenData={setMenuOpenData}/>
+                )}
             </div>
             {
                 albumMenuToOpen && (

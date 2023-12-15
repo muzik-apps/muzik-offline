@@ -1605,6 +1605,7 @@ dependencies = [
 name = "muzik-offline"
 version = "0.0.0"
 dependencies = [
+ "base64 0.21.5",
  "id3",
  "mp3-duration",
  "serde",

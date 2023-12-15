@@ -1,10 +1,10 @@
 import { SquareTitleBox, GeneralContextMenu } from "@components/index";
 import { playlist, mouse_coOrds, contextMenuEnum, contextMenuButtons } from "types";
 import { useState } from "react";
-import "@styles/layouts/UserVisiblePlaylists.scss";
+import "@styles/layouts/SearchPlaylists.scss";
 import useLocalStorageState from "use-local-storage-state";
 
-const UserVisiblePlaylists = () => {
+const SearchPlaylists = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [playlistMenuToOpen, setPlaylistMenuToOpen] = useState<playlist | null>(null);
     const [PlayListList,] = useLocalStorageState<playlist[]>("PlayListList", {defaultValue: []});
@@ -20,20 +20,20 @@ const UserVisiblePlaylists = () => {
     }
 
     return (
-        <div className="UserVisiblePlaylists">
-            <div className="UserVisiblePlaylists-container">
-                {PlayListList.map((playlist) => 
+        <div className="SearchPlaylists">
+            <div className="SearchPlaylists-container">
+                    {PlayListList.map((playlist) => 
                         <SquareTitleBox 
-                            key={playlist.key}
-                            cover={playlist.cover} 
-                            title={playlist.title}
-                            keyV={playlist.key}
-                            setMenuOpenData={setMenuOpenData}
-                        />)}
+                        key={playlist.key}
+                        cover={playlist.cover} 
+                        title={playlist.title}
+                        keyV={playlist.key}
+                        setMenuOpenData={setMenuOpenData}/>
+                    )}
             </div>
             {
                 playlistMenuToOpen && (
-                    <div className="UserVisiblePlaylists-ContextMenu-container" 
+                    <div className="SearchPlaylists-ContextMenu-container" 
                     onClick={() => {
                         setPlaylistMenuToOpen(null);
                         setCoords({xPos: 0, yPos: 0});
@@ -57,4 +57,4 @@ const UserVisiblePlaylists = () => {
     )
 }
 
-export default UserVisiblePlaylists
+export default SearchPlaylists
