@@ -2,45 +2,72 @@ import { motion } from "framer-motion";
 import { NullCoverFour, NullCoverOne, NullCoverThree, NullCoverTwo } from "@assets/index";
 import { SkipBack, Pause, SkipFwd, Shuffle, VolumeMin, VolumeMax, Repeat, Play, RepeatOne, NullCoverNull } from "@icons/index";
 import "@styles/components/music/MainMusicPlayer.scss";
-import useLocalStorageState from "use-local-storage-state";
-import { SavedObject, emptySavedObject } from "@database/index";
-import { emptyPlayer, Player } from "types";
+import { SavedObject } from "@database/index";
+import { useSavedObjectStore, usePlayerStore } from "store";
 
 const MainMusicPlayer = () => {
-    const [local_store, setStore] = useLocalStorageState<SavedObject>("SavedObject-offline", {defaultValue: emptySavedObject});
-    const [Player, setPlayer] = useLocalStorageState<Player>("Player-offline", {defaultValue: emptyPlayer});
+    const {local_store, setStore} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
+    const {Player, setPlayer} = usePlayerStore((state) => { return { Player: state.Player, setPlayer: state.setPlayer}; });
 
     function changeVolume(event : any){
-        setStore({ ... local_store, Volume : event.target.value});
+        let temp: SavedObject = local_store;
+        temp.Volume = event.target.value;
+        setStore(temp);
         //do backend rust stuff
     }
 
     function changeSeeker(event : any){
         if(Player.playingSongMetadata === null){
-            setPlayer({ ... Player, playingPosition : 0});
+            let temp = Player;
+            temp.playingPosition = 0;
+            setPlayer(temp);
         }
         else {
-            setPlayer({ ... Player, playingPosition : event.target.value});
+            let temp = Player;
+            temp.playingPosition = event.target.value;
+            setPlayer(temp);
         }
         //do backend rust stuff
     }
 
-    function playSong(){if(Player.playingSongMetadata)setPlayer({ ... Player, isPlaying : true});}
+    function playSong(){
+        if(Player.playingSongMetadata){
+            let temp = Player;
+            temp.isPlaying = true;
+            setPlayer(temp);
+        }
+    }
 
-    function pauseSong(){setPlayer({ ... Player, isPlaying : false});}
+    function pauseSong(){
+        let temp = Player;
+        temp.isPlaying = false;
+        setPlayer(temp);
+    }
 
-    function shuffleToggle(){setPlayer({ ... Player, isShuffling : !Player.isShuffling});}
+    function shuffleToggle(){
+        let temp = Player;
+        temp.isShuffling = !Player.isShuffling;
+        setPlayer(temp);
+    }
 
-    function repeatToggle(){setPlayer({ ... Player, repeatingLevel : Player.repeatingLevel + 1 > 2 ? 0 : (Player.repeatingLevel + 1) as 0 | 1 | 2});}
-    
+    function repeatToggle(){
+        let temp = Player;
+        temp.repeatingLevel = Player.repeatingLevel + 1 > 2 ? 0 : (Player.repeatingLevel + 1) as 0 | 1 | 2;
+        setPlayer(temp);
+    }
+
     function changeVolumeBtnPress(isDecreasing: boolean){
         if(isDecreasing === true){
             const level: number = (local_store.Volume - parseInt(local_store.VolumeStepAmount));
-            setStore({ ... local_store, Volume : level <= 0 ? 0 : level});
+            let temp: SavedObject = local_store;
+            temp.Volume = level <= 0 ? 0 : level;
+            setStore(temp);
         }
         else{
             const level: number = (local_store.Volume + parseInt(local_store.VolumeStepAmount));
-            setStore({ ... local_store, Volume : level >= 100 ? 100 : level});
+            let temp: SavedObject = local_store;
+            temp.Volume = level >= 100 ? 100 : level;
+            setStore(temp);
         }
     }
 
@@ -62,12 +89,12 @@ const MainMusicPlayer = () => {
             <div className="song_cover_art">
                 <div className="first_cover">
                     {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
-                    {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={""} alt="song-art" />)}{/**there is cover art */}
+                    {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" />)}{/**there is cover art */}
                     {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover())()}{/**the cover art is null */}
                 </div>
                 <div className="second_cover">
                     {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
-                    {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={""} alt="song-art" />)}{/**there is cover art */}
+                    {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" />)}{/**there is cover art */}
                     {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover())()}{/**the cover art is null */}
                 </div>
             </div>

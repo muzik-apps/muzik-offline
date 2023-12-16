@@ -4,7 +4,8 @@ import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu } from "@componen
 import { ChevronDown } from "@assets/icons";
 import "@styles/pages/AllPlaylists.scss";
 import { contextMenuButtons, contextMenuEnum, mouse_coOrds, playlist } from "types";
-import useLocalStorageState from "use-local-storage-state";
+import { local_playlists_db } from "@database/database";
+import { useLiveQuery } from "dexie-react-hooks";
 
 const AllPlaylists = () => {
 
@@ -12,7 +13,7 @@ const AllPlaylists = () => {
     const [openedDDM, setOpenedDDM] = useState<boolean>(false);
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [playlistMenuToOpen, setPlaylistMenuToOpen] = useState<playlist | null>(null);
-    const [PlayListList,] = useLocalStorageState<playlist[]>("PlayListList", {defaultValue: []});
+    const playlists = useLiveQuery(() => local_playlists_db.playlists.toArray()) ?? [];
 
     function selectOption(arg: string){
         if(arg !== sort)setSort(arg);
@@ -21,7 +22,7 @@ const AllPlaylists = () => {
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
-        const matching_playlist = PlayListList.find(playlist => { return playlist.key === key; })
+        const matching_playlist = playlists.find(playlist => { return playlist.key === key; })
         setPlaylistMenuToOpen(matching_playlist ? matching_playlist : null);
     }
 
@@ -56,7 +57,7 @@ const AllPlaylists = () => {
                 </div>
             </div>
             <div className="AllPlaylists_container">
-                    {PlayListList.map((playlist) =>
+                    {playlists.map((playlist) =>
                         <SquareTitleBox 
                         key={playlist.key}
                         cover={playlist.cover} 

@@ -1,25 +1,22 @@
 import "@styles/App/App.scss";
-import { AppMusicPlayer, LeftSidebar, FSMusicPlayer, HeaderLinuxOS, HeaderMacOS, HeaderWindows } from "@components/index";
+import { AppMusicPlayer, LeftSidebar, FSMusicPlayer, HeaderLinuxOS, HeaderMacOS, HeaderWindows, NotifyBottomRight } from "@components/index";
 import { AllGenres, AllPlaylists, AllTracks, Settings, SongAlbumDetails, 
   AllAlbums, AllArtists, SearchPage } from "@pages/index";
 import { useEffect, useState } from "react";
 import { type } from '@tauri-apps/api/os';
-import { invoke } from '@tauri-apps/api/tauri';
-import useLocalStorageState from "use-local-storage-state";
-import { SavedDirectories, SavedObject, SavedWallpaper, emptyDirectories, emptySavedObject, emptyWallpaper } from "@database/index";
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { HistoryNextFloating } from "@layouts/index";
-import { OSTYPEenum, Song } from "types";
+import { OSTYPEenum } from "types";
 import { AnimatePresence } from "framer-motion";
+import { useWallpaperStore, useSavedObjectStore } from "store";
+import { SavedObject } from "@database/saved_object";
 
 const App = () => {
   const [openSettings, setOpenSettings] = useState<boolean>(false);
   const [FSplayerState, setFSplayerState] = useState<boolean>(false);
   const [FloatingHNState, setFloatingHNState] = useState<boolean>(false);
-  const [local_store, setStore] = useLocalStorageState<SavedObject>("SavedObject-offline", {defaultValue: emptySavedObject});
-  const [wallpaper,] = useLocalStorageState<SavedWallpaper>("SavedWallpaper-offline", {defaultValue: emptyWallpaper});
-  const [dir,] = useLocalStorageState<SavedDirectories>("directories", {defaultValue: emptyDirectories});
-  const [, setSongList] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
+  const {local_store, setStore} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
+  const { wallpaper } = useWallpaperStore((state) => { return { wallpaper: state.wallpaper,}; });
 
   function closeSetting(){if(openSettings === true)setOpenSettings(false);}
 
@@ -31,35 +28,16 @@ const App = () => {
 
   function toggleFloatingHNState(){setFloatingHNState(!FloatingHNState);}
 
-  function detectKeyPress(this: Window, ev: any){
-    if(ev.target.id !== "gsearch")console.log(ev.key);
-  }
-
   useEffect(() => {
     const checkOSType = async() => {
       const osType = await type();
-      setStore({ ... local_store, OStype : osType.toString()});
+      let temp: SavedObject = local_store;
+      temp.OStype = osType.toString();
+      setStore(temp);
     }
 
-    window.addEventListener("keydown", detectKeyPress);
     checkOSType();
-    return () => {  window.removeEventListener("keydown", detectKeyPress); }
   }, [])
-
-  useEffect(() => {
-    const reloadSongs = () => {
-      setSongList([]);
-      invoke("get_all_songs", { pathsAsJsonArray: JSON.stringify(dir.Dir) })
-        .then((message: any) => {
-          console.log(JSON.parse(message));
-          setSongList(JSON.parse(message));
-        })
-        .catch((error) => console.log(error));
-    }
-
-    reloadSongs();
-  }, [dir])
-  
 
   return (
     <Router>
@@ -68,10 +46,10 @@ const App = () => {
         data-theme={local_store.ThemeColour} 
         wallpaper-opacity={local_store.WallpaperOpacityAmount}
         onContextMenu={(e) => e.preventDefault()}>
-          <div className={"background_img " + (wallpaper.DisplayWallpaper ? "" : local_store.BGColour)}>
-            {wallpaper.DisplayWallpaper && (<img src={wallpaper.DisplayWallpaper} alt="wallpaper"/>)}
+          <div className={"background_img " + (wallpaper && wallpaper.DisplayWallpaper ? "" : local_store.BGColour)}>
+            {wallpaper && wallpaper.DisplayWallpaper && (<img src={wallpaper.DisplayWallpaper} alt="wallpaper"/>)}
           </div>
-          <div className={"app_darkness_layer " + (wallpaper.DisplayWallpaper ? "image_layer" : "color_layer")}>
+          <div className={"app_darkness_layer " + (wallpaper && wallpaper.DisplayWallpaper ? "image_layer" : "color_layer")}>
             {
               local_store.OStype ===  OSTYPEenum.Windows ? 
                 <HeaderWindows toggleSettings={toggleSettings}/>
@@ -99,18 +77,11 @@ const App = () => {
                     </AnimatePresence>
               </div>
             </div>
-            <div className="app_music_player_container">
               <AppMusicPlayer openPlayer={openPlayer} toggleFloatingHNState={toggleFloatingHNState}/>
-            </div>
-            <div className="app_settings">
               <Settings openSettings={openSettings} closeSettings={closeSetting}/>
-            </div>
-            <div className="fullscreen_music_player">
               <FSMusicPlayer openPlayer={FSplayerState} closePlayer={closePlayer}/>
-            </div>
-            <div className="lyrics_next_history">
               <HistoryNextFloating FloatingHNState={FloatingHNState} toggleFloatingHNState={toggleFloatingHNState}/>
-            </div>
+              <NotifyBottomRight/>
           </div>
       </div>
     </Router>

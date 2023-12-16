@@ -40,6 +40,20 @@ export enum contextMenuButtons{
     ShowInfo = "ShowInfo",
 }
 
+export enum toastType{
+    success = "success",
+    error = "error",
+    info = "info",
+    warning = "warning"
+}
+
+export interface toast{
+    type: toastType;
+    title: string;
+    message: string;
+    timeout: number;
+}
+
 export interface Song{
     id: number,
     title: string,
@@ -49,7 +63,7 @@ export interface Song{
     year: number,
     duration: string,
     path: string,
-    cover: any | null,
+    cover: string | null,
     date_recorded: string,
     date_released: string,
     file_size: number,
@@ -58,13 +72,13 @@ export interface Song{
 
 export interface artist {
     key: number;
-    cover: any | null;
+    cover: string | null;
     artist_name: string;
 }
 
 export interface playlist {
     key: number;
-    cover: any | null;
+    cover: string | null;
     title: string;
     dateCreated: string;
     tracksPaths: string[];
@@ -72,33 +86,17 @@ export interface playlist {
 
 export interface genre {
     key: number;
-    cover: any | null;
+    cover: string | null;
     title: string;
 }
 
 export interface album {
     key: number;
-    cover: any | null;
+    cover: string | null;
     title: string;
 }
 
 export interface mouse_coOrds {
     xPos: number; 
     yPos: number;
-}
-
-export interface Player{
-    playingSongMetadata: Song | null;
-    isPlaying: boolean;
-    playingPosition: number;
-    isShuffling: boolean;
-    repeatingLevel: 0 | 1 | 2;
-}
-
-export const emptyPlayer: Player = {
-    playingSongMetadata: null,
-    isPlaying: false,
-    playingPosition: 0,
-    isShuffling: false,
-    repeatingLevel: 0,
 }

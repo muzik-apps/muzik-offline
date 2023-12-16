@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { FunctionComponent, useState, useEffect } from 'react';
 import "@styles/pages/Settings.scss";
 import { ChevronDown, ComponentIcon, InformationCircleContained, Layout, Lock, SettingsIcon } from "@icons/index";
-import { SettingsNavigator } from '@components/index';
+import { DirectoriesModal, SettingsNavigator } from '@components/index';
 import { selectedSettingENUM } from 'types';
 import { AppearanceSettings, GeneralSettings } from '@layouts/index';
 
@@ -19,6 +19,7 @@ const variants={
 const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
 
     const [selectedSetting, setSelectedSetting] = useState<selectedSettingENUM>(selectedSettingENUM.General);
+    const [CDisOpen, setCDModalState] = useState<boolean>(false);
 
     function convertToEnum(arg: string){
         if(arg == "General")return selectedSettingENUM.General;
@@ -38,47 +39,54 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
     
 
     return (
-        <motion.div className="settings_section"
-            animate={props.openSettings ? "open" : "closed"}
-            variants={variants}
-            transition={{ type: "spring", stiffness: 100, damping: 14 }}
-            >
-            <div className="settings_navigator">
-                <div className="title">
-                    <motion.div whileTap={{scale: 0.98}} onClick={props.closeSettings}>
-                        <ChevronDown />
-                    </motion.div>
-                    <h1>Settings</h1>
-                </div>
-                <SettingsNavigator icon={SettingsIcon} title={selectedSettingENUM.General} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
-                <SettingsNavigator icon={Layout} title={selectedSettingENUM.Appearance} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
-                <SettingsNavigator icon={Lock} title={selectedSettingENUM.Security} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
-                <SettingsNavigator icon={ComponentIcon} title={selectedSettingENUM.Advanced} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
-                <SettingsNavigator icon={InformationCircleContained} title={selectedSettingENUM.About} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
-            </div>
-            <div className="settings_panel">
-                {
-                    (
-                    () => {
-                        switch(selectedSetting){
-                            case selectedSettingENUM.General:
-                                return <GeneralSettings />
-                            case selectedSettingENUM.Appearance:
-                                return <AppearanceSettings />
-                            case selectedSettingENUM.Security:
-                                return <div />
-                            case selectedSettingENUM.Advanced:
-                                return <div />
-                            case selectedSettingENUM.About:
-                                return <div />
-                            default:
-                                return <div />
-                        }
-                    }
-                    )()
+        <>
+            <motion.div className="settings_section"
+                animate={props.openSettings ? "open" : "closed"}
+                variants={variants}
+                transition={{ type: "spring", stiffness: 100, damping: 14 }}
+                >
+                {   props.openSettings &&
+                    <>
+                        <div className="settings_navigator">
+                        <div className="title">
+                            <motion.div whileTap={{scale: 0.98}} onClick={props.closeSettings}>
+                                <ChevronDown />
+                            </motion.div>
+                            <h1>Settings</h1>
+                        </div>
+                        <SettingsNavigator icon={SettingsIcon} title={selectedSettingENUM.General} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
+                        <SettingsNavigator icon={Layout} title={selectedSettingENUM.Appearance} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
+                        <SettingsNavigator icon={Lock} title={selectedSettingENUM.Security} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
+                        <SettingsNavigator icon={ComponentIcon} title={selectedSettingENUM.Advanced} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
+                        <SettingsNavigator icon={InformationCircleContained} title={selectedSettingENUM.About} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
+                        </div>
+                        <div className="settings_panel">
+                            {
+                                (
+                                () => {
+                                    switch(selectedSetting){
+                                        case selectedSettingENUM.General:
+                                            return <GeneralSettings openDirectoryModal={() => setCDModalState(true)}/>
+                                        case selectedSettingENUM.Appearance:
+                                            return <AppearanceSettings />
+                                        case selectedSettingENUM.Security:
+                                            return <div />
+                                        case selectedSettingENUM.Advanced:
+                                            return <div />
+                                        case selectedSettingENUM.About:
+                                            return <div />
+                                        default:
+                                            return <div />
+                                    }
+                                }
+                                )()
+                            }
+                        </div>
+                    </>
                 }
-            </div>
-        </motion.div>
+            </motion.div>
+            <DirectoriesModal isOpen={CDisOpen} closeModal={() => setCDModalState(false)}/>
+        </>
     )
 }
 

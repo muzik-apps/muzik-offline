@@ -3,13 +3,12 @@ import { motion } from 'framer-motion';
 import "@styles/components/music/HistoryUpcoming.scss";
 import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
 import { GeneralContextMenu, SongCardResizable } from "@components/index";
-import useLocalStorageState from "use-local-storage-state";
 
 const HistoryUpcoming = () => {
   const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
   const [selectedView, setSelectedView] = useState<string>("Upcoming_tab");
-  const [SongQueue,] = useLocalStorageState<Song[]>("SongQueue", {defaultValue: []});
-  const [SongHistory,] = useLocalStorageState<Song[]>("SongHistory", {defaultValue: []});
+  const [SongQueue,] = useState<Song[]>([]);
+  const [SongHistory,] = useState<Song[]>([]);
   const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
 
   function selectView(arg: string){setSelectedView(arg);}

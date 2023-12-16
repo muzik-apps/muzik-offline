@@ -3,7 +3,6 @@ import { FunctionComponent, useState } from "react";
 import "@styles/layouts/HistoryNextFloating.scss";
 import { GeneralContextMenu, SongCardResizable } from "@components/index";
 import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
-import useLocalStorageState from "use-local-storage-state";
 
 type HistoryNextFloatingProps = {
     FloatingHNState: boolean;
@@ -18,8 +17,8 @@ const variants={
 const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props: HistoryNextFloatingProps) => {
     const [selectedView, setSelectedView] = useState<string>("Upcoming_tab");
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-    const [SongQueue,] = useLocalStorageState<Song[]>("SongQueue", {defaultValue: []});
-    const [SongHistory,] = useLocalStorageState<Song[]>("SongHistory", {defaultValue: []});
+    const [SongQueue,] = useState<Song[]>([]);
+    const [SongHistory,] = useState<Song[]>([]);
     const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
 
     function selectView(arg: string){setSelectedView(arg);}
@@ -47,48 +46,52 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
                 variants={variants}
                 transition={{ type: "spring", stiffness: 100, damping: 15 }}
             >
-                {
-                    selectedView === "Upcoming_tab" ?
-                    <div className="Upcoming_view">
+                { props.FloatingHNState &&
+                    <>
                         {
-                            SongQueue.slice(0, 20).map((song) => 
-                                <SongCardResizable 
-                                    key={song.id}
-                                    cover={song.cover} 
-                                    songName={song.title}
-                                    artist={song.artist}
-                                    keyV={song.id}
-                                    setMenuOpenData={setMenuOpenData__SongQueue}
-                                    />
-                            )
+                            selectedView === "Upcoming_tab" ?
+                            <div className="Upcoming_view">
+                                {
+                                    SongQueue.slice(0, 20).map((song) => 
+                                        <SongCardResizable 
+                                            key={song.id}
+                                            cover={song.cover} 
+                                            songName={song.title}
+                                            artist={song.artist}
+                                            keyV={song.id}
+                                            setMenuOpenData={setMenuOpenData__SongQueue}
+                                            />
+                                    )
+                                }
+                            </div>
+                            :
+                            <div className="History_view">
+                                {
+                                    SongHistory.slice(SongHistory.length - 21, SongHistory.length - 1).map((song) => 
+                                        <SongCardResizable 
+                                            key={song.id}
+                                            cover={song.cover} 
+                                            songName={song.title}
+                                            artist={song.artist}
+                                            keyV={song.id}
+                                            setMenuOpenData={setMenuOpenData_SongHistory}
+                                            />
+                                    )
+                                }
+                            </div>
                         }
-                    </div>
-                    :
-                    <div className="History_view">
-                        {
-                            SongHistory.slice(SongHistory.length - 21, SongHistory.length - 1).map((song) => 
-                                <SongCardResizable 
-                                    key={song.id}
-                                    cover={song.cover} 
-                                    songName={song.title}
-                                    artist={song.artist}
-                                    keyV={song.id}
-                                    setMenuOpenData={setMenuOpenData_SongHistory}
-                                    />
-                            )
-                        }
-                    </div>
+                        <div className="HistoryUpcoming_tabs">
+                            <motion.div className="Upcoming_tab" onMouseUp={() => selectView("Upcoming_tab")} whileTap={{scale: 0.98}}>
+                            {selectedView === "Upcoming_tab" && <motion.div layoutId="active-pill" className="selected"/>}
+                            <h3>Upcoming</h3>
+                            </motion.div>
+                            <motion.div className="History_tab" onMouseUp={() => selectView("History_tab")} whileTap={{scale: 0.98}}>
+                            {selectedView === "History_tab" && <motion.div layoutId="active-pill" className="selected"/>}
+                            <h3>History</h3>
+                            </motion.div>
+                        </div>
+                    </>
                 }
-                <div className="HistoryUpcoming_tabs">
-                    <motion.div className="Upcoming_tab" onMouseUp={() => selectView("Upcoming_tab")} whileTap={{scale: 0.98}}>
-                    {selectedView === "Upcoming_tab" && <motion.div layoutId="active-pill" className="selected"/>}
-                    <h3>Upcoming</h3>
-                    </motion.div>
-                    <motion.div className="History_tab" onMouseUp={() => selectView("History_tab")} whileTap={{scale: 0.98}}>
-                    {selectedView === "History_tab" && <motion.div layoutId="active-pill" className="selected"/>}
-                    <h3>History</h3>
-                    </motion.div>
-                </div>
             </motion.div>
 
             {

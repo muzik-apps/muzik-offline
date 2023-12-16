@@ -33,6 +33,5 @@ npm run tauri dev
 4. <a href="https://reactrouter.com/en/main">react-router-dom</a>
 5. <a href="https://sass-lang.com/">sass</a>
 6. <a href="https://swiperjs.com/">swiper</a>
-7. <a href="https://www.npmjs.com/package/use-local-storage-state">use-local-storage-state</a>
 
 # Rust libraries used

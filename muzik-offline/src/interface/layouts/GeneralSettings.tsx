@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
 import "@styles/layouts/GeneralSettings.scss";
-import useLocalStorageState from 'use-local-storage-state';
-import { SavedObject, emptySavedObject, viewableSideEl, viewableSideElements, SavedDirectories, emptyDirectories } from "@database/index";
+import { SavedObject, viewableSideEl } from "@database/index";
 import { ChevronDown, Disk, LayersThree, Menu, Microphone, MusicalNote } from "@assets/icons";
 import { selectedGeneralSettingEnum } from "types";
-import { useState } from "react";
-import { DropDownMenuLarge, RadioComponent, DirectoriesModal } from "@components/index";
+import { FunctionComponent, useState } from "react";
+import { DropDownMenuLarge, RadioComponent } from "@components/index";
+import { useSavedObjectStore, useViewableSideElStore } from "store";
 
 const settings_data: {
     key: number;
@@ -40,12 +40,14 @@ const settings_data: {
 
 ]
 
-const GeneralSettings = () => {
+type GeneralSettingsProps = {
+    openDirectoryModal: () => void;
+}
+
+const GeneralSettings: FunctionComponent<GeneralSettingsProps> = (props: GeneralSettingsProps) => {
     const [selectedGeneralSetting, setselectedGeneralSetting] = useState<selectedGeneralSettingEnum>(selectedGeneralSettingEnum.Nothing);
-    const [local_store, setStore] = useLocalStorageState<SavedObject>("SavedObject-offline", {defaultValue: emptySavedObject});
-    const [viewableEl, setviewableEl] = useLocalStorageState<viewableSideEl>("viewableEl", {defaultValue: viewableSideElements});
-    const [dir, setDir] = useLocalStorageState<SavedDirectories>("directories", {defaultValue: emptyDirectories});
-    const [CDisOpen, setCDModalState] = useState<boolean>(false);
+    const {local_store, setStore} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
+    const {viewableEl, setviewableEl } = useViewableSideElStore((state) => { return { viewableEl: state.viewableEl, setviewableEl: state.setviewableEl}; });
 
     function toggleDropDown(arg: selectedGeneralSettingEnum){
         if(arg === selectedGeneralSetting)setselectedGeneralSetting(selectedGeneralSettingEnum.Nothing);
@@ -53,16 +55,17 @@ const GeneralSettings = () => {
     }
 
     function setStoreValue(arg: string, type: string){
-        setStore({ ... local_store, [type] : arg});
+        let temp: SavedObject = local_store;
+        temp[type as keyof SavedObject] = arg as never;
+        setStore(temp);
         setselectedGeneralSetting(selectedGeneralSettingEnum.Nothing);
     }
 
-    function respondAndCloseModal(arg: string[]){
-        setDir({ ... dir, Dir : arg});
-        setCDModalState(false);
+    function setViewableEl(value: boolean, type: string){
+        let temp: viewableSideEl = viewableEl;
+        temp[type as keyof typeof viewableEl] = value;
+        setviewableEl(temp);
     }
-
-    function setViewableEl(value: boolean, type: string){setviewableEl({...viewableEl, [type]: value})}
 
     return (
         <div className="General_settings">
@@ -93,7 +96,7 @@ const GeneralSettings = () => {
                 <div className="setting">
                     <h3>Directories</h3>
                     <div className="directories_container">
-                        <motion.h4 whileTap={{scale: 0.98}} onClick={() => setCDModalState(true)}>click here to change directories</motion.h4>
+                        <motion.h4 whileTap={{scale: 0.98}} onClick={props.openDirectoryModal}>click here to change directories</motion.h4>
                     </div>
                 </div>
                 <div className="setting">
@@ -110,7 +113,6 @@ const GeneralSettings = () => {
                     </div>
                 </div>
             </div>
-            <DirectoriesModal value={dir.Dir} isOpen={CDisOpen} respondAndCloseModal={respondAndCloseModal}/>
         </div>
     )
 }

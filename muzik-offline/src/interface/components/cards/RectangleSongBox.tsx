@@ -5,7 +5,7 @@ import "@styles/components/cards/RectangleSongBox.scss";
 
 type RectangleSongBoxProps = {
     index: number;
-    cover: any | null;
+    cover: string | null;
     songName: string;
     artist: string;
     length: number | string;

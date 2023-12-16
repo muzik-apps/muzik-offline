@@ -1,20 +1,18 @@
 import { motion } from "framer-motion";
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu } from "@components/index";
 import { ChevronDown } from "@assets/icons";
 import "@styles/pages/AllAlbums.scss";
-import { mouse_coOrds, contextMenuEnum, contextMenuButtons, album, Song } from "types";
-import useLocalStorageState from "use-local-storage-state";
+import { mouse_coOrds, contextMenuEnum, contextMenuButtons, album } from "types";
+import { local_albums_db } from "@database/database";
+import { useLiveQuery } from "dexie-react-hooks";
 
 const AllAlbums = () => {
     const [sort, setSort] = useState<string>("Ascending");
     const [openedDDM, setOpenedDDM] = useState<boolean>(false);
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-    const [albums, setAlbums] = useState<album[]>([]);
-    const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
+    const albums = useLiveQuery(() => local_albums_db.albums.toArray()) ?? [];
     const [albumMenuToOpen, setAlbumMenuToOpen] = useState<album | null>(null);
-    
-    const albumsLoaded = useRef<boolean>(false);
 
     function selectOption(arg: string){
         if(arg !== sort)setSort(arg); 
@@ -30,30 +28,6 @@ const AllAlbums = () => {
     function chooseOption(arg: contextMenuButtons){
     
     }
-
-    useEffect(() => {
-        const findAlbums = () => {
-            if(albumsLoaded.current === true)return;
-            if(SongList.length === 0)return;
-            albumsLoaded.current = true;
-            const uniqueSet: Set<string> = new Set();
-            const albums_list = SongList.map((song) => {
-                if(!uniqueSet.has(song.album)){
-                    uniqueSet.add(song.album);
-                    return song.album;
-                }
-                return null; // Returning null for elements that are not added to the uniqueArray
-            }).filter((element) => {
-                return element !== null; // Filtering out elements that were not added to the uniqueArray
-            });
-
-            albums_list.map((album_str, index) => { 
-                if(album_str !== null)setAlbums(oldArray => [...oldArray, { key: index, cover: null, title: album_str}]);
-            });
-        }
-        
-        findAlbums();
-    }, [SongList])
     
     return (
         <motion.div className="AllAlbums"

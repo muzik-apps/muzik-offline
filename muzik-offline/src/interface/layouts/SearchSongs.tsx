@@ -2,14 +2,17 @@ import { RectangleSongBox, GeneralContextMenu } from "@components/index";
 import { mouse_coOrds, contextMenuEnum, Song, contextMenuButtons } from "types";
 import { useState, useRef } from "react";
 import "@styles/layouts/SearchSongs.scss";
-import useLocalStorageState from "use-local-storage-state";
 import { ViewportList } from 'react-viewport-list';
+import { local_songs_db } from "@database/database";
+import { useLiveQuery } from "dexie-react-hooks";
+import { useSearchStore } from "store";
 
 const SearchSongs = () => {
     const [selected, setSelectedSong] = useState<number>(0);
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-    const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
     const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
+    const { query } = useSearchStore((state) => { return { query: state.query}; });
+    const SongList = useLiveQuery(() => local_songs_db.songs.where("title").startsWithIgnoreCase(query).toArray()) ?? [];
 
     const ref = useRef<HTMLDivElement | null>(null);
 

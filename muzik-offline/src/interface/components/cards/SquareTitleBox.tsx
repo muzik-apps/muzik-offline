@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { NullCoverFour, NullCoverOne, NullCoverThree, NullCoverTwo } from '@assets/index';
 
 type SquareTitleBoxProps = {
-    cover: any | null;
+    cover: string | null;
     title: string;
     keyV: number;
     setMenuOpenData: (key: number, co_ords: {xPos: number; yPos: number;}) => void;
@@ -30,7 +30,7 @@ const SquareTitleBox: FunctionComponent<SquareTitleBoxProps> = (props: SquareTit
                     { 
                         !props.cover ? (getRandomCover())()
                         :
-                        <img src={props.cover} alt="SquareTitleBox-img" />
+                        <img src={`data:image/png;base64,${props.cover}`} alt="SquareTitleBox-img" />
                     }
             </motion.div>
             <motion.h3 whileTap={{scale: 0.98}}>{props.title}</motion.h3>

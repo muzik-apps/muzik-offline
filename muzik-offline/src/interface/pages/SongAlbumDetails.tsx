@@ -5,7 +5,6 @@ import "@styles/pages/SongAlbumDetails.scss";
 import { motion } from "framer-motion";
 import { Play, Shuffle } from "@assets/icons";
 import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
-import useLocalStorageState from "use-local-storage-state";
 
 const album: {
     cover: string | null;
@@ -32,7 +31,7 @@ const album: {
 const SongAlbumDetails = () => {
     const [selected, setSelected] = useState<number>(0);
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-    const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
+    const [SongList,] = useState<Song[]>([]);
     const [songMenuToOpen, setSongMenuToOpen] = useState<Song | null>(null);
 
     function selectThisSong(index: number){ setSelected(index); }

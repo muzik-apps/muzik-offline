@@ -1,0 +1,100 @@
+@import "../../constants/constants";
+
+.NotifyBottomRight{
+    position: fixed;
+    width: 255px;
+    height: fit-content;
+    z-index: $z-index-9500;
+    user-select: none;
+    overflow: hidden;
+    border-radius: 20px;
+    border: 1px solid $songs-container-border-col;
+    background: var(--var-songs-container-bg-col);
+    backdrop-filter: var(--var-bg-blur-150);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.10);
+    bottom: 86px;
+    display: flex;
+
+    .covers{
+        margin-top: 13px;
+        margin-left: 13px;
+        margin-bottom: 13px;
+        width: 24px;
+        height: 24px;
+        position: relative;
+        .first_cover, .second_cover{
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            display: flex;
+            overflow: hidden;
+            justify-content: center;
+            align-items: center;
+            svg{
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        .error{
+            background: $red-900;
+        }
+
+        .info{
+            background: $blue-300;
+        }
+
+        .warning{
+            background: $orange-1000;
+        }
+
+        .success{
+            background: $green-300;
+        }
+
+        .first_cover{
+            filter: $layer-blur-50;
+        }
+
+        .second_cover{
+            margin-top: -24px;
+            position: absolute;
+        }
+    }
+
+    .title_and_message{
+        margin-left: 13px;
+        width: 157px;
+        h2{
+            font-size: 16px;
+            height: 20px;
+            margin-top: 4px;
+            width: 157px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        h3{
+            font-size: 12px;
+            margin-top: 0px;
+            width: 157px;
+            margin-bottom: 10px;
+            white-space: wrap;
+            text-wrap: wrap;
+            overflow-x: hidden;
+        }
+    }
+
+    .close_button{
+        margin-left: 13px;
+        margin-top: 13px;
+        margin-bottom: 13px;
+    }
+}
+
+@media only screen and (max-width: 1250px){
+    .NotifyBottomRight{
+        margin-right: -12px;
+    }
+}

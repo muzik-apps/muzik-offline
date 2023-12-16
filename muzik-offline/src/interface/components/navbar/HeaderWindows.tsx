@@ -9,6 +9,7 @@ import { Prev_page, Next_page, Search, Cross, Empty_user } from "@icons/index";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { App_logo } from "@logos/index";
+import { useSearchStore } from "store";
 
 type HeaderWindowsProps = {
     toggleSettings: () => void;
@@ -18,18 +19,15 @@ const HeaderWindows: FunctionComponent<HeaderWindowsProps> = (props: HeaderWindo
 
     const navigate = useNavigate();
     const [searchText, setSearchText] = useState<string>("");
+    const { setSearch } = useSearchStore((state) => { return { setSearch: state.setSearch}; });
 
-    function captureSearch(e: React.ChangeEvent<HTMLInputElement>){
-        setSearchText(e.target.value);
-        //set global search text
-    }
+    function captureSearch(e: React.ChangeEvent<HTMLInputElement>){ setSearchText(e.target.value); }
 
-    function searchFor(){
-        //set complete search global variable to true
-    }
+    function searchFor(){ setSearch(searchText); }
 
     function clearSearch(){
         setSearchText("");
+        setSearch("");
     }
     
     useEffect(() => {

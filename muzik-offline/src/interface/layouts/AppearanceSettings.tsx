@@ -1,33 +1,54 @@
 import { motion } from "framer-motion"
-import useLocalStorageState from "use-local-storage-state";
-import { SavedObject, SavedWallpaper, emptySavedObject, emptyWallpaper } from "@database/index";
+import { SavedObject } from "@database/index";
 import "@styles/layouts/AppearanceSettings.scss"; 
 import { ArrowRefresh, CancelRight } from "@assets/icons";
+import { useSavedObjectStore, useWallpaperStore } from "store";
 
 const AppearanceSettings = () => {
-    const [local_store, setStore] = useLocalStorageState<SavedObject>("SavedObject-offline", {defaultValue: emptySavedObject});
-    const [wallpaper, setWallpaper] = useLocalStorageState<SavedWallpaper>("SavedWallpaper-offline", {defaultValue: emptyWallpaper});
+    const {local_store, setStore} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
+    const { wallpaper, setWallpaper, unsetWallpaper } = useWallpaperStore((state) => { return { wallpaper: state.wallpaper, setWallpaper: state.setWallpaper, unsetWallpaper: state.unsetWallpaper }; });
 
     function uploadImg(e: any){
         const image = e.target.files[0];
         const reader = new FileReader();
         reader.readAsDataURL(image);
-        reader.addEventListener('load', () => setWallpaper({ ... wallpaper, DisplayWallpaper : reader.result}));
-        setStore({ ... local_store, BGColour : ""});
+        
+        reader.addEventListener('load', () => setWallpaper({DisplayWallpaper: reader.result}));
+        let temp: SavedObject = local_store;
+        temp.BGColour = "";
+        setStore(temp);
     }
 
     function changeToBgCCOL(obj: string){
-        setStore({ ... local_store, BGColour : obj});
-        setWallpaper({ ... wallpaper, DisplayWallpaper : null});
+        let temp: SavedObject = local_store;
+        temp.BGColour = obj;
+        setStore(temp);
+        unsetWallpaper();
     }
 
-    function SetThemeColour(arg: string){setStore({ ... local_store, ThemeColour : arg});}
+    function SetThemeColour(arg: string){
+        let temp: SavedObject = local_store;
+        temp.ThemeColour = arg;
+        setStore(temp);
+    }
 
-    function SetPlayerBar(arg: boolean){setStore({ ... local_store, PlayerBar : arg});}
+    function SetPlayerBar(arg: boolean){
+        let temp: SavedObject = local_store;
+        temp.PlayerBar = arg;
+        setStore(temp);
+    }
 
-    function SetAppThemeBlur(arg: boolean){setStore({ ... local_store, AppThemeBlur : arg});}
+    function SetAppThemeBlur(arg: boolean){
+        let temp: SavedObject = local_store;
+        temp.AppThemeBlur = arg;
+        setStore(temp);
+    }
 
-    function SetBackgroundAnimation(arg: boolean){setStore({ ... local_store, AnimateBackground : arg});}
+    function SetBackgroundAnimation(arg: boolean){
+        let temp: SavedObject = local_store;
+        temp.AnimateBackground = arg;
+        setStore(temp);
+    }
 
     return (
         <div className="AppearanceSettings">
@@ -35,7 +56,7 @@ const AppearanceSettings = () => {
             <div className="AppearanceSettings_container">
                 <h3>Background</h3>
                 <div className="background_select">
-                    <motion.label className={"button_select add_wallpaper " + (wallpaper.DisplayWallpaper ? "button_selected" : "")} whileHover={{scale: 1.03}} whileTap={{scale: 0.98}}>
+                    <motion.label className={"button_select add_wallpaper " + (wallpaper && wallpaper.DisplayWallpaper ? "button_selected" : "")} whileHover={{scale: 1.03}} whileTap={{scale: 0.98}}>
                         <input name="background-img" type="file" accept="image/png, image/jpeg" onChange={uploadImg}/>
                         add wallpaper
                     </motion.label>

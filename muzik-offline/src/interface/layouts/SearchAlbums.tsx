@@ -1,15 +1,16 @@
 import { SquareTitleBox, GeneralContextMenu } from "@components/index";
-import { mouse_coOrds, contextMenuEnum, contextMenuButtons, Song, album } from "types";
-import { useState,  useRef, useEffect } from "react";
+import { mouse_coOrds, contextMenuEnum, contextMenuButtons, album } from "types";
+import { useState } from "react";
 import "@styles/layouts/SearchAlbums.scss";
-import useLocalStorageState from "use-local-storage-state";
+import { useLiveQuery } from "dexie-react-hooks";
+import { local_albums_db } from "@database/database";
+import { useSearchStore } from "store";
 
 const SearchAlbums = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [albumMenuToOpen, setAlbumMenuToOpen] = useState<album | null>(null);
-    const [albums, setAlbums] = useState<album[]>([]);
-    const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
-    const albumsLoaded = useRef<boolean>(false);
+    const { query } = useSearchStore((state) => { return { query: state.query}; });
+    const albums = useLiveQuery(() => local_albums_db.albums.where("title").startsWithIgnoreCase(query).toArray()) ?? [];
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
@@ -20,30 +21,6 @@ const SearchAlbums = () => {
     function chooseOption(arg: contextMenuButtons){
     
     }
-
-    useEffect(() => {
-        const findAlbums = () => {
-            if(albumsLoaded.current === true)return;
-            if(SongList.length === 0)return;
-            albumsLoaded.current = true;
-            const uniqueSet: Set<string> = new Set();
-            const albums_list = SongList.map((song) => {
-                if (!uniqueSet.has(song.album)) {
-                    uniqueSet.add(song.album);
-                    return song.album;
-                }
-                return null; // Returning null for elements that are not added to the uniqueArray
-            }).filter((element) => {
-                return element !== null; // Filtering out elements that were not added to the uniqueArray
-            });
-
-            albums_list.map((album_str, index) => { 
-                if(album_str !== null)setAlbums(oldArray => [...oldArray, { key: index, cover: null, title: album_str}]);
-            });
-        }
-        
-        findAlbums();
-    }, [SongList])
 
     return (
         <div className="SearchAlbums">

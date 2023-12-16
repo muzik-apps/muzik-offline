@@ -4,15 +4,16 @@ import { useState, useRef } from "react";
 import { ChevronDown } from "@assets/icons";
 import { DropDownMenuSmall, GeneralContextMenu, RectangleSongBox } from "@components/index";
 import "@styles/pages/AllTracks.scss";
-import useLocalStorageState from "use-local-storage-state";
 import { ViewportList } from 'react-viewport-list';
+import { local_songs_db } from "@database/database";
+import { useLiveQuery } from "dexie-react-hooks";
 
 const AllTracks = () => {
     const [selected, setSelected] = useState<number>(0);
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [sort, setSort] = useState<{aToz: string, by: string}>({aToz: "Ascending", by: "Alphabetically"});
     const [openedDDM, setOpenedDDM] = useState<string | null>(null);
-    const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
+    const SongList = useLiveQuery(() => local_songs_db.songs.toArray()) ?? [];
     const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
 
     const ref = useRef<HTMLDivElement | null>(null);

@@ -81,6 +81,10 @@
         height: calc(100% - 45px);
         overflow-x: hidden;
         overflow-y: scroll;
+
+        .AllTracks_container_bottom_margin{
+            height: 75px;
+        }
     }
 
     .bottom_margin{

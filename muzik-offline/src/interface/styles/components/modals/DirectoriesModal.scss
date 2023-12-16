@@ -11,6 +11,7 @@
     display: none;
     justify-content: center;
     align-items: center;
+    z-index: $z-index-9500;
 
     h2{
         font-size: 20px;
@@ -23,7 +24,8 @@
         padding: 20px;
         box-sizing: border-box;
         border: 1px solid $songs-container-border-col;
-        background: $gray-1000;
+        background: var(--var-songs-container-bg-col);
+        backdrop-filter: var(--var-bg-blur-150);
         border-radius: 20px;
         font-size: 16px;
         resize: none;

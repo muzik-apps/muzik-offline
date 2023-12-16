@@ -4,7 +4,7 @@ import { DotHorizontal, NullMusicCoverFour, NullMusicCoverOne, NullMusicCoverThr
 import "@styles/components/cards/SongCardResizable.scss";
 
 type SongCardResizableProps = {
-    cover: any | null;
+    cover: string | null;
     songName: string;
     artist: string;
     keyV: number;

@@ -11,13 +11,15 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^1.5.1",
+    "dexie": "^3.2.4",
+    "dexie-react-hooks": "^1.1.7",
     "framer-motion": "^10.16.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.19.0",
     "react-viewport-list": "^7.1.2",
     "sass": "^1.66.1",
-    "use-local-storage-state": "^19.1.0"
+    "zustand": "^4.4.7"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.5.6",

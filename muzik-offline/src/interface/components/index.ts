@@ -18,6 +18,7 @@ import GeneralContextMenu from './context_menu/GeneralContextMenu';
 import SearchNavigator from './buttons/SearchNavigator';
 import DirectoriesModal from "./modals/DirectoriesModal";
 import { ShowInfoButton } from './context_menu/ContextMenuButtons';
+import NotifyBottomRight from './toasts/NotifyBottomRight';
 import { PlayButton, PlayNextButton, PlayLaterButton, 
     ShowArtistButton, AddToPlaylistButton, ShowGenreButton, 
     ShowPlaylistButton, ShowAlbumButton } from './context_menu/ContextMenuButtons';
@@ -29,5 +30,6 @@ export {
     SongCardResizable, GeneralContextMenu,
     PlayButton, PlayNextButton, PlayLaterButton, ShowArtistButton,
     AddToPlaylistButton, ShowGenreButton, ShowPlaylistButton,
-    ShowAlbumButton, SearchNavigator, DirectoriesModal, ShowInfoButton
+    ShowAlbumButton, SearchNavigator, DirectoriesModal, ShowInfoButton,
+    NotifyBottomRight
 }

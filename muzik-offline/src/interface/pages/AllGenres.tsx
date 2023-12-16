@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu } from "@components/index";
 import { ChevronDown } from "@assets/icons";
 import "@styles/pages/AllGenres.scss";
-import { mouse_coOrds, contextMenuEnum, contextMenuButtons, Song, genre } from "types";
-import useLocalStorageState from "use-local-storage-state";
+import { mouse_coOrds, contextMenuEnum, contextMenuButtons, genre } from "types";
+import { local_genres_db } from "@database/database";
+import { useLiveQuery } from "dexie-react-hooks";
 
 const AllGenres = () => {
     
@@ -12,10 +13,7 @@ const AllGenres = () => {
     const [openedDDM, setOpenedDDM] = useState<boolean>(false);
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [genreMenuToOpen, setGenreMenuToOpen] = useState<genre | null>(null);
-    const [genres, setGenres] = useState<genre[]>([]);
-    const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
-
-    const genresLoaded = useRef<boolean>(false);
+    const genres = useLiveQuery(() => local_genres_db.genres.toArray()) ?? [];
 
     function selectOption(arg: string){
         if(arg !== sort)setSort(arg); 
@@ -31,30 +29,6 @@ const AllGenres = () => {
     function chooseOption(arg: contextMenuButtons){
     
     }
-
-    useEffect(() => {
-        const findGenre = () => {
-            if(genresLoaded.current === true)return;
-            if(SongList.length === 0)return;
-            genresLoaded.current = true;
-            const uniqueSet: Set<string> = new Set();
-            const genres_list = SongList.map((song) => {
-                if (!uniqueSet.has(song.genre)) {
-                    uniqueSet.add(song.genre);
-                    return song.genre;
-                }
-                return null; // Returning null for elements that are not added to the uniqueArray
-            }).filter((element) => {
-                return element !== null; // Filtering out elements that were not added to the uniqueArray
-            });
-
-            genres_list.map((genre_str, index) => { 
-                if(genre_str !== null)setGenres(oldArray => [...oldArray, { key: index, cover: null, title: genre_str}]);
-            });
-        }
-        
-        findGenre();
-    }, [SongList])
     
     return (
         <motion.div className="AllGenres"

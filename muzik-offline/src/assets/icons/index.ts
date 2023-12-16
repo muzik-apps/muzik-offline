@@ -39,6 +39,10 @@ import NullArtistCoverOne from './Profiles/NullArtistCoverOne';
 import NullArtistCoverTwo from './Profiles/NullArtistCoverTwo';
 import NullArtistCoverThree from './Profiles/NullArtistCoverThree';
 import NullArtistCoverFour from './Profiles/NullArtistCoverFour';
+import CheckGreen from './General/CheckGreen';
+import CrossRed from './General/CrossRed';
+import InformationCircleContainedOrange from './General/InformationCircleContainedOrange';
+import InformationCircleContainedBlue from './General/InformationCircleContainedBlue';
 
 export {
     Next_page, Prev_page, Search, 
@@ -51,5 +55,6 @@ export {
     ArrowCurveLeftRight, ArrowCurveRightUp, ChromeCast,
     Cross, Empty_user, NullMusicCoverOne,
     NullMusicCoverTwo, NullMusicCoverThree, NullMusicCoverFour, NullCoverNull,
-    NullArtistCoverOne, NullArtistCoverTwo, NullArtistCoverThree, NullArtistCoverFour
+    NullArtistCoverOne, NullArtistCoverTwo, NullArtistCoverThree, NullArtistCoverFour,
+    CheckGreen, CrossRed, InformationCircleContainedOrange, InformationCircleContainedBlue
 }

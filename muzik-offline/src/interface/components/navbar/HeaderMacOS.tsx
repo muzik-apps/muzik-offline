@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Prev_page, Next_page, Search, Cross, Empty_user } from "@icons/index";
 import { App_logo } from "@logos/index";
 import { FunctionComponent, useState } from 'react';
+import { useSearchStore } from 'store';
 
 type HeaderMacOSProps = {
     toggleSettings: () => void;
@@ -12,18 +13,15 @@ const HeaderMacOS: FunctionComponent<HeaderMacOSProps>  = (props: HeaderMacOSPro
 
     const navigate = useNavigate();
     const [searchText, setSearchText] = useState<string>("");
+    const { setSearch } = useSearchStore((state) => { return { setSearch: state.setSearch}; });
 
-    function captureSearch(e: React.ChangeEvent<HTMLInputElement>){
-        setSearchText(e.target.value);
-        //set global search text
-    }
+    function captureSearch(e: React.ChangeEvent<HTMLInputElement>){ setSearchText(e.target.value); }
 
-    function searchFor(){
-        //set complete search global variable to true
-    }
+    function searchFor(){ setSearch(searchText); }
 
     function clearSearch(){
         setSearchText("");
+        setSearch("");
     }
     
     return (

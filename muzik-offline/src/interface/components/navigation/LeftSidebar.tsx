@@ -3,11 +3,10 @@ import { AppNavigator } from "@components/index";
 import "@styles/components/navigation/LeftSidebar.scss";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import useLocalStorageState from "use-local-storage-state";
-import { SavedObject, emptySavedObject } from "@database/index";
+import { useSavedObjectStore } from "store";
 
 const LeftSidebar = () => {
-    const [local_store,] = useLocalStorageState<SavedObject>("SavedObject-offline", {defaultValue: emptySavedObject});
+    const {local_store } = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
     const [selectedPanel, setSelectedPanel] = useState<string>(local_store.LaunchTab);
     const navigate = useNavigate();
     const location = useLocation();

@@ -36,8 +36,8 @@
         }
 
         svg{
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vw;
         }
     }
 
@@ -47,7 +47,6 @@
         height: 70px;
         margin-top: -70px;
         background: $blur-element;
-        backdrop-filter: var(--var-bg-blur-150);
         display: flex;
         align-items: center;
         justify-content: space-around;
@@ -55,6 +54,7 @@
         border-top-right-radius: 16px;
         overflow: hidden;
         position: absolute;
+        backdrop-filter: var(--var-bg-blur-150);
 
         .art_and_song_details{
             display: flex;

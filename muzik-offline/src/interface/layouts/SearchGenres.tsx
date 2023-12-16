@@ -1,16 +1,16 @@
 import { SquareTitleBox, GeneralContextMenu } from "@components/index";
-import { mouse_coOrds, contextMenuEnum, contextMenuButtons, Song, genre } from "types";
-import { useState,useEffect, useRef } from "react";
+import { mouse_coOrds, contextMenuEnum, contextMenuButtons, genre } from "types";
+import { useState } from "react";
 import "@styles/layouts/SearchGenres.scss";
-import useLocalStorageState from "use-local-storage-state";
+import { local_genres_db } from "@database/database";
+import { useLiveQuery } from "dexie-react-hooks";
+import { useSearchStore } from "store";
 
 const SearchGenres = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [genreMenuToOpen, setGenreMenuToOpen] = useState<genre | null>(null);
-    const [genres, setGenres] = useState<genre[]>([]);
-    const [SongList,] = useLocalStorageState<Song[]>("SongList", {defaultValue: []});
-
-    const genresLoaded = useRef<boolean>(false);
+    const { query } = useSearchStore((state) => { return { query: state.query}; });
+    const genres = useLiveQuery(() => local_genres_db.genres.where("title").startsWithIgnoreCase(query).toArray()) ?? [];
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
@@ -21,30 +21,6 @@ const SearchGenres = () => {
     function chooseOption(arg: contextMenuButtons){
     
     }
-
-    useEffect(() => {
-        const findGenre = () => {
-            if(genresLoaded.current === true)return;
-            if(SongList.length === 0)return;
-            genresLoaded.current = true;
-            const uniqueSet: Set<string> = new Set();
-            const genres_list = SongList.map((song) => {
-                if (!uniqueSet.has(song.genre)) {
-                    uniqueSet.add(song.genre);
-                    return song.genre;
-                }
-                return null; // Returning null for elements that are not added to the uniqueArray
-            }).filter((element) => {
-                return element !== null; // Filtering out elements that were not added to the uniqueArray
-            });
-
-            genres_list.map((genre_str, index) => { 
-                if(genre_str !== null)setGenres(oldArray => [...oldArray, { key: index, cover: null, title: genre_str}]);
-            });
-        }
-        
-        findGenre();
-    }, [SongList])
 
     return (
         <div className="SearchGenres">
