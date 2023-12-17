@@ -6,6 +6,7 @@ import "@styles/pages/AllAlbums.scss";
 import { mouse_coOrds, contextMenuEnum, contextMenuButtons, album } from "types";
 import { local_albums_db } from "@database/database";
 import { useLiveQuery } from "dexie-react-hooks";
+import { useNavigate } from "react-router-dom";
 
 const AllAlbums = () => {
     const [sort, setSort] = useState<string>("Ascending");
@@ -13,6 +14,7 @@ const AllAlbums = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const albums = useLiveQuery(() => local_albums_db.albums.toArray()) ?? [];
     const [albumMenuToOpen, setAlbumMenuToOpen] = useState<album | null>(null);
+    const navigate = useNavigate();
 
     function selectOption(arg: string){
         if(arg !== sort)setSort(arg); 
@@ -28,6 +30,8 @@ const AllAlbums = () => {
     function chooseOption(arg: contextMenuButtons){
     
     }
+
+    function navigateTo(key: number){ navigate("/AlbumDetails/" + key); }
     
     return (
         <motion.div className="AllAlbums"
@@ -62,6 +66,7 @@ const AllAlbums = () => {
                     cover={album.cover} 
                     title={album.title}
                     keyV={album.key}
+                    navigateTo={navigateTo}
                     setMenuOpenData={setMenuOpenData}/>
                 )}
             </div>

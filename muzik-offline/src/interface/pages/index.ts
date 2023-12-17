@@ -1,5 +1,5 @@
 import Settings from './Settings';
-import SongAlbumDetails from './SongAlbumDetails';
+import AlbumDetails from './AlbumDetails';
 import AllPlaylists from './AllPlaylists';
 import AllTracks from './AllTracks';
 import AllGenres from './AllGenres';
@@ -8,6 +8,6 @@ import AllArtists from "./AllArtists";
 import SearchPage from './SearchPage';
 
 export {
-    Settings, SongAlbumDetails, AllPlaylists, AllTracks,
+    Settings, AlbumDetails, AllPlaylists, AllTracks,
     AllGenres, AllAlbums, AllArtists, SearchPage
 }

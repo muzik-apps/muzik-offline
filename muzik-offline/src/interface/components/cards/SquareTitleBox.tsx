@@ -8,6 +8,7 @@ type SquareTitleBoxProps = {
     title: string;
     keyV: number;
     setMenuOpenData: (key: number, co_ords: {xPos: number; yPos: number;}) => void;
+    navigateTo: (key: number) => void;
 }
 
 const SquareTitleBox: FunctionComponent<SquareTitleBoxProps> = (props: SquareTitleBoxProps) => {
@@ -20,20 +21,22 @@ const SquareTitleBox: FunctionComponent<SquareTitleBoxProps> = (props: SquareTit
         else return NullCoverFour;
     }
 
+    function navigateTo(){ props.navigateTo(props.keyV); }
+
     return (
         <div className="SquareTitleBox" onContextMenu={(e) => {
             e.preventDefault();
             e.stopPropagation();
             props.setMenuOpenData(props.keyV, {xPos: e.pageX, yPos: e.pageY});
         }}>
-            <motion.div className="title_cover" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
+            <motion.div className="title_cover" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={navigateTo}>
                     { 
                         !props.cover ? (getRandomCover())()
                         :
                         <img src={`data:image/png;base64,${props.cover}`} alt="SquareTitleBox-img" />
                     }
             </motion.div>
-            <motion.h3 whileTap={{scale: 0.98}}>{props.title}</motion.h3>
+            <motion.h3 whileTap={{scale: 0.98}} onClick={navigateTo}>{props.title}</motion.h3>
         </div>
     )
 }

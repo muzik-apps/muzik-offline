@@ -1,10 +1,9 @@
 import { RectangleSongBox, GeneralContextMenu } from "@components/index";
 import { mouse_coOrds, contextMenuEnum, Song, contextMenuButtons } from "types";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import "@styles/layouts/SearchSongs.scss";
 import { ViewportList } from 'react-viewport-list';
 import { local_songs_db } from "@database/database";
-import { useLiveQuery } from "dexie-react-hooks";
 import { useSearchStore } from "store";
 
 const SearchSongs = () => {
@@ -12,7 +11,7 @@ const SearchSongs = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
-    const SongList = useLiveQuery(() => local_songs_db.songs.where("title").startsWithIgnoreCase(query).toArray()) ?? [];
+    const [SongList, setSongLists] = useState<Song[]>([]);
 
     const ref = useRef<HTMLDivElement | null>(null);
 
@@ -27,6 +26,14 @@ const SearchSongs = () => {
     function chooseOption(arg: contextMenuButtons){
     
     }
+
+    useEffect(() => {
+        const resetSongLists = () => {
+            local_songs_db.songs.where("title").startsWithIgnoreCase(query).toArray().then((res) => { setSongLists(res);});
+        }
+
+        resetSongLists();
+    }, [query])
 
     return (
         <div className="SearchSongs">

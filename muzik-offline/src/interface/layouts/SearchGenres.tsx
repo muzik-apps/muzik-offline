@@ -1,16 +1,15 @@
 import { SquareTitleBox, GeneralContextMenu } from "@components/index";
 import { mouse_coOrds, contextMenuEnum, contextMenuButtons, genre } from "types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "@styles/layouts/SearchGenres.scss";
 import { local_genres_db } from "@database/database";
-import { useLiveQuery } from "dexie-react-hooks";
 import { useSearchStore } from "store";
 
 const SearchGenres = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [genreMenuToOpen, setGenreMenuToOpen] = useState<genre | null>(null);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
-    const genres = useLiveQuery(() => local_genres_db.genres.where("title").startsWithIgnoreCase(query).toArray()) ?? [];
+    const [genres, setGenres] = useState<genre[]>([]);
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
@@ -22,6 +21,18 @@ const SearchGenres = () => {
     
     }
 
+    function navigateTo(key: number){
+        console.log("Navigate to genre with key: " + key);
+    }
+
+    useEffect(() => {
+        const resetGenres = () => {
+            local_genres_db.genres.where("title").startsWithIgnoreCase(query).toArray().then((res) => { setGenres(res);});
+        }
+
+        resetGenres();
+    }, [query])
+
     return (
         <div className="SearchGenres">
             <div className="SearchGenres-container">
@@ -31,6 +42,7 @@ const SearchGenres = () => {
                         cover={genre.cover} 
                         title={genre.title}
                         keyV={genre.key}
+                        navigateTo={navigateTo}
                         setMenuOpenData={setMenuOpenData}/>
                     )}
             </div>

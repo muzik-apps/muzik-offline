@@ -52,7 +52,7 @@ pub async fn get_songs_in_path(dir_path: &str, song_id: &mut i32) -> Vec<Song>{
     songs 
 }
 
-async fn read_from_path(path: &str,  song_id: &mut i32) -> Result<Song, Box<dyn std::error::Error>> {
+async fn read_from_path(path: &str, song_id: &mut i32) -> Result<Song, Box<dyn std::error::Error>> {
     let tag = Tag::read_from_path(path)?;
     *song_id += 1;
 
@@ -64,6 +64,7 @@ async fn read_from_path(path: &str,  song_id: &mut i32) -> Result<Song, Box<dyn 
         genre: String::from(""),
         year: 0,
         duration: String::from(""),
+        duration_seconds: 0,
         path: String::from(""),
         cover: None,
         date_recorded: String::from(""),
@@ -115,9 +116,11 @@ async fn read_from_path(path: &str,  song_id: &mut i32) -> Result<Song, Box<dyn 
     //DURATION
     match mp3_duration::from_path(&path){
         Ok(duration) => {
-            song_meta_data.duration = duration_to_string(duration);
+            song_meta_data.duration_seconds = duration.as_secs();
+            song_meta_data.duration = duration_to_string(&duration);
         },
         Err(_) => {
+            song_meta_data.duration_seconds = 0;
             song_meta_data.duration = String::from("00:00");
         },
     }
@@ -183,7 +186,7 @@ async fn read_from_path(path: &str,  song_id: &mut i32) -> Result<Song, Box<dyn 
     Ok(song_meta_data)
 }
 
-fn duration_to_string(duration: std::time::Duration) -> String {
+fn duration_to_string(duration: &std::time::Duration) -> String {
     let seconds = duration.as_secs();
     let minutes = seconds / 60;
     let seconds = seconds % 60;

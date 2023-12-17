@@ -29,6 +29,10 @@ const AllGenres = () => {
     function chooseOption(arg: contextMenuButtons){
     
     }
+
+    function navigateTo(key: number){
+        console.log("Navigate to album with key: " + key);
+    }
     
     return (
         <motion.div className="AllGenres"
@@ -63,6 +67,7 @@ const AllGenres = () => {
                         cover={genre.cover} 
                         title={genre.title}
                         keyV={genre.key}
+                        navigateTo={navigateTo}
                         setMenuOpenData={setMenuOpenData}/>
                     )}
             </div>

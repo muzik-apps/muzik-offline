@@ -1,6 +1,6 @@
 import "@styles/App/App.scss";
 import { AppMusicPlayer, LeftSidebar, FSMusicPlayer, HeaderLinuxOS, HeaderMacOS, HeaderWindows, NotifyBottomRight } from "@components/index";
-import { AllGenres, AllPlaylists, AllTracks, Settings, SongAlbumDetails, 
+import { AllGenres, AllPlaylists, AllTracks, Settings, AlbumDetails, 
   AllAlbums, AllArtists, SearchPage } from "@pages/index";
 import { useEffect, useState } from "react";
 import { type } from '@tauri-apps/api/os';
@@ -71,8 +71,8 @@ const App = () => {
                             <Route path="/AllAlbums" element={<AllAlbums/>}/>
                             <Route path="/AllGenres" element={<AllGenres/>}/>
                             <Route path="/AllPlaylists" element={<AllPlaylists/>}/>
-                            <Route path="/SongAlbumDetails" element={<SongAlbumDetails/>}/>
                             <Route path="/SearchPage" element={<SearchPage/>}/>
+                            <Route path="/AlbumDetails/:key" element={<AlbumDetails/>}/>
                       </Routes>
                     </AnimatePresence>
               </div>

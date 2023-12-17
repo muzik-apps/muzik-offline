@@ -1,42 +1,27 @@
-import { useState } from "react";
-import { artist1, largealbumpic } from "@assets/index";
+import { useEffect, useState } from "react";
+import { NullCoverFour, NullCoverOne, NullCoverThree, NullCoverTwo, artist1 } from "@assets/index";
 import { GeneralContextMenu, RectangleSongBox } from "@components/index";
-import "@styles/pages/SongAlbumDetails.scss";
+import "@styles/pages/AlbumDetails.scss";
 import { motion } from "framer-motion";
 import { Play, Shuffle } from "@assets/icons";
 import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
+import { useParams } from "react-router-dom";
+import { local_albums_db } from "@database/database";
+import { getAlbumSongs, secondsToTimeFormat } from "utils";
 
-const album: {
-    cover: string | null;
-    title: string;
-    artist: string;
-    genre: string;
-    year: string;
-    hearted: boolean;
-    song_count: number;
-    length: number;
-    copyright: string;
-} = {
-    cover: largealbumpic,
-    title: "Album/Song/MT name goes here",
-    artist: "Artist name goes here",
-    genre: "Genre goes here",
-    year: "2022",
-    hearted: true,
-    song_count: 4,
-    length: 11,
-    copyright: "c Lorem ipsum dolor sit amet massa suspendisse ac venenatis tincidunt vestibulum. Interdum pulvinar sodales mollis auctor metus."
-}
+interface AlbumMD {cover: string | null;title: string;artist: string;year: string;song_count: number;length: string;}
 
-const SongAlbumDetails = () => {
+const emptyMD: AlbumMD = {cover: null,title: "",artist: "",year: "",song_count: 0,length: ""}
+
+const AlbumDetails = () => {
     const [selected, setSelected] = useState<number>(0);
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-    const [SongList,] = useState<Song[]>([]);
+    const [SongList, setSongList] = useState<Song[]>([]);
+    const [album_metadata, setAlbumMetadata] = useState<AlbumMD>(emptyMD);
     const [songMenuToOpen, setSongMenuToOpen] = useState<Song | null>(null);
+    const { key } = useParams(); 
 
     function selectThisSong(index: number){ setSelected(index); }
-
-    function calculateListenTime(len: number){return "";}
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
@@ -48,29 +33,74 @@ const SongAlbumDetails = () => {
     
     }
 
+    function getRandomCover(): () => JSX.Element{
+        if(key === undefined)return NullCoverOne;
+        const modv: number = Number.parseInt(key) % 4;
+        if(modv === 0)return NullCoverOne;
+        else if(modv === 1)return NullCoverTwo;
+        else if(modv === 2)return NullCoverThree;
+        else return NullCoverFour;
+    }
+
+    useEffect(() => {
+        const setAlbumSongs = () => {
+            if(key === undefined)return;
+            local_albums_db.albums.where("key").equals(Number.parseInt(key)).toArray().then(async(res) => {
+                const result = await getAlbumSongs(res[0]);
+                setAlbumMetadata({
+                    cover: res[0].cover,
+                    title: res[0].title,
+                    artist: result.songs[0].artist,
+                    year: result.songs[0].year.toString(),
+                    song_count: result.songs.length,
+                    length: secondsToTimeFormat(result.totalDuration)
+                });
+                setSongList(result.songs);
+            }).catch((_err) => {});
+        }
+
+        setAlbumSongs();
+    }, [])
+    
+
     return (
-        <motion.div className="SongAlbumDetails"
+        <motion.div className="AlbumDetails"
         initial={{scale: 0.9, opacity: 0}}
         animate={{scale: 1, opacity: 1}}
         exit={{scale: 0.9, opacity: 0}}>
             <div className="header_content">
                 <div className="cover_art">
                     <div className="first_cover">
-                        <img src={album.cover!} alt="first-cover"/>
+                        {
+                            album_metadata.cover ?
+                                <img src={`data:image/png;base64,${album_metadata.cover}`} alt="first-cover"/>
+                            :
+                            getRandomCover()()
+                        }
                     </div>
                     <div className="second_cover">
-                        <img src={album.cover!} alt="second-cover"/>
+                        {
+                            album_metadata.cover ?
+                                <img src={`data:image/png;base64,${album_metadata.cover}`} alt="second-cover"/>
+                            :
+                            getRandomCover()()
+                        }
                     </div>
                 </div>
                 <div className="details">
-                    <h2>{album.title}</h2>
+                    <h2>{album_metadata.title}</h2>
                     <div className="artist_details">
                         <div className="artist_profile">
-                            <img src={artist1} alt=""/>
+                            {
+                                album_metadata.cover ?
+                                    <img src={`data:image/png;base64,${album_metadata.cover}`} alt="second-cover"/>
+                                :
+                                getRandomCover()()
+                            }
                         </div>
-                        <h3>{album.artist}</h3>
+                        <h3>{album_metadata.artist}</h3>
                     </div>
-                    <h4>{album.genre + " " + album.year}</h4>
+                    <h4>{album_metadata.year}</h4>
                     <div className="action_buttons">
                         <motion.div className="PlayIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
                             <Play />
@@ -101,13 +131,12 @@ const SongAlbumDetails = () => {
                     )
                 }
                 <div className="footer_content">
-                    <h4>{album.song_count} Songs, {calculateListenTime(album.length)} minutes listen time</h4>
-                    <p>{album.copyright}</p>
+                    <h4>{album_metadata.song_count} {album_metadata.song_count > 1 ? "Songs" : "Song"}, {album_metadata.length} listen time</h4>
                 </div>
             </div>
             {
                 songMenuToOpen && (
-                    <div className="SongAlbumDetails-ContextMenu-container" 
+                    <div className="AlbumDetails-ContextMenu-container" 
                     onClick={() => {
                         setSongMenuToOpen(null);
                         setCoords({xPos: 0, yPos: 0});
@@ -131,4 +160,4 @@ const SongAlbumDetails = () => {
     )
 }
 
-export default SongAlbumDetails
+export default AlbumDetails

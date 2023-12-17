@@ -1,6 +1,6 @@
 @import "../constants/constants";
 
-.SongAlbumDetails{
+.AlbumDetails{
     margin-top: 23px;
     min-width: 859px;
     width: calc(100vw - var(--var-right-side-bar-width-expanded));
@@ -35,6 +35,11 @@
                     height: 100%;
                     object-fit: cover;
                 }
+
+                svg{
+                    width: 100%;
+                    height: 100%;
+                }
             }
     
             .first_cover{
@@ -56,6 +61,10 @@
                 font-size: 20px;
                 margin-top: 68px;
                 height: 23px;
+                text-wrap: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin-right: 10px;
             }
 
             .artist_details{
@@ -81,6 +90,11 @@
                         height: 100%;
                         object-fit: cover;
                     }
+
+                    svg{
+                        width: 100%;
+                        height: 100%;
+                    }
                 }
 
                 h3{
@@ -103,7 +117,7 @@
             .action_buttons{
                 display: flex;
 
-                .PlayIcon, .HeartFullIcon, .HeartIcon{
+                .PlayIcon, .HeartFullIcon, .HeartIcon, .ShuffleIcon{
                     display: flex;
                     background: $btn-clickable;
                     backdrop-filter: var(--var-bg-blur-150);
@@ -128,6 +142,7 @@
                     svg{
                         path{
                             fill: $app-theme-col;
+                            stroke: $app-theme-col;
                         }
                     }
                 }
@@ -174,7 +189,7 @@
 
 }
 
-.SongAlbumDetails-ContextMenu-container{
+.AlbumDetails-ContextMenu-container{
     width: 100vw;
     height: calc(100vh - 32px);
     position: fixed;
@@ -184,7 +199,7 @@
 }
 
 @media only screen and (max-width: 1300px){
-    .SongAlbumDetails{
+    .AlbumDetails{
         min-width: 759px;
         width: calc(100vw - var(--var-right-side-bar-width-expanded));
 
@@ -196,7 +211,7 @@
 }
 
 @media only screen and (max-width: 1180px){
-    .SongAlbumDetails{
+    .AlbumDetails{
         min-width: 759px;
         width: calc(100vw - var(--var-right-side-bar-width-minimized));
 
@@ -208,7 +223,7 @@
 }
 
 @media only screen and (max-width: 1046px){
-    .SongAlbumDetails{
+    .AlbumDetails{
         min-width: 759px;
         width: calc(100vw - var(--var-right-side-bar-width-smallest));
 

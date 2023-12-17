@@ -1,16 +1,17 @@
 import { SquareTitleBox, GeneralContextMenu } from "@components/index";
 import { mouse_coOrds, contextMenuEnum, contextMenuButtons, album } from "types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "@styles/layouts/SearchAlbums.scss";
-import { useLiveQuery } from "dexie-react-hooks";
 import { local_albums_db } from "@database/database";
 import { useSearchStore } from "store";
+import { useNavigate } from "react-router-dom";
 
 const SearchAlbums = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [albumMenuToOpen, setAlbumMenuToOpen] = useState<album | null>(null);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
-    const albums = useLiveQuery(() => local_albums_db.albums.where("title").startsWithIgnoreCase(query).toArray()) ?? [];
+    const [albums, setAlbums] = useState<album[]>([]);
+    const navigate = useNavigate();
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
@@ -22,6 +23,16 @@ const SearchAlbums = () => {
     
     }
 
+    function navigateTo(key: number){ navigate("/AlbumDetails/" + key); }
+
+    useEffect(() => {
+        const resetAlbums = () => {
+            local_albums_db.albums.where("title").startsWithIgnoreCase(query).toArray().then((res) => { setAlbums(res);});
+        }
+
+        resetAlbums();
+    }, [query])
+
     return (
         <div className="SearchAlbums">
             <div className="SearchAlbums-container">
@@ -31,6 +42,7 @@ const SearchAlbums = () => {
                         cover={album.cover} 
                         title={album.title}
                         keyV={album.key}
+                        navigateTo={navigateTo}
                         setMenuOpenData={setMenuOpenData}/>
                     )}
             </div>

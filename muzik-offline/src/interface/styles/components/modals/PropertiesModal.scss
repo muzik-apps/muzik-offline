@@ -1,0 +1,98 @@
+@import "../../constants/constants";
+
+.PropertiesModal{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background: $blur-element;
+    flex-direction: column;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: $z-index-9500;
+
+    .modal{
+        width: 500px;
+        height: 350px;
+        padding: 20px;
+        border: 1px solid $songs-container-border-col;
+        background: var(--var-songs-container-bg-col);
+        backdrop-filter: var(--var-bg-blur-150);
+        border-radius: 20px;
+
+        h2{
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .properties_grid{
+            width: 100%;
+            height: 300px;
+            overflow-y: auto; /* This will make a vertical scrollbar appear when content overflows */
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px; /* Adjust the gap between columns if needed */
+
+            .properties_grid_item{
+                width: 230px;
+                h3{
+                    width: 230px;
+                    font-size: 16px;
+                    text-wrap: wrap;
+                    word-wrap: break-word;
+                }
+
+                p{
+                    width: 230px;
+                    font-size: 12px;
+                    text-wrap: wrap;
+                    word-wrap: break-word;
+                }
+
+                h4{
+                    width: 230px;
+                    font-size: 16px;
+                    color: $app-theme-col;
+                    text-wrap: wrap;
+                    text-wrap: wrap;
+                    word-wrap: break-word;
+                    cursor: pointer;
+                }
+            }
+        }
+    
+        .playlist_songs_paths{
+            width: 100%;
+            height: 100%;
+            .properties_grid_item{
+                h3{
+                    font-size: 16px;
+                }
+
+                p{
+                    font-size: 12px;
+                }
+            }
+
+            .playlist_songs_paths_list{
+                width: 100%;
+                height: calc(100% - 40px);
+                overflow-y: auto;
+                .playlist_songs_paths_list_item{
+                    p{
+                        width: 100%;
+                        font-size: 12px;
+                        text-wrap: wrap;
+                        word-wrap: break-word;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.PropertiesModal-visible{
+    display: flex;
+}

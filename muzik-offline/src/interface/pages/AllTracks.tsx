@@ -2,7 +2,7 @@ import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
 import { motion } from "framer-motion";
 import { useState, useRef } from "react";
 import { ChevronDown } from "@assets/icons";
-import { DropDownMenuSmall, GeneralContextMenu, RectangleSongBox } from "@components/index";
+import { DropDownMenuSmall, GeneralContextMenu, PropertiesModal, RectangleSongBox } from "@components/index";
 import "@styles/pages/AllTracks.scss";
 import { ViewportList } from 'react-viewport-list';
 import { local_songs_db } from "@database/database";
@@ -15,6 +15,7 @@ const AllTracks = () => {
     const [openedDDM, setOpenedDDM] = useState<string | null>(null);
     const SongList = useLiveQuery(() => local_songs_db.songs.toArray()) ?? [];
     const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const ref = useRef<HTMLDivElement | null>(null);
 
@@ -33,7 +34,7 @@ const AllTracks = () => {
     }
 
     function chooseOption(arg: contextMenuButtons){
-    
+        if(arg === contextMenuButtons.ShowInfo){ setIsOpen(true);}
     }
     
     return (
@@ -102,11 +103,13 @@ const AllTracks = () => {
             {
                 songMenuToOpen && (
                     <div className="AllTracks-ContextMenu-container" 
-                    onClick={() => {
+                    onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+                        if(e.target !== e.currentTarget)return;
                         setSongMenuToOpen(null);
                         setCoords({xPos: 0, yPos: 0});
                     }} 
-                    onContextMenu={(e) => {
+                    onContextMenu={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+                        if(e.target !== e.currentTarget)return;
                         e.preventDefault();
                         setSongMenuToOpen(null);
                         setCoords({xPos: 0, yPos: 0});
@@ -122,6 +125,7 @@ const AllTracks = () => {
                 )
             }
             <div className="bottom_margin"/>
+            <PropertiesModal isOpen={isOpen} song={songMenuToOpen!} closeModal={() => {setIsOpen(false); setSongMenuToOpen(null);}} />
         </motion.div>
     )
 }

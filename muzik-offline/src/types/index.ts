@@ -62,6 +62,7 @@ export interface Song{
     genre: string,
     year: number,
     duration: string,
+    duration_seconds: number,
     path: string,
     cover: string | null,
     date_recorded: string,

@@ -101,6 +101,7 @@
             display: flex;
             width: 120px;
             height: 32px;
+            z-index: $z-index-9999;
     
             .button_area, #maximize{
                 display: flex;

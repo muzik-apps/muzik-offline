@@ -1,16 +1,15 @@
 import { SquareTitleBox, GeneralContextMenu } from "@components/index";
 import { mouse_coOrds, contextMenuEnum, contextMenuButtons, artist } from "types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "@styles/layouts/SearchArtists.scss";
 import { local_artists_db } from "@database/database";
-import { useLiveQuery } from "dexie-react-hooks";
 import { useSearchStore } from "store";
 
 const SearchArtists = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [artistMenuToOpen, setArtistMenuToOpen] = useState<artist | null>(null);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
-    const artists = useLiveQuery(() => local_artists_db.artists.where("artist_name").startsWithIgnoreCase(query).toArray()) ?? [];
+    const [artists, setArtists] = useState<artist[]>([]);
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
@@ -22,6 +21,18 @@ const SearchArtists = () => {
     
     }
 
+    function navigateTo(key: number){
+        console.log("Navigate to artist with key: " + key);
+    }
+
+    useEffect(() => {
+        const resetArtists = () => {
+            local_artists_db.artists.where("artist_name").startsWithIgnoreCase(query).toArray().then((res) => { setArtists(res);});
+        }
+
+        resetArtists();
+    }, [query])
+
     return (
         <div className="SearchArtists">
             <div className="SearchArtists-container">
@@ -31,6 +42,7 @@ const SearchArtists = () => {
                         cover={artist.cover} 
                         title={artist.artist_name}
                         keyV={artist.key}
+                        navigateTo={navigateTo}
                         setMenuOpenData={setMenuOpenData}/>
                     )}
             </div>
