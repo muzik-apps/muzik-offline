@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Song, playlist } from "types";
 import "@styles/components/modals/PropertiesModal.scss";
+import { invoke } from "@tauri-apps/api";
 
 type PropertiesModalProps = {
     song?: Song;
@@ -12,20 +13,20 @@ type PropertiesModalProps = {
 const PropertiesModal = (props: PropertiesModalProps) => {
 
     function formatBytes(bytes: number, decimals: number = 0) {
-        if (!+bytes) return '0 Bytes'
+        if (!+bytes) return '0 Bytes';
     
-        const k = 1024
-        const dm = decimals < 0 ? 0 : decimals
-        const sizes = ['bytes', 'kb', 'mb', 'gb', 'tb', 'pb', 'eb', 'zb', 'yb']
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['bytes', 'kb', 'mb', 'gb', 'tb', 'pb', 'eb', 'zb', 'yb'];
     
         const i = Math.floor(Math.log(bytes) / Math.log(k));
     
-        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
     }
 
     function openFileLocation(){
         if(props.song){
-            
+            invoke("open_in_file_manager", { filePath: props.song.path });
         }
     }
 

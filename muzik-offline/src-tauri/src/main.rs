@@ -3,6 +3,7 @@
 
 mod metadata_retriever;
 mod components;
+mod commands;
 
 use components::Song;
 use metadata_retriever::{get_songs_in_path, decode_directories};
@@ -32,9 +33,14 @@ async fn get_all_songs(paths_as_json_array: String) -> Result<String, String> {
     }
 }
 
+#[tauri::command]
+fn open_in_file_manager(file_path: &str) {
+    commands::open_file_at(&file_path);
+}
+
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, get_all_songs])
+        .invoke_handler(tauri::generate_handler![greet, get_all_songs, open_in_file_manager])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
