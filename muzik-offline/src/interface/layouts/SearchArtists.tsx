@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import "@styles/layouts/SearchArtists.scss";
 import { local_artists_db } from "@database/database";
 import { useSearchStore } from "store";
+import { useNavigate } from "react-router-dom";
 
 const SearchArtists = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [artistMenuToOpen, setArtistMenuToOpen] = useState<artist | null>(null);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
     const [artists, setArtists] = useState<artist[]>([]);
+    const navigate = useNavigate();
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
@@ -18,12 +20,12 @@ const SearchArtists = () => {
     }
 
     function chooseOption(arg: contextMenuButtons){
-    
+        if(arg == contextMenuButtons.ShowArtist && artistMenuToOpen){
+            navigateTo(artistMenuToOpen.key);
+        }
     }
 
-    function navigateTo(key: number){
-        console.log("Navigate to artist with key: " + key);
-    }
+    function navigateTo(key: number){ navigate("/ArtistCatalogue/" + artists[key].artist_name); }
 
     useEffect(() => {
         const resetArtists = () => {

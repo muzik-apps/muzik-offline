@@ -59,6 +59,7 @@ async fn read_from_path(path: &str, song_id: &mut i32) -> Result<Song, Box<dyn s
     let mut song_meta_data = Song {
         id: *song_id,
         title: String::from(""),
+        name: String::from(""),
         artist: String::from(""),
         album: String::from(""),
         genre: String::from(""),
@@ -80,6 +81,9 @@ async fn read_from_path(path: &str, song_id: &mut i32) -> Result<Song, Box<dyn s
     else{
         song_meta_data.title = String::from("Unknown Title");
     }
+
+    //NAME
+    song_meta_data.name = extract_file_name(&path);
     
     //ARTIST
     if let Some(artist) = tag.artist() {
@@ -197,5 +201,18 @@ fn duration_to_string(duration: &std::time::Duration) -> String {
         format!("{}:{:02}:{:02}", hours, minutes, seconds)
     } else {
         format!("{}:{:02}", minutes, seconds)
+    }
+}
+
+fn extract_file_name(file_path: &str) -> String {
+    let path = Path::new(file_path);
+
+    match path.file_stem(){
+        Some(file_name) => {
+            file_name.to_string_lossy().to_string()
+        },
+        None => {
+            String::from("Unknown file name")
+        },
     }
 }

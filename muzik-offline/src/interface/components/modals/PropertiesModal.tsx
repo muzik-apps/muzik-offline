@@ -39,7 +39,7 @@ const PropertiesModal = (props: PropertiesModalProps) => {
                 { props.song && 
                     <div className="properties_grid">
                         <div className="properties_grid_item">
-                            <h3>Name</h3>
+                            <h3>Title</h3>
                             <p>{props.song.title}</p>
                         </div>
                         <div className="properties_grid_item">

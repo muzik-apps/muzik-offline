@@ -1,7 +1,7 @@
 import "@styles/App/App.scss";
 import { AppMusicPlayer, LeftSidebar, FSMusicPlayer, HeaderLinuxOS, HeaderMacOS, HeaderWindows, NotifyBottomRight } from "@components/index";
 import { AllGenres, AllPlaylists, AllTracks, Settings, AlbumDetails, 
-  AllAlbums, AllArtists, SearchPage } from "@pages/index";
+  AllAlbums, AllArtists, SearchPage, ArtistCatalogue } from "@pages/index";
 import { useEffect, useState } from "react";
 import { type } from '@tauri-apps/api/os';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
@@ -72,7 +72,8 @@ const App = () => {
                             <Route path="/AllGenres" element={<AllGenres/>}/>
                             <Route path="/AllPlaylists" element={<AllPlaylists/>}/>
                             <Route path="/SearchPage" element={<SearchPage/>}/>
-                            <Route path="/AlbumDetails/:key" element={<AlbumDetails/>}/>
+                            <Route path="/AlbumDetails/:album_key/:artist_name" element={<AlbumDetails/>}/>
+                            <Route path="/ArtistCatalogue/:artist_name" element={<ArtistCatalogue/>}/>
                       </Routes>
                     </AnimatePresence>
               </div>

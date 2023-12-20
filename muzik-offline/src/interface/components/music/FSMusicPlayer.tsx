@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import "@styles/components/music/FSMusicPlayer.scss";
-import { NullCoverFour, NullCoverOne, NullCoverThree, NullCoverTwo } from "@assets/index";
 import { FunctionComponent, useState } from "react";
 import { appWindow } from '@tauri-apps/api/window';
 import { HistoryUpcoming, MainMusicPlayer } from "@components/index";
 import { OSTYPEenum } from "types";
 import { NullCoverNull } from "@assets/icons";
 import { useSavedObjectStore, usePlayerStore } from "store";
+import { getRandomCover } from "utils";
 
 type FSMusicPlayerProps = {
     openPlayer: boolean;
@@ -47,15 +47,6 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
         }
     }
 
-    function getRandomCover(): () => JSX.Element{
-        const id = Player.playingSongMetadata?.id;
-        const modv: number = id ? id % 4 : 0;
-        if(modv === 0)return NullCoverOne;
-        else if(modv === 1)return NullCoverTwo;
-        else if(modv === 2)return NullCoverThree;
-        else return NullCoverFour;
-    }
-
     return (
         <motion.div className="FSMusicPlayer"
             animate={props.openPlayer ? "open" : "closed"}
@@ -71,13 +62,13 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
                                     transition={{ ease: "linear", duration: 40, repeat: Infinity, repeatType: "reverse"}}>
                                         {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
                                         {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" />)}{/**there is cover art */}
-                                        {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover())()}{/**the cover art is null */}
+                                        {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
                                 </motion.div>)
                             : props.openPlayer && !local_store.AnimateBackground ?
                                 <div className="image-container">
                                     {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
                                     {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" />)}{/**there is cover art */}
-                                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover())()}{/**the cover art is null */}
+                                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
                                 </div>
                             :
                                 <></>

@@ -29,7 +29,7 @@ const SearchSongs = () => {
 
     useEffect(() => {
         const resetSongLists = () => {
-            local_songs_db.songs.where("title").startsWithIgnoreCase(query).toArray().then((res) => { setSongLists(res);});
+            local_songs_db.songs.where("name").startsWithIgnoreCase(query).toArray().then((res) => { setSongLists(res);});
         }
 
         resetSongLists();
@@ -45,7 +45,7 @@ const SearchSongs = () => {
                         keyV={song.id}
                         index={index + 1} 
                         cover={song.cover} 
-                        songName={song.title} 
+                        songName={song.name} 
                         artist={song.artist}
                         length={song.duration} 
                         year={song.year}

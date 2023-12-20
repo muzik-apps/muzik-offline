@@ -1,7 +1,7 @@
 import { FunctionComponent } from 'react';
 import "@styles/components/cards/SquareTitleBox.scss";
 import { motion } from 'framer-motion';
-import { NullCoverFour, NullCoverOne, NullCoverThree, NullCoverTwo } from '@assets/index';
+import { getRandomCover } from 'utils';
 
 type SquareTitleBoxProps = {
     cover: string | null;
@@ -13,14 +13,6 @@ type SquareTitleBoxProps = {
 
 const SquareTitleBox: FunctionComponent<SquareTitleBoxProps> = (props: SquareTitleBoxProps) => {
 
-    function getRandomCover(): () => JSX.Element{
-        const modv: number = props.keyV % 4;
-        if(modv === 0)return NullCoverOne;
-        else if(modv === 1)return NullCoverTwo;
-        else if(modv === 2)return NullCoverThree;
-        else return NullCoverFour;
-    }
-
     function navigateTo(){ props.navigateTo(props.keyV); }
 
     return (
@@ -31,7 +23,7 @@ const SquareTitleBox: FunctionComponent<SquareTitleBoxProps> = (props: SquareTit
         }}>
             <motion.div className="title_cover" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={navigateTo}>
                     { 
-                        !props.cover ? (getRandomCover())()
+                        !props.cover ? (getRandomCover(props.keyV))()
                         :
                         <img src={`data:image/png;base64,${props.cover}`} alt="SquareTitleBox-img" />
                     }

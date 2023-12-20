@@ -20,6 +20,7 @@ import DirectoriesModal from "./modals/DirectoriesModal";
 import { ShowInfoButton } from './context_menu/ContextMenuButtons';
 import NotifyBottomRight from './toasts/NotifyBottomRight';
 import PropertiesModal from './modals/PropertiesModal';
+import LargeResizableCover from './cards/LargeResizableCover';
 import { PlayButton, PlayNextButton, PlayLaterButton, 
     ShowArtistButton, AddToPlaylistButton, ShowGenreButton, 
     ShowPlaylistButton, ShowAlbumButton } from './context_menu/ContextMenuButtons';
@@ -32,5 +33,5 @@ export {
     PlayButton, PlayNextButton, PlayLaterButton, ShowArtistButton,
     AddToPlaylistButton, ShowGenreButton, ShowPlaylistButton,
     ShowAlbumButton, SearchNavigator, DirectoriesModal, ShowInfoButton,
-    NotifyBottomRight, PropertiesModal
+    NotifyBottomRight, PropertiesModal, LargeResizableCover
 }

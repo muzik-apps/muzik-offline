@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
-import { NullCoverFour, NullCoverOne, NullCoverThree, NullCoverTwo, artist1 } from "@assets/index";
-import { GeneralContextMenu, RectangleSongBox } from "@components/index";
+import { useEffect, useRef, useState } from "react";
+import { GeneralContextMenu, LargeResizableCover, RectangleSongBox } from "@components/index";
 import "@styles/pages/AlbumDetails.scss";
 import { motion } from "framer-motion";
 import { Play, Shuffle } from "@assets/icons";
 import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
 import { useParams } from "react-router-dom";
 import { local_albums_db } from "@database/database";
-import { getAlbumSongs, secondsToTimeFormat } from "utils";
+import { getAlbumSongs, getRandomCover, secondsToTimeFormat } from "utils";
 
 interface AlbumMD {cover: string | null;title: string;artist: string;year: string;song_count: number;length: string;}
 
 const emptyMD: AlbumMD = {cover: null,title: "",artist: "",year: "",song_count: 0,length: ""}
+
+const variants_list = {smaller: { height: "calc(100vh - 395px)" },bigger: { height: "calc(100vh - 195px)" }}
 
 const AlbumDetails = () => {
     const [selected, setSelected] = useState<number>(0);
@@ -19,7 +20,10 @@ const AlbumDetails = () => {
     const [SongList, setSongList] = useState<Song[]>([]);
     const [album_metadata, setAlbumMetadata] = useState<AlbumMD>(emptyMD);
     const [songMenuToOpen, setSongMenuToOpen] = useState<Song | null>(null);
-    const { key } = useParams(); 
+    
+    const [resizeHeader, setResizeHeader] = useState<boolean>(false);
+    const itemsHeightRef = useRef<HTMLDivElement | null>(null);
+    const { album_key, artist_name } = useParams(); 
 
     function selectThisSong(index: number){ setSelected(index); }
 
@@ -33,33 +37,35 @@ const AlbumDetails = () => {
     
     }
 
-    function getRandomCover(): () => JSX.Element{
-        if(key === undefined)return NullCoverOne;
-        const modv: number = Number.parseInt(key) % 4;
-        if(modv === 0)return NullCoverOne;
-        else if(modv === 1)return NullCoverTwo;
-        else if(modv === 2)return NullCoverThree;
-        else return NullCoverFour;
+    function handleScroll(){
+        const scrollY = itemsHeightRef.current?.scrollTop ?? 0;
+        // NOTE: The following console.log might affect the timing of the code execution.
+        // If you experience issues with state updates, it's recommended to investigate
+        // potential asynchronous behavior and consider removing or adjusting this log.
+        console.log;
+        if(scrollY === 0)setResizeHeader(false);
+        else if(resizeHeader === false)setResizeHeader(true);
+    };
+
+    async function setAlbumSongs(){
+        if(album_key === undefined)return;
+        console.log(album_key);
+        console.log(artist_name);
+        const albumres = await local_albums_db.albums.where("key").equals(Number.parseInt(album_key)).toArray();
+        if(albumres.length !== 1)return;
+        const result = await getAlbumSongs(albumres[0], artist_name ? artist_name : "");
+        setAlbumMetadata({
+            cover: result.cover, title: albumres[0].title, artist: result.songs[0].artist,
+            year: result.songs[0].year.toString(),song_count: result.songs.length,
+            length: secondsToTimeFormat(result.totalDuration)
+        });
+        setSongList(result.songs);
     }
 
     useEffect(() => {
-        const setAlbumSongs = () => {
-            if(key === undefined)return;
-            local_albums_db.albums.where("key").equals(Number.parseInt(key)).toArray().then(async(res) => {
-                const result = await getAlbumSongs(res[0]);
-                setAlbumMetadata({
-                    cover: res[0].cover,
-                    title: res[0].title,
-                    artist: result.songs[0].artist,
-                    year: result.songs[0].year.toString(),
-                    song_count: result.songs.length,
-                    length: secondsToTimeFormat(result.totalDuration)
-                });
-                setSongList(result.songs);
-            }).catch((_err) => {});
-        }
-
         setAlbumSongs();
+        itemsHeightRef.current?.addEventListener('scroll', handleScroll);
+        return () =>  itemsHeightRef.current?.removeEventListener('scroll', handleScroll);
     }, [])
     
 
@@ -69,51 +75,42 @@ const AlbumDetails = () => {
         animate={{scale: 1, opacity: 1}}
         exit={{scale: 0.9, opacity: 0}}>
             <div className="header_content">
-                <div className="cover_art">
-                    <div className="first_cover">
-                        {
-                            album_metadata.cover ?
-                                <img src={`data:image/png;base64,${album_metadata.cover}`} alt="first-cover"/>
-                            :
-                            getRandomCover()()
-                        }
-                    </div>
-                    <div className="second_cover">
-                        {
-                            album_metadata.cover ?
-                                <img src={`data:image/png;base64,${album_metadata.cover}`} alt="second-cover"/>
-                            :
-                            getRandomCover()()
-                        }
-                    </div>
-                </div>
+                <LargeResizableCover id={album_key} resizeHeader={resizeHeader} cover={album_metadata.cover} />
                 <div className="details">
-                    <h2>{album_metadata.title}</h2>
-                    <div className="artist_details">
-                        <div className="artist_profile">
-                            {
-                                album_metadata.cover ?
-                                    <img src={`data:image/png;base64,${album_metadata.cover}`} alt="second-cover"/>
-                                :
-                                getRandomCover()()
-                            }
-                        </div>
-                        <h3>{album_metadata.artist}</h3>
-                    </div>
-                    <h4>{album_metadata.year}</h4>
-                    <div className="action_buttons">
-                        <motion.div className="PlayIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
-                            <Play />
-                            <p>play</p>
-                        </motion.div>
-                        <motion.div className="ShuffleIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
-                            <Shuffle />
-                            <p>Shuffle</p>
-                        </motion.div>
-                    </div>
+                    <h2 style={{ marginTop: resizeHeader ? "25px" : "68px" }}>{album_metadata.title}</h2>
+                    { !resizeHeader &&
+                        <>
+                            <div className="artist_details">
+                                <div className="artist_profile">
+                                    {
+                                        album_metadata.cover ?
+                                            <img src={`data:image/png;base64,${album_metadata.cover}`} alt="second-cover"/>
+                                        :
+                                        getRandomCover(album_key ? Number.parseInt(album_key) : 2)()
+                                    }
+                                </div>
+                                <h3>{album_metadata.artist}</h3>
+                            </div>
+                            <h4>{album_metadata.year}</h4>
+                            <div className="action_buttons">
+                                <motion.div className="PlayIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
+                                    <Play />
+                                    <p>play</p>
+                                </motion.div>
+                                <motion.div className="ShuffleIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
+                                    <Shuffle />
+                                    <p>Shuffle</p>
+                                </motion.div>
+                            </div>
+                        </>
+                    }
                 </div>
             </div>
-            <div className="main_content">
+            <motion.div className="main_content" 
+                animate={resizeHeader ? "bigger" : "smaller"}
+                variants={variants_list}
+                transition={{ type: "tween" }}
+                ref={itemsHeightRef}>
                 {
                     SongList.map((song, index) =>
                         <RectangleSongBox 
@@ -133,7 +130,7 @@ const AlbumDetails = () => {
                 <div className="footer_content">
                     <h4>{album_metadata.song_count} {album_metadata.song_count > 1 ? "Songs" : "Song"}, {album_metadata.length} listen time</h4>
                 </div>
-            </div>
+            </motion.div>
             {
                 songMenuToOpen && (
                     <div className="AlbumDetails-ContextMenu-container" 

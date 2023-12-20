@@ -1,10 +1,10 @@
 import {FunctionComponent, useEffect} from "react";
 import "@styles/components/music/AppMusicPlayer.scss";
-import { NullCoverFour, NullCoverOne, NullCoverThree, NullCoverTwo } from "@assets/index";
 import {ChromeCast, DotHorizontal, NullCoverNull, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
 import { motion } from "framer-motion";
 import { useSavedObjectStore, usePlayerStore } from "store";
 import { SavedObject } from "@database/index";
+import { getRandomCover } from "utils";
 
 type AppMusicPlayerProps = {
     openPlayer: () => void;
@@ -77,15 +77,6 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
         }
     }
 
-    function getRandomCover(): () => JSX.Element{
-        const id = Player.playingSongMetadata?.id;
-        const modv: number = id ? id % 4 : 0;
-        if(modv === 0)return NullCoverOne;
-        else if(modv === 1)return NullCoverTwo;
-        else if(modv === 2)return NullCoverThree;
-        else return NullCoverFour;
-    }
-
     function getSeekerPercentage(){
         return Player.playingPosition.toString();
     }
@@ -112,14 +103,14 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                 {!local_store.PlayerBar && Player.playingSongMetadata && Player.playingSongMetadata.cover
                     && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="cover-art" />)}{/**there is cover art */}
                 {!local_store.PlayerBar && Player.playingSongMetadata && !Player.playingSongMetadata.cover
-                    && (getRandomCover())()}{/**the cover art is null */}
+                    && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
             </div>
             <div className="music_art_bg_layer">
                 <div className="art_and_song_details">
                     <motion.div className="mini_art_container" whileTap={{scale: 0.98}} onClick={props.openPlayer}>
                             {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
                             {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" />)}{/**there is cover art */}
-                            {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover())()}{/**the cover art is null */}
+                            {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
                     </motion.div>
                     <div className="song_details">
                         <h2>{Player.playingSongMetadata ? Player.playingSongMetadata.title : "No song is playing"}</h2>

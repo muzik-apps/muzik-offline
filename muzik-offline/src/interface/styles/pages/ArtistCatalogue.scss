@@ -1,6 +1,6 @@
 @import "../constants/constants";
 
-.AlbumDetails{
+.ArtistCatalogue{
     margin-top: 23px;
     min-width: 859px;
     width: calc(100vw - var(--var-right-side-bar-width-expanded));
@@ -24,46 +24,6 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
                 margin-right: 10px;
-            }
-
-            .artist_details{
-                display: flex;
-                margin-top: 20px;
-                height: 40px;
-                align-items: center;
-
-                .artist_profile{
-                    width: 40px;
-                    height: 40px;
-                    border-radius: 10px;
-                    flex-shrink: 0;
-                    display: flex;
-                    overflow: hidden;
-                    justify-content: center;
-                    align-items: center;
-        
-                    img{
-                        display: inline;
-                        min-width: 100%;
-                        margin: 0 auto;
-                        height: 100%;
-                        object-fit: cover;
-                    }
-
-                    svg{
-                        width: 100%;
-                        height: 100%;
-                    }
-                }
-
-                h3{
-                    margin-left: 15px;
-                    font-size: 16px;
-                    font-family: 'inter-italic-regular', sans-serif;
-                    font-style: italic;
-                    height: 19px;
-                    cursor: pointer;
-                }
             }
 
             h4{
@@ -120,38 +80,23 @@
     }
 
     .main_content{
-        min-width: 859px;
-        width: calc(100vw - var(--var-right-side-bar-width-expanded));
-        height: calc(100vh - 395px);
-        overflow-x: hidden;
         overflow-y: auto;
         transition: height 0.3s ease; 
+        min-width: 859px;
+        width: calc(100vw - var(--var-right-side-bar-width-expanded));
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 150px);
+        grid-template-rows: repeat(auto-fill, 205px);
+        justify-content: space-between;
 
         .footer_content{
-            margin-bottom: 50px;
-            h4{
-                width: 100%;
-                font-size: 13px;
-                height: 16px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-    
-            p{
-                width: 100%;
-                font-size: 10px;
-                height: 13px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
+            height: 300px;
         }
     }
 
 }
 
-.AlbumDetails-ContextMenu-container{
+.ArtistCatalogue-ContextMenu-container{
     width: 100vw;
     height: calc(100vh - 32px);
     position: fixed;
@@ -161,11 +106,11 @@
 }
 
 @media only screen and (max-width: 1300px){
-    .AlbumDetails{
+    .ArtistCatalogue{
         min-width: 759px;
         width: calc(100vw - var(--var-right-side-bar-width-expanded));
 
-        .main_content, .footer_content{
+        .main_content{
             min-width: 759px;
             width: calc(100vw - var(--var-right-side-bar-width-expanded));
         }
@@ -173,11 +118,11 @@
 }
 
 @media only screen and (max-width: 1180px){
-    .AlbumDetails{
+    .ArtistCatalogue{
         min-width: 759px;
         width: calc(100vw - var(--var-right-side-bar-width-minimized));
 
-        .main_content, .footer_content{
+        .main_content{
             min-width: 759px;
             width: calc(100vw - var(--var-right-side-bar-width-minimized));
         }
@@ -185,13 +130,17 @@
 }
 
 @media only screen and (max-width: 1046px){
-    .AlbumDetails{
+    .ArtistCatalogue{
         min-width: 759px;
         width: calc(100vw - var(--var-right-side-bar-width-smallest));
 
-        .main_content, .footer_content{
+        .main_content{
             min-width: 759px;
             width: calc(100vw - var(--var-right-side-bar-width-smallest));
+
+            .footer_content{
+                height: 500px;
+            }
         }
     }
 }

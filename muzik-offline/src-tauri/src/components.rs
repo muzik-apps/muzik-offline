@@ -4,6 +4,7 @@ use serde::Serialize;
 pub struct Song {
     pub id: i32,
     pub title: String,
+    pub name: String,
     pub artist: String,
     pub album: String,
     pub genre: String,

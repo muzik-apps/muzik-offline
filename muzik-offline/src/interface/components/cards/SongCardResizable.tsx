@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { FunctionComponent } from 'react';
-import { DotHorizontal, NullMusicCoverFour, NullMusicCoverOne, NullMusicCoverThree, NullMusicCoverTwo, Play } from "@icons/index";
+import { DotHorizontal, Play } from "@icons/index";
 import "@styles/components/cards/SongCardResizable.scss";
+import { getRandomCover } from 'utils';
 
 type SongCardResizableProps = {
     cover: string | null;
@@ -13,20 +14,12 @@ type SongCardResizableProps = {
 
 const SongCardResizable: FunctionComponent<SongCardResizableProps> = (props: SongCardResizableProps) => {
 
-    function getRandomCover(): () => JSX.Element{
-        const modv: number = props.keyV % 4;
-        if(modv === 0)return NullMusicCoverOne;
-        else if(modv === 1)return NullMusicCoverTwo;
-        else if(modv === 2)return NullMusicCoverThree;
-        else return NullMusicCoverFour;
-    }
-
     return (
         <>
             <div className="SongCardResizable">
                 <motion.div className="song_cover" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
                     { 
-                        !props.cover ? (getRandomCover())()
+                        !props.cover ? (getRandomCover(props.keyV))()
                         :
                         <img src={props.cover} alt="-img" />
                     }

@@ -57,6 +57,7 @@ export interface toast{
 export interface Song{
     id: number,
     title: string,
+    name: string,
     artist: string,
     album: string,
     genre: string,

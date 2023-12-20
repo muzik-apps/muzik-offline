@@ -89,7 +89,7 @@ const AllTracks = () => {
                         keyV={song.id}
                         index={index + 1} 
                         cover={song.cover} 
-                        songName={song.title} 
+                        songName={song.name} 
                         artist={song.artist}
                         length={song.duration} 
                         year={song.year}

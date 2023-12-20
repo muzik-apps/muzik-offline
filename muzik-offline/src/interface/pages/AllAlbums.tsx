@@ -28,10 +28,12 @@ const AllAlbums = () => {
     }
 
     function chooseOption(arg: contextMenuButtons){
-    
+        if(arg == contextMenuButtons.ShowAlbum && albumMenuToOpen){
+            navigateTo(albumMenuToOpen.key);
+        }
     }
 
-    function navigateTo(key: number){ navigate("/AlbumDetails/" + key); }
+    function navigateTo(key: number){ navigate(`/AlbumDetails/${key}/undefined`); }
     
     return (
         <motion.div className="AllAlbums"

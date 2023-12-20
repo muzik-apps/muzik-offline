@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import { NullCoverFour, NullCoverOne, NullCoverThree, NullCoverTwo } from "@assets/index";
 import { SkipBack, Pause, SkipFwd, Shuffle, VolumeMin, VolumeMax, Repeat, Play, RepeatOne, NullCoverNull } from "@icons/index";
 import "@styles/components/music/MainMusicPlayer.scss";
 import { SavedObject } from "@database/index";
 import { useSavedObjectStore, usePlayerStore } from "store";
+import { getRandomCover } from "utils";
 
 const MainMusicPlayer = () => {
     const {local_store, setStore} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
@@ -71,15 +71,6 @@ const MainMusicPlayer = () => {
         }
     }
 
-    function getRandomCover(): () => JSX.Element{
-        const id = Player.playingSongMetadata?.id;
-        const modv: number = id ? id % 4 : 0;
-        if(modv === 0)return NullCoverOne;
-        else if(modv === 1)return NullCoverTwo;
-        else if(modv === 2)return NullCoverThree;
-        else return NullCoverFour;
-    }
-
     function getSeekerPercentage(){
         return Player.playingPosition.toString();
     }
@@ -90,12 +81,12 @@ const MainMusicPlayer = () => {
                 <div className="first_cover">
                     {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
                     {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" />)}{/**there is cover art */}
-                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover())()}{/**the cover art is null */}
+                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
                 </div>
                 <div className="second_cover">
                     {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
                     {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" />)}{/**there is cover art */}
-                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover())()}{/**the cover art is null */}
+                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
                 </div>
             </div>
             <div className="song_details">

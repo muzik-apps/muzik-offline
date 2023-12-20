@@ -6,6 +6,7 @@ import "@styles/pages/AllArtists.scss";
 import { mouse_coOrds, contextMenuEnum, artist, contextMenuButtons } from "types";
 import { local_artists_db } from "@database/database";
 import { useLiveQuery } from "dexie-react-hooks";
+import { useNavigate } from "react-router-dom";
 
 const AllArtists = () => {
     
@@ -14,6 +15,7 @@ const AllArtists = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [artistMenuToOpen, setArtistMenuToOpen] = useState<artist | null>(null);
     const artists = useLiveQuery(() => local_artists_db.artists.toArray()) ?? [];
+    const navigate = useNavigate();
 
     function selectOption(arg: string){
         if(arg !== sort)setSort(arg); 
@@ -27,11 +29,14 @@ const AllArtists = () => {
     }
 
     function chooseOption(arg: contextMenuButtons){
-    
+        if(arg == contextMenuButtons.ShowArtist && artistMenuToOpen){
+            navigateTo(artistMenuToOpen.key);
+        }
     }
 
-    function navigateTo(key: number){
-        console.log("Navigate to album with key: " + key);
+    function navigateTo(key: number){ 
+        const artist_to_go_to = artists.find((value) => value.key == key);
+        if(artist_to_go_to)navigate("/ArtistCatalogue/" + artist_to_go_to.artist_name); 
     }
     
     return (

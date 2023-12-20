@@ -1,3 +1,4 @@
+import { NullCoverOne, NullCoverTwo, NullCoverThree, NullCoverFour } from "@assets/index";
 import { local_albums_db, local_artists_db, local_genres_db, local_songs_db } from "@database/database";
 import { Song, album } from "types";
 
@@ -93,30 +94,46 @@ export function secondsToTimeFormat(totalSeconds: number) {
 
 function padNumber(num: number) { return num.toString().padStart(2, '0'); }
 
-export const getAlbumSongs = async(res: album): Promise<{ songs: Song[]; totalDuration: number; }> => {
-    const albumSongs = await local_songs_db.songs.where("album").equals(res.title).toArray();
+export const getAlbumSongs = async(res: album, artist_name: string): Promise<{ songs: Song[]; totalDuration: number; cover: string | null;}> => {
+    let albumSongs: Song[] = [];
+    if(artist_name === ""){
+        albumSongs = await local_songs_db.songs.where("album").equals(res.title).toArray();
+    }
+    else{
+        albumSongs = await local_songs_db.songs.where({ album: res.title, artist: artist_name }).toArray();
+    }
+
     let totalDuration = 0;
     const songs: Song[] = [];
+    let cover: string | null = null;
     albumSongs.forEach((song) => {
         totalDuration += song.duration_seconds;
-        const song_: Song = {
-            id: song.id, 
-            title: song.title, 
-            artist: song.artist, 
-            album: song.album, 
-            genre: song.genre,
-            year: song.year, 
-            duration: song.duration, 
-            duration_seconds: song.duration_seconds,
-            path: song.path, 
-            cover: song.cover, 
-            date_recorded: song.date_recorded,
-            date_released: song.date_released,
-            file_size: song.file_size,
-            file_type: song.file_type,
-        };
-        songs.push(song_);
+        songs.push(song);
+        if(cover === null && song.cover)cover = song.cover;
     });
-    return { songs: songs, totalDuration: totalDuration };
+    return { songs, totalDuration, cover };
+}
 
+export const getArtistsAlbums = async(artist_name: string): Promise<{ albums: album[]; totalDuration: number; cover: string | null; song_count: number}> => {
+    const artistSongs: Song[] = await local_songs_db.songs.where("artist").equals(artist_name).toArray();
+    let totalDuration = 0;
+    let cover: string | null = null;
+
+    const uniqueSet: Set<string> = new Set();
+    artistSongs.forEach((song) => {
+        totalDuration += song.duration_seconds;
+        if(!uniqueSet.has(song.album))uniqueSet.add(song.album);
+        if(cover === null && song.cover)cover = song.cover;
+    });
+
+    const albums: album[] = await local_albums_db.albums.where('title').anyOf([...uniqueSet]).toArray();
+    return { albums, totalDuration, cover, song_count: artistSongs.length };
+}
+
+export const getRandomCover = (value: number): () => JSX.Element => {
+    const modv: number = value % 4;
+    if(modv === 0)return NullCoverOne;
+    else if(modv === 1)return NullCoverTwo;
+    else if(modv === 2)return NullCoverThree;
+    else return NullCoverFour;
 }
