@@ -74,6 +74,31 @@
             }
         }
 
+        .create_playlist{
+            width: 150px;
+            height: 24px;
+            border-radius: 10px;
+            background: $app-theme-col;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+
+            h4{
+                font-size: 13px;
+                height: 13px;
+                margin-top: 11px;
+                color: $root-app-navigator-hover-col;
+                margin-right: 5px;
+            }
+            
+            svg{
+                path{
+                    stroke: $root-app-navigator-hover-col;
+                }
+            }
+        }
+
     }
 
     .AllPlaylists_container{

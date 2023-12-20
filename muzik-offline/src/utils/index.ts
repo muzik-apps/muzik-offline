@@ -1,6 +1,6 @@
 import { NullCoverOne, NullCoverTwo, NullCoverThree, NullCoverFour } from "@assets/index";
 import { local_albums_db, local_artists_db, local_genres_db, local_songs_db } from "@database/database";
-import { Song, album } from "types";
+import { Song, album, genre, playlist } from "types";
 
 export const createSongList_inDB = (SongList: Song[]) => {
     local_songs_db.songs.clear().then(() => {
@@ -107,6 +107,32 @@ export const getAlbumSongs = async(res: album, artist_name: string): Promise<{ s
     const songs: Song[] = [];
     let cover: string | null = null;
     albumSongs.forEach((song) => {
+        totalDuration += song.duration_seconds;
+        songs.push(song);
+        if(cover === null && song.cover)cover = song.cover;
+    });
+    return { songs, totalDuration, cover };
+}
+
+export const getGenreSongs = async(res: genre): Promise<{ songs: Song[]; totalDuration: number; cover: string | null;}> => {
+    const genreSongs: Song[] = await local_songs_db.songs.where("genre").equals(res.title).toArray();
+    let totalDuration = 0;
+    const songs: Song[] = [];
+    let cover: string | null = null;
+    genreSongs.forEach((song) => {
+        totalDuration += song.duration_seconds;
+        songs.push(song);
+        if(cover === null && song.cover)cover = song.cover;
+    });
+    return { songs, totalDuration, cover };
+}
+
+export const getPlaylistSongs = async(res: playlist): Promise<{ songs: Song[]; totalDuration: number; cover: string | null;}> => {
+    const playlistSongs: Song[] = await local_songs_db.songs.where("path").anyOf(res.tracksPaths).toArray();
+    let totalDuration = 0;
+    const songs: Song[] = [];
+    let cover: string | null = null;
+    playlistSongs.forEach((song) => {
         totalDuration += song.duration_seconds;
         songs.push(song);
         if(cover === null && song.cover)cover = song.cover;

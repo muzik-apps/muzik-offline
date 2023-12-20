@@ -1,12 +1,13 @@
 import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
 import { motion } from "framer-motion";
 import { useState, useRef } from "react";
-import { ChevronDown } from "@assets/icons";
+import { ChevronDown, Shuffle } from "@assets/icons";
 import { DropDownMenuSmall, GeneralContextMenu, PropertiesModal, RectangleSongBox } from "@components/index";
 import "@styles/pages/AllTracks.scss";
 import { ViewportList } from 'react-viewport-list';
-import { local_songs_db } from "@database/database";
+import { local_albums_db, local_songs_db } from "@database/database";
 import { useLiveQuery } from "dexie-react-hooks";
+import { useNavigate } from "react-router-dom";
 
 const AllTracks = () => {
     const [selected, setSelected] = useState<number>(0);
@@ -16,6 +17,7 @@ const AllTracks = () => {
     const SongList = useLiveQuery(() => local_songs_db.songs.toArray()) ?? [];
     const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const navigate = useNavigate();
 
     const ref = useRef<HTMLDivElement | null>(null);
 
@@ -35,6 +37,18 @@ const AllTracks = () => {
 
     function chooseOption(arg: contextMenuButtons){
         if(arg === contextMenuButtons.ShowInfo){ setIsOpen(true);}
+    }
+
+    async function navigateTo(key: number, type: "artist" | "song"){
+        const relatedSong = SongList.find((value) => value.id === key);
+        if(!relatedSong)return;
+        if(type === "song"){
+            const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
+            navigate(`/AlbumDetails/${albumres[0].key}/undefined`);
+        }
+        else if(type === "artist"){
+            navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
+        }
     }
     
     return (
@@ -80,6 +94,10 @@ const AllTracks = () => {
                         </div>
                     </div>
                 </div>
+                <motion.div className="shuffle-btn" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}}>
+                    <h4>shuffle & play</h4>
+                    <Shuffle />
+                </motion.div>
             </div>
             <div className="AllTracks_container" ref={ref}>
                 <ViewportList viewportRef={ref} items={SongList}>
@@ -94,6 +112,7 @@ const AllTracks = () => {
                         length={song.duration} 
                         year={song.year}
                         selected={selected === index + 1 ? true : false}
+                        navigateTo={navigateTo}
                         selectThisSong={selectThisSong}
                         setMenuOpenData={setMenuOpenData}/>
                     )}

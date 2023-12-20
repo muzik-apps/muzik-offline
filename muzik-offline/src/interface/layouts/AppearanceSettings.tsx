@@ -4,6 +4,10 @@ import "@styles/layouts/AppearanceSettings.scss";
 import { ArrowRefresh, CancelRight } from "@assets/icons";
 import { useSavedObjectStore, useWallpaperStore } from "store";
 
+const accentColurs: string[] = [
+    "saucy", "salmon", "violet", "lime", "sunny", "ubuntu", "blueberry", "midnight", "blinding"
+]
+
 const AppearanceSettings = () => {
     const {local_store, setStore} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
     const { wallpaper, setWallpaper, unsetWallpaper } = useWallpaperStore((state) => { return { wallpaper: state.wallpaper, setWallpaper: state.setWallpaper, unsetWallpaper: state.unsetWallpaper }; });
@@ -82,22 +86,14 @@ const AppearanceSettings = () => {
                             <h4>blue-purple gradient</h4>
                     </motion.div>
                 </div>
-                <h3>Color theme</h3>
+                <h3>Accent color</h3>
                 <div className="color_theme">
-                    <motion.div className={"button_select saucy " + (local_store.ThemeColour === "saucy" ? "button_selected" : "")}
-                        whileHover={{scale: 1.03}} whileTap={{scale: 0.98}} onClick={() => SetThemeColour("saucy")}/>
-                    <motion.div className={"button_select salmon " + (local_store.ThemeColour === "salmon" ? "button_selected" : "")} 
-                        whileHover={{scale: 1.03}} whileTap={{scale: 0.98}} onClick={() => SetThemeColour("salmon")}/>
-                    <motion.div className={"button_select violet " + (local_store.ThemeColour === "violet" ? "button_selected" : "")}
-                        whileHover={{scale: 1.03}} whileTap={{scale: 0.98}} onClick={() => SetThemeColour("violet")}/>
-                    <motion.div className={"button_select lime " + (local_store.ThemeColour === "lime" ? "button_selected" : "")} 
-                        whileHover={{scale: 1.03}} whileTap={{scale: 0.98}} onClick={() => SetThemeColour("lime")}/>
-                    <motion.div className={"button_select sunny " + (local_store.ThemeColour === "sunny" ? "button_selected" : "")}  
-                        whileHover={{scale: 1.03}} whileTap={{scale: 0.98}} onClick={() => SetThemeColour("sunny")}/>
-                    <motion.div className={"button_select ubuntu " + (local_store.ThemeColour === "ubuntu" ? "button_selected" : "")}  
-                        whileHover={{scale: 1.03}} whileTap={{scale: 0.98}} onClick={() => SetThemeColour("ubuntu")}/>
-                    <motion.div className={"button_select blueberry " + (local_store.ThemeColour === "blueberry" ? "button_selected" : "")}  
-                        whileHover={{scale: 1.03}} whileTap={{scale: 0.98}} onClick={() => SetThemeColour("blueberry")}/>
+                    {
+                        accentColurs.map((color) => 
+                            <motion.div className={`button_select ${color} ` + (local_store.ThemeColour === color ? "button_selected" : "")}
+                                whileHover={{scale: 1.03}} whileTap={{scale: 0.98}} onClick={() => SetThemeColour(color)}/>
+                        )
+                    }
                 </div>
                 <h3>Player bar</h3>
                 <div className="playerbar_select">

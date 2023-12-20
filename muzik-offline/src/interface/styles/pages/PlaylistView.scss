@@ -1,0 +1,157 @@
+@import "../constants/constants";
+
+.PlaylistView{
+    margin-top: 23px;
+    min-width: 859px;
+    width: calc(100vw - var(--var-right-side-bar-width-expanded));
+    height: calc(100vh - 55px);
+    overflow-x: visible;
+    overflow-y: visible;
+
+    .header_content{
+        display: flex;
+        margin-bottom: 20px;
+
+        .details{
+            margin-left: 45px;
+            width: calc(100% - 295px);
+
+            h2{
+                font-size: 20px;
+                margin-top: 68px;
+                height: 23px;
+                text-wrap: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin-right: 10px;
+            }
+            
+            h4{
+                margin-top: 12px;
+                font-size: 14px;
+                font-family: 'inter-italic-regular', sans-serif;
+                font-style: italic;
+                height: 17px;
+            }
+
+            .action_buttons{
+                display: flex;
+
+                .PlayIcon, .ShuffleIcon{
+                    display: flex;
+                    background: $btn-clickable;
+                    backdrop-filter: var(--var-bg-blur-150);
+                    height: 34px;
+                    border-radius: 15px;
+                    justify-content: center;
+                    padding-left: 25px;
+                    padding-right: 25px;
+                    align-items: center;
+                    margin-right: 20px;
+
+                    svg{
+                        margin-right: 2.5px;
+                    }
+
+                    p{
+                        margin-left: 2.5px;
+                    }
+                }
+
+                .PlayIcon{
+                    svg{
+                        path{
+                            fill: $app-theme-col;
+                            stroke: $app-theme-col;
+                        }
+                    }
+                }
+            
+                .ShuffleIcon{
+                    svg{
+                        path{
+                            fill: $app-theme-col;
+                            stroke: $app-theme-col;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .main_content{
+        min-width: 859px;
+        width: calc(100vw - var(--var-right-side-bar-width-expanded));
+        height: calc(100vh - 395px);
+        overflow-x: hidden;
+        overflow-y: auto;
+        transition: height 0.3s ease; 
+
+        .footer_content{
+            margin-bottom: 70px;
+            h4{
+                width: 100%;
+                font-size: 13px;
+                height: 16px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+    
+            p{
+                width: 100%;
+                font-size: 10px;
+                height: 13px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+
+}
+
+.PlaylistView-ContextMenu-container{
+    width: 100vw;
+    height: calc(100vh - 32px);
+    position: fixed;
+    z-index: $z-index-9000;
+    top: 32px;
+    left: 0px;
+}
+
+@media only screen and (max-width: 1300px){
+    .PlaylistView{
+        min-width: 759px;
+        width: calc(100vw - var(--var-right-side-bar-width-expanded));
+
+        .main_content, .footer_content{
+            min-width: 759px;
+            width: calc(100vw - var(--var-right-side-bar-width-expanded));
+        }
+    }
+}
+
+@media only screen and (max-width: 1180px){
+    .PlaylistView{
+        min-width: 759px;
+        width: calc(100vw - var(--var-right-side-bar-width-minimized));
+
+        .main_content, .footer_content{
+            min-width: 759px;
+            width: calc(100vw - var(--var-right-side-bar-width-minimized));
+        }
+    }
+}
+
+@media only screen and (max-width: 1046px){
+    .PlaylistView{
+        min-width: 759px;
+        width: calc(100vw - var(--var-right-side-bar-width-smallest));
+
+        .main_content, .footer_content{
+            min-width: 759px;
+            width: calc(100vw - var(--var-right-side-bar-width-smallest));
+        }
+    }
+}

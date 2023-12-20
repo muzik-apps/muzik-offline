@@ -15,6 +15,10 @@
         transition: width 0.2s ease;
         border-radius: 20px;
         flex-shrink: 0;
+        display: flex;
+        overflow: hidden;
+        justify-content: center;
+        align-items: center;
 
         img{
             display: inline;

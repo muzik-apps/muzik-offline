@@ -3,6 +3,8 @@ import { FunctionComponent, useState } from "react";
 import "@styles/layouts/HistoryNextFloating.scss";
 import { GeneralContextMenu, SongCardResizable } from "@components/index";
 import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
+import { local_albums_db } from "@database/database";
+import { useNavigate } from "react-router-dom";
 
 type HistoryNextFloatingProps = {
     FloatingHNState: boolean;
@@ -20,6 +22,7 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
     const [SongQueue,] = useState<Song[]>([]);
     const [SongHistory,] = useState<Song[]>([]);
     const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
+    const navigate = useNavigate();
 
     function selectView(arg: string){setSelectedView(arg);}
 
@@ -37,6 +40,30 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
 
     function chooseOption(arg: contextMenuButtons){
     
+    }
+
+    async function navigateToSH(key: number, type: "artist" | "song"){
+        const relatedSong = SongHistory.find((value) => value.id === key);
+        if(!relatedSong)return;
+        if(type === "song"){
+            const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
+            navigate(`/AlbumDetails/${albumres[0].key}/undefined`);
+        }
+        else if(type === "artist"){
+            navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
+        }
+    }
+
+    async function navigateToSQ(key: number, type: "artist" | "song"){
+        const relatedSong = SongQueue.find((value) => value.id === key);
+        if(!relatedSong)return;
+        if(type === "song"){
+            const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
+            navigate(`/AlbumDetails/${albumres[0].key}/undefined`);
+        }
+        else if(type === "artist"){
+            navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
+        }
     }
 
     return (
@@ -60,7 +87,7 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
                                             artist={song.artist}
                                             keyV={song.id}
                                             setMenuOpenData={setMenuOpenData__SongQueue}
-                                            />
+                                            navigateTo={navigateToSQ}/>
                                     )
                                 }
                             </div>
@@ -75,7 +102,7 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
                                             artist={song.artist}
                                             keyV={song.id}
                                             setMenuOpenData={setMenuOpenData_SongHistory}
-                                            />
+                                            navigateTo={navigateToSH}/>
                                     )
                                 }
                             </div>

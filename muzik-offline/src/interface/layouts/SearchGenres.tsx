@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import "@styles/layouts/SearchGenres.scss";
 import { local_genres_db } from "@database/database";
 import { useSearchStore } from "store";
+import { useNavigate } from "react-router-dom";
 
 const SearchGenres = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [genreMenuToOpen, setGenreMenuToOpen] = useState<genre | null>(null);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
     const [genres, setGenres] = useState<genre[]>([]);
+    const navigate = useNavigate();
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
@@ -21,9 +23,7 @@ const SearchGenres = () => {
     
     }
 
-    function navigateTo(key: number){
-        console.log("Navigate to genre with key: " + key);
-    }
+    function navigateTo(passed_key: number){ navigate(`/GenreView/${passed_key}`); }
 
     useEffect(() => {
         const resetGenres = () => {

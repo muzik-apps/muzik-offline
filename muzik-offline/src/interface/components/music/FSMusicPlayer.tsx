@@ -96,7 +96,7 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
                                     <MainMusicPlayer />
                                 </div>
                                 <div className="lyrics_history_upcoming">
-                                    <HistoryUpcoming />
+                                    <HistoryUpcoming closePlayer={props.closePlayer} />
                                 </div>
                             </div>
                         </div>

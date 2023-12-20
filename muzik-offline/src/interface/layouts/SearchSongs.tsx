@@ -3,8 +3,9 @@ import { mouse_coOrds, contextMenuEnum, Song, contextMenuButtons } from "types";
 import { useState, useRef, useEffect } from "react";
 import "@styles/layouts/SearchSongs.scss";
 import { ViewportList } from 'react-viewport-list';
-import { local_songs_db } from "@database/database";
+import { local_albums_db, local_songs_db } from "@database/database";
 import { useSearchStore } from "store";
+import { useNavigate } from "react-router-dom";
 
 const SearchSongs = () => {
     const [selected, setSelectedSong] = useState<number>(0);
@@ -12,6 +13,7 @@ const SearchSongs = () => {
     const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
     const [SongList, setSongLists] = useState<Song[]>([]);
+    const navigate = useNavigate();
 
     const ref = useRef<HTMLDivElement | null>(null);
 
@@ -25,6 +27,18 @@ const SearchSongs = () => {
 
     function chooseOption(arg: contextMenuButtons){
     
+    }
+
+    async function navigateTo(key: number, type: "artist" | "song"){
+        const relatedSong = SongList.find((value) => value.id === key);
+        if(!relatedSong)return;
+        if(type === "song"){
+            const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
+            navigate(`/AlbumDetails/${albumres[0].key}/undefined`);
+        }
+        else if(type === "artist"){
+            navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
+        }
     }
 
     useEffect(() => {
@@ -51,7 +65,8 @@ const SearchSongs = () => {
                         year={song.year}
                         selected={selected === index + 1 ? true : false}
                         selectThisSong={selectThisSong}
-                        setMenuOpenData={setMenuOpenData}/>
+                        setMenuOpenData={setMenuOpenData}
+                        navigateTo={navigateTo}/>
                     )}
                 </ViewportList>
                 <div className="AllTracks_container_bottom_margin"/>

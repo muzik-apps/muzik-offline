@@ -50,6 +50,16 @@
     --root-app-navigator-hover-col: #505050;
 }
 
+[data-theme='midnight'] {
+    --root-app-theme-col: #131313;
+    --root-app-navigator-hover-col: #ececec;
+}
+
+[data-theme='blinding'] {
+    --root-app-theme-col: #ececec;
+    --root-app-navigator-hover-col: #131313;
+}
+
 //add more themes...
 
 
@@ -99,6 +109,7 @@ $songs-container-bg-col: #2525251a;
 $songs-container-border-col: #b6b6b61a;
 $ubuntu-orange: #e95420;
 $black-1000: #000000;
+$black-800: #131313;
 $blue-300: #9fa8fd;
 $gray-1000: #252525;
 $gray-600: #a0a0a0;

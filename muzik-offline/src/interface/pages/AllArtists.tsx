@@ -36,7 +36,7 @@ const AllArtists = () => {
 
     function navigateTo(key: number){ 
         const artist_to_go_to = artists.find((value) => value.key == key);
-        if(artist_to_go_to)navigate("/ArtistCatalogue/" + artist_to_go_to.artist_name); 
+        if(artist_to_go_to)navigate(`/ArtistCatalogue/${artist_to_go_to.artist_name}`); 
     }
     
     return (

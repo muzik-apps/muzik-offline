@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import "@styles/layouts/SearchPlaylists.scss";
 import { local_playlists_db } from "@database/database";
 import { useSearchStore } from "store";
+import { useNavigate } from "react-router-dom";
 
 const SearchPlaylists = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [playlistMenuToOpen, setPlaylistMenuToOpen] = useState<playlist | null>(null);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
     const [playlists, setPlaylists] = useState<playlist[]>([]);
+    const navigate = useNavigate();
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
@@ -21,9 +23,7 @@ const SearchPlaylists = () => {
     
     }
 
-    function navigateTo(key: number){
-        console.log("Navigate to playlist with key: " + key);
-    }
+    function navigateTo(passed_key: number){ navigate(`/PlaylistView/${passed_key}`); }
 
     useEffect(() => {
         const resetPlaylists = () => {

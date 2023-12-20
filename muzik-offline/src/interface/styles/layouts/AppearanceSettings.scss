@@ -70,6 +70,7 @@
 
         .color_theme{
             display: flex;
+            flex-wrap: wrap;
             margin-bottom: 10px;
 
             .button_select{
@@ -112,6 +113,14 @@
 
             .blueberry{
                 background: $blue-300;
+            }
+
+            .midnight{
+                background: $black-800;
+            }
+
+            .blinding{
+                background: $white-900;
             }
         }
 

@@ -4,7 +4,7 @@ import "@styles/pages/AlbumDetails.scss";
 import { motion } from "framer-motion";
 import { Play, Shuffle } from "@assets/icons";
 import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { local_albums_db } from "@database/database";
 import { getAlbumSongs, getRandomCover, secondsToTimeFormat } from "utils";
 
@@ -20,6 +20,7 @@ const AlbumDetails = () => {
     const [SongList, setSongList] = useState<Song[]>([]);
     const [album_metadata, setAlbumMetadata] = useState<AlbumMD>(emptyMD);
     const [songMenuToOpen, setSongMenuToOpen] = useState<Song | null>(null);
+    const navigate = useNavigate();
     
     const [resizeHeader, setResizeHeader] = useState<boolean>(false);
     const itemsHeightRef = useRef<HTMLDivElement | null>(null);
@@ -49,11 +50,9 @@ const AlbumDetails = () => {
 
     async function setAlbumSongs(){
         if(album_key === undefined)return;
-        console.log(album_key);
-        console.log(artist_name);
         const albumres = await local_albums_db.albums.where("key").equals(Number.parseInt(album_key)).toArray();
         if(albumres.length !== 1)return;
-        const result = await getAlbumSongs(albumres[0], artist_name ? artist_name : "");
+        const result = await getAlbumSongs(albumres[0], artist_name && artist_name !== "undefined" ? artist_name : "");
         setAlbumMetadata({
             cover: result.cover, title: albumres[0].title, artist: result.songs[0].artist,
             year: result.songs[0].year.toString(),song_count: result.songs.length,
@@ -89,7 +88,7 @@ const AlbumDetails = () => {
                                         getRandomCover(album_key ? Number.parseInt(album_key) : 2)()
                                     }
                                 </div>
-                                <h3>{album_metadata.artist}</h3>
+                                <motion.h3 whileTap={{scale: 0.98}} onClick={() => navigate(`/ArtistCatalogue/${album_metadata.artist}`)}>{album_metadata.artist}</motion.h3>
                             </div>
                             <h4>{album_metadata.year}</h4>
                             <div className="action_buttons">
@@ -116,15 +115,16 @@ const AlbumDetails = () => {
                         <RectangleSongBox 
                             key={song.id}
                             keyV={song.id}
-                            index={index + 1} 
-                            cover={song.cover} 
-                            songName={song.title} 
+                            index={index + 1}
+                            cover={song.cover}
+                            songName={song.title}
                             artist={song.artist}
-                            length={song.duration} 
+                            length={song.duration}
                             year={song.year}
                             selected={selected === index + 1 ? true : false}
                             selectThisSong={selectThisSong}
-                            setMenuOpenData={setMenuOpenData}/>
+                            setMenuOpenData={setMenuOpenData} 
+                            navigateTo={(_key: number, _type: "artist" | "song") => {} }/>
                     )
                 }
                 <div className="footer_content">

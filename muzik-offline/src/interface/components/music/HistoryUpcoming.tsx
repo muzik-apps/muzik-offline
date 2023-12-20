@@ -1,15 +1,20 @@
-import { useState } from "react";
+import { FunctionComponent, useState } from "react";
 import { motion } from 'framer-motion';
 import "@styles/components/music/HistoryUpcoming.scss";
 import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
 import { GeneralContextMenu, SongCardResizable } from "@components/index";
+import { useNavigate } from "react-router-dom";
+import { local_albums_db } from "@database/database";
 
-const HistoryUpcoming = () => {
+type HistoryUpcomingProps = { closePlayer: () => void;}
+
+const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: HistoryUpcomingProps) => {
   const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
   const [selectedView, setSelectedView] = useState<string>("Upcoming_tab");
   const [SongQueue,] = useState<Song[]>([]);
   const [SongHistory,] = useState<Song[]>([]);
   const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
+  const navigate = useNavigate();
 
   function selectView(arg: string){setSelectedView(arg);}
 
@@ -29,6 +34,32 @@ function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos
 
   }
 
+  async function navigateToSH(key: number, type: "artist" | "song"){
+    props.closePlayer();
+    const relatedSong = SongHistory.find((value) => value.id === key);
+    if(!relatedSong)return;
+    if(type === "song"){
+        const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
+        navigate(`/AlbumDetails/${albumres[0].key}/undefined`);
+    }
+    else if(type === "artist"){
+        navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
+    }
+  }
+
+  async function navigateToSQ(key: number, type: "artist" | "song"){
+      props.closePlayer();
+      const relatedSong = SongQueue.find((value) => value.id === key);
+      if(!relatedSong)return;
+      if(type === "song"){
+          const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
+          navigate(`/AlbumDetails/${albumres[0].key}/undefined`);
+      }
+      else if(type === "artist"){
+          navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
+      }
+  }
+
   return (
     <div className="HistoryUpcoming">
       {
@@ -43,7 +74,7 @@ function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos
                         artist={song.artist}
                         keyV={song.id}
                         setMenuOpenData={setMenuOpenData__SongQueue}
-                        />
+                        navigateTo={navigateToSQ}/>
                 )
             }
           </div>
@@ -58,7 +89,7 @@ function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos
                         artist={song.artist}
                         keyV={song.id}
                         setMenuOpenData={setMenuOpenData_SongHistory}
-                        />
+                        navigateTo={navigateToSH}/>
                 )
             }
           </div>

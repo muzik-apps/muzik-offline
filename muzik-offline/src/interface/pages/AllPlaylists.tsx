@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu } from "@components/index";
-import { ChevronDown } from "@assets/icons";
+import { ChevronDown, Menu } from "@assets/icons";
 import "@styles/pages/AllPlaylists.scss";
 import { contextMenuButtons, contextMenuEnum, mouse_coOrds, playlist } from "types";
 import { local_playlists_db } from "@database/database";
 import { useLiveQuery } from "dexie-react-hooks";
+import { useNavigate } from "react-router-dom";
 
 const AllPlaylists = () => {
 
@@ -14,6 +15,7 @@ const AllPlaylists = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [playlistMenuToOpen, setPlaylistMenuToOpen] = useState<playlist | null>(null);
     const playlists = useLiveQuery(() => local_playlists_db.playlists.toArray()) ?? [];
+    const navigate = useNavigate();
 
     function selectOption(arg: string){
         if(arg !== sort)setSort(arg);
@@ -30,9 +32,7 @@ const AllPlaylists = () => {
     
     }
 
-    function navigateTo(key: number){
-        console.log("Navigate to album with key: " + key);
-    }
+    function navigateTo(passed_key: number){ navigate(`/PlaylistView/${passed_key}`); }
     
     return (
         <motion.div className="AllPlaylists"
@@ -59,6 +59,10 @@ const AllPlaylists = () => {
                         </div>
                     </div>
                 </div>
+                <motion.div className="create_playlist" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}}>
+                    <h4>create a playlist</h4>
+                    <Menu />
+                </motion.div>
             </div>
             <div className="AllPlaylists_container">
                     {playlists.map((playlist) =>

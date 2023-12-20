@@ -6,14 +6,15 @@ import "@styles/pages/AllGenres.scss";
 import { mouse_coOrds, contextMenuEnum, contextMenuButtons, genre } from "types";
 import { local_genres_db } from "@database/database";
 import { useLiveQuery } from "dexie-react-hooks";
+import { useNavigate } from "react-router-dom";
 
 const AllGenres = () => {
-    
     const [sort, setSort] = useState<string>("Ascending");
     const [openedDDM, setOpenedDDM] = useState<boolean>(false);
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [genreMenuToOpen, setGenreMenuToOpen] = useState<genre | null>(null);
     const genres = useLiveQuery(() => local_genres_db.genres.toArray()) ?? [];
+    const navigate = useNavigate();
 
     function selectOption(arg: string){
         if(arg !== sort)setSort(arg); 
@@ -30,9 +31,7 @@ const AllGenres = () => {
     
     }
 
-    function navigateTo(key: number){
-        console.log("Navigate to album with key: " + key);
-    }
+    function navigateTo(passed_key: number){ navigate(`/GenreView/${passed_key}`); }
     
     return (
         <motion.div className="AllGenres"
