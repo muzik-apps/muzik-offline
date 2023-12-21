@@ -43,6 +43,8 @@ import CheckGreen from './General/CheckGreen';
 import CrossRed from './General/CrossRed';
 import InformationCircleContainedOrange from './General/InformationCircleContainedOrange';
 import InformationCircleContainedBlue from './General/InformationCircleContainedBlue';
+import EditImage from './General/EditImage';
+import Edit from './General/Edit';
 
 export {
     Next_page, Prev_page, Search, 
@@ -56,5 +58,6 @@ export {
     Cross, Empty_user, NullMusicCoverOne,
     NullMusicCoverTwo, NullMusicCoverThree, NullMusicCoverFour, NullCoverNull,
     NullArtistCoverOne, NullArtistCoverTwo, NullArtistCoverThree, NullArtistCoverFour,
-    CheckGreen, CrossRed, InformationCircleContainedOrange, InformationCircleContainedBlue
+    CheckGreen, CrossRed, InformationCircleContainedOrange, InformationCircleContainedBlue,
+    EditImage, Edit
 }

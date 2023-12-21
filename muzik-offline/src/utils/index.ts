@@ -163,3 +163,40 @@ export const getRandomCover = (value: number): () => JSX.Element => {
     else if(modv === 2)return NullCoverThree;
     else return NullCoverFour;
 }
+
+export const compressImage = async(dataUrl: string, maxWidth: number, maxHeight: number): Promise<string> => {
+    return new Promise<string>(
+        (resolve) => {
+            const image = new Image();
+            image.onload = () => {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d')!;
+
+            let newWidth = image.width;
+            let newHeight = image.height;
+
+            // Resize the image if it exceeds the maximum dimensions
+            if (newWidth > maxWidth) {
+                newWidth = maxWidth;
+                newHeight = (maxWidth / image.width) * image.height;
+            }
+
+            if (newHeight > maxHeight) {
+                newHeight = maxHeight;
+                newWidth = (maxHeight / image.height) * image.width;
+            }
+
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+
+            context.drawImage(image, 0, 0, newWidth, newHeight);
+
+            // Convert the canvas to data URL
+            const compressedDataUrl = canvas.toDataURL('image/jpeg'); // You can change the format if needed
+
+            resolve(compressedDataUrl);
+        };
+
+        image.src = dataUrl;
+    });
+}

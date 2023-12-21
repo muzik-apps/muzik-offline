@@ -25,7 +25,9 @@ const SquareTitleBox: FunctionComponent<SquareTitleBoxProps> = (props: SquareTit
                     { 
                         !props.cover ? (getRandomCover(props.keyV))()
                         :
-                        <img src={`data:image/png;base64,${props.cover}`} alt="SquareTitleBox-img" />
+                        <img src={props.cover.startsWith("data:image/png;base64,") || props.cover.startsWith("data:image/jpeg;base64,") ? 
+                            props.cover :
+                            `data:image/png;base64,${props.cover}`} alt="SquareTitleBox-img" />
                     }
             </motion.div>
             <motion.h3 whileTap={{scale: 0.98}} onClick={navigateTo}>{props.title}</motion.h3>

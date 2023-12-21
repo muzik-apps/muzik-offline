@@ -1,5 +1,5 @@
-import { Play, Shuffle } from "@assets/icons";
-import { LargeResizableCover, RectangleSongBox, GeneralContextMenu } from "@components/index";
+import { Edit, Play, Shuffle } from "@assets/icons";
+import { LargeResizableCover, RectangleSongBox, GeneralContextMenu, EditPlaylistModal, PropertiesModal } from "@components/index";
 import { local_albums_db, local_playlists_db } from "@database/database";
 import { mouse_coOrds, Song, contextMenuButtons, contextMenuEnum } from "types";
 import { motion } from "framer-motion";
@@ -7,10 +7,11 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getPlaylistSongs, secondsToTimeFormat } from "utils";
 import "@styles/pages/PlaylistView.scss";
+import { ViewportList } from "react-viewport-list";
 
-interface PlaylistMD {cover: string | null;playlistName: string;song_count: number;length: string;}
+interface PlaylistMD {key: number;cover: string | null;playlistName: string;song_count: number;length: string;}
 
-const emptyMD: PlaylistMD = {cover: null,playlistName: "",song_count: 0,length: ""}
+const emptyMD: PlaylistMD = {key: 0,cover: null,playlistName: "",song_count: 0,length: ""}
 
 const variants_list = {smaller: { height: "calc(100vh - 395px)" },bigger: { height: "calc(100vh - 195px)" }}
 
@@ -20,6 +21,8 @@ const PlaylistView = () => {
     const [SongList, setSongList] = useState<Song[]>([]);
     const [playlist_metadata, setPlaylistMetadata] = useState<PlaylistMD>(emptyMD);
     const [songMenuToOpen, setSongMenuToOpen] = useState<Song | null>(null);
+    const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState<boolean>(false);
+    const [isPropertiesModalOpen, setIsPropertiesModalOpen] = useState<boolean>(false);
     const navigate = useNavigate();
     
     const [resizeHeader, setResizeHeader] = useState<boolean>(false);
@@ -48,17 +51,25 @@ const PlaylistView = () => {
         else if(resizeHeader === false)setResizeHeader(true);
     };
 
-    async function setAlbumSongs(){
+    async function setPlaylistSongs(){
         if(playlist_key === undefined)return;
         const playlistres = await local_playlists_db.playlists.where("key").equals(Number.parseInt(playlist_key)).toArray();
         if(playlistres.length !== 1)return;
         const result = await getPlaylistSongs(playlistres[0]);
         setPlaylistMetadata({
-            cover: result.cover, playlistName: playlistres[0].title,
+            key: playlistres[0].key,
+            cover: playlistres[0].cover, playlistName: playlistres[0].title,
             song_count: result.songs.length,
             length: secondsToTimeFormat(result.totalDuration)
         });
         setSongList(result.songs);
+    }
+
+    async function closePlaylistModal(){
+        setIsPlaylistModalOpen(false);
+        //get this playlist
+        const pl = await local_playlists_db.playlists.where("key").equals(playlist_metadata.key).toArray();
+        setPlaylistMetadata({key: pl[0].key,cover: pl[0].cover, playlistName: pl[0].title,song_count: playlist_metadata.song_count,length: playlist_metadata.length});
     }
 
     async function navigateTo(key: number, type: "artist" | "song"){
@@ -74,7 +85,7 @@ const PlaylistView = () => {
     }
 
     useEffect(() => {
-        setAlbumSongs();
+        setPlaylistSongs();
         itemsHeightRef.current?.addEventListener('scroll', handleScroll);
         return () =>  itemsHeightRef.current?.removeEventListener('scroll', handleScroll);
     }, [])
@@ -93,12 +104,13 @@ const PlaylistView = () => {
                             <h4>{playlist_metadata.song_count} songs</h4>
                             <div className="action_buttons">
                                 <motion.div className="PlayIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
-                                    <Play />
-                                    <p>play</p>
+                                    <Play /><p>play</p>
                                 </motion.div>
                                 <motion.div className="ShuffleIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
-                                    <Shuffle />
-                                    <p>Shuffle</p>
+                                    <Shuffle /><p>Shuffle</p>
+                                </motion.div>
+                                <motion.div className="EditIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={() => setIsPlaylistModalOpen(true)}>
+                                    <Edit /><p>Edit</p>
                                 </motion.div>
                             </div>
                         </>
@@ -110,23 +122,25 @@ const PlaylistView = () => {
                 variants={variants_list}
                 transition={{ type: "tween" }}
                 ref={itemsHeightRef}>
-                {
-                    SongList.map((song, index) =>
-                        <RectangleSongBox 
-                            key={song.id}
-                            keyV={song.id}
-                            index={index + 1} 
-                            cover={song.cover} 
-                            songName={song.title} 
-                            artist={song.artist}
-                            length={song.duration} 
-                            year={song.year}
-                            selected={selected === index + 1 ? true : false}
-                            selectThisSong={selectThisSong}
-                            setMenuOpenData={setMenuOpenData}
-                            navigateTo={navigateTo}/>
-                    )
-                }
+                <ViewportList viewportRef={itemsHeightRef} items={SongList}>
+                    {
+                        (song, index) => (
+                            <RectangleSongBox 
+                                key={song.id}
+                                keyV={song.id}
+                                index={index + 1} 
+                                cover={song.cover} 
+                                songName={song.title} 
+                                artist={song.artist}
+                                length={song.duration} 
+                                year={song.year}
+                                selected={selected === index + 1 ? true : false}
+                                selectThisSong={selectThisSong}
+                                setMenuOpenData={setMenuOpenData}
+                                navigateTo={navigateTo}/>
+                        )
+                    }
+                </ViewportList>
                 <div className="footer_content">
                     <h4>{playlist_metadata.song_count} {playlist_metadata.song_count > 1 ? "Songs" : "Song"}, {playlist_metadata.length} listen time</h4>
                 </div>
@@ -147,12 +161,17 @@ const PlaylistView = () => {
                         <GeneralContextMenu 
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
-                            title={songMenuToOpen.title}
+                            title={songMenuToOpen.name}
                             CMtype={contextMenuEnum.SongCM}
                             chooseOption={chooseOption}/>
                     </div>
                 )
             }
+            <EditPlaylistModal 
+                playlistobj={{key: playlist_metadata.key, cover: playlist_metadata.cover, title: playlist_metadata.playlistName, dateCreated: "", dateEdited: "", tracksPaths: []}}
+                isOpen={isPlaylistModalOpen} 
+                closeModal={closePlaylistModal}/>
+            <PropertiesModal isOpen={isPropertiesModalOpen} song={songMenuToOpen ? songMenuToOpen : undefined} closeModal={() => setIsPropertiesModalOpen(false)} />
         </motion.div>
     )
 }

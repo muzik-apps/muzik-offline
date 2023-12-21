@@ -27,7 +27,9 @@ const LargeResizableCover = (props: LargeResizableCoverProps) => {
                 transition={{ type: "spring", stiffness: 100, damping: 14 }}>
                 {
                     props.cover ?
-                        <img src={`data:image/png;base64,${props.cover}`} alt="first-cover"/>
+                        <img src={props.cover.startsWith("data:image/png;base64,") || props.cover.startsWith("data:image/jpeg;base64,") ? 
+                            props.cover :
+                            `data:image/png;base64,${props.cover}`} alt="first-cover"/>
                     :
                     getRandomCover(props.id ? Number.parseInt(props.id) : 0)()
                 }
@@ -38,7 +40,9 @@ const LargeResizableCover = (props: LargeResizableCoverProps) => {
                 transition={{ type: "spring", stiffness: 100, damping: 14 }}>
                 {
                     props.cover ?
-                        <img src={`data:image/png;base64,${props.cover}`} alt="second-cover"/>
+                        <img src={props.cover.startsWith("data:image/png;base64,") || props.cover.startsWith("data:image/jpeg;base64,") ? 
+                            props.cover :
+                            `data:image/png;base64,${props.cover}`} alt="second-cover"/>
                     :
                     getRandomCover(props.id ? Number.parseInt(props.id) : 0)()
                 }

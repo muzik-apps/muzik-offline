@@ -7,6 +7,7 @@ import { GeneralContextMenu, LargeResizableCover, RectangleSongBox } from "@comp
 import { Play, Shuffle } from "@assets/icons";
 import { local_albums_db, local_genres_db } from "@database/database";
 import "@styles/pages/GenreView.scss";
+import { ViewportList } from "react-viewport-list";
 
 interface GenreMD {cover: string | null;genreName: string;song_count: number;length: string;}
 
@@ -110,23 +111,25 @@ const GenreView = () => {
                 variants={variants_list}
                 transition={{ type: "tween" }}
                 ref={itemsHeightRef}>
-                {
-                    SongList.map((song, index) =>
-                        <RectangleSongBox 
-                            key={song.id}
-                            keyV={song.id}
-                            index={index + 1}
-                            cover={song.cover}
-                            songName={song.title}
-                            artist={song.artist}
-                            length={song.duration}
-                            year={song.year}
-                            selected={selected === index + 1 ? true : false}
-                            selectThisSong={selectThisSong}
-                            setMenuOpenData={setMenuOpenData} 
-                            navigateTo={navigateTo}/>
-                    )
-                }
+                <ViewportList viewportRef={itemsHeightRef} items={SongList}>
+                    {
+                        (song, index) => (
+                            <RectangleSongBox 
+                                key={song.id}
+                                keyV={song.id}
+                                index={index + 1}
+                                cover={song.cover}
+                                songName={song.title}
+                                artist={song.artist}
+                                length={song.duration}
+                                year={song.year}
+                                selected={selected === index + 1 ? true : false}
+                                selectThisSong={selectThisSong}
+                                setMenuOpenData={setMenuOpenData} 
+                                navigateTo={navigateTo}/>
+                        )
+                    }
+                </ViewportList>
                 <div className="footer_content">
                     <h4>{genre_metadata.song_count} {genre_metadata.song_count > 1 ? "Songs" : "Song"}, {genre_metadata.length} listen time</h4>
                 </div>
@@ -147,7 +150,7 @@ const GenreView = () => {
                         <GeneralContextMenu 
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
-                            title={songMenuToOpen.title}
+                            title={songMenuToOpen.name}
                             CMtype={contextMenuEnum.SongCM}
                             chooseOption={chooseOption}/>
                     </div>

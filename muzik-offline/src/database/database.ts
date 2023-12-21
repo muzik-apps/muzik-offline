@@ -61,7 +61,7 @@ export class PlaylistsDexie extends Dexie {
     constructor() {
         super('PlaylistsDatabase');
         this.version(1).stores({
-            playlists: 'key,cover,title,dateCreated,tracksPaths' // Primary key and indexed props
+            playlists: '++key,cover,title,dateCreated,dateEdited,tracksPaths' // Primary key and indexed props
         });
     }
 }

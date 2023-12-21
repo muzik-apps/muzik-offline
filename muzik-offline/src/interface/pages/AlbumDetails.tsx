@@ -7,6 +7,7 @@ import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
 import { useNavigate, useParams } from "react-router-dom";
 import { local_albums_db } from "@database/database";
 import { getAlbumSongs, getRandomCover, secondsToTimeFormat } from "utils";
+import { ViewportList } from "react-viewport-list";
 
 interface AlbumMD {cover: string | null;title: string;artist: string;year: string;song_count: number;length: string;}
 
@@ -110,23 +111,25 @@ const AlbumDetails = () => {
                 variants={variants_list}
                 transition={{ type: "tween" }}
                 ref={itemsHeightRef}>
-                {
-                    SongList.map((song, index) =>
-                        <RectangleSongBox 
-                            key={song.id}
-                            keyV={song.id}
-                            index={index + 1}
-                            cover={song.cover}
-                            songName={song.title}
-                            artist={song.artist}
-                            length={song.duration}
-                            year={song.year}
-                            selected={selected === index + 1 ? true : false}
-                            selectThisSong={selectThisSong}
-                            setMenuOpenData={setMenuOpenData} 
-                            navigateTo={(_key: number, _type: "artist" | "song") => {} }/>
-                    )
-                }
+                <ViewportList viewportRef={itemsHeightRef} items={SongList}>
+                    {
+                        (song, index) => (
+                            <RectangleSongBox 
+                                key={song.id}
+                                keyV={song.id}
+                                index={index + 1}
+                                cover={song.cover}
+                                songName={song.title}
+                                artist={song.artist}
+                                length={song.duration}
+                                year={song.year}
+                                selected={selected === index + 1 ? true : false}
+                                selectThisSong={selectThisSong}
+                                setMenuOpenData={setMenuOpenData} 
+                                navigateTo={(_key: number, _type: "artist" | "song") => {} }/>
+                        )
+                    }
+                </ViewportList>
                 <div className="footer_content">
                     <h4>{album_metadata.song_count} {album_metadata.song_count > 1 ? "Songs" : "Song"}, {album_metadata.length} listen time</h4>
                 </div>
@@ -147,7 +150,7 @@ const AlbumDetails = () => {
                         <GeneralContextMenu 
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
-                            title={songMenuToOpen.title}
+                            title={songMenuToOpen.name}
                             CMtype={contextMenuEnum.SongCM}
                             chooseOption={chooseOption}/>
                     </div>

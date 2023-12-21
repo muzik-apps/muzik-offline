@@ -87,7 +87,7 @@ const SearchSongs = () => {
                         <GeneralContextMenu 
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
-                            title={songMenuToOpen.title}
+                            title={songMenuToOpen.name}
                             CMtype={contextMenuEnum.SongCM}
                             chooseOption={chooseOption}/>
                     </div>

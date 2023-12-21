@@ -34,7 +34,9 @@ const RectangleSongBox: FunctionComponent<RectangleSongBoxProps> = (props: Recta
                     { 
                         !props.cover ? (getRandomCover(props.index))()
                         :
-                        <img src={`data:image/png;base64,${props.cover}`} alt="SquareSongBox-img" />
+                        <img src={props.cover.startsWith("data:image/png;base64,") || props.cover.startsWith("data:image/jpeg;base64,") ? 
+                            props.cover :
+                            `data:image/png;base64,${props.cover}`} alt="SquareSongBox-img" />
                     }
                 </motion.div>
                 <div className="song_name">

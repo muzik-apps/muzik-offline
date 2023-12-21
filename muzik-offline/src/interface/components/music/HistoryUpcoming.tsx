@@ -121,7 +121,7 @@ function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos
                   <GeneralContextMenu 
                       xPos={co_ords.xPos} 
                       yPos={co_ords.yPos} 
-                      title={songMenuToOpen.title}
+                      title={songMenuToOpen.name}
                       CMtype={contextMenuEnum.SongCM}
                       chooseOption={chooseOption}/>
               </div>

@@ -37,7 +37,7 @@
             .action_buttons{
                 display: flex;
 
-                .PlayIcon, .ShuffleIcon{
+                .PlayIcon, .ShuffleIcon, .EditIcon{
                     display: flex;
                     background: $btn-clickable;
                     backdrop-filter: var(--var-bg-blur-150);
@@ -51,28 +51,14 @@
 
                     svg{
                         margin-right: 2.5px;
+                        path{
+                            fill: $app-theme-col;
+                            stroke: $app-theme-col;
+                        }
                     }
 
                     p{
                         margin-left: 2.5px;
-                    }
-                }
-
-                .PlayIcon{
-                    svg{
-                        path{
-                            fill: $app-theme-col;
-                            stroke: $app-theme-col;
-                        }
-                    }
-                }
-            
-                .ShuffleIcon{
-                    svg{
-                        path{
-                            fill: $app-theme-col;
-                            stroke: $app-theme-col;
-                        }
                     }
                 }
             }

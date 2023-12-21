@@ -134,6 +134,12 @@ async fn read_from_path(path: &str, song_id: &mut i32) -> Result<Song, Box<dyn s
     //COVER
     if let Some(cover) = tag.pictures().next() {
         let picture_as_num = cover.data.to_owned();
+        //we want the image to be compressed to have speed improvements
+        //the image resides in picture_as_num as a Vec<u8>
+        //compression code goes here
+        
+
+        //we need to convert it to a base64 string
         let base64str = general_purpose::STANDARD.encode(&picture_as_num);
         song_meta_data.cover = Some(base64str);
     }

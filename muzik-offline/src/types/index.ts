@@ -80,9 +80,10 @@ export interface artist {
 
 export interface playlist {
     key: number;
-    cover: string | null;
+    cover: any | null;
     title: string;
     dateCreated: string;
+    dateEdited: string;
     tracksPaths: string[];
 }
 

@@ -1,20 +1,20 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu } from "@components/index";
+import { useEffect, useState } from "react";
+import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, CreatePlaylistModal, PropertiesModal } from "@components/index";
 import { ChevronDown, Menu } from "@assets/icons";
 import "@styles/pages/AllPlaylists.scss";
 import { contextMenuButtons, contextMenuEnum, mouse_coOrds, playlist } from "types";
 import { local_playlists_db } from "@database/database";
-import { useLiveQuery } from "dexie-react-hooks";
 import { useNavigate } from "react-router-dom";
 
 const AllPlaylists = () => {
-
     const [sort, setSort] = useState<string>("Ascending");
     const [openedDDM, setOpenedDDM] = useState<boolean>(false);
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [playlistMenuToOpen, setPlaylistMenuToOpen] = useState<playlist | null>(null);
-    const playlists = useLiveQuery(() => local_playlists_db.playlists.toArray()) ?? [];
+    const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState<boolean>(false);
+    const [isPropertiesModalOpen, setIsPropertiesModalOpen] = useState<boolean>(false);
+    const [playlists, setPlaylists] = useState<playlist[]>([]);
     const navigate = useNavigate();
 
     function selectOption(arg: string){
@@ -29,10 +29,27 @@ const AllPlaylists = () => {
     }
 
     function chooseOption(arg: contextMenuButtons){
-    
+        if(arg === contextMenuButtons.ShowInfo){
+            setIsPropertiesModalOpen(true);
+        }
+    }
+
+    async function closePlaylistModal(){
+        setIsPlaylistModalOpen(false);
+        const pl = await local_playlists_db.playlists.toArray();
+        setPlaylists(pl);
     }
 
     function navigateTo(passed_key: number){ navigate(`/PlaylistView/${passed_key}`); }
+
+    useEffect(() => {
+        const getPlaylists = async () => {
+            const pl = await local_playlists_db.playlists.toArray();
+            setPlaylists(pl);
+        };
+
+        getPlaylists();
+    }, [])
     
     return (
         <motion.div className="AllPlaylists"
@@ -59,7 +76,7 @@ const AllPlaylists = () => {
                         </div>
                     </div>
                 </div>
-                <motion.div className="create_playlist" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}}>
+                <motion.div className="create_playlist" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() => setIsPlaylistModalOpen(true)}>
                     <h4>create a playlist</h4>
                     <Menu />
                 </motion.div>
@@ -98,6 +115,8 @@ const AllPlaylists = () => {
                 )
             }
             <div className="bottom_margin"/>
+            <CreatePlaylistModal isOpen={isPlaylistModalOpen} closeModal={closePlaylistModal}/>
+            <PropertiesModal isOpen={isPropertiesModalOpen} playlist={playlistMenuToOpen ? playlistMenuToOpen : undefined} closeModal={() => setIsPropertiesModalOpen(false)} />
         </motion.div>
     )
 }

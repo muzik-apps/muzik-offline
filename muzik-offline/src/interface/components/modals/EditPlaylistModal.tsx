@@ -1,18 +1,19 @@
-import { EditImage, NullCoverNull } from "@assets/icons";
-import { playlist } from "types";
-import { motion } from "framer-motion";
-import { FunctionComponent, useEffect, useState } from "react";
-import { local_playlists_db } from "@database/database";
-import "@styles/components/modals/CreatePlaylistModal.scss";
-import { compressImage } from "utils";
+import { playlist } from 'types';
+import { FunctionComponent, useEffect, useState } from 'react';
+import { NullCoverNull, EditImage } from '@assets/icons';
+import { motion } from 'framer-motion';
+import "@styles/components/modals/EditPlaylistModal.scss";
+import { compressImage } from 'utils';
+import { local_playlists_db } from '@database/database';
 
-type CreatePlaylistModalProps = {
+type EditPlaylistModalProps = {
+    playlistobj: playlist;
     isOpen: boolean;
     closeModal: () => void;
 }
 
-const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props: CreatePlaylistModalProps) => {
-    const [playlistObj, setPlaylistObj] = useState<playlist>({key: 0,cover: null,title: "",dateCreated: "",dateEdited: "",tracksPaths: []});
+const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: EditPlaylistModalProps) => {
+    const [playlistObj, setPlaylistObj] = useState<playlist>(props.playlistobj);
 
     function uploadImg(e: React.ChangeEvent<HTMLInputElement>){
         if(e.target.files === null)return;
@@ -32,27 +33,24 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
         reader.readAsDataURL(image);
     }
 
-    async function createPlaylistAndCloseModal(){
+    async function savePlaylistAndCloseModal(){
         const PLobj = playlistObj;
-        PLobj.dateCreated = new Date().toLocaleDateString();
         PLobj.dateEdited = new Date().toLocaleDateString();
-        //set key of PLobj as the last key in the database + 1
-        const last_key = await local_playlists_db.playlists.orderBy("key").last();
-        PLobj.key = last_key ? last_key.key + 1 : 0;
-        await local_playlists_db.playlists.add(PLobj);
+        //save changes of this playlist
+        await local_playlists_db.playlists.update(PLobj.key, PLobj);
         props.closeModal();
     }
-    
+
     useEffect(() => {   
-        setPlaylistObj({key: 0,cover: null,title: "",dateCreated: "",dateEdited: "",tracksPaths: []});
+        setPlaylistObj(props.playlistobj);
     }, [props.isOpen])
 
     return (
-        <div className={"CreatePlaylistModal" + (props.isOpen ? " CreatePlaylistModal-visible" : "")} onClick={
+        <div className={"EditPlaylistModal" + (props.isOpen ? " EditPlaylistModal-visible" : "")} onClick={
             (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => 
                 {if(e.target === e.currentTarget)props.closeModal()}}>
             <div className="modal">
-                <h1>Create a playlist</h1>
+                <h1>Edit a playlist</h1>
                 <div className="playlist_image">
                     <div className="playlist_img">
                         {
@@ -60,17 +58,17 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
                             <img src={playlistObj.cover} alt="playlist_img"/>
                         }
                     </div>
-                    <motion.label className="EditImageicon" whileTap={{scale: 0.97}}>
+                    <motion.label className="EditImageicon" whileHover={{scale: 1.03}} whileTap={{scale: 0.97}}>
                         <input name="EditImageicon-img" type="file" accept="image/png, image/jpeg" onChange={uploadImg}/>
                         <EditImage />
                     </motion.label>
                 </div>
                 <h3>Playlist name</h3>
                 <input type="text" value={playlistObj.title} onChange={(e) => setPlaylistObj({ ... playlistObj, title : e.target.value})}/>
-                <motion.div className="create_playlist" whileTap={{scale: 0.98}} onClick={createPlaylistAndCloseModal}>create playlist</motion.div>
+                <motion.div className="edit_playlist" whileTap={{scale: 0.98}} onClick={savePlaylistAndCloseModal}>save changes</motion.div>
             </div>
         </div>
     )
 }
 
-export default CreatePlaylistModal
+export default EditPlaylistModal
