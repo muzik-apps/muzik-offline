@@ -1,4 +1,4 @@
-import { RectangleSongBox, GeneralContextMenu } from "@components/index";
+import { RectangleSongBox, GeneralContextMenu, AddSongToPlaylistModal, PropertiesModal } from "@components/index";
 import { mouse_coOrds, contextMenuEnum, Song, contextMenuButtons } from "types";
 import { useState, useRef, useEffect } from "react";
 import "@styles/layouts/SearchSongs.scss";
@@ -13,6 +13,8 @@ const SearchSongs = () => {
     const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
     const [SongList, setSongLists] = useState<Song[]>([]);
+    const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState<boolean>(false);
+    const [isPropertiesModalOpen, setIsPropertiesModalOpen] = useState<boolean>(false);
     const navigate = useNavigate();
 
     const ref = useRef<HTMLDivElement | null>(null);
@@ -26,7 +28,8 @@ const SearchSongs = () => {
     }
 
     function chooseOption(arg: contextMenuButtons){
-    
+        if(arg === contextMenuButtons.ShowInfo){ setIsPropertiesModalOpen(true);}
+        else if(arg === contextMenuButtons.AddToPlaylist){ setIsPlaylistModalOpen(true); }
     }
 
     async function navigateTo(key: number, type: "artist" | "song"){
@@ -93,6 +96,11 @@ const SearchSongs = () => {
                     </div>
                 )
             }
+            <PropertiesModal isOpen={isPropertiesModalOpen} song={songMenuToOpen!} closeModal={() => {setIsPropertiesModalOpen(false); setSongMenuToOpen(null);}} />
+            <AddSongToPlaylistModal 
+                isOpen={isPlaylistModalOpen} 
+                songPath={songMenuToOpen ? songMenuToOpen.path : ""} 
+                closeModal={() => setIsPlaylistModalOpen(false)} />
         </div>
     )
 }

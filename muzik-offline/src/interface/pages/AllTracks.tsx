@@ -2,7 +2,7 @@ import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
 import { motion } from "framer-motion";
 import { useState, useRef } from "react";
 import { ChevronDown, Shuffle } from "@assets/icons";
-import { DropDownMenuSmall, GeneralContextMenu, PropertiesModal, RectangleSongBox } from "@components/index";
+import { AddSongToPlaylistModal, DropDownMenuSmall, GeneralContextMenu, PropertiesModal, RectangleSongBox } from "@components/index";
 import "@styles/pages/AllTracks.scss";
 import { ViewportList } from 'react-viewport-list';
 import { local_albums_db, local_songs_db } from "@database/database";
@@ -16,7 +16,8 @@ const AllTracks = () => {
     const [openedDDM, setOpenedDDM] = useState<string | null>(null);
     const SongList = useLiveQuery(() => local_songs_db.songs.toArray()) ?? [];
     const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
-    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState<boolean>(false);
+    const [isPropertiesModalOpen, setIsPropertiesModalOpen] = useState<boolean>(false);
     const navigate = useNavigate();
 
     const ref = useRef<HTMLDivElement | null>(null);
@@ -36,7 +37,8 @@ const AllTracks = () => {
     }
 
     function chooseOption(arg: contextMenuButtons){
-        if(arg === contextMenuButtons.ShowInfo){ setIsOpen(true);}
+        if(arg === contextMenuButtons.ShowInfo){ setIsPropertiesModalOpen(true);}
+        else if(arg === contextMenuButtons.AddToPlaylist){ setIsPlaylistModalOpen(true); }
     }
 
     async function navigateTo(key: number, type: "artist" | "song"){
@@ -144,7 +146,11 @@ const AllTracks = () => {
                 )
             }
             <div className="bottom_margin"/>
-            <PropertiesModal isOpen={isOpen} song={songMenuToOpen!} closeModal={() => {setIsOpen(false); setSongMenuToOpen(null);}} />
+            <PropertiesModal isOpen={isPropertiesModalOpen} song={songMenuToOpen!} closeModal={() => {setIsPropertiesModalOpen(false); setSongMenuToOpen(null);}} />
+            <AddSongToPlaylistModal 
+                isOpen={isPlaylistModalOpen} 
+                songPath={songMenuToOpen ? songMenuToOpen.path : ""} 
+                closeModal={() => {setIsPlaylistModalOpen(false); setSongMenuToOpen(null);}} />
         </motion.div>
     )
 }

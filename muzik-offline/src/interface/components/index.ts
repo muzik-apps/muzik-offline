@@ -26,6 +26,7 @@ import EditPlaylistModal from './modals/EditPlaylistModal';
 import { PlayButton, PlayNextButton, PlayLaterButton, 
     ShowArtistButton, AddToPlaylistButton, ShowGenreButton, 
     ShowPlaylistButton, ShowAlbumButton } from './context_menu/ContextMenuButtons';
+import AddSongToPlaylistModal from "./modals/AddSongToPlaylistModal";
 
 export {
     HeaderWindows, HeaderMacOS, HeaderLinuxOS, AppNavigator, LeftSidebar, AppMusicPlayer, FSMusicPlayer,
@@ -36,5 +37,5 @@ export {
     AddToPlaylistButton, ShowGenreButton, ShowPlaylistButton,
     ShowAlbumButton, SearchNavigator, DirectoriesModal, ShowInfoButton,
     NotifyBottomRight, PropertiesModal, LargeResizableCover,
-    CreatePlaylistModal, EditPlaylistModal
+    CreatePlaylistModal, EditPlaylistModal, AddSongToPlaylistModal
 }
