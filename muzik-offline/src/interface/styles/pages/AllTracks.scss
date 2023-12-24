@@ -26,6 +26,7 @@
                 font-size: 13px;
                 margin-top: 3px;
                 width: 82px;
+                text-align: center;
             }
 
             .sort_dropdown_container{
@@ -45,7 +46,9 @@
                         font-size: 13px;
                         height: 13px;
                         margin-top: 11px;
+                        width: 109px;
                         color: $root-app-navigator-hover-col;
+                        text-align: center;
                     }
                     
                     .chevron_icon{

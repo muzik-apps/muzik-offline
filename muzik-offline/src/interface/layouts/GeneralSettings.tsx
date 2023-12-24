@@ -37,7 +37,6 @@ const settings_data: {
         dropDownName: selectedGeneralSettingEnum.WallpaperOpacityAmount,
         options: ["0", "2", "4", "6", "8", "10"]
     }
-
 ]
 
 type GeneralSettingsProps = {

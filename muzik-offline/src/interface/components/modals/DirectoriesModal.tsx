@@ -2,7 +2,7 @@ import { FunctionComponent, useState } from "react";
 import "@styles/components/modals/DirectoriesModal.scss";
 import { invoke } from "@tauri-apps/api";
 import { Song, toastType } from "types";
-import { useDirStore, useToastStore } from "store";
+import { useDirStore, useSavedObjectStore, useToastStore } from "store";
 import { createSongList_inDB, createAlbumsList_inDB, createGenresList_inDB, createArtistsList_inDB } from "utils";
 
 type DirectoriesModalProps = {
@@ -14,9 +14,10 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
     const { dir, setDir } = useDirStore((state) => { return { dir: state.dir, setDir: state.setDir}; });
     const [directories, setDirectories] = useState<string[]>(dir.Dir);
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
+    const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
 
     function reloadSongs(){
-        invoke("get_all_songs", { pathsAsJsonArray: JSON.stringify(directories) })
+        invoke("get_all_songs", { pathsAsJsonArray: JSON.stringify(directories), compressImageOption: local_store.CompressImage === "Yes" ? true : false })
             .then((res: any) => {
                 const song_data: Song[] = JSON.parse(res);
                 createSongList_inDB(song_data);

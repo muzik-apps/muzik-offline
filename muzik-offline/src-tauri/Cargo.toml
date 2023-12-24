@@ -20,6 +20,7 @@ id3 = "1.10.0"
 mp3-duration = "0.1.10"
 tokio = { version = "1.35.0", features = ["full"] }
 base64 = "0.21.5"
+image = "0.24.7"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

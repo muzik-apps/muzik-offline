@@ -6,9 +6,12 @@ import SearchArtists from './SearchArtists';
 import SearchAlbums from './SearchAlbums';
 import SearchGenres from './SearchGenres';
 import SearchPlaylists from './SearchPlaylists';
+import AdvancedSettings from '@layouts/AdvancedSettings';
+import SecuritySettings from './SecuritySettings';
+import AboutSettings from './AboutSettings';
 
 export {
     GeneralSettings, AppearanceSettings, HistoryNextFloating,
     SearchSongs, SearchArtists, SearchAlbums, SearchGenres,
-    SearchPlaylists
+    SearchPlaylists, AdvancedSettings, SecuritySettings, AboutSettings
 }

@@ -4,7 +4,7 @@ import "@styles/pages/Settings.scss";
 import { ChevronDown, ComponentIcon, InformationCircleContained, Layout, Lock, SettingsIcon } from "@icons/index";
 import { DirectoriesModal, SettingsNavigator } from '@components/index';
 import { selectedSettingENUM } from 'types';
-import { AppearanceSettings, GeneralSettings } from '@layouts/index';
+import { AppearanceSettings, GeneralSettings, AdvancedSettings, AboutSettings, SecuritySettings } from '@layouts/index';
 
 type SettingsProps = {
     openSettings: boolean;
@@ -70,13 +70,13 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
                                         case selectedSettingENUM.Appearance:
                                             return <AppearanceSettings />
                                         case selectedSettingENUM.Security:
-                                            return <div />
+                                            return <SecuritySettings />
                                         case selectedSettingENUM.Advanced:
-                                            return <div />
+                                            return <AdvancedSettings />
                                         case selectedSettingENUM.About:
-                                            return <div />
+                                            return <AboutSettings />
                                         default:
-                                            return <div />
+                                            return <GeneralSettings openDirectoryModal={() => setCDModalState(true)}/>
                                     }
                                 }
                                 )()

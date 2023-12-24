@@ -1,10 +1,12 @@
-# Muzik-offline
-A cross platform, local music player that is an offline(no streaming) version of <a href="https://github.com/waveyboym/Muzik">Muzik</a>
-
+<img src="Presentation/app_logo.svg" width="5219"></img>
+\
+\
+\
+\
 ![application](Presentation/Application.png "Application")
-
-## Further description
-This app allows you to listen to music that is stored on your local machine, that being music in mp3, wav etc format.
+<br></br>
+# Muzik-offline
+A cross platform, local music player that is an offline(no streaming) version of <a href="https://github.com/waveyboym/Muzik">Muzik</a>. This app allows you to listen to music that is stored on your local machine, that being music in mp3, wav etc format.
 
 # I am a user/tester
 1. Navigate to the <a href="https://github.com/waveyboym/Muzik-offline/releases">releases tab</a> and find the latest app release for your operating system.
@@ -25,13 +27,25 @@ npm install
 ```
 npm run tauri dev
 ```
+Please note that when you run ```npm run tauri``` dev for the first time, it may take a lengthy amount of minutes to compile everything. However this only occurs just on your first run. In subsequent runs, it will be faster.
 
 # Node modules used
 1. <a href="https://www.npmjs.com/package/@tauri-apps/cli">tauri-apps/api</a>
-2. <a href="https://www.framer.com/motion/">framer motion</a>
-3. <a href="https://react.dev/">react and react-dom</a>
-4. <a href="https://reactrouter.com/en/main">react-router-dom</a>
-5. <a href="https://sass-lang.com/">sass</a>
-6. <a href="https://swiperjs.com/">swiper</a>
+2. <a href="https://dexie.org/">dexie</a>
+3. <a href="https://www.framer.com/motion/">framer motion</a>
+4. <a href="https://www.npmjs.com/package/image-size">image-size</a>
+5. <a href="https://react.dev/">react and react-dom</a>
+6. <a href="https://reactrouter.com/en/main">react-router-dom</a>
+7. <a href="https://www.npmjs.com/package/react-viewport-list">react viewport list</a>
+8. <a href="https://sass-lang.com/">sass</a>
+9. <a href="https://docs.pmnd.rs/zustand/getting-started/introduction">zustand</a>
 
 # Rust libraries used
+1. <a href="https://tauri.app/">tauri</a>
+2. <a href="https://serde.rs/">serde</a>
+3. <a href="https://docs.rs/serde_json">serde_json</a>
+4. <a href="https://docs.rs/id3">id3</a>
+5. <a href="https://crates.io/crates/mp3-duration">mp3-duration</a>
+6. <a href="https://crates.io/crates/tokio">tokio</a>
+7. <a href="https://docs.rs/base64">base64</a>
+8. <a href="https://docs.rs/image">image</a>

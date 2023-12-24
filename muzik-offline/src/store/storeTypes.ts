@@ -3,7 +3,7 @@ import { Player } from "@database/player";
 import { SavedObject } from "@database/saved_object";
 import { viewableSideEl } from "@database/side_elements";
 import { SavedWallpaper } from "@database/wallpaper";
-import { toast } from "types";
+import { Song, toast } from "types";
 
 export interface toastInterface{
     toastObject: toast | null;
@@ -40,4 +40,10 @@ export interface SavedObjectInterface{
 export interface PlayerInterface{
     Player: Player;
     setPlayer: (setTo: Player) => void;
+}
+
+export interface QueueInterface{
+    queue: Song[];
+    enqueue: (song: Song) => void;
+    dequeue: () => void;
 }

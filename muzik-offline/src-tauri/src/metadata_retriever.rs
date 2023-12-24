@@ -1,8 +1,9 @@
-use std::path::Path;
+use std::{path::Path, io::Cursor};
 use id3::{Tag, TagLike};
 use mp3_duration;
 use serde_json::Value;
 use base64::{Engine as _, engine::general_purpose};
+use image::imageops::FilterType;
 use crate::components::Song;
 
 pub fn decode_directories(paths_as_json: &str) -> Vec<String> {
@@ -27,7 +28,7 @@ pub fn decode_directories(paths_as_json: &str) -> Vec<String> {
     }
 }
 
-pub async fn get_songs_in_path(dir_path: &str, song_id: &mut i32) -> Vec<Song>{
+pub async fn get_songs_in_path(dir_path: &str, song_id: &mut i32, compress_image_option: &bool) -> Vec<Song>{
     let mut songs: Vec<Song> = Vec::new();
 
     match tokio::fs::read_dir(dir_path).await {
@@ -35,7 +36,7 @@ pub async fn get_songs_in_path(dir_path: &str, song_id: &mut i32) -> Vec<Song>{
             while let Ok(Some(entry)) = paths.next_entry().await {
                 match entry.path().to_str(){
                     Some(full_path) => {
-                        match read_from_path(full_path, song_id).await {
+                        match read_from_path(full_path, song_id, compress_image_option).await {
                             Ok(song_data) => {
                                 songs.push(song_data);
                             },
@@ -52,7 +53,7 @@ pub async fn get_songs_in_path(dir_path: &str, song_id: &mut i32) -> Vec<Song>{
     songs 
 }
 
-async fn read_from_path(path: &str, song_id: &mut i32) -> Result<Song, Box<dyn std::error::Error>> {
+async fn read_from_path(path: &str, song_id: &mut i32, compress_image_option: &bool) -> Result<Song, Box<dyn std::error::Error>> {
     let tag = Tag::read_from_path(path)?;
     *song_id += 1;
 
@@ -137,11 +138,22 @@ async fn read_from_path(path: &str, song_id: &mut i32) -> Result<Song, Box<dyn s
         //we want the image to be compressed to have speed improvements
         //the image resides in picture_as_num as a Vec<u8>
         //compression code goes here
-        
-
-        //we need to convert it to a base64 string
-        let base64str = general_purpose::STANDARD.encode(&picture_as_num);
-        song_meta_data.cover = Some(base64str);
+        if *compress_image_option == true {
+            match resize_and_compress_image(&picture_as_num, &250){
+                Some(compressed_image) => {
+                    //we need to convert it to a base64 string
+                    let base64str = general_purpose::STANDARD.encode(&compressed_image);
+                    song_meta_data.cover = Some(base64str);
+                },
+                None => {
+                    song_meta_data.cover = None;
+                },
+            }
+        }
+        else{
+            let base64str = general_purpose::STANDARD.encode(&picture_as_num);
+            song_meta_data.cover = Some(base64str);
+        }
     }
     else{
         song_meta_data.cover = None;
@@ -219,6 +231,37 @@ fn extract_file_name(file_path: &str) -> String {
         },
         None => {
             String::from("Unknown file name")
+        },
+    }
+}
+
+fn resize_and_compress_image(original_data: &Vec<u8>, target_height: &u32) -> Option<Vec<u8>> {
+    // Decode the original image
+    match image::load_from_memory(&original_data){
+        Ok(original_image) => {
+            // Calculate the corresponding width to maintain aspect ratio
+            let aspect_ratio = original_image.width() as f32 / original_image.height() as f32;
+            let target_width = (*target_height as f32 * aspect_ratio) as u32;
+
+            // Resize the image to a specific size (e.g., 250x250 pixels)
+            let resized_image = original_image.resize_exact(target_width, *target_height, FilterType::Triangle);
+
+            // Create a buffer to store the compressed image
+            let mut compressed_buffer = Cursor::new(Vec::new());
+
+            // Encode the resized image as JPEG with a certain quality
+            match resized_image.write_to(&mut compressed_buffer, image::ImageOutputFormat::Jpeg(80)){
+                Ok(_) => {
+                    // Return the compressed image data
+                    Some(compressed_buffer.into_inner())
+                },
+                Err(_) => {
+                    None
+                },
+            }
+        },
+        Err(_) => {
+            None
         },
     }
 }

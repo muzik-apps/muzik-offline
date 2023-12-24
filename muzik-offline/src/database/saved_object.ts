@@ -12,7 +12,9 @@ export interface SavedObject{
     AnimateBackground: boolean,
     AppThemeBlur: boolean,
     WallpaperOpacityAmount: string,
-    OStype: string
+    OStype: string,
+    CompressImage: string,
+    UpcomingHistoryLimit: string,
 }
 
 export const emptySavedObject: SavedObject = {
@@ -27,5 +29,7 @@ export const emptySavedObject: SavedObject = {
     AnimateBackground: true,
     AppThemeBlur: true,
     WallpaperOpacityAmount: "8",
-    OStype: OSTYPEenum.Windows
+    OStype: OSTYPEenum.Windows,
+    CompressImage: "No",
+    UpcomingHistoryLimit: "10",
 }

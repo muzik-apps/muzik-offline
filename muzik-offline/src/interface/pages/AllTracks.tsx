@@ -1,20 +1,19 @@
 import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
 import { motion } from "framer-motion";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Shuffle } from "@assets/icons";
 import { AddSongToPlaylistModal, DropDownMenuSmall, GeneralContextMenu, PropertiesModal, RectangleSongBox } from "@components/index";
 import "@styles/pages/AllTracks.scss";
 import { ViewportList } from 'react-viewport-list';
 import { local_albums_db, local_songs_db } from "@database/database";
-import { useLiveQuery } from "dexie-react-hooks";
 import { useNavigate } from "react-router-dom";
 
 const AllTracks = () => {
     const [selected, setSelected] = useState<number>(0);
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-    const [sort, setSort] = useState<{aToz: string, by: string}>({aToz: "Ascending", by: "Alphabetically"});
+    const [sort, setSort] = useState<{aToz: string, by: string}>({aToz: "Ascending", by: "name"});
     const [openedDDM, setOpenedDDM] = useState<string | null>(null);
-    const SongList = useLiveQuery(() => local_songs_db.songs.toArray()) ?? [];
+    const [SongList, setSongList] = useState<Song[]>([]);
     const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
     const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState<boolean>(false);
     const [isPropertiesModalOpen, setIsPropertiesModalOpen] = useState<boolean>(false);
@@ -52,6 +51,17 @@ const AllTracks = () => {
             navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
         }
     }
+
+    useEffect(() => {
+        const setList = async() => {
+            let list: Song[] = [];
+            if(sort.aToz === "Ascending")list = await local_songs_db.songs.orderBy(sort.by).toArray();//sort in ascending order
+            else if(sort.aToz === "Descending")list = await local_songs_db.songs.orderBy(sort.by).reverse().toArray();//sort in descending order
+            setSongList(list);
+        }
+
+        setList();
+    }, [sort])
     
     return (
         <motion.div className="AllTracks"
@@ -71,7 +81,7 @@ const AllTracks = () => {
                         </motion.div>
                         <div className="DropDownMenu_container">
                             <DropDownMenuSmall
-                                options={["Alphabetically", "Date added", "Date created", "Title", "Artist", "Album", "Duration", "Plays"]} 
+                                options={["name", "title", "artist", "album", "duration_seconds", "year", "file_size"]} 
                                 isOpen={(openedDDM === "by")}
                                 selectOption={selectOption}
                             />

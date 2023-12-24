@@ -89,8 +89,8 @@ const AppearanceSettings = () => {
                 <h3>Accent color</h3>
                 <div className="color_theme">
                     {
-                        accentColurs.map((color) => 
-                            <motion.div className={`button_select ${color} ` + (local_store.ThemeColour === color ? "button_selected" : "")}
+                        accentColurs.map((color, index) => 
+                            <motion.div key={index} className={`button_select ${color} ` + (local_store.ThemeColour === color ? "button_selected" : "")}
                                 whileHover={{scale: 1.03}} whileTap={{scale: 0.98}} onClick={() => SetThemeColour(color)}/>
                         )
                     }

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { PlayerInterface, SavedDirectoriesInterface, SavedObjectInterface, searchInterface, toastInterface, viewableSideElInterface, wallpaperInterface } from './storeTypes';
+import { PlayerInterface, QueueInterface, SavedDirectoriesInterface, SavedObjectInterface, searchInterface, toastInterface, viewableSideElInterface, wallpaperInterface } from './storeTypes';
 import { emptyDirectories } from '@database/directories';
 import { emptyPlayer } from '@database/player';
 import { emptySavedObject } from '@database/saved_object';
@@ -79,6 +79,32 @@ export const usePlayerStore = create<PlayerInterface>()(
                 setPlayer: (setTo) => set((_state) => ({ Player: setTo })),
             }),
         {name: 'Player-offline',}
+        )
+    )
+)
+
+export const useUpcomingSongs = create<QueueInterface>()(
+    devtools(
+        persist(
+            (set) => ({
+                queue: [],
+                enqueue: (song) => set((state) => ({ queue: [...state.queue, song] })),
+                dequeue: () => set((state) => ({ queue: state.queue.slice(1) })),
+            }),
+        {name: 'upcomingSongs-offline',}
+        )
+    )
+)
+
+export const useHistorySongs = create<QueueInterface>()(
+    devtools(
+        persist(
+            (set) => ({
+                queue: [],
+                enqueue: (song) => set((state) => ({ queue: [...state.queue, song] })),
+                dequeue: () => set((state) => ({ queue: state.queue.slice(1) })),
+            }),
+        {name: 'historySongs-offline',}
         )
     )
 )

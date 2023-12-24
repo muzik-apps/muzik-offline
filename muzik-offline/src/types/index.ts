@@ -12,6 +12,8 @@ export enum selectedGeneralSettingEnum{
     AppActivityDiscord = "AppActivityDiscord",
     VolumeStepAmount = "VolumeStepAmount",
     WallpaperOpacityAmount = "WallpaperOpacityAmount",
+    CompressImage = "CompressImage",
+    UpcomingHistoryLimit = "UpcomingHistoryLimit",
 }
 
 export enum OSTYPEenum{
