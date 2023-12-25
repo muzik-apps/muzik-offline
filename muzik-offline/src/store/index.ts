@@ -6,6 +6,17 @@ import { emptyPlayer } from '@database/player';
 import { emptySavedObject } from '@database/saved_object';
 import { viewableSideElements } from '@database/side_elements';
 import { emptyWallpaper } from '@database/wallpaper';
+import { alltracksReducer, AllTracksState } from './reducerStore';
+import { reducerType, AllTracksStateInterface, Action } from './reducerTypes';
+
+export type{
+    AllTracksStateInterface, Action
+}
+
+export {
+    reducerType,
+    alltracksReducer, AllTracksState, 
+}
 
 export const useToastStore = create<toastInterface>()(
     (set) => ({
@@ -84,27 +95,25 @@ export const usePlayerStore = create<PlayerInterface>()(
 )
 
 export const useUpcomingSongs = create<QueueInterface>()(
-    devtools(
-        persist(
-            (set) => ({
-                queue: [],
-                enqueue: (song) => set((state) => ({ queue: [...state.queue, song] })),
-                dequeue: () => set((state) => ({ queue: state.queue.slice(1) })),
-            }),
-        {name: 'upcomingSongs-offline',}
-        )
-    )
+    (set) => ({
+        queue: [],
+        enqueue: (song) => set((state) => ({ queue: [...state.queue, song] })),
+        dequeue: () => set((state) => ({ queue: state.queue.slice(1) })),
+        clearQueue: () => set((_state) => ({ queue: [] })),
+        push_front: (song) => set((state) => ({ queue: [song, ...state.queue] })),
+        pop_back: () => set((state) => ({ queue: state.queue.slice(0, state.queue.length - 1) })),
+        setQueue: (setTo) => set((_state) => ({ queue: setTo })),
+    }),
 )
 
 export const useHistorySongs = create<QueueInterface>()(
-    devtools(
-        persist(
-            (set) => ({
-                queue: [],
-                enqueue: (song) => set((state) => ({ queue: [...state.queue, song] })),
-                dequeue: () => set((state) => ({ queue: state.queue.slice(1) })),
-            }),
-        {name: 'historySongs-offline',}
-        )
-    )
+    (set) => ({
+        queue: [],
+        enqueue: (song) => set((state) => ({ queue: [...state.queue, song] })),
+        dequeue: () => set((state) => ({ queue: state.queue.slice(1) })),
+        clearQueue: () => set((_state) => ({ queue: [] })),
+        push_front: (song) => set((state) => ({ queue: [song, ...state.queue] })),
+        pop_back: () => set((state) => ({ queue: state.queue.slice(0, state.queue.length - 1) })),
+        setQueue: (setTo) => set((_state) => ({ queue: setTo })),
+    }),
 )

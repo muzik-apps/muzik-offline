@@ -51,18 +51,11 @@
         }
     }
 
-    .svg_app_theme_path{
-        svg{
-            path{
-                stroke: $app-theme-col;
-            }
-        }
-    }
-
-    .svg_app_theme_fill{
+    .PlayIcon{
         svg{
             path{
                 fill: $app-theme-col;
+                stroke: $app-theme-col;
             }
         }
     }

@@ -21,14 +21,16 @@ const SongCardResizable: FunctionComponent<SongCardResizableProps> = (props: Son
                 { 
                     !props.cover ? (getRandomCover(props.keyV))()
                     :
-                    <img src={props.cover} alt="-img" />
+                    <img src={props.cover.startsWith("data:image/png;base64,") || props.cover.startsWith("data:image/jpeg;base64,") ? 
+                        props.cover :
+                        `data:image/png;base64,${props.cover}`} alt="-img" />
                 }
             </motion.div>
             <div className="song_name">
                 <motion.h3 whileTap={{scale: 0.98}} onClick={() => props.navigateTo(props.keyV, "song")}>{props.songName}</motion.h3>
                 <motion.p whileTap={{scale: 0.98}} onClick={() => props.navigateTo(props.keyV, "artist")}>{props.artist}</motion.p>
             </div>
-            <motion.div className="svg_app_theme_fill" whileTap={{scale: 0.95}}>
+            <motion.div className="PlayIcon" whileTap={{scale: 0.95}}>
                 <Play />
             </motion.div>
             <motion.div whileTap={{scale: 0.95}} onMouseUp={(e) => {

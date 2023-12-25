@@ -46,4 +46,8 @@ export interface QueueInterface{
     queue: Song[];
     enqueue: (song: Song) => void;
     dequeue: () => void;
+    clearQueue: () => void;
+    push_front: (song: Song) => void;
+    pop_back: () => void;
+    setQueue: (setTo: Song[]) => void;
 }

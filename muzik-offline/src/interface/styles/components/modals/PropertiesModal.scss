@@ -13,6 +13,9 @@
     align-items: center;
     z-index: $z-index-9500;
 
+    /* Track */
+    ::-webkit-scrollbar-track { margin-top: 0px; margin-bottom: 0px; }
+
     .modal{
         width: 500px;
         height: 350px;
@@ -21,6 +24,7 @@
         background: var(--var-songs-container-bg-col);
         backdrop-filter: var(--var-bg-blur-150);
         border-radius: 20px;
+        padding-right: 0px;
 
         h2{
             font-size: 20px;
@@ -29,12 +33,14 @@
         }
 
         .properties_grid{
-            width: 100%;
+            width: calc(100% - 20px);
+            overflow-x: hidden;
             height: 290px;
             overflow-y: auto; /* This will make a vertical scrollbar appear when content overflows */
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px; /* Adjust the gap between columns if needed */
+            padding-right: 20px;
 
             .properties_grid_item{
                 width: 230px;

@@ -15,6 +15,9 @@
     background: var(--var-songs-container-bg-col);
     backdrop-filter: var(--var-bg-blur-150);
 
+    /* Track */
+    ::-webkit-scrollbar-track { margin-top: 0px; margin-bottom: 0px; }
+
     .settings_navigator{
         width: 157px;
         margin-left: 40px;

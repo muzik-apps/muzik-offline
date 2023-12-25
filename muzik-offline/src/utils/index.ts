@@ -1,5 +1,6 @@
 import { NullCoverOne, NullCoverTwo, NullCoverThree, NullCoverFour } from "@assets/index";
 import { local_albums_db, local_artists_db, local_genres_db, local_songs_db } from "@database/database";
+import { useSavedObjectStore, useUpcomingSongs } from "store";
 import { Song, album, genre, playlist } from "types";
 
 export const createSongList_inDB = (SongList: Song[]) => {
@@ -199,4 +200,35 @@ export const compressImage = async(dataUrl: string, maxWidth: number, maxHeight:
 
         image.src = dataUrl;
     });
+}
+
+export const addThisSongToPlayNext = (song: Song) => {
+    //get the limit
+    const limit = Number.parseInt(useSavedObjectStore.getState().local_store.UpcomingHistoryLimit);
+    //get the song queue
+    const res = useUpcomingSongs.getState().queue;
+    //add the song to index position 1 in the queue
+    const newQueue = [...res.slice(0, 1), song, ...res.slice(1)];
+    //add the new queue from index 0 to index limit - 1
+    useUpcomingSongs.getState().setQueue(newQueue.slice(0, limit - 1));
+}
+
+export const addThisSongToPlayLater = (song: Song) => {
+    //get the limit
+    const limit = Number.parseInt(useSavedObjectStore.getState().local_store.UpcomingHistoryLimit);
+    //get the song queue
+    let res = useUpcomingSongs.getState().queue;
+    //if the list is bigger than the limit, remove the songs that are over the limit
+    if(res.length > limit)res = res.slice(0, limit - 2);
+    //add the song to the end of the queue
+    res.push(song);
+    //add the new queue
+    useUpcomingSongs.getState().setQueue(res);
+}
+
+export const playThisListNow = (songs: Song[]) => {
+    //get the limit
+    const limit = Number.parseInt(useSavedObjectStore.getState().local_store.UpcomingHistoryLimit);
+    if(songs.length > limit)songs = songs.slice(0, limit - 1);
+    useUpcomingSongs.getState().setQueue(songs);
 }

@@ -11,17 +11,23 @@
     background: var(--var-songs-container-bg-col);
     backdrop-filter: var(--var-bg-blur-150);
     padding: 9px;
+    padding-right: 0px;
     top: 47px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 
+    /* Track */
+    ::-webkit-scrollbar-track { margin-top: 15px; margin-bottom: 0px; }
+
     .Upcoming_view{
+        padding-right: 3px;
         height: 92.5%;
         overflow-y: auto;
     }
 
     .History_view{
+        padding-right: 3px;
         height: 92.5%;
         overflow-y: auto;
     }

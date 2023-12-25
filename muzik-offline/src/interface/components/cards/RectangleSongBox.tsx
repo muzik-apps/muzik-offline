@@ -32,7 +32,7 @@ const RectangleSongBox: FunctionComponent<RectangleSongBoxProps> = (props: Recta
                 <p className="index">{props.index}</p>
                 <motion.div className="song_cover" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={() => props.navigateTo(props.keyV, "song")}>
                     { 
-                        !props.cover ? (getRandomCover(props.index))()
+                        !props.cover ? (getRandomCover(props.keyV))()
                         :
                         <img src={props.cover.startsWith("data:image/png;base64,") || props.cover.startsWith("data:image/jpeg;base64,") ? 
                             props.cover :
