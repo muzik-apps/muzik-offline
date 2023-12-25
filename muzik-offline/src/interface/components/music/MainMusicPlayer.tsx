@@ -3,6 +3,7 @@ import { SkipBack, Pause, SkipFwd, Shuffle, VolumeMin, VolumeMax, Repeat, Play, 
 import "@styles/components/music/MainMusicPlayer.scss";
 import { SavedObject } from "@database/index";
 import { useSavedObjectStore, usePlayerStore } from "store";
+import { invoke } from "@tauri-apps/api";
 import { getRandomCover } from "utils";
 
 const MainMusicPlayer = () => {
@@ -26,19 +27,21 @@ const MainMusicPlayer = () => {
             let temp = Player;
             temp.playingPosition = event.target.value;
             setPlayer(temp);
+            //do backend rust stuff
         }
-        //do backend rust stuff
     }
 
-    function playSong(){
+    async function playSong(){
         if(Player.playingSongMetadata){
+            await invoke("resume_playing");
             let temp = Player;
             temp.isPlaying = true;
             setPlayer(temp);
         }
     }
 
-    function pauseSong(){
+    async function pauseSong(){
+        await invoke("pause_song");
         let temp = Player;
         temp.isPlaying = false;
         setPlayer(temp);

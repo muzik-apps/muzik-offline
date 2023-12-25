@@ -18,7 +18,7 @@ pub async fn get_all_songs(paths_as_json_array: String, compress_image_option: b
 
     match serde_json::to_string(&songs){
         Ok(json) => { Ok(json.into())},
-        Err(_) => {Err("{\"error\":\"failed to parse json object\"}".into())},
+        Err(_) => {Err("{\"error\":\"failed to load songs\"}".into())},
     }
 }
 

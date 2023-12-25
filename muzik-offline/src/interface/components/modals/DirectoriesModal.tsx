@@ -24,9 +24,12 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
                 createAlbumsList_inDB(song_data);
                 createGenresList_inDB(song_data);
                 createArtistsList_inDB(song_data);
-                setToast({title: "Loading songs.", message: "Successfully loaded all the songs in the paths specified", type: toastType.success, timeout: 5000});
+                setToast({title: "Loading songs...", message: "Successfully loaded all the songs in the paths specified", type: toastType.success, timeout: 5000});
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {
+                setToast({title: "Loading songs...", message: "Failed to load all the songs in the paths specified", type: toastType.error, timeout: 5000});
+                console.log(error);
+            });
     }
 
     function setDirectoriesVal(e: React.ChangeEvent<HTMLTextAreaElement>){

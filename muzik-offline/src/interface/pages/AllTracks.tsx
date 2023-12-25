@@ -8,6 +8,7 @@ import { local_albums_db, local_songs_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
 import { AllTracksState, alltracksReducer, reducerType, usePlayerStore } from "store";
 import { addThisSongToPlayLater, addThisSongToPlayNext, playThisListNow } from "utils";
+import { invoke } from "@tauri-apps/api";
 import "@styles/pages/AllTracks.scss";
 
 const AllTracks = () => {
@@ -52,9 +53,11 @@ const AllTracks = () => {
         }
     }
 
-    function playThisSong(key: number){
+    async function playThisSong(key: number){
         const matching_song = state.SongList.find(song => { return song.id === key; });
         if(!matching_song)return;
+        //call rust function to play the song
+        await invoke("load_and_play_song_from_path", { soundPath: matching_song.path });
         chooseOption(contextMenuButtons.Play, matching_song);
         const temp = Player;
         temp.playingSongMetadata = matching_song;

@@ -12,22 +12,24 @@ use components::SharedAudioManager;
 
 use crate::metadata_retriever::get_all_songs;
 use crate::commands::open_in_file_manager;
-use crate::player::{play_sound, pause_sound, resume_playing};
+use crate::player::{load_and_play_song_from_path, pause_song, resume_playing, seek_to};
 
 fn main() {
     tauri::Builder::default()
         .manage(Mutex::new(SharedAudioManager {
-            //this unwrap is necessary because if the audio manager fails to initialize, the application should not run
+            //this expect is necessary because if the audio manager fails to initialize, the application should not run
             //since we would not be able to play any audio if it fails to initialize
-            manager: AudioManager::<DefaultBackend>::new(AudioManagerSettings::default()).unwrap(),
+            manager: AudioManager::<DefaultBackend>::new(AudioManagerSettings::default()).expect("failed to initialize audio manager"),
+            instance_handle: None,
         }))
         .invoke_handler(tauri::generate_handler![
                             greet, 
                             get_all_songs, 
                             open_in_file_manager,
-                            play_sound,
-                            pause_sound,
-                            resume_playing
+                            load_and_play_song_from_path,
+                            pause_song,
+                            resume_playing,
+                            seek_to
                         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

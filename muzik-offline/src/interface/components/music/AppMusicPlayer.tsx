@@ -4,6 +4,7 @@ import {ChromeCast, DotHorizontal, NullCoverNull, Pause, Play, Repeat, RepeatOne
 import { motion } from "framer-motion";
 import { useSavedObjectStore, usePlayerStore } from "store";
 import { SavedObject } from "@database/index";
+import { invoke } from "@tauri-apps/api";
 import { getRandomCover } from "utils";
 
 type AppMusicPlayerProps = {
@@ -32,19 +33,21 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
             let temp = Player;
             temp.playingPosition = event.target.value;
             setPlayer(temp);
+            //do backend rust stuff
         }
-        //do backend rust stuff
     }
 
-    function playSong(){
+    async function playSong(){
         if(Player.playingSongMetadata){
+            await invoke("resume_playing");
             let temp = Player;
             temp.isPlaying = true;
             setPlayer(temp);
         }
     }
 
-    function pauseSong(){
+    async function pauseSong(){
+        await invoke("pause_song");
         let temp = Player;
         temp.isPlaying = false;
         setPlayer(temp);

@@ -83,15 +83,10 @@ export const useSavedObjectStore = create<SavedObjectInterface>()(
 )
 
 export const usePlayerStore = create<PlayerInterface>()(
-    devtools(
-        persist(
-            (set) => ({
-                Player: emptyPlayer,
-                setPlayer: (setTo) => set((_state) => ({ Player: setTo })),
-            }),
-        {name: 'Player-offline',}
-        )
-    )
+    (set) => ({
+        Player: emptyPlayer,
+        setPlayer: (setTo) => set((_state) => ({ Player: setTo })),
+    }),
 )
 
 export const useUpcomingSongs = create<QueueInterface>()(
