@@ -126,7 +126,8 @@ const AlbumDetails = () => {
                                 selected={selected === index + 1 ? true : false}
                                 selectThisSong={selectThisSong}
                                 setMenuOpenData={setMenuOpenData} 
-                                navigateTo={(_key: number, _type: "artist" | "song") => {} }/>
+                                navigateTo={(_key: number, _type: "artist" | "song") => {} }
+                                playThisSong={(_key: number,) => {}}/>
                         )
                     }
                 </ViewportList>

@@ -49,3 +49,4 @@ Please note that when you run ```npm run tauri``` dev for the first time, it may
 6. <a href="https://crates.io/crates/tokio">tokio</a>
 7. <a href="https://docs.rs/base64">base64</a>
 8. <a href="https://docs.rs/image">image</a>
+9. <a href="https://docs.rs/kira/latest/kira/">kira</a>

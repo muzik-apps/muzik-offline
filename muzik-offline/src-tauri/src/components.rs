@@ -1,4 +1,5 @@
 use serde::Serialize;
+use kira::manager::{AudioManager, backend::DefaultBackend};
 
 #[derive(Serialize)]
 pub struct Song {
@@ -17,4 +18,8 @@ pub struct Song {
     pub date_released: String,
     pub file_size: u64,
     pub file_type: String,
+}
+
+pub struct SharedAudioManager {
+    pub manager: AudioManager<DefaultBackend>,
 }

@@ -219,7 +219,7 @@ export const addThisSongToPlayLater = (song: Song) => {
     //get the song queue
     let res = useUpcomingSongs.getState().queue;
     //if the list is bigger than the limit, remove the songs that are over the limit
-    if(res.length > limit)res = res.slice(0, limit - 2);
+    if(res.length >= limit)res = res.slice(0, limit - 2);
     //add the song to the end of the queue
     res.push(song);
     //add the new queue

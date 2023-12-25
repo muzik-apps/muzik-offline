@@ -126,7 +126,8 @@ const GenreView = () => {
                                 selected={selected === index + 1 ? true : false}
                                 selectThisSong={selectThisSong}
                                 setMenuOpenData={setMenuOpenData} 
-                                navigateTo={navigateTo}/>
+                                navigateTo={navigateTo}
+                                playThisSong={(_key: number,) => {}}/>
                         )
                     }
                 </ViewportList>

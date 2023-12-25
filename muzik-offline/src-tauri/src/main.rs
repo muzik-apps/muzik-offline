@@ -4,10 +4,34 @@
 mod metadata_retriever;
 mod components;
 mod commands;
+mod player;
 
-use components::Song;
-use metadata_retriever::{get_songs_in_path, decode_directories};
+use std::sync::Mutex;
+use kira::manager::{AudioManager,AudioManagerSettings,backend::DefaultBackend};
+use components::SharedAudioManager;
 
+use crate::metadata_retriever::get_all_songs;
+use crate::commands::open_in_file_manager;
+use crate::player::{play_sound, pause_sound, resume_playing};
+
+fn main() {
+    tauri::Builder::default()
+        .manage(Mutex::new(SharedAudioManager {
+            //this unwrap is necessary because if the audio manager fails to initialize, the application should not run
+            //since we would not be able to play any audio if it fails to initialize
+            manager: AudioManager::<DefaultBackend>::new(AudioManagerSettings::default()).unwrap(),
+        }))
+        .invoke_handler(tauri::generate_handler![
+                            greet, 
+                            get_all_songs, 
+                            open_in_file_manager,
+                            play_sound,
+                            pause_sound,
+                            resume_playing
+                        ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
+}
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -15,32 +39,4 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
     //this serves as an example template whenever new commands are to be created
     //so don't delete this
-}
-
-#[tauri::command]
-async fn get_all_songs(paths_as_json_array: String, compress_image_option: bool) -> Result<String, String> {
-    let paths_as_vec = decode_directories(&paths_as_json_array);
-
-    let mut songs: Vec<Song> = Vec::new();
-    let mut song_id: i32 = 0;
-    for path in &paths_as_vec{
-        songs.extend(get_songs_in_path(&path, &mut song_id, &compress_image_option).await);
-    }
-
-    match serde_json::to_string(&songs){
-        Ok(json) => { Ok(json.into())},
-        Err(_) => {Err("{\"error\":\"failed to parse json object\"}".into())},
-    }
-}
-
-#[tauri::command]
-fn open_in_file_manager(file_path: &str) {
-    commands::open_file_at(&file_path);
-}
-
-fn main() {
-    tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, get_all_songs, open_in_file_manager])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
 }

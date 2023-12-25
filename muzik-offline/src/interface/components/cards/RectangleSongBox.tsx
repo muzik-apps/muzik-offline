@@ -16,6 +16,7 @@ type RectangleSongBoxProps = {
     navigateTo: (key: number, type: "artist" | "song") => void;
     selectThisSong: (index: number) => void;
     setMenuOpenData: (key: number, co_ords: {xPos: number; yPos: number;}) => void;
+    playThisSong: (key: number) => void;
 }
 
 const RectangleSongBox: FunctionComponent<RectangleSongBoxProps> = (props: RectangleSongBoxProps) => {
@@ -44,7 +45,7 @@ const RectangleSongBox: FunctionComponent<RectangleSongBoxProps> = (props: Recta
                     <motion.p whileTap={{scale: 0.98}} onClick={() => props.navigateTo(props.keyV, "artist")}>{props.artist}</motion.p>
                 </div>
                 <p className="length">{props.length}</p>
-                <motion.div className="PlayIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
+                <motion.div className="PlayIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={() => props.playThisSong(props.keyV)}>
                     <Play/>
                 </motion.div>
                 <p className="year">{props.year === 0 ? "~" : props.year.toString()}</p>

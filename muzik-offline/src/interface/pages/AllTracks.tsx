@@ -3,15 +3,16 @@ import { motion } from "framer-motion";
 import { useRef, useEffect, useReducer } from "react";
 import { ChevronDown, Shuffle } from "@assets/icons";
 import { AddSongToPlaylistModal, DropDownMenuSmall, GeneralContextMenu, PropertiesModal, RectangleSongBox } from "@components/index";
-import "@styles/pages/AllTracks.scss";
 import { ViewportList } from 'react-viewport-list';
 import { local_albums_db, local_songs_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
-import { AllTracksState, alltracksReducer, reducerType } from "store";
+import { AllTracksState, alltracksReducer, reducerType, usePlayerStore } from "store";
 import { addThisSongToPlayLater, addThisSongToPlayNext, playThisListNow } from "utils";
+import "@styles/pages/AllTracks.scss";
 
 const AllTracks = () => {
     const [state , dispatch] = useReducer(alltracksReducer, AllTracksState);
+    const {Player, setPlayer} = usePlayerStore((state) => { return { Player: state.Player, setPlayer: state.setPlayer}; });
     const navigate = useNavigate();
     const ref = useRef<HTMLDivElement | null>(null);
 
@@ -29,7 +30,7 @@ const AllTracks = () => {
         dispatch({ type: reducerType.SET_SONG_MENU, payload: matching_song ? matching_song : null});
     }
 
-    function chooseOption(arg: contextMenuButtons){
+    function chooseOption(arg: contextMenuButtons, songToPlay?: Song){
         if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.PlayNext && state.songMenuToOpen){ 
@@ -40,14 +41,26 @@ const AllTracks = () => {
             addThisSongToPlayLater(state.songMenuToOpen);
             closeContextMenu(); 
         }
-        else if(arg === contextMenuButtons.Play && state.songMenuToOpen){
+        else if(arg === contextMenuButtons.Play && (state.songMenuToOpen || songToPlay)){
             //in the songlist, get the next 20 songs from the songmenutotopen key
-            const smTo = state.songMenuToOpen;
+            const smTo = state.songMenuToOpen ? state.songMenuToOpen : songToPlay;
+            if(!smTo)return;
             const index = state.SongList.findIndex(song => song.id === smTo.id);
             if(index === -1)return;
             playThisListNow(state.SongList.slice(index, index + 20));
             closeContextMenu(); 
         }
+    }
+
+    function playThisSong(key: number){
+        const matching_song = state.SongList.find(song => { return song.id === key; });
+        if(!matching_song)return;
+        chooseOption(contextMenuButtons.Play, matching_song);
+        const temp = Player;
+        temp.playingSongMetadata = matching_song;
+        temp.isPlaying = true;
+        temp.playingPosition = 0;
+        setPlayer(temp);
     }
 
     function closeContextMenu(e?: React.MouseEvent<HTMLDivElement, MouseEvent>){
@@ -143,7 +156,8 @@ const AllTracks = () => {
                             selected={state.selected === index + 1 ? true : false}
                             navigateTo={navigateTo}
                             selectThisSong={selectThisSong}
-                            setMenuOpenData={setMenuOpenData}/>
+                            setMenuOpenData={setMenuOpenData}
+                            playThisSong={playThisSong}/>
                     )}
                 </ViewportList>
                 <div className="AllTracks_container_bottom_margin"/>

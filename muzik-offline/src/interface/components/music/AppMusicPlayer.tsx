@@ -113,7 +113,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                             {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
                     </motion.div>
                     <div className="song_details">
-                        <h2>{Player.playingSongMetadata ? Player.playingSongMetadata.title : "No song is playing"}</h2>
+                        <h2>{Player.playingSongMetadata ? Player.playingSongMetadata.name : "No song is playing"}</h2>
                         <h3>{Player.playingSongMetadata ? Player.playingSongMetadata.artist : "No song is playing"}</h3>
                     </div>
                 </div>

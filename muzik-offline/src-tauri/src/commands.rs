@@ -1,7 +1,12 @@
 use std::process::Command;
 
+#[tauri::command]
+pub fn open_in_file_manager(file_path: &str) {
+    open_file_at(&file_path);
+}
+
 #[cfg(target_os = "macos")]
-pub fn open_file_at(file_path: &str) {
+fn open_file_at(file_path: &str) {
     match Command::new( "open" )
         .arg( file_path ) // <- Specify the directory you'd like to open.
         .spawn( )
@@ -12,7 +17,7 @@ pub fn open_file_at(file_path: &str) {
 }
 
 #[cfg(target_os = "windows")]
-pub fn open_file_at(file_path: &str) {
+fn open_file_at(file_path: &str) {
     match Command::new( "explorer" )
         .arg( file_path ) // <- Specify the directory you'd like to open.
         .spawn( )
@@ -23,7 +28,7 @@ pub fn open_file_at(file_path: &str) {
 }
 
 #[cfg(target_os = "linux")]
-pub fn open_file_at(file_path: &str) {
+fn open_file_at(file_path: &str) {
     match Command::new( "xdg-open" )
         .arg( file_path ) // <- Specify the directory you'd like to open.
         .spawn( )
