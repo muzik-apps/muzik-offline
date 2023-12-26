@@ -42,6 +42,16 @@ export interface PlayerInterface{
     setPlayer: (setTo: Player) => void;
 }
 
+export interface PlayingPositionInterface{
+    position: number;
+    setPosition: (setTo: number) => void;
+}
+
+export interface PlayingPositionSecInterface{
+    position: number;
+    setPosition: (setTo: number) => void;
+}
+
 export interface QueueInterface{
     queue: Song[];
     enqueue: (song: Song) => void;

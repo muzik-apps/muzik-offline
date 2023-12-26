@@ -1,82 +1,29 @@
 import { motion } from "framer-motion";
 import { SkipBack, Pause, SkipFwd, Shuffle, VolumeMin, VolumeMax, Repeat, Play, RepeatOne, NullCoverNull } from "@icons/index";
 import "@styles/components/music/MainMusicPlayer.scss";
-import { SavedObject } from "@database/index";
-import { useSavedObjectStore, usePlayerStore } from "store";
-import { invoke } from "@tauri-apps/api";
-import { getRandomCover } from "utils";
+import { usePlayingPosition, usePlayingPositionSec, useSavedObjectStore } from "store";
+import { getRandomCover, secondsToTimeFormat } from "utils";
+import playerState from "store/playerState";
 
 const MainMusicPlayer = () => {
-    const {local_store, setStore} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
-    const {Player, setPlayer} = usePlayerStore((state) => { return { Player: state.Player, setPlayer: state.setPlayer}; });
+    const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
+    const {playingPosition, setplayingPosition} = usePlayingPosition((state) => { return {playingPosition: state.position, setplayingPosition: state.setPosition}; });
+    const {Player, playSong, pauseSong, repeatToggle, shuffleToggle, dragSeeker,
+        changeSeekerPosition, changeVolumeLevel, changeVolumeLevelBtnPress} = playerState();
+    const {playingPosInSec, setplayingPosInSec} = usePlayingPositionSec((state) => { return {playingPosInSec: state.position, setplayingPosInSec: state.setPosition}; });
 
-    function changeVolume(event : any){
-        let temp: SavedObject = local_store;
-        temp.Volume = event.target.value;
-        setStore(temp);
-        //do backend rust stuff
+    function changeVolume(event : any){changeVolumeLevel(event.target.value);}
+
+    function changeSeeker(event : any){changeSeekerPosition(event.target.value);}
+
+    function draggingSeeker(event: any){
+        setplayingPosition(event.target.value); 
+        dragSeeker().then(() => {
+            setplayingPosInSec(Math.floor((event.target.value / 100) * Player.lengthOfSongInSeconds));
+        });
     }
 
-    function changeSeeker(event : any){
-        if(Player.playingSongMetadata === null){
-            let temp = Player;
-            temp.playingPosition = 0;
-            setPlayer(temp);
-        }
-        else {
-            let temp = Player;
-            temp.playingPosition = event.target.value;
-            setPlayer(temp);
-            //do backend rust stuff
-        }
-    }
-
-    async function playSong(){
-        if(Player.playingSongMetadata){
-            await invoke("resume_playing");
-            let temp = Player;
-            temp.isPlaying = true;
-            setPlayer(temp);
-        }
-    }
-
-    async function pauseSong(){
-        await invoke("pause_song");
-        let temp = Player;
-        temp.isPlaying = false;
-        setPlayer(temp);
-    }
-
-    function shuffleToggle(){
-        let temp = Player;
-        temp.isShuffling = !Player.isShuffling;
-        setPlayer(temp);
-    }
-
-    function repeatToggle(){
-        let temp = Player;
-        temp.repeatingLevel = Player.repeatingLevel + 1 > 2 ? 0 : (Player.repeatingLevel + 1) as 0 | 1 | 2;
-        setPlayer(temp);
-    }
-
-    function changeVolumeBtnPress(isDecreasing: boolean){
-        if(isDecreasing === true){
-            const level: number = (local_store.Volume - parseInt(local_store.VolumeStepAmount));
-            let temp: SavedObject = local_store;
-            temp.Volume = level <= 0 ? 0 : level;
-            setStore(temp);
-        }
-        else{
-            const level: number = (local_store.Volume + parseInt(local_store.VolumeStepAmount));
-            let temp: SavedObject = local_store;
-            temp.Volume = level >= 100 ? 100 : level;
-            setStore(temp);
-        }
-    }
-
-    function getSeekerPercentage(){
-        return Player.playingPosition.toString();
-    }
+    function changeVolumeBtnPress(isDecreasing: boolean){changeVolumeLevelBtnPress(isDecreasing);}
 
     return (
         <div className="main_music_player">
@@ -126,9 +73,13 @@ const MainMusicPlayer = () => {
                     </motion.div>
             </div>
             <div className="Seeker">
-                <p>{Player.playingSongMetadata ? Player.playingPosition : "~"}</p>
-                <input type="range" id="seek-slider" max="100" value={Player.playingPosition} onChange={changeSeeker} style={{backgroundSize: getSeekerPercentage() + "% 100%"}}/>
-                <p>{Player.playingSongMetadata ? Player.playingSongMetadata.duration : "~"}</p>
+                <p>{Player.playingSongMetadata ? secondsToTimeFormat(playingPosInSec) : "~"}</p>
+                <input type="range" id="seek-slider" max="100" 
+                    value={playingPosition} 
+                    onChange={draggingSeeker} 
+                    onMouseUp={changeSeeker}
+                    style={{backgroundSize: playingPosition.toString() + "% 100%"}}/>
+                <p>{Player.playingSongMetadata ? secondsToTimeFormat(Player.lengthOfSongInSeconds) : "~"}</p>
             </div>
             <div className="volume_controller">
                 <motion.div className="volume_icon" whileTap={{scale: 0.98}} onClick={() => changeVolumeBtnPress(true)}>

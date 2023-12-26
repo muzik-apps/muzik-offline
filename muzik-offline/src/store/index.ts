@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { PlayerInterface, QueueInterface, SavedDirectoriesInterface, SavedObjectInterface, searchInterface, toastInterface, viewableSideElInterface, wallpaperInterface } from './storeTypes';
+import { PlayerInterface, PlayingPositionInterface, QueueInterface, SavedDirectoriesInterface, SavedObjectInterface, searchInterface, toastInterface, viewableSideElInterface, wallpaperInterface } from './storeTypes';
 import { emptyDirectories } from '@database/directories';
 import { emptyPlayer } from '@database/player';
 import { emptySavedObject } from '@database/saved_object';
@@ -86,6 +86,20 @@ export const usePlayerStore = create<PlayerInterface>()(
     (set) => ({
         Player: emptyPlayer,
         setPlayer: (setTo) => set((_state) => ({ Player: setTo })),
+    }),
+)
+
+export const usePlayingPosition = create<PlayingPositionInterface>()(
+    (set) => ({
+        position: 0,
+        setPosition: (setTo) => set((_state) => ({ position: setTo })),
+    }),
+)
+
+export const usePlayingPositionSec = create<PlayingPositionInterface>()(
+    (set) => ({
+        position: 0,
+        setPosition: (setTo) => set((_state) => ({ position: setTo })),
     }),
 )
 

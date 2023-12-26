@@ -6,14 +6,14 @@ import { AddSongToPlaylistModal, DropDownMenuSmall, GeneralContextMenu, Properti
 import { ViewportList } from 'react-viewport-list';
 import { local_albums_db, local_songs_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
-import { AllTracksState, alltracksReducer, reducerType, usePlayerStore } from "store";
+import { AllTracksState, alltracksReducer, reducerType } from "store";
 import { addThisSongToPlayLater, addThisSongToPlayNext, playThisListNow } from "utils";
-import { invoke } from "@tauri-apps/api";
 import "@styles/pages/AllTracks.scss";
+import playerState from "store/playerState";
 
 const AllTracks = () => {
     const [state , dispatch] = useReducer(alltracksReducer, AllTracksState);
-    const {Player, setPlayer} = usePlayerStore((state) => { return { Player: state.Player, setPlayer: state.setPlayer}; });
+    const {startPlayingNewSong} = playerState();
     const navigate = useNavigate();
     const ref = useRef<HTMLDivElement | null>(null);
 
@@ -56,14 +56,8 @@ const AllTracks = () => {
     async function playThisSong(key: number){
         const matching_song = state.SongList.find(song => { return song.id === key; });
         if(!matching_song)return;
-        //call rust function to play the song
-        await invoke("load_and_play_song_from_path", { soundPath: matching_song.path });
+        await startPlayingNewSong(matching_song);
         chooseOption(contextMenuButtons.Play, matching_song);
-        const temp = Player;
-        temp.playingSongMetadata = matching_song;
-        temp.isPlaying = true;
-        temp.playingPosition = 0;
-        setPlayer(temp);
     }
 
     function closeContextMenu(e?: React.MouseEvent<HTMLDivElement, MouseEvent>){

@@ -6,13 +6,13 @@ mod components;
 mod commands;
 mod player;
 
-use std::sync::Mutex;
 use kira::manager::{AudioManager,AudioManagerSettings,backend::DefaultBackend};
 use components::SharedAudioManager;
+use std::sync::Mutex;
 
 use crate::metadata_retriever::get_all_songs;
 use crate::commands::open_in_file_manager;
-use crate::player::{load_and_play_song_from_path, pause_song, resume_playing, seek_to};
+use crate::player::{load_and_play_song_from_path, pause_song, resume_playing, seek_to, get_song_position};
 
 fn main() {
     tauri::Builder::default()
@@ -29,7 +29,8 @@ fn main() {
                             load_and_play_song_from_path,
                             pause_song,
                             resume_playing,
-                            seek_to
+                            seek_to,
+                            get_song_position
                         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

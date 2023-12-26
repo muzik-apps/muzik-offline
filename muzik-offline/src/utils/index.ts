@@ -90,7 +90,7 @@ export function secondsToTimeFormat(totalSeconds: number) {
     const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
     const seconds = totalSeconds % 60;
 
-    return (days > 0 ? days + ':' : '') + padNumber(hours) + ':' + padNumber(minutes) + ':' + padNumber(seconds);
+    return (days > 0 ? days + ':' : '') + (hours > 0 ? padNumber(hours) + ':' : '') + padNumber(minutes) + ':' + padNumber(seconds);
 }
 
 function padNumber(num: number) { return num.toString().padStart(2, '0'); }
