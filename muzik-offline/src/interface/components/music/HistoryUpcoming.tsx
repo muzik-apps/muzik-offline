@@ -5,14 +5,15 @@ import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
 import { GeneralContextMenu, SongCardResizable } from "@components/index";
 import { useNavigate } from "react-router-dom";
 import { local_albums_db } from "@database/database";
+import { useUpcomingSongs, useHistorySongs } from "store";
 
 type HistoryUpcomingProps = { closePlayer: () => void;}
 
 const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: HistoryUpcomingProps) => {
   const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
   const [selectedView, setSelectedView] = useState<string>("Upcoming_tab");
-  const [SongQueue,] = useState<Song[]>([]);
-  const [SongHistory,] = useState<Song[]>([]);
+  const {SongQueue} = useUpcomingSongs((state) => { return { SongQueue: state.queue}; });
+  const {SongHistory} = useHistorySongs((state) => { return { SongHistory: state.queue}; });
   const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
   const navigate = useNavigate();
 
@@ -66,7 +67,7 @@ function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos
         selectedView === "Upcoming_tab" ?
           <div className="Upcoming_view">
             {
-                SongQueue.slice(0, 20).map((song) => 
+                SongQueue.map((song) => 
                     <SongCardResizable 
                         key={song.id}
                         cover={song.cover} 
@@ -81,7 +82,7 @@ function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos
         :
           <div className="History_view">
             {
-                SongHistory.slice(SongHistory.length - 21, SongHistory.length - 1).map((song) => 
+                SongHistory.map((song) => 
                     <SongCardResizable 
                         key={song.id}
                         cover={song.cover} 

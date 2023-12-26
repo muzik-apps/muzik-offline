@@ -111,6 +111,11 @@ pub fn seek_to(audio_manager: State<'_, Mutex<SharedAudioManager>>, position: f6
                     match handle.seek_to(position){
                         Ok(_) => {
                             //seeked to position
+                            //there seems to be a weird issue where the song will seek correctly
+                            //but the position will not update until the song is resumed
+                            //so we will lower the volume to 0, play, then pause, then restore the previous volume
+                            //this is a hacky solution but it works
+                            
                         },
                         Err(_) => {
                             //failed to seek to position
