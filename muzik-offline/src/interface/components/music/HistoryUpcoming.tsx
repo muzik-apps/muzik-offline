@@ -71,7 +71,7 @@ const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: History
                     <SongCardResizable 
                         key={song.id}
                         cover={song.cover} 
-                        songName={song.title}
+                        songName={song.name}
                         artist={song.artist}
                         keyV={song.id}
                         setMenuOpenData={setMenuOpenData__SongQueue}
@@ -86,7 +86,7 @@ const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: History
                     <SongCardResizable 
                         key={song.id}
                         cover={song.cover} 
-                        songName={song.title}
+                        songName={song.name}
                         artist={song.artist}
                         keyV={song.id}
                         setMenuOpenData={setMenuOpenData_SongHistory}

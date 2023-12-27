@@ -174,6 +174,8 @@ export function playNextSong(){
     const song = usePlayerStore.getState().Player.playingSongMetadata;
     if(song === null)return;
     useHistorySongs.getState().enqueue(song);
+    usePlayingPositionSec.getState().setPosition(0);
+    usePlayingPosition.getState().setPosition(0);
     if(usePlayerStore.getState().Player.isPlaying){
         startPlayingNewSong(useUpcomingSongs.getState().queue[1]);
     }
@@ -186,6 +188,8 @@ export function playNextSong(){
 export function playPreviousSong(){
     if(useHistorySongs.getState().queue.length >= 1){
         const SongHistory = useHistorySongs.getState().queue;
+        usePlayingPositionSec.getState().setPosition(0);
+        usePlayingPosition.getState().setPosition(0);
         if(usePlayerStore.getState().Player.isPlaying){
             startPlayingNewSong(SongHistory[SongHistory.length - 1]);
         }
