@@ -33,19 +33,18 @@ Please note that when you run ```npm run tauri``` dev for the first time, it may
 1. <a href="https://www.npmjs.com/package/@tauri-apps/cli">tauri-apps/api</a>
 2. <a href="https://dexie.org/">dexie</a>
 3. <a href="https://www.framer.com/motion/">framer motion</a>
-4. <a href="https://www.npmjs.com/package/image-size">image-size</a>
-5. <a href="https://react.dev/">react and react-dom</a>
-6. <a href="https://reactrouter.com/en/main">react-router-dom</a>
-7. <a href="https://www.npmjs.com/package/react-viewport-list">react viewport list</a>
-8. <a href="https://sass-lang.com/">sass</a>
-9. <a href="https://docs.pmnd.rs/zustand/getting-started/introduction">zustand</a>
+4. <a href="https://react.dev/">react and react-dom</a>
+5. <a href="https://reactrouter.com/en/main">react-router-dom</a>
+6. <a href="https://www.npmjs.com/package/react-viewport-list">react viewport list</a>
+7. <a href="https://sass-lang.com/">sass</a>
+8. <a href="https://docs.pmnd.rs/zustand/getting-started/introduction">zustand</a>
 
 # Rust libraries used
 1. <a href="https://tauri.app/">tauri</a>
 2. <a href="https://serde.rs/">serde</a>
 3. <a href="https://docs.rs/serde_json">serde_json</a>
 4. <a href="https://docs.rs/id3">id3</a>
-5. <a href="https://crates.io/crates/mp3-duration">mp3-duration</a>
+5. <a href="https://docs.rs/lofty/latest/lofty/">lofty</a>
 6. <a href="https://crates.io/crates/tokio">tokio</a>
 7. <a href="https://docs.rs/base64">base64</a>
 8. <a href="https://docs.rs/image">image</a>
