@@ -1,10 +1,11 @@
-import { playlist } from 'types';
+import { playlist, toastType } from 'types';
 import { FunctionComponent, useEffect, useState } from 'react';
 import { NullCoverNull, EditImage } from '@assets/icons';
 import { motion } from 'framer-motion';
 import "@styles/components/modals/EditPlaylistModal.scss";
-import { compressImage } from 'utils';
 import { local_playlists_db } from '@database/database';
+import { invoke } from "@tauri-apps/api";
+import { useToastStore } from 'store';
 
 type EditPlaylistModalProps = {
     playlistobj: playlist;
@@ -14,6 +15,7 @@ type EditPlaylistModalProps = {
 
 const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: EditPlaylistModalProps) => {
     const [playlistObj, setPlaylistObj] = useState<playlist>(props.playlistobj);
+    const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
 
     function uploadImg(e: React.ChangeEvent<HTMLInputElement>){
         if(e.target.files === null)return;
@@ -23,9 +25,26 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
         reader.onload = async (e) => {
             if (e.target?.result) {
                 const originalDataUrl = e.target.result as string;
+                let toSend = "";
         
-              // Compress the image to a maximum size of 250x250
-                const compressedDataUrl = await compressImage(originalDataUrl, 250, 250);
+                if(originalDataUrl.startsWith("data:image/jpeg;base64,")){
+                    //remove the header of the image
+                    toSend = originalDataUrl.replace("data:image/jpeg;base64,", "");
+                }
+                else if (originalDataUrl.startsWith("data:image/png;base64,")){
+                    //remove the header of the image
+                    toSend = originalDataUrl.replace("data:image/png;base64,", "");
+                }
+                // Compress the image to a maximum size of 250x250
+                if(toSend === ""){
+                    setToast({title: "Processing error...", message: "Could not process this image, please try another image", type: toastType.error, timeout: 3000});
+                    return;
+                }
+                const compressedDataUrl = await invoke("resize_frontend_image_to_fixed_height",{imageAsStr: toSend, height: 250});
+                if(compressedDataUrl === "FAILED"){
+                    setToast({title: "Processing error...", message: "Could not process this image, please try another image", type: toastType.error, timeout: 3000});
+                    return;
+                }
                 setPlaylistObj({ ... playlistObj, cover : compressedDataUrl});
             }
         };

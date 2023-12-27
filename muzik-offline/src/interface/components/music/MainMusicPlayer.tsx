@@ -1,16 +1,15 @@
 import { motion } from "framer-motion";
 import { SkipBack, Pause, SkipFwd, Shuffle, VolumeMin, VolumeMax, Repeat, Play, RepeatOne, NullCoverNull } from "@icons/index";
 import "@styles/components/music/MainMusicPlayer.scss";
-import { usePlayingPosition, usePlayingPositionSec, useSavedObjectStore } from "store";
+import { usePlayerStore, usePlayingPosition, usePlayingPositionSec, useSavedObjectStore } from "store";
 import { getRandomCover, secondsToTimeFormat } from "utils";
-import playerState from "store/playerState";
+import { changeVolumeLevel, changeSeekerPosition, dragSeeker, changeVolumeLevelBtnPress, repeatToggle, pauseSong, playSong, shuffleToggle, setVolumeLevel, playPreviousSong, playNextSong } from "utils/playerControl";
 
 const MainMusicPlayer = () => {
     const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
-    const {playingPosition, setplayingPosition} = usePlayingPosition((state) => { return {playingPosition: state.position, setplayingPosition: state.setPosition}; });
-    const {Player, playSong, pauseSong, repeatToggle, shuffleToggle, dragSeeker,
-        changeSeekerPosition, changeVolumeLevel, changeVolumeLevelBtnPress} = playerState();
+    const {Player} = usePlayerStore((state) => { return { Player: state.Player}; });
     const {playingPosInSec, setplayingPosInSec} = usePlayingPositionSec((state) => { return {playingPosInSec: state.position, setplayingPosInSec: state.setPosition}; });
+    const {playingPosition, setplayingPosition} = usePlayingPosition((state) => { return {playingPosition: state.position, setplayingPosition: state.setPosition}; });
 
     function changeVolume(event : any){changeVolumeLevel(event.target.value);}
 
@@ -52,7 +51,7 @@ const MainMusicPlayer = () => {
                             <Repeat />
                         }
                     </motion.div>
-                    <motion.div className="control_icon" whileTap={{scale: 0.98}}>
+                    <motion.div className="control_icon" whileTap={{scale: 0.98}} onClick={playPreviousSong}>
                         <SkipBack />
                     </motion.div>
                     {Player.isPlaying ?
@@ -64,7 +63,7 @@ const MainMusicPlayer = () => {
                             <Play />
                         </motion.div>
                     }
-                    <motion.div className="control_icon" whileTap={{scale: 0.98}}>
+                    <motion.div className="control_icon" whileTap={{scale: 0.98}} onClick={playNextSong}>
                         <SkipFwd />
                     </motion.div>
                     <motion.div className={"control_icon" + (Player.isShuffling ? " coloured" : "")}  
@@ -85,7 +84,11 @@ const MainMusicPlayer = () => {
                 <motion.div className="volume_icon" whileTap={{scale: 0.98}} onClick={() => changeVolumeBtnPress(true)}>
                     <VolumeMin />
                 </motion.div>
-                <input type="range" id="volume-slider" value={local_store.Volume} max="100" onChange={changeVolume} style={{backgroundSize: local_store.Volume.toString() + "% 100%"}}/>
+                <input type="range" id="volume-slider" max="100"
+                    value={local_store.Volume} 
+                    onChange={changeVolume} 
+                    onMouseUp={() => setVolumeLevel(local_store.Volume)}
+                    style={{backgroundSize: local_store.Volume.toString() + "% 100%"}}/>
                 <motion.div className="volume_icon" whileTap={{scale: 0.98}} onClick={() => changeVolumeBtnPress(false)}>
                     <VolumeMax />
                 </motion.div>

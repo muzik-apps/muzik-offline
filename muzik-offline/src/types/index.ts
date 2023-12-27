@@ -72,6 +72,11 @@ export interface Song{
     date_released: string,
     file_size: number,
     file_type: string,
+    overall_bit_rate: number,
+    audio_bit_rate: number,
+    sample_rate: number,
+    bit_depth: number,
+    channels: number
 }
 
 export interface artist {

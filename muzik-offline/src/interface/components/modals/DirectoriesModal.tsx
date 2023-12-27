@@ -4,6 +4,7 @@ import { invoke } from "@tauri-apps/api";
 import { Song, toastType } from "types";
 import { useDirStore, useSavedObjectStore, useToastStore } from "store";
 import { createSongList_inDB, createAlbumsList_inDB, createGenresList_inDB, createArtistsList_inDB } from "utils";
+import { isPermissionGranted, sendNotification } from '@tauri-apps/api/notification';
 
 type DirectoriesModalProps = {
     isOpen: boolean;
@@ -18,17 +19,25 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
 
     function reloadSongs(){
         invoke("get_all_songs", { pathsAsJsonArray: JSON.stringify(directories), compressImageOption: local_store.CompressImage === "Yes" ? true : false })
-            .then((res: any) => {
+            .then(async(res: any) => {
                 const song_data: Song[] = JSON.parse(res);
                 createSongList_inDB(song_data);
                 createAlbumsList_inDB(song_data);
                 createGenresList_inDB(song_data);
                 createArtistsList_inDB(song_data);
                 setToast({title: "Loading songs...", message: "Successfully loaded all the songs in the paths specified", type: toastType.success, timeout: 5000});
+
+                const permissionGranted = await isPermissionGranted();
+                if (permissionGranted) {
+                    sendNotification({ title: 'Loading songs...', body: 'Successfully loaded all the songs in the paths specified' });
+                }
             })
-            .catch((error) => {
+            .catch(async(_error) => {
                 setToast({title: "Loading songs...", message: "Failed to load all the songs in the paths specified", type: toastType.error, timeout: 5000});
-                console.log(error);
+                const permissionGranted = await isPermissionGranted();
+                if (permissionGranted) {
+                    sendNotification({ title: 'Loading songs...', body: 'Failed to load all the songs in the paths specified' });
+                }
             });
     }
 

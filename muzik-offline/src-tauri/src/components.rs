@@ -18,6 +18,11 @@ pub struct Song {
     pub date_released: String,
     pub file_size: u64,
     pub file_type: String,
+    pub overall_bit_rate: u32,
+    pub audio_bit_rate: u32,
+    pub sample_rate: u32,
+    pub bit_depth: u8,
+    pub channels: u8,
 }
 
 pub struct SharedAudioManager {

@@ -39,6 +39,10 @@ const PropertiesModal = (props: PropertiesModalProps) => {
                 { props.song && 
                     <div className="properties_grid">
                         <div className="properties_grid_item">
+                            <h3>In-app ID</h3>
+                            <p>{props.song.id}</p>
+                        </div>
+                        <div className="properties_grid_item">
                             <h3>Title</h3>
                             <p>{props.song.title}</p>
                         </div>
@@ -81,6 +85,26 @@ const PropertiesModal = (props: PropertiesModalProps) => {
                         <div className="properties_grid_item">
                             <h3>File type</h3>
                             <p>{props.song.file_type}</p>
+                        </div>
+                        <div className="properties_grid_item">
+                            <h3>Overall bit rate</h3>
+                            <p>{props.song.overall_bit_rate}</p>
+                        </div>
+                        <div className="properties_grid_item">
+                            <h3>Audio bit rate</h3>
+                            <p>{props.song.audio_bit_rate}</p>
+                        </div>
+                        <div className="properties_grid_item">
+                            <h3>Sample rate</h3>
+                            <p>{props.song.sample_rate}</p>
+                        </div>
+                        <div className="properties_grid_item">
+                            <h3>Bit depth</h3>
+                            <p>{props.song.bit_depth}</p>
+                        </div>
+                        <div className="properties_grid_item">
+                            <h3>Channels</h3>
+                            <p>{props.song.channels}</p>
                         </div>
                         <div className="properties_grid_item">
                             <motion.h4 onClick={openFileLocation}>Open file location</motion.h4>

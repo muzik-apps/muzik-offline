@@ -1,10 +1,10 @@
-use std::{path::Path, io::Cursor};
+use std::path::Path;
 use id3::{Tag, TagLike};
-use mp3_duration;
 use serde_json::Value;
 use base64::{Engine as _, engine::general_purpose};
-use image::imageops::FilterType;
 use crate::components::Song;
+use lofty::{ Probe, AudioFile};
+use crate::utils::{duration_to_string, extract_file_name, resize_and_compress_image};
 
 #[tauri::command]
 pub async fn get_all_songs(paths_as_json_array: String, compress_image_option: bool) -> Result<String, String> {
@@ -88,9 +88,32 @@ async fn read_from_path(path: &str, song_id: &mut i32, compress_image_option: &b
         date_recorded: String::from(""),
         date_released: String::from(""),
         file_size: 0,
-        file_type: String::from("")
+        file_type: String::from(""),
+        overall_bit_rate: 0,
+        audio_bit_rate: 0,
+        sample_rate: 0,
+        bit_depth: 0,
+        channels: 0,
     };
 
+    set_title(&tag, &mut song_meta_data);
+    set_name(&path, &mut song_meta_data);
+    set_artist(&tag, &mut song_meta_data);
+    set_album(&tag, &mut song_meta_data);
+    set_genre(&tag, &mut song_meta_data);
+    set_year(&tag, &mut song_meta_data);
+    set_duration_bit_rate_sample_rate_bit_depth_channels(&path, &mut song_meta_data);
+    set_path(&path, &mut song_meta_data);
+    set_cover(&tag, &mut song_meta_data, compress_image_option);
+    set_date_recorded(&tag, &mut song_meta_data);
+    set_date_released(&tag, &mut song_meta_data);
+    set_file_size(&path, &mut song_meta_data);
+    set_file_extension(&path, &mut song_meta_data);
+
+    Ok(song_meta_data)
+}
+
+fn set_title(tag: &Tag, song_meta_data: &mut Song){
     //TITLE
     if let Some(title) = tag.title() {
         song_meta_data.title = title.to_owned();
@@ -98,10 +121,14 @@ async fn read_from_path(path: &str, song_id: &mut i32, compress_image_option: &b
     else{
         song_meta_data.title = String::from("Unknown Title");
     }
+}
 
+fn set_name(path: &str, song_meta_data: &mut Song){
     //NAME
     song_meta_data.name = extract_file_name(&path);
-    
+}
+
+fn set_artist(tag: &Tag, song_meta_data: &mut Song){
     //ARTIST
     if let Some(artist) = tag.artist() {
         song_meta_data.artist = artist.to_owned();
@@ -109,23 +136,29 @@ async fn read_from_path(path: &str, song_id: &mut i32, compress_image_option: &b
     else{
         song_meta_data.artist = String::from("Unknown Artist");
     }
+}
 
+fn set_album(tag: &Tag, song_meta_data: &mut Song){
     //ALBUM
     if let Some(album) = tag.album() {
         song_meta_data.album = album.to_owned();
     }
     else{
-        song_meta_data.album = String::from("album: Unknown Album");
+        song_meta_data.album = String::from("Unknown Album");
     }
+}
 
+fn set_genre(tag: &Tag, song_meta_data: &mut Song){
     //GENRE
     if let Some(genre) = tag.genre() {
         song_meta_data.genre = genre.to_owned();
     }
     else{
-        song_meta_data.genre = String::from("genre: Unknown Genre");
+        song_meta_data.genre = String::from("Unknown Genre");
     }
+}
 
+fn set_year(tag: &Tag, song_meta_data: &mut Song){
     //YEAR
     if let Some(year) = tag.year() {
         song_meta_data.year = year.to_owned();
@@ -133,48 +166,84 @@ async fn read_from_path(path: &str, song_id: &mut i32, compress_image_option: &b
     else{
         song_meta_data.year = 0;
     }
+}
 
-    //DURATION
-    match mp3_duration::from_path(&path){
-        Ok(duration) => {
-            song_meta_data.duration_seconds = duration.as_secs();
-            song_meta_data.duration = duration_to_string(&duration);
+fn set_duration_bit_rate_sample_rate_bit_depth_channels(path: &str, song_meta_data: &mut Song){
+    //DURATION, OVERALL BIT RATE, AUDIO BIT RATE, SAMPLE RATE, BIT DEPTH, CHANNELS
+    match Probe::open(path){
+        Ok(probed) => {
+            match probed.read(){
+                Ok(tagged_file) => {
+                    song_meta_data.duration_seconds = tagged_file.properties().duration().as_secs();
+                    song_meta_data.duration = duration_to_string(&tagged_file.properties().duration().as_secs());
+                    song_meta_data.overall_bit_rate = tagged_file.properties().overall_bitrate().unwrap_or(0);
+                    song_meta_data.audio_bit_rate = tagged_file.properties().audio_bitrate().unwrap_or(0);
+                    song_meta_data.sample_rate = tagged_file.properties().sample_rate().unwrap_or(0);
+                    song_meta_data.bit_depth = tagged_file.properties().bit_depth().unwrap_or(0);
+                    song_meta_data.channels = tagged_file.properties().channels().unwrap_or(0);
+                },
+                Err(_) => {
+                    song_meta_data.duration_seconds = 0;
+                    song_meta_data.duration = String::from("00:00");
+                    song_meta_data.overall_bit_rate = 0;
+                    song_meta_data.audio_bit_rate = 0;
+                    song_meta_data.sample_rate = 0;
+                    song_meta_data.bit_depth = 0;
+                    song_meta_data.channels = 0;
+                },
+            }
         },
         Err(_) => {
             song_meta_data.duration_seconds = 0;
             song_meta_data.duration = String::from("00:00");
+            song_meta_data.overall_bit_rate = 0;
+            song_meta_data.audio_bit_rate = 0;
+            song_meta_data.sample_rate = 0;
+            song_meta_data.bit_depth = 0;
+            song_meta_data.channels = 0;
         },
     }
+}
+
+fn set_path(path: &str, song_meta_data: &mut Song){
     //PATH
     song_meta_data.path = path.clone().to_owned();
+}
 
+fn set_cover(tag: &Tag, song_meta_data: &mut Song, compress_image_option: &bool){
     //COVER
     if let Some(cover) = tag.pictures().next() {
         let picture_as_num = cover.data.to_owned();
-        //we want the image to be compressed to have speed improvements
-        //the image resides in picture_as_num as a Vec<u8>
-        //compression code goes here
-        if *compress_image_option == true {
-            match resize_and_compress_image(&picture_as_num, &250){
-                Some(compressed_image) => {
-                    //we need to convert it to a base64 string
-                    let base64str = general_purpose::STANDARD.encode(&compressed_image);
-                    song_meta_data.cover = Some(base64str);
-                },
-                None => {
-                    song_meta_data.cover = None;
-                },
-            }
+        match compress_image_option {
+            true => {
+                //we want the image to be compressed to have speed improvements
+                //the image resides in picture_as_num as a Vec<u8>
+                //compression code goes here
+                match resize_and_compress_image(&picture_as_num, &250){
+                    Some(compressed_image) => {
+                        //we need to convert it to a base64 string
+                        let base64str = general_purpose::STANDARD.encode(&compressed_image);
+                        song_meta_data.cover = Some(base64str);
+                    },
+                    None => {
+                        let base64str = general_purpose::STANDARD.encode(&picture_as_num);
+                        song_meta_data.cover = Some(base64str);
+                    },
+                }
+            },
+            false => {
+                let base64str = general_purpose::STANDARD.encode(&picture_as_num);
+                song_meta_data.cover = Some(base64str);
+            },
         }
-        else{
-            let base64str = general_purpose::STANDARD.encode(&picture_as_num);
-            song_meta_data.cover = Some(base64str);
-        }
+        
     }
     else{
         song_meta_data.cover = None;
     }
+}
 
+fn set_date_recorded(tag: &Tag, song_meta_data: &mut Song){
     //DATE RECORDED
     //"YYYY-MM-DD-HH-MM-SS"
     if let Some(date_recorded) = tag.date_recorded() {
@@ -183,7 +252,9 @@ async fn read_from_path(path: &str, song_id: &mut i32, compress_image_option: &b
     else{
         song_meta_data.date_recorded = String::from("Unknown date recorded");
     }
+}
 
+fn set_date_released(tag: &Tag, song_meta_data: &mut Song){
     //DATE RELEASED
     //"YYYY-MM-DD-HH-MM-SS"
     if let Some(date_released) = tag.date_released() {
@@ -192,7 +263,9 @@ async fn read_from_path(path: &str, song_id: &mut i32, compress_image_option: &b
     else{
         song_meta_data.date_released = String::from("Unknown date recorded");
     }
+}
 
+fn set_file_size(path: &str, song_meta_data: &mut Song){
     //SIZE
     let real_path = Path::new(&path);
     match std::fs::metadata(&real_path) {
@@ -203,8 +276,11 @@ async fn read_from_path(path: &str, song_id: &mut i32, compress_image_option: &b
             song_meta_data.file_size = 0;
         },
     }
+}
 
+fn set_file_extension(path: &str, song_meta_data: &mut Song){
     //FILE TYPE
+    let real_path = Path::new(&path);
     match real_path.extension(){
         Some(wrapped_extension) => {
             match wrapped_extension.to_str(){
@@ -218,66 +294,6 @@ async fn read_from_path(path: &str, song_id: &mut i32, compress_image_option: &b
         },
         None => {
             song_meta_data.file_type = String::from("Unknown file type");
-        },
-    }
-
-    Ok(song_meta_data)
-}
-
-fn duration_to_string(duration: &std::time::Duration) -> String {
-    let seconds = duration.as_secs();
-    let minutes = seconds / 60;
-    let seconds = seconds % 60;
-    let hours = minutes / 60;
-    let minutes = minutes % 60;
-
-    if hours > 0 {
-        format!("{}:{:02}:{:02}", hours, minutes, seconds)
-    } else {
-        format!("{}:{:02}", minutes, seconds)
-    }
-}
-
-fn extract_file_name(file_path: &str) -> String {
-    let path = Path::new(file_path);
-
-    match path.file_stem(){
-        Some(file_name) => {
-            file_name.to_string_lossy().to_string()
-        },
-        None => {
-            String::from("Unknown file name")
-        },
-    }
-}
-
-fn resize_and_compress_image(original_data: &Vec<u8>, target_height: &u32) -> Option<Vec<u8>> {
-    // Decode the original image
-    match image::load_from_memory(&original_data){
-        Ok(original_image) => {
-            // Calculate the corresponding width to maintain aspect ratio
-            let aspect_ratio = original_image.width() as f32 / original_image.height() as f32;
-            let target_width = (*target_height as f32 * aspect_ratio) as u32;
-
-            // Resize the image to a specific size (e.g., 250x250 pixels)
-            let resized_image = original_image.resize_exact(target_width, *target_height, FilterType::Triangle);
-
-            // Create a buffer to store the compressed image
-            let mut compressed_buffer = Cursor::new(Vec::new());
-
-            // Encode the resized image as JPEG with a certain quality
-            match resized_image.write_to(&mut compressed_buffer, image::ImageOutputFormat::Jpeg(80)){
-                Ok(_) => {
-                    // Return the compressed image data
-                    Some(compressed_buffer.into_inner())
-                },
-                Err(_) => {
-                    None
-                },
-            }
-        },
-        Err(_) => {
-            None
         },
     }
 }

@@ -20,16 +20,16 @@ const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: History
   function selectView(arg: string){setSelectedView(arg);}
 
   function setMenuOpenData__SongQueue(key: number, n_co_ords: {xPos: number; yPos: number;}){
-    setCoords(n_co_ords);
-    const matching_song = SongQueue.find(song => { return song.id === key; })
-    setSongMenuToOpen(matching_song ? matching_song : null);
-}
+      setCoords(n_co_ords);
+      const matching_song = SongQueue.find(song => { return song.id === key; })
+      setSongMenuToOpen(matching_song ? matching_song : null);
+  }
 
-function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos: number;}){
-    setCoords(n_co_ords);
-    const matching_song = SongHistory.find(song => { return song.id === key; })
-    setSongMenuToOpen(matching_song ? matching_song : null);
-}
+  function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos: number;}){
+      setCoords(n_co_ords);
+      const matching_song = SongHistory.find(song => { return song.id === key; })
+      setSongMenuToOpen(matching_song ? matching_song : null);
+  }
 
   function chooseOption(arg: contextMenuButtons){
 

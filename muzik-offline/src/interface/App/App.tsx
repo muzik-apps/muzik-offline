@@ -10,6 +10,7 @@ import { OSTYPEenum } from "types";
 import { AnimatePresence } from "framer-motion";
 import { useWallpaperStore, useSavedObjectStore } from "store";
 import { SavedObject } from "@database/saved_object";
+import { isPermissionGranted, requestPermission } from '@tauri-apps/api/notification';
 
 const App = () => {
   const [openSettings, setOpenSettings] = useState<boolean>(false);
@@ -28,15 +29,21 @@ const App = () => {
 
   function toggleFloatingHNState(){setFloatingHNState(!FloatingHNState);}
 
-  useEffect(() => {
-    const checkOSType = async() => {
-      const osType = await type();
-      let temp: SavedObject = local_store;
-      temp.OStype = osType.toString();
-      setStore(temp);
-    }
+  async function checkOSType(){
+    const osType = await type();
+    let temp: SavedObject = local_store;
+    temp.OStype = osType.toString();
+    setStore(temp);
+  }
 
+  async function checkAndRequestNotificationPermission(){
+    let permissionGranted = await isPermissionGranted();
+    if(!permissionGranted)await requestPermission();
+  }
+
+  useEffect(() => {
     checkOSType();
+    checkAndRequestNotificationPermission();
   }, [])
 
   return (

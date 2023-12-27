@@ -7,13 +7,11 @@ import { ViewportList } from 'react-viewport-list';
 import { local_albums_db, local_songs_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
 import { AllTracksState, alltracksReducer, reducerType } from "store";
-import { addThisSongToPlayLater, addThisSongToPlayNext, playThisListNow } from "utils";
+import { addThisSongToPlayLater, addThisSongToPlayNext, playThisListNow, startPlayingNewSong } from "utils/playerControl";
 import "@styles/pages/AllTracks.scss";
-import playerState from "store/playerState";
 
 const AllTracks = () => {
     const [state , dispatch] = useReducer(alltracksReducer, AllTracksState);
-    const {startPlayingNewSong} = playerState();
     const navigate = useNavigate();
     const ref = useRef<HTMLDivElement | null>(null);
 

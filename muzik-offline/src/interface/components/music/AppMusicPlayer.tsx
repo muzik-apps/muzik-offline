@@ -2,10 +2,10 @@ import {FunctionComponent, useEffect, useRef} from "react";
 import "@styles/components/music/AppMusicPlayer.scss";
 import {ChromeCast, DotHorizontal, NullCoverNull, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
 import { motion } from "framer-motion";
-import { usePlayingPosition, usePlayingPositionSec, useSavedObjectStore } from "store";
+import { usePlayerStore, usePlayingPosition, usePlayingPositionSec, useSavedObjectStore } from "store";
 import { getRandomCover, secondsToTimeFormat } from "utils";
-import playerState from "store/playerState";
 import { invoke } from "@tauri-apps/api";
+import { changeVolumeLevel, changeSeekerPosition, changeVolumeLevelBtnPress, dragSeeker, pauseSong, playSong, repeatToggle, shuffleToggle, setVolumeLevel, reconfigurePlayer_AtEndOfSong, playPreviousSong, playNextSong } from "utils/playerControl";
 
 type AppMusicPlayerProps = {
     openPlayer: () => void;
@@ -13,13 +13,12 @@ type AppMusicPlayerProps = {
 }
 
 const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusicPlayerProps) => {
+    const {Player} = usePlayerStore((state) => { return { Player: state.Player}; });
     const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
-    const intervalIdRef = useRef<number>();
-    const {playingPosition, setplayingPosition} = usePlayingPosition((state) => { return {playingPosition: state.position, setplayingPosition: state.setPosition}; });
-    const {Player, playSong, pauseSong, repeatToggle, shuffleToggle, dragSeeker,
-        changeSeekerPosition, changeVolumeLevel, changeVolumeLevelBtnPress} = playerState();
     const {playingPosInSec, setplayingPosInSec} = usePlayingPositionSec((state) => { return {playingPosInSec: state.position, setplayingPosInSec: state.setPosition}; });
-
+    const {playingPosition, setplayingPosition} = usePlayingPosition((state) => { return {playingPosition: state.position, setplayingPosition: state.setPosition}; });
+    const intervalIdRef = useRef<number>();
+    
     function changeVolume(event : any){changeVolumeLevel(event.target.value);}
 
     function changeSeeker(event : any){changeSeekerPosition(event.target.value);}
@@ -36,8 +35,13 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
     async function upDateSeeker(){
         const value: any = await invoke("get_song_position");
         if(value === 0)setplayingPosition(0);
-        setplayingPosInSec(Math.floor(value));
-        setplayingPosition(Math.floor((value / Player.lengthOfSongInSeconds) * 100));
+        else if(value === Player.lengthOfSongInSeconds && Player.playingSongMetadata){
+            reconfigurePlayer_AtEndOfSong();
+        }
+        else{
+            setplayingPosInSec(Math.floor(value));
+            setplayingPosition(Math.floor((value / Player.lengthOfSongInSeconds) * 100));
+        }
     }
 
     function detectKeyPress(this: Window, ev: any){
@@ -55,14 +59,9 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
     }, [])
 
     useEffect(() => {
-        if (Player.isPlaying) {
-            intervalIdRef.current = setInterval(upDateSeeker, 1000);
-        } else {
-            clearInterval(intervalIdRef.current);
-        }
-    
-        // Cleanup function to clear the timer when the component unmounts or when the flag changes
-        return () => clearInterval(intervalIdRef.current);
+        if(Player.isPlaying)intervalIdRef.current = setInterval(upDateSeeker, 1000);
+        else clearInterval(intervalIdRef.current);
+        return () => clearInterval(intervalIdRef.current);// Cleanup function to clear the timer when the component unmounts or when the flag changes
     }, [Player.isPlaying]);
 
     return (
@@ -97,7 +96,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                                 <Repeat />
                             }
                         </motion.div>
-                        <motion.div className="control_icon" whileTap={{scale: 0.98}}>
+                        <motion.div className="control_icon" whileTap={{scale: 0.98}} onClick={playPreviousSong}>
                             <SkipBack />
                         </motion.div>
                         {Player.isPlaying ?
@@ -109,7 +108,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                                 <Play />
                             </motion.div>
                         }
-                        <motion.div className="control_icon" whileTap={{scale: 0.98}}>
+                        <motion.div className="control_icon" whileTap={{scale: 0.98}} onClick={playNextSong}>
                             <SkipFwd />
                         </motion.div>
                         <motion.div className={"control_icon" + (Player.isShuffling ? " coloured" : "")}  
@@ -138,7 +137,11 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                         <motion.div className="volume_icon" whileTap={{scale: 0.98}} onClick={() => changeVolumeBtnPress(true)}>
                             <VolumeMin />
                         </motion.div>
-                        <input type="range" id="volume-slider" value={local_store.Volume} max="100" onChange={changeVolume} style={{backgroundSize: local_store.Volume.toString() + "% 100%"}}/>
+                        <input type="range" id="volume-slider" max="100" 
+                            value={local_store.Volume} 
+                            onChange={changeVolume} 
+                            onMouseUp={() => setVolumeLevel(local_store.Volume)}
+                            style={{backgroundSize: local_store.Volume.toString() + "% 100%"}}/>
                         <motion.div className="volume_icon" whileTap={{scale: 0.98}} onClick={() => changeVolumeBtnPress(false)}>
                             <VolumeMax />
                         </motion.div>

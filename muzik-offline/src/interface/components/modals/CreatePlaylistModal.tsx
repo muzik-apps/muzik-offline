@@ -1,10 +1,11 @@
 import { EditImage, NullCoverNull } from "@assets/icons";
-import { playlist } from "types";
+import { playlist, toastType } from "types";
 import { motion } from "framer-motion";
 import { FunctionComponent, useEffect, useState } from "react";
 import { local_playlists_db } from "@database/database";
 import "@styles/components/modals/CreatePlaylistModal.scss";
-import { compressImage } from "utils";
+import { invoke } from "@tauri-apps/api";
+import { useToastStore } from "store";
 
 type CreatePlaylistModalProps = {
     isOpen: boolean;
@@ -13,6 +14,7 @@ type CreatePlaylistModalProps = {
 
 const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props: CreatePlaylistModalProps) => {
     const [playlistObj, setPlaylistObj] = useState<playlist>({key: 0,cover: null,title: "",dateCreated: "",dateEdited: "",tracksPaths: []});
+    const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
 
     function uploadImg(e: React.ChangeEvent<HTMLInputElement>){
         if(e.target.files === null)return;
@@ -22,9 +24,28 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
         reader.onload = async (e) => {
             if (e.target?.result) {
                 const originalDataUrl = e.target.result as string;
+                let toSend = "";
         
-              // Compress the image to a maximum size of 250x250
-                const compressedDataUrl = await compressImage(originalDataUrl, 250, 250);
+                if(originalDataUrl.startsWith("data:image/jpeg;base64,")){
+                    //remove the header of the image
+                    toSend = originalDataUrl.replace("data:image/jpeg;base64,", "");
+                }
+                else if (originalDataUrl.startsWith("data:image/png;base64,")){
+                    //remove the header of the image
+                    toSend = originalDataUrl.replace("data:image/png;base64,", "");
+                }
+                // Compress the image to a maximum size of 250x250
+                if(toSend === ""){
+                    setToast({title: "Processing error...", message: "Could not process this image, please try another image", type: toastType.error, timeout: 3000});
+                    return;
+                }
+        
+                // Compress the image to a maximum size of 250x250
+                const compressedDataUrl = await invoke("resize_frontend_image_to_fixed_height",{imageAsStr: originalDataUrl, height: 250});
+                if(compressedDataUrl === "FAILED"){
+                    setToast({title: "Processing error...", message: "Could not process this image, please try another image", type: toastType.error, timeout: 3000});
+                    return;
+                }
                 setPlaylistObj({ ... playlistObj, cover : compressedDataUrl});
             }
         };

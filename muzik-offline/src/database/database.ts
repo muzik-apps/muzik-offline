@@ -9,7 +9,7 @@ export class SongsDexie extends Dexie {
     constructor() {
         super('SongsDatabase');
         this.version(1).stores({
-            songs: 'id,title,name,artist,album,genre,year,duration,duration_seconds,path,cover,date_recorded,date_released,file_size,file_type' // Primary key and indexed props
+            songs: 'id,title,name,artist,album,genre,year,duration,duration_seconds,path,cover,date_recorded,date_released,file_size,file_type,overall_bit_rate,audio_bit_rate,sample_rate,bit_depth,channels' // Primary key and indexed props
         });
     }
 }

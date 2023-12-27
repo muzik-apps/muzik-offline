@@ -7,16 +7,21 @@
     width: calc(350px + 5vw);
     height: 80vh;
 
+    /* Track */
+    ::-webkit-scrollbar-track { margin-top: 15px; margin-bottom: 0px; }
+
     .Upcoming_view{
         height: 85%;
-        width: calc(350px + 5vw);
+        width: calc(350px + 4vw);
+        padding-right: 1vw;
         margin-bottom: 20px;
         overflow-y: auto;
     }
 
     .History_view{
         height: 85%;
-        width: calc(350px + 5vw);
+        width: calc(350px + 4vw);
+        padding-right: 1vw;
         margin-bottom: 20px;
         overflow-y: auto;
     }

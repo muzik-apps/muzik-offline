@@ -51,6 +51,67 @@ pub fn load_and_play_song_from_path(audio_manager: State<'_, Mutex<SharedAudioMa
 }
 
 #[tauri::command]
+pub fn load_a_song_from_path(audio_manager: State<'_, Mutex<SharedAudioManager>>, sound_path: &str){
+    match audio_manager.lock(){
+        Ok(mut manager) => {
+            //stop and clear all sounds that are playing
+            match &mut manager.instance_handle{
+                Some(handle) => {
+                    match handle.stop(Tween::default()){
+                        Ok(_) => {
+                            //stopped song
+                        },
+                        Err(_) => {
+                            return;
+                        },
+                    }
+                },
+                None => {
+                    //no song is currently playing
+                },
+            }
+
+            //try and load and play then immediately pause a new song
+            match StreamingSoundData::from_file(sound_path, StreamingSoundSettings::default()){
+                Ok(sound_data) => {
+                    match manager.manager.play(sound_data){
+                        Ok(instance_handle) => {
+                            //playback started
+                            manager.instance_handle = Some(instance_handle);
+                            //pause the song
+                            match &mut manager.instance_handle{
+                                Some(handle) => {
+                                    match handle.pause(Tween::default()){
+                                        Ok(_) => {
+                                            //paused song
+                                        },
+                                        Err(_) => {
+                                            //failed to pause song
+                                        },
+                                    }
+                                },
+                                None => {
+                                    //no song is currently playing
+                                },
+                            }
+                        },
+                        Err(_) => {
+                            //playback failed
+                        },
+                    }
+                },
+                Err(_) => {
+                    //failed to load sound
+                },
+            }
+        },
+        Err(_) => {
+            //failed to lock audio manager
+        },
+    }
+}
+
+#[tauri::command]
 pub fn pause_song(audio_manager: State<'_, Mutex<SharedAudioManager>>) {
     match audio_manager.lock(){
         Ok(mut manager) => {
@@ -74,6 +135,33 @@ pub fn pause_song(audio_manager: State<'_, Mutex<SharedAudioManager>>) {
             //failed to lock audio manager
         },
     }
+}
+
+#[tauri::command]
+pub fn stop_song(audio_manager: State<'_, Mutex<SharedAudioManager>>){
+    match audio_manager.lock(){
+        Ok(mut manager) => {
+            match &mut manager.instance_handle{
+                Some(handle) => {
+                    match handle.stop(Tween::default()){
+                        Ok(_) => {
+                            //stopped song
+                        },
+                        Err(_) => {
+                            //failed to stop song
+                        },
+                    }
+                },
+                None => {
+                    //no song is currently playing
+                },
+            }
+        },
+        Err(_) => {
+            //failed to lock audio manager
+        },
+    }
+
 }
 
 #[tauri::command]
