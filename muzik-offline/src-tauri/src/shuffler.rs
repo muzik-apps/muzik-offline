@@ -70,7 +70,7 @@ impl Shuffler {
 }
 
 #[tauri::command]
-pub fn set_total_songs(shuffler: State<'_, Mutex<Shuffler>>, total_songs: usize){
+pub fn shuffler_set_total_songs(shuffler: State<'_, Mutex<Shuffler>>, total_songs: usize){
     match shuffler.lock(){
         Ok(mut shuffler) => {
             shuffler.set_total_songs(total_songs);
@@ -82,7 +82,7 @@ pub fn set_total_songs(shuffler: State<'_, Mutex<Shuffler>>, total_songs: usize)
 }
 
 #[tauri::command]
-pub fn set_batch_size(shuffler: State<'_, Mutex<Shuffler>>, batch_size: usize){
+pub fn shuffler_set_batch_size(shuffler: State<'_, Mutex<Shuffler>>, batch_size: usize){
     match shuffler.lock(){
         Ok(mut shuffler) => {
             shuffler.set_batch_size(batch_size);
@@ -94,7 +94,7 @@ pub fn set_batch_size(shuffler: State<'_, Mutex<Shuffler>>, batch_size: usize){
 }
 
 #[tauri::command]
-pub fn set_total_songs_and_batch_size(shuffler: State<'_, Mutex<Shuffler>>, total_songs: usize, batch_size: usize){
+pub fn shuffler_set_total_songs_and_batch_size(shuffler: State<'_, Mutex<Shuffler>>, total_songs: usize, batch_size: usize){
     match shuffler.lock(){
         Ok(mut shuffler) => {
             shuffler.set_total_songs_and_batch_size(total_songs, batch_size);
@@ -106,7 +106,7 @@ pub fn set_total_songs_and_batch_size(shuffler: State<'_, Mutex<Shuffler>>, tota
 }
 
 #[tauri::command]
-pub fn reset_and_set_remaining_keys(shuffler: State<'_, Mutex<Shuffler>>, remaining_keys: Vec<usize>){
+pub fn shuffler_reset_and_set_remaining_keys(shuffler: State<'_, Mutex<Shuffler>>, remaining_keys: Vec<usize>){
     match shuffler.lock(){
         Ok(mut shuffler) => {
             shuffler.reset_and_set_remaining_keys(remaining_keys);
@@ -118,7 +118,7 @@ pub fn reset_and_set_remaining_keys(shuffler: State<'_, Mutex<Shuffler>>, remain
 }
 
 #[tauri::command]
-pub fn get_next_batch(shuffler: State<'_, Mutex<Shuffler>>) -> Vec<usize>{
+pub fn shuffler_get_next_batch(shuffler: State<'_, Mutex<Shuffler>>) -> Vec<usize>{
     match shuffler.lock(){
         Ok(mut shuffler) => {
             shuffler.get_next_batch()
@@ -131,7 +131,7 @@ pub fn get_next_batch(shuffler: State<'_, Mutex<Shuffler>>) -> Vec<usize>{
 }
 
 #[tauri::command]
-pub fn get_next_batch_as_size(shuffler: State<'_, Mutex<Shuffler>>, size: usize) -> Vec<usize>{
+pub fn shuffler_get_next_batch_as_size(shuffler: State<'_, Mutex<Shuffler>>, size: usize) -> Vec<usize>{
     match shuffler.lock(){
         Ok(mut shuffler) => {
             shuffler.get_next_batch_as_size(size)

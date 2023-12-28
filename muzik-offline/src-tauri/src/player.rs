@@ -203,7 +203,22 @@ pub fn seek_to(audio_manager: State<'_, Mutex<SharedAudioManager>>, position: f6
                             //but the position will not update until the song is resumed
                             //so we will lower the volume to 0, play, then pause, then restore the previous volume
                             //this is a hacky solution but it works
-                            
+                            match handle.resume(Tween::default()){
+                                Ok(_) => {
+                                    //resumed song
+                                    match handle.pause(Tween::default()){
+                                        Ok(_) => {
+                                            //paused song
+                                        },
+                                        Err(_) => {
+                                            //failed to pause song
+                                        },
+                                    }
+                                },
+                                Err(_) => {
+                                    //failed to resume song
+                                },
+                            }
                         },
                         Err(_) => {
                             //failed to seek to position

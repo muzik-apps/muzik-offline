@@ -7,18 +7,28 @@ mod commands;
 mod player;
 mod utils;
 mod shuffler;
+mod normalplaylist;
 
 use kira::manager::{AudioManager,AudioManagerSettings,backend::DefaultBackend};
 use components::SharedAudioManager;
 use shuffler::Shuffler;
+use normalplaylist::NormalPlayList;
 use std::sync::Mutex;
 
 use crate::metadata_retriever::get_all_songs;
+
 use crate::commands::{open_in_file_manager, resize_frontend_image_to_fixed_height};
+
 use crate::player::{load_and_play_song_from_path, load_a_song_from_path,
     pause_song, resume_playing, seek_to, get_song_position, stop_song};
-use crate::shuffler::{set_total_songs, set_batch_size, get_next_batch, 
-    get_next_batch_as_size, set_total_songs_and_batch_size, reset_and_set_remaining_keys};
+
+use crate::shuffler::{shuffler_set_total_songs, shuffler_set_batch_size, 
+    shuffler_get_next_batch, shuffler_get_next_batch_as_size, 
+    shuffler_set_total_songs_and_batch_size, shuffler_reset_and_set_remaining_keys};
+
+use crate::normalplaylist::{normalplaylist_set_total_songs, normalplaylist_set_batch_size,
+    normalplaylist_get_next_batch, normalplaylist_get_next_batch_as_size,
+    normalplaylist_set_total_songs_and_batch_size, normalplaylist_reset_and_set_remaining_keys};
 
 fn main() {
     tauri::Builder::default()
@@ -29,6 +39,7 @@ fn main() {
             instance_handle: None,
         }))
         .manage(Mutex::new(Shuffler::new(0, 0)))
+        .manage(Mutex::new(NormalPlayList::new(0, 0)))
         .invoke_handler(tauri::generate_handler![
                             get_all_songs, 
                             open_in_file_manager,
@@ -40,12 +51,18 @@ fn main() {
                             seek_to,
                             get_song_position,
                             resize_frontend_image_to_fixed_height,
-                            set_total_songs,
-                            set_batch_size,
-                            set_total_songs_and_batch_size,
-                            reset_and_set_remaining_keys,
-                            get_next_batch,
-                            get_next_batch_as_size
+                            shuffler_set_total_songs,
+                            shuffler_set_batch_size,
+                            shuffler_set_total_songs_and_batch_size,
+                            shuffler_reset_and_set_remaining_keys,
+                            shuffler_get_next_batch,
+                            shuffler_get_next_batch_as_size,
+                            normalplaylist_set_total_songs,
+                            normalplaylist_set_batch_size,
+                            normalplaylist_set_total_songs_and_batch_size,
+                            normalplaylist_reset_and_set_remaining_keys,
+                            normalplaylist_get_next_batch,
+                            normalplaylist_get_next_batch_as_size,
                         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
