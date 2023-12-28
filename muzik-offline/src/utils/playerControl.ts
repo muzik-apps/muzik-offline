@@ -104,14 +104,14 @@ export async function setVolumeLevel(value: number){await invoke("set_volume", {
 
 export function changeVolumeLevelBtnPress(isDecreasing: boolean){
     if(isDecreasing === true){
-        const level: number = (useSavedObjectStore.getState().local_store.Volume - parseInt(useSavedObjectStore.getState().local_store.VolumeStepAmount));
+        const level: number = Number(useSavedObjectStore.getState().local_store.Volume) - parseInt(useSavedObjectStore.getState().local_store.VolumeStepAmount);
         let temp: SavedObject = useSavedObjectStore.getState().local_store;
         temp.Volume = level <= 0 ? 0 : level;
         useSavedObjectStore.getState().setStore(temp);
         if(level >= 0)setVolumeLevel(temp.Volume);
     }
     else{
-        const level: number = (useSavedObjectStore.getState().local_store.Volume + parseInt(useSavedObjectStore.getState().local_store.VolumeStepAmount));
+        const level: number = Number(useSavedObjectStore.getState().local_store.Volume)  + parseInt(useSavedObjectStore.getState().local_store.VolumeStepAmount);
         let temp: SavedObject = useSavedObjectStore.getState().local_store;
         temp.Volume = level >= 100 ? 100 : level;
         useSavedObjectStore.getState().setStore(temp);

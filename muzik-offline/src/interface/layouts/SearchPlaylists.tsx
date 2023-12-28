@@ -20,7 +20,10 @@ const SearchPlaylists = () => {
     }
 
     function chooseOption(arg: contextMenuButtons){
-    
+        if(arg === contextMenuButtons.AddToPlaylist){ console.log("Add to playlist"); }
+        else if(arg === contextMenuButtons.PlayNext){ console.log("Play next"); }
+        else if(arg === contextMenuButtons.PlayLater){ console.log("Play later"); }
+        else if(arg === contextMenuButtons.Play){ console.log("Play"); }
     }
 
     function navigateTo(passed_key: number){ navigate(`/PlaylistView/${passed_key}`); }

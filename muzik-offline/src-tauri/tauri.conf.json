@@ -38,8 +38,11 @@
     },
     "bundle": {
       "active": true,
+      "category": "Music",
       "targets": "all",
-      "identifier": "com.tauri.dev",
+      "identifier": "com.muzik-offline.dev",
+      "longDescription": "A desktop music player for listening to music offline that is downloaded onto your computer in the form of mp3, wav, ogg files etc.",
+      "shortDescription": "A desktop music player for listening to music offline.",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",

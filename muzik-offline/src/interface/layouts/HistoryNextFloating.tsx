@@ -44,7 +44,10 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
     }
 
     function chooseOption(arg: contextMenuButtons){
-    
+        if(arg === contextMenuButtons.AddToPlaylist){ console.log("Add to playlist"); }
+        else if(arg === contextMenuButtons.PlayNext && songMenuToOpen){ console.log("Play next"); }
+        else if(arg === contextMenuButtons.PlayLater && songMenuToOpen){ console.log("Play later"); }
+        else if(arg === contextMenuButtons.Play && songMenuToOpen){ console.log("Play"); }
     }
 
     async function navigateToSH(key: number, type: "artist" | "song"){
@@ -73,10 +76,21 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
 
     async function setLists(){
         const limit = Number.parseInt(local_store.UpcomingHistoryLimit);
-        const USsongs = await local_songs_db.songs.where("id").anyOf(SongQueueKeys.slice(0, limit)).toArray();
-        const HSsongs = await local_songs_db.songs.where("id").anyOf(SongHistoryKeys.slice(SongHistoryKeys.length - limit, SongHistoryKeys.length - 1)).toArray();
-        setSongQueue(USsongs);
-        setSongHistory(HSsongs);
+        const sqkeys = SongQueueKeys.slice(0, limit);
+        const hskeys = SongHistoryKeys.slice(SongHistoryKeys.length - limit, SongHistoryKeys.length);
+        const USsongs = await local_songs_db.songs.where("id").anyOf(sqkeys).toArray();
+        const HSsongs = await local_songs_db.songs.where("id").anyOf(hskeys).toArray();
+
+        const sqkeysToItemMap = new Map(USsongs.map(item => [item.id, item]));
+        const hskeysToItemMap = new Map(HSsongs.map(item => [item.id, item]));
+
+        const USsongsOrdered = sqkeys.map(key => sqkeysToItemMap.get(key));
+        const HSsongsOrdered = hskeys.map(key => hskeysToItemMap.get(key));
+
+        const USfilteredSongs = USsongsOrdered.filter((song) => song !== undefined);
+        setSongQueue(USfilteredSongs as Song[]);
+        const HSfilteredSongs = HSsongsOrdered.filter((song) => song !== undefined);
+        setSongHistory(HSfilteredSongs as Song[]);
     }
 
     useEffect(() => {setLists()}, [SongQueueKeys, SongHistoryKeys])

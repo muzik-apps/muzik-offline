@@ -42,23 +42,46 @@ impl MLO {
     }
 
     pub fn get_next_batch_as_size(&mut self, size: usize) -> Vec<usize> {
-        if self.remaining_keys.is_empty() && self.repeat_list == true {
+        if self.remaining_keys.is_empty(){
             // If all keys have been fetched, reshuffle
-            self.remaining_keys = self.untouched_keys.clone();
-            self.drained_keys.clear();
+            if self.repeat_list == false{
+                return Vec::new();
+            }
+            else{
+                self.remaining_keys = self.untouched_keys.clone();
+                self.drained_keys.clear();
+                if self.shuffle_list {
+                    self.remaining_keys.shuffle(&mut rand::thread_rng());
+                }
+                let batch: Vec<usize> = self.remaining_keys.drain(..size).collect();
+                self.drained_keys.extend(&batch);
+                return batch;
+            }
+        }
+        else if self.remaining_keys.len() < size {
+            // If there are not enough keys left, fetch all remaining keys
             if self.shuffle_list {
                 self.remaining_keys.shuffle(&mut rand::thread_rng());
             }
+            let batch: Vec<usize> = self.remaining_keys.drain(..).collect();
+            self.drained_keys.extend(&batch);
+            return batch;
         }
-        else if self.remaining_keys.is_empty() && self.repeat_list == false{
-            return Vec::new();
+        else if self.remaining_keys.len() == self.untouched_keys.len(){
+            //we have just began here so return a shuffled or unshuffled list
+            if self.shuffle_list {
+                self.remaining_keys.shuffle(&mut rand::thread_rng());
+            }
+            let batch: Vec<usize> = self.remaining_keys.drain(..size).collect();
+            self.drained_keys.extend(&batch);
+            return batch;
         }
         //research more into unshuffling after a shuffling has already been done
-        
-
-        let batch: Vec<usize> = self.remaining_keys.drain(..size).collect();
-        self.drained_keys.extend(&batch);
-        batch
+        else{
+            let batch: Vec<usize> = self.remaining_keys.drain(..size).collect();
+            self.drained_keys.extend(&batch);
+            return batch;
+        }
     }
 }
 
