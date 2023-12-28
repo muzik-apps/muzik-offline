@@ -29,33 +29,33 @@ const AllTracks = () => {
         dispatch({ type: reducerType.SET_SONG_MENU, payload: matching_song ? matching_song : null});
     }
 
-    function chooseOption(arg: contextMenuButtons, songToPlay?: Song){
+    function chooseOption(arg: contextMenuButtons){
         if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.PlayNext && state.songMenuToOpen){ 
-            addThisSongToPlayNext(state.songMenuToOpen);
+            addThisSongToPlayNext(state.songMenuToOpen.id);
             closeContextMenu(); 
         }
         else if(arg === contextMenuButtons.PlayLater && state.songMenuToOpen){ 
-            addThisSongToPlayLater(state.songMenuToOpen);
+            addThisSongToPlayLater(state.songMenuToOpen.id);
             closeContextMenu(); 
         }
-        else if(arg === contextMenuButtons.Play && (state.songMenuToOpen || songToPlay)){
-            //in the songlist, get the next 20 songs from the songmenutotopen key
-            const smTo = state.songMenuToOpen ? state.songMenuToOpen : songToPlay;
-            if(!smTo)return;
-            const index = state.SongList.findIndex(song => song.id === smTo.id);
-            if(index === -1)return;
-            playThisListNow(state.SongList.slice(index, index + 20));
+        else if(arg === contextMenuButtons.Play && state.songMenuToOpen){
+            playThisSong(state.songMenuToOpen.id);
             closeContextMenu(); 
         }
     }
 
-    async function playThisSong(key: number){
-        const matching_song = state.SongList.find(song => { return song.id === key; });
-        if(!matching_song)return;
-        await startPlayingNewSong(matching_song);
-        chooseOption(contextMenuButtons.Play, matching_song);
+    async function playThisSong(key: number, shuffle_list: boolean = false){
+        if(state.SongList.length === 0)return;
+        let songkey = key;
+        if(songkey === -1)songkey = state.SongList[0].id;
+        const index = state.SongList.findIndex(song => song.id === songkey);
+        if(index === -1)return;
+        //get ids of songs from index of matching song to last song in list
+        await startPlayingNewSong(state.SongList[index]);
+        const ids: number[] = state.SongList.slice(index + 1).map(song => song.id);
+        await playThisListNow(ids, shuffle_list);
     }
 
     function closeContextMenu(e?: React.MouseEvent<HTMLDivElement, MouseEvent>){
@@ -131,7 +131,7 @@ const AllTracks = () => {
                         </div>
                     </div>
                 </div>
-                <motion.div className="shuffle-btn" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}}>
+                <motion.div className="shuffle-btn" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() => playThisSong(-1, true)}>
                     <h4>shuffle & play</h4>
                     <Shuffle />
                 </motion.div>

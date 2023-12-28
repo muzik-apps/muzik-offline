@@ -53,11 +53,11 @@ export interface PlayingPositionSecInterface{
 }
 
 export interface QueueInterface{
-    queue: Song[];
-    enqueue: (song: Song) => void;
+    queue: number[];
+    enqueue: (song: number) => void;
     dequeue: () => void;
     clearQueue: () => void;
-    push_front: (song: Song) => void;
+    push_front: (song: number) => void;
     pop_back: () => void;
-    setQueue: (setTo: Song[]) => void;
+    setQueue: (setTo: number[]) => void;
 }

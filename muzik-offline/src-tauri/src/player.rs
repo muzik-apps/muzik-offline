@@ -6,7 +6,7 @@ use std::sync::Mutex;
 use crate::components::SharedAudioManager;
 
 #[tauri::command]
-pub fn load_and_play_song_from_path(audio_manager: State<'_, Mutex<SharedAudioManager>>, sound_path: &str){
+pub fn load_and_play_song_from_path(audio_manager: State<'_, Mutex<SharedAudioManager>>, sound_path: &str, volume: f64){
     match audio_manager.lock(){
         Ok(mut manager) => {
             //stop and clear all sounds that are playing
@@ -33,6 +33,22 @@ pub fn load_and_play_song_from_path(audio_manager: State<'_, Mutex<SharedAudioMa
                         Ok(instance_handle) => {
                             //playback started
                             manager.instance_handle = Some(instance_handle);
+                            //set volume
+                            match &mut manager.instance_handle{
+                                Some(handle) => {
+                                    match handle.set_volume(volume, Tween::default()){
+                                        Ok(_) => {
+                                            //set volume
+                                        },
+                                        Err(_) => {
+                                            //failed to set volume
+                                        },
+                                    }
+                                },
+                                None => {
+                                    //no song is currently playing
+                                },
+                            }
                         },
                         Err(_) => {
                             //playback failed
@@ -51,7 +67,7 @@ pub fn load_and_play_song_from_path(audio_manager: State<'_, Mutex<SharedAudioMa
 }
 
 #[tauri::command]
-pub fn load_a_song_from_path(audio_manager: State<'_, Mutex<SharedAudioManager>>, sound_path: &str){
+pub fn load_a_song_from_path(audio_manager: State<'_, Mutex<SharedAudioManager>>, sound_path: &str, volume: f64){
     match audio_manager.lock(){
         Ok(mut manager) => {
             //stop and clear all sounds that are playing
@@ -87,6 +103,22 @@ pub fn load_a_song_from_path(audio_manager: State<'_, Mutex<SharedAudioManager>>
                                         },
                                         Err(_) => {
                                             //failed to pause song
+                                        },
+                                    }
+                                },
+                                None => {
+                                    //no song is currently playing
+                                },
+                            }
+                            //set volume
+                            match &mut manager.instance_handle{
+                                Some(handle) => {
+                                    match handle.set_volume(volume, Tween::default()){
+                                        Ok(_) => {
+                                            //set volume
+                                        },
+                                        Err(_) => {
+                                            //failed to set volume
                                         },
                                     }
                                 },
@@ -258,14 +290,13 @@ pub fn get_song_position(audio_manager: State<'_, Mutex<SharedAudioManager>>) ->
     }
 }
 
-/* 
 #[tauri::command]
-pub fn set_volume(audio_manager: State<'_, Mutex<SharedAudioManager>>, volume: i32){
+pub fn set_volume(audio_manager: State<'_, Mutex<SharedAudioManager>>, volume: f64){
     match audio_manager.lock(){
         Ok(mut manager) => {
             match &mut manager.instance_handle{
                 Some(handle) => {
-                    match handle.set_volume(0.5, Tween::default()){
+                    match handle.set_volume(volume, Tween::default()){
                         Ok(_) => {
                             //set volume
                         },
@@ -284,20 +315,3 @@ pub fn set_volume(audio_manager: State<'_, Mutex<SharedAudioManager>>, volume: i
         },
     }
 }
-
-fn get_volume_value(volume: i32) -> f32{
-    match volume{
-        0 => 0.0,
-        1 => 0.1,
-        2 => 0.2,
-        3 => 0.3,
-        4 => 0.4,
-        5 => 0.5,
-        6 => 0.6,
-        7 => 0.7,
-        8 => 0.8,
-        9 => 0.9,
-        10 => 1.0,
-        _ => 0.5,
-    }
-}*/

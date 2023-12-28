@@ -1,20 +1,24 @@
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { motion } from 'framer-motion';
 import "@styles/components/music/HistoryUpcoming.scss";
 import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
 import { GeneralContextMenu, SongCardResizable } from "@components/index";
 import { useNavigate } from "react-router-dom";
-import { local_albums_db } from "@database/database";
-import { useUpcomingSongs, useHistorySongs } from "store";
+import { local_albums_db, local_songs_db } from "@database/database";
+import { useUpcomingSongs, useHistorySongs, useSavedObjectStore } from "store";
 
 type HistoryUpcomingProps = { closePlayer: () => void;}
 
 const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: HistoryUpcomingProps) => {
   const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
   const [selectedView, setSelectedView] = useState<string>("Upcoming_tab");
-  const {SongQueue} = useUpcomingSongs((state) => { return { SongQueue: state.queue}; });
-  const {SongHistory} = useHistorySongs((state) => { return { SongHistory: state.queue}; });
   const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
+  const {SongQueueKeys} = useUpcomingSongs((state) => { return { SongQueueKeys: state.queue}; });
+  const {SongHistoryKeys} = useHistorySongs((state) => { return { SongHistoryKeys: state.queue}; });
+  const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
+  const [SongQueue, setSongQueue] = useState<Song[]>([]);
+  const [SongHistory, setSongHistory] = useState<Song[]>([]);
+  
   const navigate = useNavigate();
 
   function selectView(arg: string){setSelectedView(arg);}
@@ -60,6 +64,16 @@ const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: History
           navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
       }
   }
+
+  async function setLists(){
+    const limit = Number.parseInt(local_store.UpcomingHistoryLimit);
+    const USsongs = await local_songs_db.songs.where("id").anyOf(SongQueueKeys.slice(0, limit)).toArray();
+    const HSsongs = await local_songs_db.songs.where("id").anyOf(SongHistoryKeys.slice(SongHistoryKeys.length - limit, SongHistoryKeys.length - 1)).toArray();
+    setSongQueue(USsongs);
+    setSongHistory(HSsongs);
+  }
+
+  useEffect(() => {setLists()}, [SongQueueKeys, SongHistoryKeys])
 
   return (
     <div className="HistoryUpcoming">
