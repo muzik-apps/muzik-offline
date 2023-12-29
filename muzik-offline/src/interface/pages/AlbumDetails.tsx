@@ -1,45 +1,59 @@
-import { useEffect, useRef, useState } from "react";
-import { GeneralContextMenu, LargeResizableCover, RectangleSongBox } from "@components/index";
+import { useEffect, useReducer, useRef, useState } from "react";
+import { AddSongToPlaylistModal, GeneralContextMenu, LargeResizableCover, PropertiesModal, RectangleSongBox } from "@components/index";
 import "@styles/pages/AlbumDetails.scss";
 import { motion } from "framer-motion";
 import { Play, Shuffle } from "@assets/icons";
-import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
+import { contextMenuButtons, contextMenuEnum } from "types";
 import { useNavigate, useParams } from "react-router-dom";
 import { local_albums_db } from "@database/database";
 import { getAlbumSongs, getRandomCover, secondsToTimeFormat } from "utils";
 import { ViewportList } from "react-viewport-list";
-
-interface AlbumMD {cover: string | null;title: string;artist: string;year: string;song_count: number;length: string;}
-
-const emptyMD: AlbumMD = {cover: null,title: "",artist: "",year: "",song_count: 0,length: ""}
-
-const variants_list = {smaller: { height: "calc(100vh - 395px)" },bigger: { height: "calc(100vh - 195px)" }}
+import { albumDetailsReducer, AlbumDetailsState } from "store/reducerStore";
+import { startPlayingNewSong, playThisListNow, addThisSongToPlayLater, addThisSongToPlayNext } from "utils/playerControl";
+import { closeContextMenu, closePlaylistModal, closePropertiesModal, selectThisSong, setSongList } from "utils/reducerUtils";
+import { variants_list } from "@content/index";
+import { reducerType } from "store";
 
 const AlbumDetails = () => {
-    const [selected, setSelected] = useState<number>(0);
-    const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-    const [SongList, setSongList] = useState<Song[]>([]);
-    const [album_metadata, setAlbumMetadata] = useState<AlbumMD>(emptyMD);
-    const [songMenuToOpen, setSongMenuToOpen] = useState<Song | null>(null);
-    const navigate = useNavigate();
-    
+    const [state , dispatch] = useReducer(albumDetailsReducer, AlbumDetailsState);
     const [resizeHeader, setResizeHeader] = useState<boolean>(false);
     const itemsHeightRef = useRef<HTMLDivElement | null>(null);
     const { album_key, artist_name } = useParams(); 
-
-    function selectThisSong(index: number){ setSelected(index); }
+    const navigate = useNavigate();
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
-        setCoords(n_co_ords);
-        const matching_song = SongList.find(song => { return song.id === key; })
-        setSongMenuToOpen(matching_song ? matching_song : null);
+        const matching_song = state.SongList.find(song => { return song.id === key; });
+        dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords});
+        dispatch({ type: reducerType.SET_SONG_MENU, payload: matching_song ? matching_song : null});
     }
 
     function chooseOption(arg: contextMenuButtons){
-        if(arg === contextMenuButtons.AddToPlaylist){ console.log("Add to playlist"); }
-        else if(arg === contextMenuButtons.PlayNext){ console.log("Play next"); }
-        else if(arg === contextMenuButtons.PlayLater){ console.log("Play later"); }
-        else if(arg === contextMenuButtons.Play){ console.log("Play"); }
+        if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
+        else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
+        else if(arg === contextMenuButtons.PlayNext && state.songMenuToOpen){ 
+            addThisSongToPlayNext(state.songMenuToOpen.id);
+            closeContextMenu(dispatch); 
+        }
+        else if(arg === contextMenuButtons.PlayLater && state.songMenuToOpen){ 
+            addThisSongToPlayLater(state.songMenuToOpen.id);
+            closeContextMenu(dispatch); 
+        }
+        else if(arg === contextMenuButtons.Play && state.songMenuToOpen){
+            playThisSong(state.songMenuToOpen.id);
+            closeContextMenu(dispatch); 
+        }
+    }
+
+    async function playThisSong(key: number, shuffle_list: boolean = false){
+        if(state.SongList.length === 0)return;
+        let songkey = key;
+        if(songkey === -1)songkey = state.SongList[0].id;
+        const index = state.SongList.findIndex(song => song.id === songkey);
+        if(index === -1)return;
+        //get ids of songs from index of matching song to last song in list
+        await startPlayingNewSong(state.SongList[index]);
+        const ids: number[] = state.SongList.slice(index + 1).map(song => song.id);
+        await playThisListNow(ids, shuffle_list);
     }
 
     function handleScroll(){
@@ -52,17 +66,24 @@ const AlbumDetails = () => {
         else if(resizeHeader === false)setResizeHeader(true);
     };
 
+    async function navigateTo(key: number, type: "artist" | "song"){
+        const relatedSong = state.SongList.find((value) => value.id === key);
+        if(!relatedSong)return;
+        if(type === "artist")navigate(`/ArtistCatalogue/${relatedSong.artist}`);
+    }
+
     async function setAlbumSongs(){
         if(album_key === undefined)return;
         const albumres = await local_albums_db.albums.where("key").equals(Number.parseInt(album_key)).toArray();
         if(albumres.length !== 1)return;
         const result = await getAlbumSongs(albumres[0], artist_name && artist_name !== "undefined" ? artist_name : "");
-        setAlbumMetadata({
-            cover: result.cover, title: albumres[0].title, artist: result.songs[0].artist,
-            year: result.songs[0].year.toString(),song_count: result.songs.length,
-            length: secondsToTimeFormat(result.totalDuration)
+        dispatch({ type: reducerType.SET_ALBUM_METADATA, payload: {
+                cover: result.cover, title: albumres[0].title, artist: result.songs[0].artist,
+                year: result.songs[0].year.toString(),song_count: result.songs.length,
+                length: secondsToTimeFormat(result.totalDuration)
+            }
         });
-        setSongList(result.songs);
+        setSongList(result.songs, dispatch);
     }
 
     useEffect(() => {
@@ -71,36 +92,35 @@ const AlbumDetails = () => {
         return () =>  itemsHeightRef.current?.removeEventListener('scroll', handleScroll);
     }, [])
     
-
     return (
         <motion.div className="AlbumDetails"
         initial={{scale: 0.9, opacity: 0}}
         animate={{scale: 1, opacity: 1}}
         exit={{scale: 0.9, opacity: 0}}>
             <div className="header_content">
-                <LargeResizableCover id={album_key} resizeHeader={resizeHeader} cover={album_metadata.cover} />
+                <LargeResizableCover id={album_key} resizeHeader={resizeHeader} cover={state.album_metadata.cover} />
                 <div className="details">
-                    <h2 style={{ marginTop: resizeHeader ? "25px" : "68px" }}>{album_metadata.title}</h2>
+                    <h2 style={{ marginTop: resizeHeader ? "25px" : "68px" }}>{state.album_metadata.title}</h2>
                     { !resizeHeader &&
                         <>
                             <div className="artist_details">
                                 <div className="artist_profile">
                                     {
-                                        album_metadata.cover ?
-                                            <img src={`data:image/png;base64,${album_metadata.cover}`} alt="second-cover"/>
+                                        state.album_metadata.cover ?
+                                            <img src={`data:image/png;base64,${state.album_metadata.cover}`} alt="second-cover"/>
                                         :
                                         getRandomCover(album_key ? Number.parseInt(album_key) : 2)()
                                     }
                                 </div>
-                                <motion.h3 whileTap={{scale: 0.98}} onClick={() => navigate(`/ArtistCatalogue/${album_metadata.artist}`)}>{album_metadata.artist}</motion.h3>
+                                <motion.h3 whileTap={{scale: 0.98}} onClick={() => navigate(`/ArtistCatalogue/${state.album_metadata.artist}`)}>{state.album_metadata.artist}</motion.h3>
                             </div>
-                            <h4>{album_metadata.year}</h4>
+                            <h4>{state.album_metadata.year}</h4>
                             <div className="action_buttons">
-                                <motion.div className="PlayIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
+                                <motion.div className="PlayIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={() => playThisSong(-1)}>
                                     <Play />
                                     <p>play</p>
                                 </motion.div>
-                                <motion.div className="ShuffleIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
+                                <motion.div className="ShuffleIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={() => playThisSong(-1, true)}>
                                     <Shuffle />
                                     <p>Shuffle</p>
                                 </motion.div>
@@ -114,7 +134,7 @@ const AlbumDetails = () => {
                 variants={variants_list}
                 transition={{ type: "tween" }}
                 ref={itemsHeightRef}>
-                <ViewportList viewportRef={itemsHeightRef} items={SongList}>
+                <ViewportList viewportRef={itemsHeightRef} items={state.SongList}>
                     {
                         (song, index) => (
                             <RectangleSongBox 
@@ -126,40 +146,32 @@ const AlbumDetails = () => {
                                 artist={song.artist}
                                 length={song.duration}
                                 year={song.year}
-                                selected={selected === index + 1 ? true : false}
-                                selectThisSong={selectThisSong}
-                                setMenuOpenData={setMenuOpenData} 
-                                navigateTo={(_key: number, _type: "artist" | "song") => {} }
-                                playThisSong={(_key: number,) => {}}/>
+                                selected={state.selected === index + 1 ? true : false}
+                                navigateTo={navigateTo}
+                                selectThisSong={(index) => selectThisSong(index, dispatch)}
+                                setMenuOpenData={setMenuOpenData}
+                                playThisSong={playThisSong}/>
                         )
                     }
                 </ViewportList>
                 <div className="footer_content">
-                    <h4>{album_metadata.song_count} {album_metadata.song_count > 1 ? "Songs" : "Song"}, {album_metadata.length} listen time</h4>
+                    <h4>{state.album_metadata.song_count} {state.album_metadata.song_count > 1 ? "Songs" : "Song"}, {state.album_metadata.length} listen time</h4>
                 </div>
             </motion.div>
             {
-                songMenuToOpen && (
-                    <div className="AlbumDetails-ContextMenu-container" 
-                    onClick={() => {
-                        setSongMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }} 
-                    onContextMenu={(e) => {
-                        e.preventDefault();
-                        setSongMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }}
-                    >
+                state.songMenuToOpen && (
+                    <div className="AlbumDetails-ContextMenu-container" onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 
-                            xPos={co_ords.xPos} 
-                            yPos={co_ords.yPos} 
-                            title={songMenuToOpen.name}
+                            xPos={state.co_ords.xPos} 
+                            yPos={state.co_ords.yPos} 
+                            title={state.songMenuToOpen.name}
                             CMtype={contextMenuEnum.SongCM}
                             chooseOption={chooseOption}/>
                     </div>
                 )
             }
+            <PropertiesModal isOpen={state.isPropertiesModalOpen} song={state.songMenuToOpen!} closeModal={() => closePropertiesModal(dispatch)} />
+            <AddSongToPlaylistModal isOpen={state.isPlaylistModalOpen} songPath={state.songMenuToOpen ? state.songMenuToOpen.path : ""} closeModal={() => closePlaylistModal(dispatch)} />
         </motion.div>
     )
 }

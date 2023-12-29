@@ -20,3 +20,5 @@ export const genres_content = [
     "Metal",
     "Salsa",
 ]
+
+export const variants_list = {smaller: { height: "calc(100vh - 395px)" },bigger: { height: "calc(100vh - 195px)" }}

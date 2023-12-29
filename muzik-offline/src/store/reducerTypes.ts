@@ -1,4 +1,4 @@
-import { Song, mouse_coOrds } from "types";
+import { Song, mouse_coOrds, AlbumMD, album } from "types";
 
 export enum reducerType {
     SET_SELECTED = "SET_SELECTED",
@@ -9,6 +9,9 @@ export enum reducerType {
     SET_SONG_MENU = "SET_SONG_MENU",
     SET_PLAYLIST_MODAL = "SET_PLAYLIST_MODAL",
     SET_PROPERTIES_MODAL = "SET_PROPERTIES_MODAL",
+    SET_ALBUM_METADATA = "SET_ALBUM_METADATA",
+    SET_ALBUM_LIST = "SET_ALBUM_LIST",
+    SET_ALBUM_MENU = "SET_ALBUM_MENU",
 
 }
 
@@ -20,8 +23,18 @@ export type Action =
     | { type: reducerType.SET_SONG_LIST; payload: Song[] }
     | { type: reducerType.SET_SONG_MENU; payload: Song | null }
     | { type: reducerType.SET_PLAYLIST_MODAL; payload: boolean }
-    | { type: reducerType.SET_PROPERTIES_MODAL; payload: boolean };
+    | { type: reducerType.SET_PROPERTIES_MODAL; payload: boolean }
+    | { type: reducerType.SET_ALBUM_METADATA; payload: AlbumMD }
+    | { type: reducerType.SET_ALBUM_LIST; payload: album[] }
+    | { type: reducerType.SET_ALBUM_MENU; payload: album | null}
 
+
+
+
+
+
+
+// INTERFACES
 export interface AllTracksStateInterface{
     selected: number,
     co_ords: mouse_coOrds,
@@ -31,4 +44,23 @@ export interface AllTracksStateInterface{
     songMenuToOpen: Song | null,
     isPlaylistModalOpen: boolean,
     isPropertiesModalOpen: boolean,
+}
+
+export interface AlbumDetailsInterface{
+    selected: number,
+    co_ords: mouse_coOrds,
+    SongList: Song[],
+    album_metadata: AlbumMD,
+    songMenuToOpen: Song | null,
+    isPlaylistModalOpen: boolean,
+    isPropertiesModalOpen: boolean,
+}
+
+export interface AllAlbumsInterface{
+    selected: number,
+    co_ords: mouse_coOrds,
+    sort: {aToz: string, by: string},
+    openedDDM: string | null,
+    albumList: album[],
+    albumMenuToOpen: album | null,
 }

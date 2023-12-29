@@ -9,23 +9,16 @@ import { useNavigate } from "react-router-dom";
 import { AllTracksState, alltracksReducer, reducerType } from "store";
 import { addThisSongToPlayLater, addThisSongToPlayNext, playThisListNow, startPlayingNewSong } from "utils/playerControl";
 import "@styles/pages/AllTracks.scss";
+import { closeContextMenu, closePlaylistModal, closePropertiesModal, selectSortOption, selectThisSong, setOpenedDDM, setSongList } from "utils/reducerUtils";
 
 const AllTracks = () => {
     const [state , dispatch] = useReducer(alltracksReducer, AllTracksState);
     const navigate = useNavigate();
     const ref = useRef<HTMLDivElement | null>(null);
 
-    function selectThisSong(index: number){ dispatch({ type: reducerType.SET_SELECTED, payload: index }); }
-
-    function selectOption(arg: string){
-        if(state.openedDDM === "aToz" && arg !== state.sort.aToz)dispatch({ type: reducerType.SET_SORT, payload: {aToz: arg, by: state.sort.by}});
-        if(state.openedDDM === "by" && arg !== state.sort.by)dispatch({ type: reducerType.SET_SORT, payload: {aToz: state.sort.aToz, by: arg}});
-        dispatch({ type: reducerType.SET_OPENED_DDM, payload: null});
-    }
-
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
-        dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords});
         const matching_song = state.SongList.find(song => { return song.id === key; });
+        dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords});
         dispatch({ type: reducerType.SET_SONG_MENU, payload: matching_song ? matching_song : null});
     }
 
@@ -34,15 +27,15 @@ const AllTracks = () => {
         else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.PlayNext && state.songMenuToOpen){ 
             addThisSongToPlayNext(state.songMenuToOpen.id);
-            closeContextMenu(); 
+            closeContextMenu(dispatch); 
         }
         else if(arg === contextMenuButtons.PlayLater && state.songMenuToOpen){ 
             addThisSongToPlayLater(state.songMenuToOpen.id);
-            closeContextMenu(); 
+            closeContextMenu(dispatch); 
         }
         else if(arg === contextMenuButtons.Play && state.songMenuToOpen){
             playThisSong(state.songMenuToOpen.id);
-            closeContextMenu(); 
+            closeContextMenu(dispatch); 
         }
     }
 
@@ -58,15 +51,6 @@ const AllTracks = () => {
         await playThisListNow(ids, shuffle_list);
     }
 
-    function closeContextMenu(e?: React.MouseEvent<HTMLDivElement, MouseEvent>){
-        if(e){
-            if(e.target !== e.currentTarget)return;
-            e.preventDefault();
-        }
-        dispatch({ type: reducerType.SET_SONG_MENU, payload: null});
-        dispatch({ type: reducerType.SET_COORDS, payload: {xPos: 0, yPos: 0}});
-    }
-
     async function navigateTo(key: number, type: "artist" | "song"){
         const relatedSong = state.SongList.find((value) => value.id === key);
         if(!relatedSong)return;
@@ -79,10 +63,9 @@ const AllTracks = () => {
 
     useEffect(() => {
         const setList = async() => {
-            let list: Song[] = [];
-            if(state.sort.aToz === "Ascending")list = await local_songs_db.songs.orderBy(state.sort.by).toArray();//sort in ascending order
-            else if(state.sort.aToz === "Descending")list = await local_songs_db.songs.orderBy(state.sort.by).reverse().toArray();//sort in descending order
-            dispatch({ type: reducerType.SET_SONG_LIST, payload: list});
+            let list: Song[] = await local_songs_db.songs.orderBy(state.sort.by).toArray();
+            if(state.sort.aToz === "Descending")list = list.reverse();//sort in descending order
+            setSongList(list, dispatch);
         }
 
         setList();
@@ -98,7 +81,7 @@ const AllTracks = () => {
                 <div className="sort_selector">
                     <h2>Sort by: </h2>
                     <div className="sort_dropdown_container">
-                        <motion.div className="sort_dropdown" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() => dispatch({ type: reducerType.SET_OPENED_DDM, payload: state.openedDDM === "by" ? null : "by"})}>
+                        <motion.div className="sort_dropdown" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() => setOpenedDDM(state.openedDDM === "by" ? null : "by", dispatch)}>
                             <h4>{state.sort.by}</h4>
                             <motion.div className="chevron_icon" animate={{rotate: state.openedDDM === "by" ? 180 : 0}}>
                                 <ChevronDown />
@@ -108,7 +91,7 @@ const AllTracks = () => {
                             <DropDownMenuSmall
                                 options={["name", "title", "artist", "album", "duration_seconds", "year", "file_size"]} 
                                 isOpen={(state.openedDDM === "by")}
-                                selectOption={selectOption}
+                                selectOption={(arg) => selectSortOption(state.sort, state.openedDDM, arg, dispatch)}
                             />
                         </div>
                     </div>
@@ -116,7 +99,7 @@ const AllTracks = () => {
                 <div className="sort_selector">
                     <h2>Sort A-Z: </h2>
                     <div className="sort_dropdown_container">
-                        <motion.div className="sort_dropdown" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() =>  dispatch({ type: reducerType.SET_OPENED_DDM, payload: state.openedDDM === "aToz" ? null : "aToz"})}>
+                        <motion.div className="sort_dropdown" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() => setOpenedDDM(state.openedDDM === "aToz" ? null : "aToz", dispatch)}>
                             <h4>{state.sort.aToz}</h4>
                             <motion.div className="chevron_icon" animate={{rotate: state.openedDDM === "aToz" ? 180 : 0}}>
                                 <ChevronDown />
@@ -126,7 +109,7 @@ const AllTracks = () => {
                             <DropDownMenuSmall
                                 options={["Ascending", "Descending"]} 
                                 isOpen={(state.openedDDM === "aToz")}
-                                selectOption={selectOption}
+                                selectOption={(arg) => selectSortOption(state.sort, state.openedDDM, arg, dispatch)}
                             />
                         </div>
                     </div>
@@ -150,7 +133,7 @@ const AllTracks = () => {
                             year={song.year}
                             selected={state.selected === index + 1 ? true : false}
                             navigateTo={navigateTo}
-                            selectThisSong={selectThisSong}
+                            selectThisSong={(index) => selectThisSong(index, dispatch)}
                             setMenuOpenData={setMenuOpenData}
                             playThisSong={playThisSong}/>
                     )}
@@ -159,7 +142,7 @@ const AllTracks = () => {
             </div>
             {
                 state.songMenuToOpen && (
-                    <div className="AllTracks-ContextMenu-container" onClick={closeContextMenu} onContextMenu={closeContextMenu}>
+                    <div className="AllTracks-ContextMenu-container" onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 
                             xPos={state.co_ords.xPos} 
                             yPos={state.co_ords.yPos} 
@@ -170,14 +153,8 @@ const AllTracks = () => {
                 )
             }
             <div className="bottom_margin"/>
-            <PropertiesModal 
-                isOpen={state.isPropertiesModalOpen} 
-                song={state.songMenuToOpen!} 
-                closeModal={() => {dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: false}); dispatch({ type: reducerType.SET_SONG_MENU, payload: null});}} />
-            <AddSongToPlaylistModal 
-                isOpen={state.isPlaylistModalOpen} 
-                songPath={state.songMenuToOpen ? state.songMenuToOpen.path : ""} 
-                closeModal={() => {dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: false}); dispatch({ type: reducerType.SET_SONG_MENU, payload: null});}} />
+            <PropertiesModal isOpen={state.isPropertiesModalOpen} song={state.songMenuToOpen!} closeModal={() => closePropertiesModal(dispatch)} />
+            <AddSongToPlaylistModal isOpen={state.isPlaylistModalOpen} songPath={state.songMenuToOpen ? state.songMenuToOpen.path : ""} closeModal={() => closePlaylistModal(dispatch)} />
         </motion.div>
     )
 }

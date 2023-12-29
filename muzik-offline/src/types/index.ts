@@ -110,3 +110,12 @@ export interface mouse_coOrds {
     xPos: number; 
     yPos: number;
 }
+
+export interface AlbumMD {
+    cover: string | null;
+    title: string;
+    artist: string;
+    year: string;
+    song_count: number;
+    length: string;
+}
