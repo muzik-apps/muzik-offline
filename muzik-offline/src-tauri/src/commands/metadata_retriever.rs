@@ -2,9 +2,9 @@ use std::path::Path;
 use id3::{Tag, TagLike};
 use serde_json::Value;
 use base64::{Engine as _, engine::general_purpose};
-use crate::components::Song;
+use crate::components::song::Song;
 use lofty::{ Probe, AudioFile};
-use crate::utils::{duration_to_string, extract_file_name, resize_and_compress_image};
+use crate::utils::general_utils::{duration_to_string, extract_file_name, resize_and_compress_image};
 
 #[tauri::command]
 pub async fn get_all_songs(paths_as_json_array: String, compress_image_option: bool) -> Result<String, String> {

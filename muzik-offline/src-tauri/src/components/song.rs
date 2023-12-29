@@ -1,5 +1,4 @@
 use serde::Serialize;
-use kira::{manager::{AudioManager, backend::DefaultBackend}, sound::{streaming::StreamingSoundHandle, FromFileError}};
 
 #[derive(Serialize)]
 pub struct Song {
@@ -23,9 +22,4 @@ pub struct Song {
     pub sample_rate: u32,
     pub bit_depth: u8,
     pub channels: u8,
-}
-
-pub struct SharedAudioManager {
-    pub manager: AudioManager<DefaultBackend>,
-    pub instance_handle: Option<StreamingSoundHandle<FromFileError>>,
 }

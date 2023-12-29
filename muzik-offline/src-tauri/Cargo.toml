@@ -1,10 +1,10 @@
 [package]
 name = "muzik-offline"
 version = "0.1.0"
-description = "A Tauri App"
+description = "A desktop music player for listening to music offline."
 authors = ["Michael"]
 license = ""
-repository = ""
+repository = "https://github.com/muzik-apps/Muzik-offline"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -23,6 +23,7 @@ image = "0.24.7"
 kira = "0.8.5"
 lofty = "0.17.1"
 rand = "0.8.5"
+rusqlite = { version = "0.30.0", features = ["bundled"] }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

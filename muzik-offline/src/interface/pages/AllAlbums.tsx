@@ -26,16 +26,15 @@ const AllAlbums = () => {
     }
 
     function chooseOption(arg: contextMenuButtons){
-        if(arg == contextMenuButtons.ShowAlbum && state.albumMenuToOpen){
-            navigateTo(state.albumMenuToOpen.key);
-        }
+        if(arg == contextMenuButtons.ShowAlbum && state.albumMenuToOpen){navigateTo(state.albumMenuToOpen.key);}
+        else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
     }
 
     function navigateTo(key: number){ navigate(`/AlbumDetails/${key}/undefined`); }
 
     useEffect(() => {
         const setList = async() => {
-            let list = await local_albums_db.albums.orderBy(state.sort.by).toArray();
+            let list = await local_albums_db.albums.toArray();
             if(state.sort.aToz === "Descending")list = list.reverse();
             dispatch({ type: reducerType.SET_ALBUM_LIST, payload: list });
         }
@@ -93,6 +92,7 @@ const AllAlbums = () => {
                 )
             }
             <div className="bottom_margin"/>
+            {/*<AddSongToPlaylistModal isOpen={state.isPlaylistModalOpen} songPath={state. ? state.songMenuToOpen.path : ""} closeModal={() => closePlaylistModal(dispatch)} />*/}
         </motion.div>
     )
 }

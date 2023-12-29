@@ -3,7 +3,7 @@ use kira::{
 	sound::streaming::{StreamingSoundData, StreamingSoundSettings}, tween::Tween
 };
 use std::sync::Mutex;
-use crate::components::SharedAudioManager;
+use crate::components::audio_manager::SharedAudioManager;
 
 #[tauri::command]
 pub fn load_and_play_song_from_path(audio_manager: State<'_, Mutex<SharedAudioManager>>, sound_path: &str, volume: f64){

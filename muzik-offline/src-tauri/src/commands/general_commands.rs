@@ -1,5 +1,5 @@
 use std::process::Command;
-use crate::utils::resize_and_compress_image;
+use crate::utils::general_utils::resize_and_compress_image;
 use base64::{Engine as _, engine::general_purpose};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
