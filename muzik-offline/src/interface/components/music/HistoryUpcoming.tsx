@@ -72,19 +72,15 @@ const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: History
     const limit = Number.parseInt(local_store.UpcomingHistoryLimit);
     const sqkeys = SongQueueKeys.slice(0, limit);
     const hskeys = SongHistoryKeys.slice(SongHistoryKeys.length - limit, SongHistoryKeys.length);
+
     const USsongs = await local_songs_db.songs.where("id").anyOf(sqkeys).toArray();
     const HSsongs = await local_songs_db.songs.where("id").anyOf(hskeys).toArray();
 
-    const sqkeysToItemMap = new Map(USsongs.map(item => [item.id, item]));
-    const hskeysToItemMap = new Map(HSsongs.map(item => [item.id, item]));
+    const USsongsOrdered = sqkeys.map(key => USsongs.find(item => item.id === key));
+    const HSsongsOrdered = hskeys.map(key => HSsongs.find(item => item.id === key));
 
-    const USsongsOrdered = sqkeys.map(key => sqkeysToItemMap.get(key));
-    const HSsongsOrdered = hskeys.map(key => hskeysToItemMap.get(key));
-
-    const USfilteredSongs = USsongsOrdered.filter((song) => song !== undefined);
-    setSongQueue(USfilteredSongs as Song[]);
-    const HSfilteredSongs = HSsongsOrdered.filter((song) => song !== undefined);
-    setSongHistory(HSfilteredSongs as Song[]);
+    setSongQueue(USsongsOrdered as Song[]);
+    setSongHistory(HSsongsOrdered as Song[]);
   }
 
   useEffect(() => {setLists()}, [SongQueueKeys, SongHistoryKeys])
@@ -95,9 +91,9 @@ const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: History
         selectedView === "Upcoming_tab" ?
           <div className="Upcoming_view">
             {
-                SongQueue.map((song) => 
+                SongQueue.map((song, index) => 
                     <SongCardResizable 
-                        key={song.id}
+                        key={song.id * index}
                         cover={song.cover} 
                         songName={song.name}
                         artist={song.artist}
@@ -110,9 +106,9 @@ const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: History
         :
           <div className="History_view">
             {
-                SongHistory.map((song) => 
+                SongHistory.map((song, index) => 
                     <SongCardResizable 
-                        key={song.id}
+                        key={song.id * index}
                         cover={song.cover} 
                         songName={song.name}
                         artist={song.artist}

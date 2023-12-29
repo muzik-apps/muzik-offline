@@ -152,24 +152,14 @@ export async function playNextSong(){
     useHistorySongs.getState().enqueue(song.id);
     usePlayingPositionSec.getState().setPosition(0);
     usePlayingPosition.getState().setPosition(0);
-    if(useUpcomingSongs.getState().queue.length <= 1){
-        const temp = usePlayerStore.getState().Player;
-        temp.playingSongMetadata = null;
-        temp.lengthOfSongInSeconds = 0;
-        temp.isPlaying = false;
-        temp.wasPlayingBeforePause = false;
-        usePlayerStore.getState().setPlayer(temp);
-        useUpcomingSongs.getState().dequeue();
-        await stopSong();
-    }
+    useUpcomingSongs.getState().dequeue();
+    if(useUpcomingSongs.getState().queue.length === 0)await stopSong();
     else{
-        const toplayid = useUpcomingSongs.getState().queue[1];
+        const toplayid = useUpcomingSongs.getState().queue[0];
         const toplay = await local_songs_db.songs.where("id").equals(toplayid).first();
         if(toplay === undefined)return;//the likelihood of this happening is basically impossible
-
         if(usePlayerStore.getState().Player.isPlaying) startPlayingNewSong(toplay);
         else loadNewSong(toplay);
-        useUpcomingSongs.getState().dequeue();
         //if the size of the list is equal to the limit, get another batch from the backend
         const limit = Number.parseInt(useSavedObjectStore.getState().local_store.UpcomingHistoryLimit);
         if(useUpcomingSongs.getState().queue.length === limit)get_next_batch(limit);
