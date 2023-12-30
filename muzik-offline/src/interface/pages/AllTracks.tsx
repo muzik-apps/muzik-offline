@@ -120,6 +120,13 @@ const AllTracks = () => {
                 </motion.div>
             </div>
             <div className="AllTracks_container" ref={ref}>
+                {state.SongList.length === 0 && (
+                    <h1>
+                        Seems like you may not have added any songs yet or they are still loading. <br/>
+                        To add songs, click on the settings button above, scroll down <br/>
+                        and click on "click here to change directories". <br/>
+                    </h1>
+                )}
                 <ViewportList viewportRef={ref} items={state.SongList}>
                     {(song, index) => (
                         <RectangleSongBox 

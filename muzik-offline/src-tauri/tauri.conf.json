@@ -34,6 +34,13 @@
       },
       "notification": {
         "all": true
+      },
+      "dialog": {
+        "all": false,
+        "open": true
+      },
+      "path": {
+        "all": true
       }
     },
     "bundle": {

@@ -51,11 +51,11 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
         <motion.div className="FSMusicPlayer"
             animate={props.openPlayer ? "open" : "closed"}
             variants={variants}
-            transition={local_store.OStype === OSTYPEenum.Linux ? {type: "spring", duration: 0} : { type: "spring", stiffness: 100, damping: 14 }}>
+            transition={(local_store.OStype === OSTYPEenum.Linux || !local_store.Animations) ? {} : { type: "spring", stiffness: 100, damping: 14 }}>
                 { props.openPlayer &&
                     <div className="FSMusicPlayer-container">
                         <div className="background-img">
-                            {props.openPlayer && local_store.AnimateBackground ? 
+                            {props.openPlayer && local_store.Animations ? 
                                 (<motion.div 
                                     className="image-container"
                                     animate={{ rotate: 360 }}
@@ -64,7 +64,7 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
                                         {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" />)}{/**there is cover art */}
                                         {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
                                 </motion.div>)
-                            : props.openPlayer && !local_store.AnimateBackground ?
+                            : props.openPlayer && !local_store.Animations ?
                                 <div className="image-container">
                                     {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
                                     {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" />)}{/**there is cover art */}

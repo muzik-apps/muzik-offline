@@ -16,6 +16,9 @@
     h2{
         font-size: 20px;
         margin-bottom: 20px;
+        background-color: $gray-900;
+        padding: 4px;
+        border-radius: 15px;
     }
 
     .modal{
@@ -31,6 +34,24 @@
         resize: none;
         overflow-y: auto;
         color: $white-900;
+        margin-bottom: 20px;
+    }
+
+    .select_directory{
+        display: flex;
+        height: 34px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        align-items: center;
+        transition: all 0.1s ease-in-out;
+        background: $app-theme-col;
+
+        h3{
+            color: $root-app-navigator-hover-col;
+            font-size: 13px;
+        }
     }
 }
 

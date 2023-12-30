@@ -1,10 +1,13 @@
 import { FunctionComponent, useState } from "react";
 import "@styles/components/modals/DirectoriesModal.scss";
 import { invoke } from "@tauri-apps/api";
+import { open } from '@tauri-apps/api/dialog';
+import { appConfigDir } from '@tauri-apps/api/path';
 import { Song, toastType } from "types";
 import { useDirStore, useSavedObjectStore, useToastStore } from "store";
 import { createSongList_inDB, createAlbumsList_inDB, createGenresList_inDB, createArtistsList_inDB } from "utils";
 import { isPermissionGranted, sendNotification } from '@tauri-apps/api/notification';
+import { motion } from "framer-motion";
 
 type DirectoriesModalProps = {
     isOpen: boolean;
@@ -25,11 +28,11 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
                 createAlbumsList_inDB(song_data);
                 createGenresList_inDB(song_data);
                 createArtistsList_inDB(song_data);
-                setToast({title: "Loading songs...", message: "Successfully loaded all the songs in the paths specified", type: toastType.success, timeout: 5000});
+                setToast({title: "Loading songs...", message: "Successfully loaded all the songs in the paths specified. You may need to reload the page you are on to see your new songs", type: toastType.success, timeout: 10000});
 
                 const permissionGranted = await isPermissionGranted();
                 if (permissionGranted) {
-                    sendNotification({ title: 'Loading songs...', body: 'Successfully loaded all the songs in the paths specified' });
+                    sendNotification({ title: 'Loading songs...', body: 'Successfully loaded all the songs in the paths specified. You may need to reload the page you are on to see your new songs' });
                 }
             })
             .catch(async(_error) => {
@@ -64,19 +67,40 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
         }
         props.closeModal();
     }
+
+    const openFileDialog = async () => {
+        const selected = await open({
+            directory: true,
+            multiple: false,
+            defaultPath: await appConfigDir(),
+        });
+        if(Array.isArray(selected)){
+            //this is not valid since multiple cannot be selected
+        } 
+        else if(selected === null){
+            // user cancelled the selection so return
+        } 
+        else{
+            //add the selected directory to setDirectories array
+            setDirectories(oldArray => [...oldArray, selected]);
+        }
+    };
     
     return (
         <div className={"DirectoriesModal" + (props.isOpen ? " DirectoriesModal-visible" : "")} onClick={
             (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => 
                 {if(e.target === e.currentTarget)closeModal()}}>
-            <h2>type in directories as absolute paths, eg C:\songs\</h2>
+            <h2>type in directories as absolute paths, eg C:\songs\. click anywhere to close</h2>
             <textarea 
                 className="modal"
                 value={directories.join(",")}
                 onChange={setDirectoriesVal}
-                placeholder="directory 1, directory 2, etc
-click anywhere to close the modal...">
+                placeholder="directory 1, directory 2, etc">
             </textarea>
+            <h2>or select a directory and it will be extracted for you</h2>
+            <motion.div className="select_directory" whileTap={{scale: 0.98}} onClick={openFileDialog}>
+                <h3>Select a directory</h3>
+            </motion.div>
         </div>
     )
 }

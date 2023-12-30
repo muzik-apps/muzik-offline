@@ -4,9 +4,9 @@ import "@styles/layouts/AppearanceSettings.scss";
 import { ArrowRefresh, CancelRight } from "@assets/icons";
 import { useSavedObjectStore, useWallpaperStore } from "store";
 
-const accentColurs: string[] = [
-    "saucy", "salmon", "violet", "lime", "sunny", "ubuntu", "blueberry", "midnight", "blinding"
-]
+const accentColurs: string[] = ["saucy", "salmon", "violet", "lime", "sunny", "ubuntu", "blueberry", "midnight", "blinding"]
+
+const opacityAmount: string[] = ["0", "2", "4", "6", "8", "10"]
 
 const AppearanceSettings = () => {
     const {local_store, setStore} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
@@ -36,6 +36,12 @@ const AppearanceSettings = () => {
         setStore(temp);
     }
 
+    function SetOpacityAmount(arg: string){
+        let temp: SavedObject = local_store;
+        temp.WallpaperOpacityAmount = arg;
+        setStore(temp);
+    }
+
     function SetPlayerBar(arg: boolean){
         let temp: SavedObject = local_store;
         temp.PlayerBar = arg;
@@ -48,9 +54,9 @@ const AppearanceSettings = () => {
         setStore(temp);
     }
 
-    function SetBackgroundAnimation(arg: boolean){
+    function SetAnimations(arg: boolean){
         let temp: SavedObject = local_store;
-        temp.AnimateBackground = arg;
+        temp.Animations = arg;
         setStore(temp);
     }
 
@@ -86,6 +92,17 @@ const AppearanceSettings = () => {
                             <h4>blue-purple gradient</h4>
                     </motion.div>
                 </div>
+                <h3>Wallpaper opacity amount</h3>
+                <div className="opacity_amount">
+                    {
+                        opacityAmount.map((opacity, index) => 
+                            <motion.div key={index} className={"button_select " + (local_store.WallpaperOpacityAmount === opacity ? "button_selected" : "")}
+                                whileHover={{scale: 1.03}} whileTap={{scale: 0.98}} onClick={() => SetOpacityAmount(opacity)}>
+                                    {opacity}
+                            </motion.div>
+                        )
+                    }
+                </div>
                 <h3>Accent color</h3>
                 <div className="color_theme">
                     {
@@ -112,21 +129,21 @@ const AppearanceSettings = () => {
                             <h4>album cover blur</h4>
                     </motion.div>
                 </div>
-                <h3>Full screen player animations</h3>
+                <h3>Allow application wide animations</h3>
                 <div className="animations_select">
                     <motion.div 
-                        className={"button_select glass " + (!local_store.AnimateBackground ? "button_selected" : "")} 
+                        className={"button_select glass " + (!local_store.Animations ? "button_selected" : "")} 
                         whileHover={{scale: 1.03}} 
                         whileTap={{scale: 0.98}}
-                        onClick={() => {SetBackgroundAnimation(false)}}>
+                        onClick={() => {SetAnimations(false)}}>
                         <h4>no animations</h4>
                         <CancelRight />
                     </motion.div>
                     <motion.div 
-                        className={"button_select glass " + (local_store.AnimateBackground ? "button_selected" : "")}
+                        className={"button_select glass " + (local_store.Animations ? "button_selected" : "")}
                         whileHover={{scale: 1.03}} 
                         whileTap={{scale: 0.98}} 
-                        onClick={() => {SetBackgroundAnimation(true)}}>
+                        onClick={() => {SetAnimations(true)}}>
                             <h4>animate</h4>
                             <ArrowRefresh />
                     </motion.div>

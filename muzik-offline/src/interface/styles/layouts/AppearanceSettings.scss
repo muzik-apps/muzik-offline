@@ -68,6 +68,30 @@
             }
         }
 
+        .opacity_amount{
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+
+            .button_select{
+                width: 100px;
+                height: 50px;
+                border-radius: 20px;
+                margin-right: 15px;
+                margin-bottom: 20px;
+                background: $btn-clickable;
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+            }
+
+            .button_selected{
+                border: 3px solid $app-theme-col;
+                width: 94px;
+                height: 44px;
+            }
+        }
+
         .color_theme{
             display: flex;
             flex-wrap: wrap;

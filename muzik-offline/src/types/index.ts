@@ -11,7 +11,6 @@ export enum selectedGeneralSettingEnum{
     LaunchTab = "LaunchTab",
     AppActivityDiscord = "AppActivityDiscord",
     VolumeStepAmount = "VolumeStepAmount",
-    WallpaperOpacityAmount = "WallpaperOpacityAmount",
     CompressImage = "CompressImage",
     UpcomingHistoryLimit = "UpcomingHistoryLimit",
 }

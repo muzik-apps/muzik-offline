@@ -30,12 +30,6 @@ const settings_data: {
         title: "Volume step amount",
         dropDownName: selectedGeneralSettingEnum.VolumeStepAmount,
         options: ["1", "3", "5", "10", "15", "20"]
-    },
-    {
-        key: 4,
-        title: "Set opacity of wallpaper",
-        dropDownName: selectedGeneralSettingEnum.WallpaperOpacityAmount,
-        options: ["0", "2", "4", "6", "8", "10"]
     }
 ]
 

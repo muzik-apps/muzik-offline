@@ -5,6 +5,7 @@ import { ChevronDown, ComponentIcon, InformationCircleContained, Layout, Lock, S
 import { DirectoriesModal, SettingsNavigator } from '@components/index';
 import { selectedSettingENUM } from 'types';
 import { AppearanceSettings, GeneralSettings, AdvancedSettings, AboutSettings, SecuritySettings } from '@layouts/index';
+import { useSavedObjectStore } from 'store';
 
 type SettingsProps = {
     openSettings: boolean;
@@ -20,6 +21,7 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
 
     const [selectedSetting, setSelectedSetting] = useState<selectedSettingENUM>(selectedSettingENUM.General);
     const [CDisOpen, setCDModalState] = useState<boolean>(false);
+    const {local_store,} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
 
     function convertToEnum(arg: string){
         if(arg == "General")return selectedSettingENUM.General;
@@ -43,7 +45,7 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
             <motion.div className="settings_section"
                 animate={props.openSettings ? "open" : "closed"}
                 variants={variants}
-                transition={{ type: "spring", stiffness: 100, damping: 14 }}
+                transition={!local_store.Animations ? {} : { type: "spring", stiffness: 100, damping: 14 }}
                 >
                 {   props.openSettings &&
                     <>
