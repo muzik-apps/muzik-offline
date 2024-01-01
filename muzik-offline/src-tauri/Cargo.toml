@@ -23,7 +23,7 @@ image = "0.24.7"
 kira = "0.8.5"
 lofty = "0.17.1"
 rand = "0.8.5"
-rusqlite = { version = "0.30.0", features = ["bundled"] }
+rayon = "1.8.0"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

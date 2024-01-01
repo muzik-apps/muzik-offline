@@ -1,5 +1,7 @@
 use image::imageops::FilterType;
 use std::{path::Path, io::Cursor};
+use rayon::prelude::*;
+use base64::{Engine as _, engine::general_purpose};
 
 pub fn duration_to_string(duration: &u64) -> String {
     let seconds = duration;
@@ -57,4 +59,20 @@ pub fn resize_and_compress_image(original_data: &Vec<u8>, target_height: &u32) -
             None
         },
     }
+}
+
+pub fn encode_image_in_parallel(image_as_vec: &Vec<u8>) -> String{
+    let base64str = image_as_vec.par_iter()
+                    .chunks(50) // Adjust the chunk size according to your needs
+                    .flat_map(|chunk| {
+                        chunk.into_iter().map(|&x| x).collect::<Vec<_>>()
+                    })
+                    .collect::<Vec<_>>()
+                    .par_chunks(50)
+                    .map(|chunk| 
+                        general_purpose::STANDARD.encode(chunk)
+                    )
+                    .collect::<Vec<_>>()
+                    .concat();
+    return base64str;
 }

@@ -2,7 +2,7 @@ use std::path::Path;
 use id3::{Tag, TagLike};
 use serde_json::Value;
 use base64::{Engine as _, engine::general_purpose};
-use crate::components::song::Song;
+use crate::{components::song::Song, utils::general_utils::encode_image_in_parallel};
 use lofty::{ Probe, AudioFile};
 use crate::utils::general_utils::{duration_to_string, extract_file_name, resize_and_compress_image};
 
@@ -63,7 +63,7 @@ pub async fn get_songs_in_path(dir_path: &str, song_id: &mut i32, compress_image
                 }
             }
         },
-        Err(_) => { return songs; },
+        Err(_) => {},
     }
 
     songs 
@@ -222,18 +222,17 @@ fn set_cover(tag: &Tag, song_meta_data: &mut Song, compress_image_option: &bool)
                 match resize_and_compress_image(&picture_as_num, &250){
                     Some(compressed_image) => {
                         //we need to convert it to a base64 string
-                        let base64str = general_purpose::STANDARD.encode(&compressed_image);
-                        song_meta_data.cover = Some(base64str);
+                        song_meta_data.cover = Some(encode_image_in_parallel(&compressed_image));
                     },
                     None => {
-                        let base64str = general_purpose::STANDARD.encode(&picture_as_num);
-                        song_meta_data.cover = Some(base64str);
+                        song_meta_data.cover = Some(encode_image_in_parallel(&picture_as_num));
                     },
                 }
             },
             false => {
                 let base64str = general_purpose::STANDARD.encode(&picture_as_num);
                 song_meta_data.cover = Some(base64str);
+                //song_meta_data.cover = Some(encode_image_in_parallel(&picture_as_num));
             },
         }
         
