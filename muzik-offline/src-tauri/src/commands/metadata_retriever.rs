@@ -1,24 +1,51 @@
-use std::path::Path;
+use std::{path::Path, collections::HashMap};
 use id3::{Tag, TagLike};
 use serde_json::Value;
-use base64::{Engine as _, engine::general_purpose};
-use crate::{components::song::Song, utils::general_utils::encode_image_in_parallel};
+use crate::utils::general_utils::encode_image_in_parallel;
+use crate::database::db_api::{
+    compare_and_set_hash_map, 
+    start_insertion,
+};
 use lofty::{ Probe, AudioFile};
 use crate::utils::general_utils::{duration_to_string, extract_file_name, resize_and_compress_image};
+use crate::components::{song::Song, hmaptype::HMapType};
 
 #[tauri::command]
 pub async fn get_all_songs(paths_as_json_array: String, compress_image_option: bool) -> Result<String, String> {
+    
     let paths_as_vec = decode_directories(&paths_as_json_array);
 
     let mut songs: Vec<Song> = Vec::new();
+    let mut albums_hash_map: HashMap<String, HMapType> = HashMap::new();
+    let mut artists_hash_map: HashMap<String, HMapType> = HashMap::new();
+    let mut genres_hash_map: HashMap<String, HMapType> = HashMap::new();
+
     let mut song_id: i32 = 0;
     for path in &paths_as_vec{
-        songs.extend(get_songs_in_path(&path, &mut song_id, &compress_image_option).await);
+        songs.extend(get_songs_in_path(
+            &path, 
+            &mut song_id, 
+            &compress_image_option,
+            &mut albums_hash_map,
+            &mut artists_hash_map,
+            &mut genres_hash_map
+        ).await);
     }
 
-    match serde_json::to_string(&songs){
-        Ok(json) => { Ok(json.into())},
-        Err(_) => {Err("{\"error\":\"failed to load songs\"}".into())},
+    let songs_vec_len = songs.len();
+
+    match start_insertion(songs, albums_hash_map, artists_hash_map, genres_hash_map).await{
+        Ok(_) => {},
+        Err(e) => {
+            return Err(e);
+        },
+    }
+
+    if songs_vec_len.to_string() == song_id.to_string(){
+        return Ok("{\"status\":\"success\"}".into());
+    }
+    else {
+        return Err("{\"status\":\"error\",\"message\":\"the song id does not match song length\"}".into());
     }
 }
 
@@ -44,7 +71,14 @@ pub fn decode_directories(paths_as_json: &str) -> Vec<String> {
     }
 }
 
-pub async fn get_songs_in_path(dir_path: &str, song_id: &mut i32, compress_image_option: &bool) -> Vec<Song>{
+pub async fn get_songs_in_path(
+    dir_path: &str, 
+    song_id: &mut i32, 
+    compress_image_option: &bool,
+    albums_hash_map: &mut HashMap<String, HMapType>,
+    artists_hash_map: &mut HashMap<String, HMapType>,
+    genres_hash_map: &mut HashMap<String, HMapType> 
+) -> Vec<Song>{
     let mut songs: Vec<Song> = Vec::new();
 
     match tokio::fs::read_dir(dir_path).await {
@@ -54,6 +88,10 @@ pub async fn get_songs_in_path(dir_path: &str, song_id: &mut i32, compress_image
                     Some(full_path) => {
                         match read_from_path(full_path, song_id, compress_image_option).await {
                             Ok(song_data) => {
+                                let hmt: HMapType = HMapType{key: song_data.id.clone(), cover: song_data.cover.clone()};
+                                compare_and_set_hash_map(albums_hash_map, &song_data.album, &hmt);
+                                compare_and_set_hash_map(artists_hash_map, &song_data.artist, &hmt);
+                                compare_and_set_hash_map(genres_hash_map, &song_data.genre, &hmt);
                                 songs.push(song_data);
                             },
                             Err(_) => {},
@@ -230,9 +268,9 @@ fn set_cover(tag: &Tag, song_meta_data: &mut Song, compress_image_option: &bool)
                 }
             },
             false => {
-                let base64str = general_purpose::STANDARD.encode(&picture_as_num);
-                song_meta_data.cover = Some(base64str);
-                //song_meta_data.cover = Some(encode_image_in_parallel(&picture_as_num));
+                //let base64str = general_purpose::STANDARD.encode(&picture_as_num);
+                //song_meta_data.cover = Some(base64str);
+                song_meta_data.cover = Some(encode_image_in_parallel(&picture_as_num));
             },
         }
         

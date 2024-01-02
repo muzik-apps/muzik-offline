@@ -1,86 +1,48 @@
 import { NullCoverOne, NullCoverTwo, NullCoverThree, NullCoverFour } from "@assets/index";
 import { local_albums_db, local_artists_db, local_genres_db, local_songs_db } from "@database/database";
-import { Song, album, genre, playlist } from "types";
+import { Song, album, artist, genre, playlist } from "types";
+import { invoke } from "@tauri-apps/api";
 
-export const createSongList_inDB = (SongList: Song[]) => {
-    local_songs_db.songs.clear().then(() => {
-        SongList.map(async(song) => await local_songs_db.songs.add(song));
-    });
-}
+export const fetch_metadata_in_chunks = async() => {
+    //fetch songs in bulk
+    let last_song_id = 0;
+    while(true){
+        const res: any = await invoke("get_batch_of_songs", {batchSize: 50, lastId: last_song_id});
+        const songs: Song[] = JSON.parse(res);
+        if(res.length === 0)break;
+        else await local_songs_db.songs.bulkAdd(songs);
+        last_song_id = songs[songs.length - 1].id;
+    }
 
-export const createAlbumsList_inDB = (SongList: Song[]) => {
-    local_albums_db.albums.clear().then(() => {
-        const uniqueMap: Map<string, {key: number, cover: string | null}> = new Map();
+    //fetch albums in bulk
+    let last_album_id = 0;
+    while(true){
+        const res: any = await invoke("get_batch_of_albums", {batchSize: 50, lastId: last_album_id});
+        const albums: album[] = JSON.parse(res);
+        if(res.length === 0)break;
+        else await local_albums_db.albums.bulkAdd(albums);
+        last_album_id = albums[albums.length - 1].key;
+    }
 
-        SongList.map((song) => {
-            if(!uniqueMap.has(song.album) && song.cover !== null){
-                //if the album is not in the map and the cover is not null
-                uniqueMap.set(song.album, {key: song.id, cover: song.cover});
-            }
-            else if(uniqueMap.has(song.album) && song.cover !== null && uniqueMap.get(song.album) === null){
-                //if the album is in the map and the cover is not null and the cover is null in the map
-                uniqueMap.set(song.album, {key: song.id, cover: song.cover});
-            }
-            else if(!uniqueMap.has(song.album) && song.cover === null){
-                //if the album is not in the map and the cover is null
-                uniqueMap.set(song.album, {key: song.id, cover: null});
-            }
-        });
+    //fetch artists in bulk
+    let last_artist_id = 0;
+    while(true){
+        const res: any = await invoke("get_batch_of_artists", {batchSize: 50, lastId: last_artist_id});
+        const artists: artist[] = JSON.parse(res);
+        if(res.length === 0)break;
+        else await local_artists_db.artists.bulkAdd(artists);
+        last_artist_id = artists[artists.length - 1].key;
+    }
 
-        uniqueMap.forEach(async(value, key) => {
-            await local_albums_db.albums.add({ key: value.key, cover: value.cover, title: key});
-        });
-    });
-}
-
-export const createArtistsList_inDB = (SongList: Song[]) => {
-    local_artists_db.artists.clear().then(() => {
-        const uniqueMap: Map<string, {key: number, cover: string | null}> = new Map();
-    
-        SongList.map((song) => {
-            if(!uniqueMap.has(song.artist) && song.cover !== null){
-                //if the artist is not in the map and the cover is not null
-                uniqueMap.set(song.artist, {key: song.id, cover: song.cover});
-            }
-            else if(uniqueMap.has(song.artist) && song.cover !== null && uniqueMap.get(song.artist) === null){
-                //if the artist is in the map and the cover is not null and the cover is null in the map
-                uniqueMap.set(song.artist, {key: song.id, cover: song.cover});
-            }
-            else if(!uniqueMap.has(song.artist) && song.cover === null){
-                //if the artist is not in the map and the cover is null
-                uniqueMap.set(song.artist, {key: song.id, cover: null});
-            }
-        });
-    
-        uniqueMap.forEach(async(value, key) => {
-            await local_artists_db.artists.add({ key: value.key, cover: value.cover, artist_name: key});
-        });
-    });
-}
-
-export const createGenresList_inDB = (SongList: Song[]) => {
-    local_genres_db.genres.clear().then(() => {
-        const uniqueMap: Map<string, {key: number, cover: string | null}> = new Map();
-    
-        SongList.map((song) => {
-            if(!uniqueMap.has(song.genre) && song.cover !== null){
-                //if the genre is not in the map and the cover is not null
-                uniqueMap.set(song.genre, {key: song.id, cover: song.cover});
-            }
-            else if(uniqueMap.has(song.genre) && song.cover !== null && uniqueMap.get(song.genre) === null){
-                //if the genre is in the map and the cover is not null and the cover is null in the map
-                uniqueMap.set(song.genre, {key: song.id, cover: song.cover});
-            }
-            else if(!uniqueMap.has(song.genre) && song.cover === null){
-                //if the genre is not in the map and the cover is null
-                uniqueMap.set(song.genre, {key: song.id, cover: null});
-            }
-        });
-    
-        uniqueMap.forEach(async(value, key) => {
-            await local_genres_db.genres.add({ key: value.key, cover: value.cover, title: key});
-        });
-    });
+    //fetch genres in bulk
+    let last_genre_id = 0;
+    while(true){
+        const res: any = await invoke("get_batch_of_genres", {batchSize: 50, lastId: last_genre_id});
+        const genres: genre[] = JSON.parse(res);
+        if(res.length === 0)break;
+        else await local_genres_db.genres.bulkAdd(genres);
+        last_genre_id = genres[genres.length - 1].key;
+    }
 }
 
 export function secondsToTimeFormat(totalSeconds: number) {

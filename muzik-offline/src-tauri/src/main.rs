@@ -5,6 +5,7 @@ mod commands;
 mod music;
 mod components;
 mod utils;
+mod database;
 
 use kira::manager::{AudioManager,AudioManagerSettings,backend::DefaultBackend};
 use components::audio_manager::SharedAudioManager;
@@ -20,6 +21,8 @@ use crate::music::player::{load_and_play_song_from_path, load_a_song_from_path, 
 
 use crate::utils::music_list_organizer::{mlo_set_shuffle_list, mlo_set_repeat_list, 
     mlo_get_next_batch_as_size, mlo_reset_and_set_remaining_keys};
+
+use crate::database::db_api::{get_batch_of_songs, get_batch_of_albums, get_batch_of_artists, get_batch_of_genres,};
 
 fn main() {
     tauri::Builder::default()
@@ -46,6 +49,10 @@ fn main() {
                             mlo_set_repeat_list,
                             mlo_reset_and_set_remaining_keys,
                             mlo_get_next_batch_as_size,
+                            get_batch_of_songs, 
+                            get_batch_of_albums, 
+                            get_batch_of_artists, 
+                            get_batch_of_genres,
                         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

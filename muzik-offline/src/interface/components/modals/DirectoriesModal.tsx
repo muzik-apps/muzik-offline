@@ -3,11 +3,11 @@ import "@styles/components/modals/DirectoriesModal.scss";
 import { invoke } from "@tauri-apps/api";
 import { open } from '@tauri-apps/api/dialog';
 import { appConfigDir } from '@tauri-apps/api/path';
-import { Song, toastType } from "types";
+import { toastType } from "types";
 import { useDirStore, useSavedObjectStore, useToastStore } from "store";
-import { createSongList_inDB, createAlbumsList_inDB, createGenresList_inDB, createArtistsList_inDB } from "utils";
 import { isPermissionGranted, sendNotification } from '@tauri-apps/api/notification';
 import { motion } from "framer-motion";
+import { fetch_metadata_in_chunks } from "utils";
 
 type DirectoriesModalProps = {
     isOpen: boolean;
@@ -22,12 +22,8 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
 
     function reloadSongs(){
         invoke("get_all_songs", { pathsAsJsonArray: JSON.stringify(directories), compressImageOption: local_store.CompressImage === "Yes" ? true : false })
-            .then(async(res: any) => {
-                const song_data: Song[] = JSON.parse(res);
-                createSongList_inDB(song_data);
-                createAlbumsList_inDB(song_data);
-                createGenresList_inDB(song_data);
-                createArtistsList_inDB(song_data);
+            .then(async() => {
+                //fetch_metadata_in_chunks();
                 setToast({title: "Loading songs...", message: "Successfully loaded all the songs in the paths specified. You may need to reload the page you are on to see your new songs", type: toastType.success, timeout: 10000});
 
                 const permissionGranted = await isPermissionGranted();

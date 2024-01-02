@@ -1,6 +1,6 @@
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Song {
     pub id: i32,
     pub title: String,

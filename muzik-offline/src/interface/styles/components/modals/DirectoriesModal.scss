@@ -39,6 +39,7 @@
 
     .select_directory{
         display: flex;
+        width: 157px;
         height: 34px;
         padding-left: 4px;
         padding-right: 4px;
@@ -51,6 +52,8 @@
         h3{
             color: $root-app-navigator-hover-col;
             font-size: 13px;
+            text-align: center;
+            width: 100%;
         }
     }
 }
