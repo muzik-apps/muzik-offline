@@ -6,33 +6,55 @@ use std::sync::Arc;
 
 //publicly available api functions
 #[tauri::command]
-pub fn get_batch_of_songs(batch_size: usize, last_id: u32) -> String{
+pub async fn get_batch_of_songs(batch_size: usize, last_id: u32) -> String{
     let mut songs: Vec<Song> = Vec::new();
 
     match DbManager::new(){
         Ok(dbm) => {
 
             let keys = get_next_keys(&dbm.song_tree, last_id, batch_size);
-            for key in keys{
-                match dbm.song_tree.get(key.to_ne_bytes()){
-                    Ok(Some(song_as_ivec)) => {
-                        let song_as_bytes = song_as_ivec.as_ref();
-                        let song_as_str = String::from_utf8_lossy(song_as_bytes);
-                        match serde_json::from_str::<Song>(&song_as_str.to_string()){
-                            Ok(song) => {
-                                songs.push(song);
-                            },
-                            Err(_) => {
-                                
-                            },
-                        }
-                    },
-                    Ok(None) => {
 
+            let could_retrieve_songs = tokio::task::spawn_blocking(move || { 
+                for key in keys{
+                    match dbm.song_tree.get(key.to_ne_bytes()){
+                        Ok(Some(song_as_ivec)) => {
+                            let song_as_bytes = song_as_ivec.as_ref();
+                            let song_as_str = String::from_utf8_lossy(song_as_bytes);
+                            match serde_json::from_str::<Song>(&song_as_str.to_string()){
+                                Ok(song) => {
+                                    songs.push(song);
+                                },
+                                Err(_) => {
+                                    
+                                },
+                            }
+                        },
+                        Ok(None) => {
+
+                        },
+                        Err(_) => {
+
+                        },
+                    }
+                }
+
+                //convert songs vec to json and return
+                match serde_json::to_string(&songs){
+                    Ok(songs_as_json) => {
+                        return songs_as_json;
                     },
                     Err(_) => {
-
+                        return String::from("[]");
                     },
+                }
+            }).await;
+
+            match could_retrieve_songs{
+                Ok(songs_as_json) => {
+                    return songs_as_json;
+                }
+                Err(_) => {
+                    return String::from("[]");
                 }
             }
         }
@@ -40,46 +62,58 @@ pub fn get_batch_of_songs(batch_size: usize, last_id: u32) -> String{
             return String::from("[]");
         },
     }
-
-    //convert songs vec to json and return
-    match serde_json::to_string(&songs){
-        Ok(songs_as_json) => {
-            return songs_as_json;
-        },
-        Err(_) => {
-            return String::from("[]");
-        },
-    }
 }
 
 #[tauri::command]
-pub fn get_batch_of_albums(batch_size: usize, last_id: u32) -> String{
+pub async fn get_batch_of_albums(batch_size: usize, last_id: u32) -> String{
     let mut albums: Vec<Album> = Vec::new();
     
     match DbManager::new(){
         Ok(dbm) => {
 
             let keys = get_next_keys(&dbm.album_tree, last_id, batch_size);
-            for key in keys{
-                match dbm.album_tree.get(key.to_ne_bytes()){
-                    Ok(Some(album_as_ivec)) => {
-                        let album_as_bytes = album_as_ivec.as_ref();
-                        let album_as_str = String::from_utf8_lossy(album_as_bytes);
-                        match serde_json::from_str::<Album>(&album_as_str.to_string()){
-                            Ok(album) => {
-                                albums.push(album);
-                            },
-                            Err(_) => {
-                                
-                            },
-                        }
-                    },
-                    Ok(None) => {
 
+            let could_retrieve_albums = tokio::task::spawn_blocking(move || { 
+                for key in keys{
+                    match dbm.album_tree.get(key.to_ne_bytes()){
+                        Ok(Some(album_as_ivec)) => {
+                            let album_as_bytes = album_as_ivec.as_ref();
+                            let album_as_str = String::from_utf8_lossy(album_as_bytes);
+                            match serde_json::from_str::<Album>(&album_as_str.to_string()){
+                                Ok(album) => {
+                                    albums.push(album);
+                                },
+                                Err(_) => {
+                                    
+                                },
+                            }
+                        },
+                        Ok(None) => {
+
+                        },
+                        Err(_) => {
+
+                        },
+                    }
+                }
+
+                //convert albums vec to json and return
+                match serde_json::to_string(&albums){
+                    Ok(albums_as_json) => {
+                        return albums_as_json;
                     },
                     Err(_) => {
-
+                        return String::from("[]");
                     },
+                }
+            }).await;
+
+            match could_retrieve_albums{
+                Ok(albums_as_json) => {
+                    return albums_as_json;
+                }
+                Err(_) => {
+                    return String::from("[]");
                 }
             }
         }
@@ -87,45 +121,56 @@ pub fn get_batch_of_albums(batch_size: usize, last_id: u32) -> String{
             return String::from("[]");
         },
     }
-
-    //convert albums vec to json and return
-    match serde_json::to_string(&albums){
-        Ok(albums_as_json) => {
-            return albums_as_json;
-        },
-        Err(_) => {
-            return String::from("[]");
-        },
-    }
 }
 
 #[tauri::command]
-pub fn get_batch_of_artists(batch_size: usize, last_id: u32) -> String{
+pub async fn get_batch_of_artists(batch_size: usize, last_id: u32) -> String{
     let mut artists: Vec<Artist> = Vec::new();
     
     match DbManager::new(){
         Ok(dbm) => {
             let keys = get_next_keys(&dbm.artist_tree, last_id, batch_size);
-            for key in keys{
-                match dbm.artist_tree.get(key.to_ne_bytes()){
-                    Ok(Some(artist_as_ivec)) => {
-                        let artist_as_bytes = artist_as_ivec.as_ref();
-                        let artist_as_str = String::from_utf8_lossy(artist_as_bytes);
-                        match serde_json::from_str::<Artist>(&artist_as_str.to_string()){
-                            Ok(artist) => {
-                                artists.push(artist);
-                            },
-                            Err(_) => {
-                                
-                            },
-                        }
-                    },
-                    Ok(None) => {
+            let could_retrieve_artists = tokio::task::spawn_blocking(move || { 
+                for key in keys{
+                    match dbm.artist_tree.get(key.to_ne_bytes()){
+                        Ok(Some(artist_as_ivec)) => {
+                            let artist_as_bytes = artist_as_ivec.as_ref();
+                            let artist_as_str = String::from_utf8_lossy(artist_as_bytes);
+                            match serde_json::from_str::<Artist>(&artist_as_str.to_string()){
+                                Ok(artist) => {
+                                    artists.push(artist);
+                                },
+                                Err(_) => {
+                                    
+                                },
+                            }
+                        },
+                        Ok(None) => {
 
+                        },
+                        Err(_) => {
+
+                        },
+                    }
+                }
+
+                //convert artists vec to json and return
+                match serde_json::to_string(&artists){
+                    Ok(artists_as_json) => {
+                        return artists_as_json;
                     },
                     Err(_) => {
-
+                        return String::from("[]");
                     },
+                }
+            }).await;
+
+            match could_retrieve_artists{
+                Ok(artists_as_json) => {
+                    return artists_as_json;
+                }
+                Err(_) => {
+                    return String::from("[]");
                 }
             }
         }
@@ -133,57 +178,58 @@ pub fn get_batch_of_artists(batch_size: usize, last_id: u32) -> String{
             return String::from("[]");
         },
     }
-
-    //convert artists vec to json and return
-    match serde_json::to_string(&artists){
-        Ok(artists_as_json) => {
-            return artists_as_json;
-        },
-        Err(_) => {
-            return String::from("[]");
-        },
-    }
 }
 
 #[tauri::command]
-pub fn get_batch_of_genres(batch_size: usize, last_id: u32) -> String{
+pub async fn get_batch_of_genres(batch_size: usize, last_id: u32) -> String{
     let mut genres: Vec<Genre> = Vec::new();
     
     match DbManager::new(){
         Ok(dbm) => {
             let keys = get_next_keys(&dbm.genre_tree, last_id, batch_size);
-            for key in keys{
-                match dbm.genre_tree.get(key.to_ne_bytes()){
-                    Ok(Some(genre_as_ivec)) => {
-                        let genre_as_bytes = genre_as_ivec.as_ref();
-                        let genre_as_str = String::from_utf8_lossy(genre_as_bytes);
-                        match serde_json::from_str::<Genre>(&genre_as_str.to_string()){
-                            Ok(genre) => {
-                                genres.push(genre);
-                            },
-                            Err(_) => {
-                                
-                            },
-                        }
-                    },
-                    Ok(None) => {
+            let could_retrieve_genres = tokio::task::spawn_blocking(move || { 
+                for key in keys{
+                    match dbm.genre_tree.get(key.to_ne_bytes()){
+                        Ok(Some(genre_as_ivec)) => {
+                            let genre_as_bytes = genre_as_ivec.as_ref();
+                            let genre_as_str = String::from_utf8_lossy(genre_as_bytes);
+                            match serde_json::from_str::<Genre>(&genre_as_str.to_string()){
+                                Ok(genre) => {
+                                    genres.push(genre);
+                                },
+                                Err(_) => {
+                                    
+                                },
+                            }
+                        },
+                        Ok(None) => {
 
+                        },
+                        Err(_) => {
+
+                        },
+                    }
+                }
+
+                //convert genres vec to json and return
+                match serde_json::to_string(&genres){
+                    Ok(genres_as_json) => {
+                        return genres_as_json;
                     },
                     Err(_) => {
-
+                        return String::from("[]");
                     },
                 }
+            }).await;
+
+            match could_retrieve_genres{
+                Ok(genres_as_json) => {
+                    return genres_as_json;
+                }
+                Err(_) => {
+                    return String::from("[]");
+                }
             }
-        },
-        Err(_) => {
-
-        },
-    }
-
-    //convert genres vec to json and return
-    match serde_json::to_string(&genres){
-        Ok(genres_as_json) => {
-            return genres_as_json;
         },
         Err(_) => {
             return String::from("[]");

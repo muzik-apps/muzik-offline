@@ -20,7 +20,7 @@ export interface SavedObject{
 export const emptySavedObject: SavedObject = {
     LaunchTab: "Home page",
     AppActivityDiscord: "No",
-    BGColour: "black_linear",
+    BGColour: "blue_purple_gradient",
     ThemeColour: "blueberry",
     PlayerBar: true,
     Volume: 0,

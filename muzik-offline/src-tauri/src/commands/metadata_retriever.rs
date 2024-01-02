@@ -35,17 +35,17 @@ pub async fn get_all_songs(paths_as_json_array: String, compress_image_option: b
     let songs_vec_len = songs.len();
 
     match start_insertion(songs, albums_hash_map, artists_hash_map, genres_hash_map).await{
-        Ok(_) => {},
+        Ok(_) => {
+            if songs_vec_len.to_string() == song_id.to_string(){
+                return Ok("{\"status\":\"success\"}".into());
+            }
+            else {
+                return Err("{\"status\":\"error\",\"message\":\"the song id does not match song length\"}".into());
+            }
+        },
         Err(e) => {
             return Err(e);
         },
-    }
-
-    if songs_vec_len.to_string() == song_id.to_string(){
-        return Ok("{\"status\":\"success\"}".into());
-    }
-    else {
-        return Err("{\"status\":\"error\",\"message\":\"the song id does not match song length\"}".into());
     }
 }
 
