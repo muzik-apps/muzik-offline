@@ -36,7 +36,7 @@ const AboutSettings = () => {
                 <motion.span whileTap={{scale: 0.98}} onClick={() => open("https://github.com/muzik-apps/Muzik-offline")}>
                     github
                 </motion.span>
-                if you like this application and check out our other applications
+                if you like this application and check out our other
                 <motion.span whileTap={{scale: 0.98}}  onClick={() => open("https://github.com/orgs/muzik-apps/repositories")}>
                     applications
                 </motion.span>
