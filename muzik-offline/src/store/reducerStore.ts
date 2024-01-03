@@ -1,6 +1,9 @@
-import { Action, AlbumDetailsInterface, AllAlbumsInterface, AllTracksStateInterface, reducerType } from "./reducerTypes";
+import { Action, AlbumDetailsInterface, AllAlbumsInterface, AllTracksStateInterface,
+    AllArtistsInterface, 
+    reducerType } from "./reducerTypes";
 
 export const AllTracksState: AllTracksStateInterface = {
+    isloading: true,
     selected: 0,
     co_ords: { xPos: 0, yPos: 0 },
     sort: {aToz: "Ascending", by: "name"},
@@ -13,6 +16,7 @@ export const AllTracksState: AllTracksStateInterface = {
 
 export const alltracksReducer = (state: AllTracksStateInterface, action: Action) => {
     switch (action.type) {
+        case reducerType.SET_LOADING: return { ...state, isloading: action.payload };
         case reducerType.SET_SELECTED: return { ...state, selected: action.payload };
         case reducerType.SET_COORDS: return { ...state, co_ords: action.payload };
         case reducerType.SET_SORT: return { ...state, sort: action.payload };
@@ -26,6 +30,7 @@ export const alltracksReducer = (state: AllTracksStateInterface, action: Action)
 };
 
 export const AlbumDetailsState: AlbumDetailsInterface = {
+    isloading: true,
     selected: 0,
     co_ords: { xPos: 0, yPos: 0 },
     SongList: [],
@@ -37,6 +42,7 @@ export const AlbumDetailsState: AlbumDetailsInterface = {
 
 export const albumDetailsReducer = (state: AlbumDetailsInterface, action: Action) => {
     switch (action.type) {
+        case reducerType.SET_LOADING: return { ...state, isloading: action.payload };
         case reducerType.SET_SELECTED: return { ...state, selected: action.payload };
         case reducerType.SET_COORDS: return { ...state, co_ords: action.payload };
         case reducerType.SET_SONG_LIST: return { ...state, SongList: action.payload };
@@ -49,6 +55,7 @@ export const albumDetailsReducer = (state: AlbumDetailsInterface, action: Action
 };
 
 export const AllAlbumsState: AllAlbumsInterface = {
+    isloading: true,
     selected: 0,
     co_ords: { xPos: 0, yPos: 0 },
     sort: {aToz: "Ascending", by: "name"},
@@ -59,12 +66,36 @@ export const AllAlbumsState: AllAlbumsInterface = {
 
 export const allAlbumsReducer = (state: AllAlbumsInterface, action: Action) => {
     switch (action.type) {
+        case reducerType.SET_LOADING: return { ...state, isloading: action.payload };
         case reducerType.SET_SELECTED: return { ...state, selected: action.payload };
         case reducerType.SET_COORDS: return { ...state, co_ords: action.payload };
         case reducerType.SET_SORT: return { ...state, sort: action.payload };
         case reducerType.SET_OPENED_DDM: return { ...state, openedDDM: action.payload };
         case reducerType.SET_ALBUM_LIST: return { ...state, albumList: action.payload };
         case reducerType.SET_ALBUM_MENU: return { ...state, albumMenuToOpen: action.payload };
+        default: return state;
+    }
+};
+
+export const AllArtistsState: AllArtistsInterface = {
+    isloading: true,
+    selected: 0,
+    co_ords: { xPos: 0, yPos: 0 },
+    sort: {aToz: "Ascending", by: "name"},
+    openedDDM: null,
+    artistList: [],
+    artistMenuToOpen: null,
+};
+
+export const allArtistsReducer = (state: AllArtistsInterface, action: Action) => {
+    switch (action.type) {
+        case reducerType.SET_LOADING: return { ...state, isloading: action.payload };
+        case reducerType.SET_SELECTED: return { ...state, selected: action.payload };
+        case reducerType.SET_COORDS: return { ...state, co_ords: action.payload };
+        case reducerType.SET_SORT: return { ...state, sort: action.payload };
+        case reducerType.SET_OPENED_DDM: return { ...state, openedDDM: action.payload };
+        case reducerType.SET_ARTIST_LIST: return { ...state, artistList: action.payload };
+        case reducerType.SET_ARTIST_MENU: return { ...state, artistMenuToOpen: action.payload };
         default: return state;
     }
 };

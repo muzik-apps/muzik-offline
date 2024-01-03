@@ -7,7 +7,8 @@ import { toastType } from "types";
 import { useDirStore, useSavedObjectStore, useToastStore } from "store";
 import { isPermissionGranted, sendNotification } from '@tauri-apps/api/notification';
 import { motion } from "framer-motion";
-import { fetch_metadata_in_chunks } from "utils";
+import { fetch_library_in_chunks } from "utils";
+import { local_albums_db, local_artists_db, local_genres_db, local_songs_db } from "@database/database";
 
 type DirectoriesModalProps = {
     isOpen: boolean;
@@ -20,16 +21,24 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
     const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
 
-    function reloadSongs(){
+    async function reloadSongs(){
+        await local_songs_db.songs.clear();
+        await local_albums_db.albums.clear();
+        await local_artists_db.artists.clear();
+        await local_genres_db.genres.clear();
+
         invoke("get_all_songs", { pathsAsJsonArray: JSON.stringify(directories), compressImageOption: local_store.CompressImage === "Yes" ? true : false })
             .then(async() => {
-                //fetch_metadata_in_chunks();
-                setToast({title: "Loading songs...", message: "Successfully loaded all the songs in the paths specified. You may need to reload the page you are on to see your new songs", type: toastType.success, timeout: 10000});
+                const res = await fetch_library_in_chunks();
+                let message = "";
+
+                if(res.status === "error")message = res.message;
+                else message = "Successfully loaded all the songs in the paths specified. You may need to reload the page you are on to see your new songs";
+
+                setToast({title: "Loading songs...", message: message, type: toastType.success, timeout: 5000});
 
                 const permissionGranted = await isPermissionGranted();
-                if (permissionGranted) {
-                    sendNotification({ title: 'Loading songs...', body: 'Successfully loaded all the songs in the paths specified. You may need to reload the page you are on to see your new songs' });
-                }
+                if(permissionGranted)sendNotification({ title: 'Loading songs...', body: message });
             })
             .catch(async(_error) => {
                 setToast({title: "Loading songs...", message: "Failed to load all the songs in the paths specified", type: toastType.error, timeout: 5000});
@@ -64,7 +73,7 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
         props.closeModal();
     }
 
-    const openFileDialog = async () => {
+    async function openFileDialog(){
         const selected = await open({
             directory: true,
             multiple: false,
@@ -81,6 +90,27 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
             setDirectories(oldArray => [...oldArray, selected]);
         }
     };
+
+    async function refreshLibrary(){
+        setToast({title: "refresh library...", message: "You will be notified when the refresh is done", type: toastType.info, timeout: 2000});
+
+        await local_songs_db.songs.clear();
+        await local_albums_db.albums.clear();
+        await local_artists_db.artists.clear();
+        await local_genres_db.genres.clear();
+
+        const res = await fetch_library_in_chunks();
+        let message = "";
+
+        if(res.status === "error")message = res.message;
+        else message = "Successfully refreshed your library";
+
+        setToast({title: "Refresh library...", message: message, type: toastType.success, timeout: 5000});
+        const permissionGranted = await isPermissionGranted();
+        if(permissionGranted)sendNotification({ title: 'Refresh library...', body: message });
+    }
+
+    function clearDirectories(){ setDirectories([]); }
     
     return (
         <div className={"DirectoriesModal" + (props.isOpen ? " DirectoriesModal-visible" : "")} onClick={
@@ -93,10 +123,18 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
                 onChange={setDirectoriesVal}
                 placeholder="directory 1, directory 2, etc">
             </textarea>
-            <h2>or select a directory and it will be extracted for you</h2>
-            <motion.div className="select_directory" whileTap={{scale: 0.98}} onClick={openFileDialog}>
-                <h3>Select a directory</h3>
-            </motion.div>
+            <h2>clear directories, refresh your library or select a new directory</h2>
+            <div className="action_buttons">
+                <motion.div className="clear_directories" whileTap={{scale: 0.98}} onClick={clearDirectories}>
+                    <h3>clear all directories</h3>
+                </motion.div>
+                <motion.div className="refresh_libraries" whileTap={{scale: 0.98}} onClick={refreshLibrary}>
+                    <h3>refresh library</h3>
+                </motion.div>
+                <motion.div className="select_directory" whileTap={{scale: 0.98}} onClick={openFileDialog}>
+                    <h3>Select a directory</h3>
+                </motion.div>
+            </div>
         </div>
     )
 }

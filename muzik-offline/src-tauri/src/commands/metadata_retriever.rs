@@ -107,7 +107,10 @@ pub async fn get_songs_in_path(
     songs 
 }
 
-async fn read_from_path(path: &str, song_id: &mut i32, compress_image_option: &bool) -> Result<Song, Box<dyn std::error::Error>> {
+async fn read_from_path(
+    path: &str, song_id: &mut i32, 
+    compress_image_option: &bool
+) -> Result<Song, Box<dyn std::error::Error>> {
     let tag = Tag::read_from_path(path)?;
     *song_id += 1;
 

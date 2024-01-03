@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useReducer } from "react";
-import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu } from "@components/index";
+import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
 import { ChevronDown } from "@assets/icons";
 import "@styles/pages/AllAlbums.scss";
 import { contextMenuEnum, contextMenuButtons } from "types";
@@ -32,15 +32,16 @@ const AllAlbums = () => {
 
     function navigateTo(key: number){ navigate(`/AlbumDetails/${key}/undefined`); }
 
-    useEffect(() => {
-        const setList = async() => {
-            let list = await local_albums_db.albums.toArray();
+    function setList(){
+        dispatch({ type: reducerType.SET_LOADING, payload: true});
+        local_albums_db.albums.toArray().then((list) =>{
+            dispatch({ type: reducerType.SET_LOADING, payload: false});
             if(state.sort.aToz === "Descending")list = list.reverse();
             dispatch({ type: reducerType.SET_ALBUM_LIST, payload: list });
-        }
-        setList();
+        });
+    }
 
-    }, [state.sort])
+    useEffect(() => { setList(); }, [state.sort])
     
     return (
         <motion.div className="AllAlbums"
@@ -52,7 +53,8 @@ const AllAlbums = () => {
                 <div className="sort_selector">
                     <h2>Sort A-Z: </h2>
                     <div className="sort_dropdown_container">
-                        <motion.div className="sort_dropdown" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() => setOpenedDDM(state.openedDDM === "aToz" ? null : "aToz", dispatch)}>
+                        <motion.div className="sort_dropdown" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} 
+                            onClick={() => setOpenedDDM(state.openedDDM === "aToz" ? null : "aToz", dispatch)}>
                             <h4>{state.sort.aToz}</h4>
                             <motion.div className="chevron_icon" animate={{rotate: state.openedDDM ? 180 : 0}}>
                                 <ChevronDown />
@@ -68,6 +70,14 @@ const AllAlbums = () => {
                     </div>
                 </div>
             </div>
+            {state.albumList.length === 0 && state.isloading === false && (
+                <h6>
+                    it seems like you may not have added any songs yet.<br/>
+                    To add songs, click on the settings button above, scroll down <br/>
+                    and click on "click here to change directories". <br/>
+                </h6>
+            )}
+            { state.isloading && <LoaderAnimated /> }
             <div className="AllAlbums_container">
                 {state.albumList.map((album) => 
                     <SquareTitleBox 
@@ -81,7 +91,8 @@ const AllAlbums = () => {
             </div>
             {
                 state.albumMenuToOpen && (
-                    <div className="AllAlbums-ContextMenu-container" onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
+                    <div className="AllAlbums-ContextMenu-container" 
+                        onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 
                             xPos={state.co_ords.xPos} 
                             yPos={state.co_ords.yPos} 

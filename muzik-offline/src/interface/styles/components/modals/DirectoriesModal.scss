@@ -22,8 +22,8 @@
     }
 
     .modal{
-        width: 500px;
-        height: 350px;
+        width: 60%;
+        height: 50%;
         padding: 20px;
         box-sizing: border-box;
         border: 1px solid $songs-container-border-col;
@@ -37,25 +37,32 @@
         margin-bottom: 20px;
     }
 
-    .select_directory{
+    .action_buttons{
         display: flex;
-        width: 157px;
-        height: 34px;
-        padding-left: 4px;
-        padding-right: 4px;
-        border-radius: 15px;
-        margin-bottom: 20px;
-        align-items: center;
-        transition: all 0.1s ease-in-out;
-        background: $app-theme-col;
+        justify-content: space-between;
+        width: 60%;
 
-        h3{
-            color: $root-app-navigator-hover-col;
-            font-size: 13px;
-            text-align: center;
-            width: 100%;
+        .select_directory, .clear_directories, .refresh_libraries{
+            display: flex;
+            width: 157px;
+            height: 34px;
+            padding-left: 4px;
+            padding-right: 4px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+            transition: all 0.1s ease-in-out;
+            background: $app-theme-col;
+    
+            h3{
+                color: $root-app-navigator-hover-col;
+                font-size: 13px;
+                text-align: center;
+                width: 100%;
+            }
         }
     }
+
 }
 
 .DirectoriesModal-visible{

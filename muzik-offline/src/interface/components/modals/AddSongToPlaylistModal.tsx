@@ -22,13 +22,13 @@ const AddSongToPlaylistModal: FunctionComponent<AddSongToPlaylistModalProps> = (
         if(pl === undefined)return;
         if(pl.tracksPaths.includes(props.songPath)){
             //if the track path is already in the playlist, send a toast letting the user know
-            setToast({title: "Already in playlist", message: "This song is already in the playlist you selected", type: toastType.warning, timeout: 5000});
+            setToast({title: "Already in playlist", message: "This song is already in the playlist you selected", type: toastType.warning, timeout: 2000});
             return;
         }
         //if the track path is not in the playlist, add it to the local db playlist
         local_playlists_db.playlists.update(key, {tracksPaths: [...pl.tracksPaths ?? [], props.songPath]});
         props.closeModal();
-        setToast({title: "Added to playlist", message: `The song has been added to ${pl.title}`, type: toastType.info, timeout: 5000});
+        setToast({title: "Added to playlist", message: `The song has been added to ${pl.title}`, type: toastType.info, timeout: 2000});
     }
 
     return (
@@ -38,6 +38,7 @@ const AddSongToPlaylistModal: FunctionComponent<AddSongToPlaylistModalProps> = (
             <div className="modal">
                 <h1>Add song to playlist</h1>
                 <div className="playlists">
+                    {playlists.length === 0 && (<h2>You have no playlists</h2>)}
                     {
                         playlists.map(playlist => 
                             <div className="playlist" key={playlist.key} onClick={() => chooseThisPlaylist(playlist.key)}>

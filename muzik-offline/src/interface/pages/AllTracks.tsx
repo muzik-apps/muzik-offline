@@ -1,8 +1,8 @@
-import { Song, contextMenuButtons, contextMenuEnum } from "types";
+import { contextMenuButtons, contextMenuEnum } from "types";
 import { motion } from "framer-motion";
 import { useRef, useEffect, useReducer } from "react";
 import { ChevronDown, Shuffle } from "@assets/icons";
-import { AddSongToPlaylistModal, DropDownMenuSmall, GeneralContextMenu, PropertiesModal, RectangleSongBox } from "@components/index";
+import { AddSongToPlaylistModal, DropDownMenuSmall, GeneralContextMenu, LoaderAnimated, PropertiesModal, RectangleSongBox } from "@components/index";
 import { ViewportList } from 'react-viewport-list';
 import { local_albums_db, local_songs_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
@@ -61,15 +61,16 @@ const AllTracks = () => {
         else if(type === "artist")navigate(`/ArtistCatalogue/${relatedSong.artist}`);
     }
 
-    useEffect(() => {
-        const setList = async() => {
-            let list: Song[] = await local_songs_db.songs.orderBy(state.sort.by).toArray();
+    function setList(){
+        dispatch({ type: reducerType.SET_LOADING, payload: true});
+        local_songs_db.songs.orderBy(state.sort.by).toArray().then((list) =>{
+            dispatch({ type: reducerType.SET_LOADING, payload: false});
             if(state.sort.aToz === "Descending")list = list.reverse();//sort in descending order
             setSongList(list, dispatch);
-        }
+        });
+    }
 
-        setList();
-    }, [state.sort])
+    useEffect(() => { setList(); }, [state.sort])
     
     return (
         <motion.div className="AllTracks"
@@ -89,7 +90,7 @@ const AllTracks = () => {
                         </motion.div>
                         <div className="DropDownMenu_container">
                             <DropDownMenuSmall
-                                options={["name", "title", "artist", "album", "duration_seconds", "year", "file_size"]} 
+                                options={["name", "title", "artist", "album", "year"]} 
                                 isOpen={(state.openedDDM === "by")}
                                 selectOption={(arg) => selectSortOption(state.sort, state.openedDDM, arg, dispatch)}
                             />
@@ -120,13 +121,14 @@ const AllTracks = () => {
                 </motion.div>
             </div>
             <div className="AllTracks_container" ref={ref}>
-                {state.SongList.length === 0 && (
+                {state.SongList.length === 0 && state.isloading === false && (
                     <h1>
-                        Seems like you may not have added any songs yet or they are still loading. <br/>
+                        it seems like you may not have added any songs yet.<br/>
                         To add songs, click on the settings button above, scroll down <br/>
                         and click on "click here to change directories". <br/>
                     </h1>
                 )}
+                { state.isloading && <LoaderAnimated /> }
                 <ViewportList viewportRef={ref} items={state.SongList}>
                     {(song, index) => (
                         <RectangleSongBox 
