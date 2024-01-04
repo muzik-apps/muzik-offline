@@ -14,16 +14,20 @@ A cross platform, local music player that is an offline(no streaming) version of
 
 # I am a developer
 1. Download <a href="https://tauri.app/v1/guides/getting-started/prerequisites">the pre-requisites</a> for tauri only by following the pre-requisites page for your operating system.
-2. Clone this repo
-3. run
+2. If you are on linux OS(debian/ubuntu), run
 ```
-cd Muzik
+sudo apt-get install libasound2-dev
 ```
+3. Clone this repo
 4. run
+```
+cd Muzik-offline/muzik-offline
+```
+5. run
 ```
 npm install
 ```
-5. run
+6. run
 ```
 npm run tauri dev
 ```
@@ -50,3 +54,5 @@ Please note that when you run ```npm run tauri``` dev for the first time, it may
 8. <a href="https://docs.rs/image">image</a>
 9. <a href="https://docs.rs/kira/latest/kira/">kira</a>
 10. <a href="https://docs.rs/rand/latest/rand/">rand</a>
+11. <a href="https://docs.rs/rayon/latest/rayon/">rayon</a>
+12. <a href="https://docs.rs/sled/latest/sled/">sled</a>

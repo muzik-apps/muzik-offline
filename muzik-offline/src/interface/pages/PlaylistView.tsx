@@ -1,47 +1,58 @@
 import { Edit, Play, Shuffle } from "@assets/icons";
-import { LargeResizableCover, RectangleSongBox, GeneralContextMenu, EditPlaylistModal, PropertiesModal } from "@components/index";
+import { LargeResizableCover, RectangleSongBox, GeneralContextMenu, EditPlaylistModal, PropertiesModal, AddSongToPlaylistModal } from "@components/index";
 import { local_albums_db, local_playlists_db } from "@database/database";
-import { mouse_coOrds, Song, contextMenuButtons, contextMenuEnum } from "types";
+import { contextMenuButtons, contextMenuEnum } from "types";
 import { motion } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
+import { useReducer, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getPlaylistSongs, secondsToTimeFormat } from "utils";
 import "@styles/pages/PlaylistView.scss";
 import { ViewportList } from "react-viewport-list";
-
-interface PlaylistMD {key: number;cover: string | null;playlistName: string;song_count: number;length: string;}
-
-const emptyMD: PlaylistMD = {key: 0,cover: null,playlistName: "",song_count: 0,length: ""}
-
-const variants_list = {smaller: { height: "calc(100vh - 395px)" },bigger: { height: "calc(100vh - 195px)" }}
+import { variants_list } from "@content/index";
+import { PlaylistViewState, playlistViewReducer } from "store/reducerStore";
+import { reducerType } from "store";
+import { addThisSongToPlayNext, addThisSongToPlayLater, playThisListNow, startPlayingNewSong } from "utils/playerControl";
+import { closeContextMenu, setSongList, selectThisSong, closePlaylistModal } from "utils/reducerUtils";
 
 const PlaylistView = () => {
-    const [selected, setSelected] = useState<number>(0);
-    const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-    const [SongList, setSongList] = useState<Song[]>([]);
-    const [playlist_metadata, setPlaylistMetadata] = useState<PlaylistMD>(emptyMD);
-    const [songMenuToOpen, setSongMenuToOpen] = useState<Song | null>(null);
-    const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState<boolean>(false);
-    const [isPropertiesModalOpen, setIsPropertiesModalOpen] = useState<boolean>(false);
-    const navigate = useNavigate();
-    
-    const [resizeHeader, setResizeHeader] = useState<boolean>(false);
+    const [state , dispatch] = useReducer(playlistViewReducer, PlaylistViewState);
     const itemsHeightRef = useRef<HTMLDivElement | null>(null);
     const { playlist_key } = useParams(); 
-
-    function selectThisSong(index: number){ setSelected(index); }
+    const navigate = useNavigate();
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
-        setCoords(n_co_ords);
-        const matching_song = SongList.find(song => { return song.id === key; })
-        setSongMenuToOpen(matching_song ? matching_song : null);
+        const matching_song = state.SongList.find(song => { return song.id === key; });
+        dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords});
+        dispatch({ type: reducerType.SET_SONG_MENU, payload: matching_song ? matching_song : null});
     }
 
     function chooseOption(arg: contextMenuButtons){
-        if(arg === contextMenuButtons.AddToPlaylist){ console.log("Add to playlist"); }
-        else if(arg === contextMenuButtons.PlayNext){ console.log("Play next"); }
-        else if(arg === contextMenuButtons.PlayLater){ console.log("Play later"); }
-        else if(arg === contextMenuButtons.Play){ console.log("Play"); }
+        if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
+        else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
+        else if(arg === contextMenuButtons.PlayNext && state.songMenuToOpen){ 
+            addThisSongToPlayNext(state.songMenuToOpen.id);
+            closeContextMenu(dispatch); 
+        }
+        else if(arg === contextMenuButtons.PlayLater && state.songMenuToOpen){ 
+            addThisSongToPlayLater(state.songMenuToOpen.id);
+            closeContextMenu(dispatch); 
+        }
+        else if(arg === contextMenuButtons.Play && state.songMenuToOpen){
+            playThisSong(state.songMenuToOpen.id);
+            closeContextMenu(dispatch); 
+        }
+    }
+
+    async function playThisSong(key: number, shuffle_list: boolean = false){
+        if(state.SongList.length === 0)return;
+        let songkey = key;
+        if(songkey === -1)songkey = state.SongList[0].id;
+        const index = state.SongList.findIndex(song => song.id === songkey);
+        if(index === -1)return;
+        //get ids of songs from index of matching song to last song in list
+        await startPlayingNewSong(state.SongList[index]);
+        const ids: number[] = state.SongList.slice(index + 1).map(song => song.id);
+        await playThisListNow(ids, shuffle_list);
     }
 
     function handleScroll(){
@@ -50,8 +61,8 @@ const PlaylistView = () => {
         // If you experience issues with state updates, it's recommended to investigate
         // potential asynchronous behavior and consider removing or adjusting this log.
         console.log;
-        if(scrollY === 0)setResizeHeader(false);
-        else if(resizeHeader === false)setResizeHeader(true);
+        if(scrollY === 0)dispatch({ type: reducerType.SET_RESIZE_HEADER, payload: false});
+        else if(state.resizeHeader === false)dispatch({ type: reducerType.SET_RESIZE_HEADER, payload: true});
     };
 
     async function setPlaylistSongs(){
@@ -59,24 +70,18 @@ const PlaylistView = () => {
         const playlistres = await local_playlists_db.playlists.where("key").equals(Number.parseInt(playlist_key)).toArray();
         if(playlistres.length !== 1)return;
         const result = await getPlaylistSongs(playlistres[0]);
-        setPlaylistMetadata({
+        dispatch({ type: reducerType.SET_PLAYLIST_METADATA, payload: {
             key: playlistres[0].key,
             cover: playlistres[0].cover, playlistName: playlistres[0].title,
             song_count: result.songs.length,
             length: secondsToTimeFormat(result.totalDuration)
+            }
         });
-        setSongList(result.songs);
-    }
-
-    async function closePlaylistModal(){
-        setIsPlaylistModalOpen(false);
-        //get this playlist
-        const pl = await local_playlists_db.playlists.where("key").equals(playlist_metadata.key).toArray();
-        setPlaylistMetadata({key: pl[0].key,cover: pl[0].cover, playlistName: pl[0].title,song_count: playlist_metadata.song_count,length: playlist_metadata.length});
+        setSongList(result.songs, dispatch);
     }
 
     async function navigateTo(key: number, type: "artist" | "song"){
-        const relatedSong = SongList.find((value) => value.id === key);
+        const relatedSong = state.SongList.find((value) => value.id === key);
         if(!relatedSong)return;
         if(type === "song"){
             const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
@@ -99,20 +104,21 @@ const PlaylistView = () => {
         animate={{scale: 1, opacity: 1}}
         exit={{scale: 0.9, opacity: 0}}>
             <div className="header_content">
-                <LargeResizableCover id={playlist_key} resizeHeader={resizeHeader} cover={playlist_metadata.cover} />
+                <LargeResizableCover id={playlist_key} resizeHeader={state.resizeHeader} cover={state.playlist_metadata.cover} />
                 <div className="details">
-                    <h2 style={{ marginTop: resizeHeader ? "25px" : "68px" }}>{playlist_metadata.playlistName}</h2>
-                    { !resizeHeader &&
+                    <h2 style={{ marginTop: state.resizeHeader ? "25px" : "68px" }}>{state.playlist_metadata.playlistName}</h2>
+                    { !state.resizeHeader &&
                         <>
-                            <h4>{playlist_metadata.song_count} songs</h4>
+                            <h4>{state.playlist_metadata.song_count} songs</h4>
                             <div className="action_buttons">
-                                <motion.div className="PlayIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
+                                <motion.div className="PlayIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={() => playThisSong(-1)}>
                                     <Play /><p>play</p>
                                 </motion.div>
-                                <motion.div className="ShuffleIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
+                                <motion.div className="ShuffleIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={() => playThisSong(-1, true)}>
                                     <Shuffle /><p>Shuffle</p>
                                 </motion.div>
-                                <motion.div className="EditIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={() => setIsPlaylistModalOpen(true)}>
+                                <motion.div className="EditIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} 
+                                onClick={() => dispatch({ type: reducerType.SET_EDIT_PLAYLIST_MODAL, payload: true})}>
                                     <Edit /><p>Edit</p>
                                 </motion.div>
                             </div>
@@ -121,11 +127,11 @@ const PlaylistView = () => {
                 </div>
             </div>
             <motion.div className="main_content" 
-                animate={resizeHeader ? "bigger" : "smaller"}
+                animate={state.resizeHeader ? "bigger" : "smaller"}
                 variants={variants_list}
                 transition={{ type: "tween" }}
                 ref={itemsHeightRef}>
-                <ViewportList viewportRef={itemsHeightRef} items={SongList}>
+                <ViewportList viewportRef={itemsHeightRef} items={state.SongList}>
                     {
                         (song, index) => (
                             <RectangleSongBox 
@@ -137,8 +143,8 @@ const PlaylistView = () => {
                                 artist={song.artist}
                                 length={song.duration} 
                                 year={song.year}
-                                selected={selected === index + 1 ? true : false}
-                                selectThisSong={selectThisSong}
+                                selected={state.selected === index + 1 ? true : false}
+                                selectThisSong={(index) => selectThisSong(index, dispatch)}
                                 setMenuOpenData={setMenuOpenData}
                                 navigateTo={navigateTo}
                                 playThisSong={(_key: number,) => {}}/>
@@ -146,36 +152,28 @@ const PlaylistView = () => {
                     }
                 </ViewportList>
                 <div className="footer_content">
-                    <h4>{playlist_metadata.song_count} {playlist_metadata.song_count > 1 ? "Songs" : "Song"}, {playlist_metadata.length} listen time</h4>
+                    <h4>{state.playlist_metadata.song_count} {state.playlist_metadata.song_count > 1 ? "Songs" : "Song"}, {state.playlist_metadata.length} listen time</h4>
                 </div>
             </motion.div>
             {
-                songMenuToOpen && (
+                state.songMenuToOpen && (
                     <div className="PlaylistView-ContextMenu-container" 
-                    onClick={() => {
-                        setSongMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }} 
-                    onContextMenu={(e) => {
-                        e.preventDefault();
-                        setSongMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }}
-                    >
+                        onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 
-                            xPos={co_ords.xPos} 
-                            yPos={co_ords.yPos} 
-                            title={songMenuToOpen.name}
+                            xPos={state.co_ords.xPos} 
+                            yPos={state.co_ords.yPos} 
+                            title={state.songMenuToOpen.name}
                             CMtype={contextMenuEnum.SongCM}
                             chooseOption={chooseOption}/>
                     </div>
                 )
             }
             <EditPlaylistModal 
-                playlistobj={{key: playlist_metadata.key, cover: playlist_metadata.cover, title: playlist_metadata.playlistName, dateCreated: "", dateEdited: "", tracksPaths: []}}
-                isOpen={isPlaylistModalOpen} 
-                closeModal={closePlaylistModal}/>
-            <PropertiesModal isOpen={isPropertiesModalOpen} song={songMenuToOpen ? songMenuToOpen : undefined} closeModal={() => setIsPropertiesModalOpen(false)} />
+                playlistobj={{key: state.playlist_metadata.key, cover: state.playlist_metadata.cover, title: state.playlist_metadata.playlistName, dateCreated: "", dateEdited: "", tracksPaths: []}}
+                isOpen={state.isEditingPlayListModalOpen} 
+                closeModal={() => dispatch({ type: reducerType.SET_EDIT_PLAYLIST_MODAL, payload: false})}/>
+                <AddSongToPlaylistModal isOpen={state.isPlaylistModalOpen} songPath={state.songMenuToOpen ? state.songMenuToOpen.path : ""} closeModal={() => closePlaylistModal(dispatch)} />
+            <PropertiesModal isOpen={state.isPropertiesModalOpen} song={state.songMenuToOpen ? state.songMenuToOpen : undefined} closeModal={() => closePlaylistModal(dispatch)} />
         </motion.div>
     )
 }

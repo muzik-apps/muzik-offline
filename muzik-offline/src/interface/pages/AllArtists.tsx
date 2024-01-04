@@ -94,7 +94,8 @@ const AllArtists = () => {
             </div>
             {
                 state.artistMenuToOpen && (
-                    <div className="AllArtists-ContextMenu-container"  onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
+                    <div className="AllArtists-ContextMenu-container"  
+                        onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 
                             xPos={state.co_ords.xPos} 
                             yPos={state.co_ords.yPos} 

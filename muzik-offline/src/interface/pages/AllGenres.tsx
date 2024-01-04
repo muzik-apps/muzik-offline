@@ -1,30 +1,28 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useReducer } from "react";
 import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu } from "@components/index";
 import { ChevronDown } from "@assets/icons";
 import "@styles/pages/AllGenres.scss";
-import { mouse_coOrds, contextMenuEnum, contextMenuButtons, genre } from "types";
+import { contextMenuEnum, contextMenuButtons } from "types";
 import { local_genres_db } from "@database/database";
-import { useLiveQuery } from "dexie-react-hooks";
 import { useNavigate } from "react-router-dom";
+import { AllGenresState, allGenreReducer } from '../../store/reducerStore';
+import { reducerType } from "store";
+import { closeContextMenu, setOpenedDDM } from "utils/reducerUtils";
 
 const AllGenres = () => {
-    const [sort, setSort] = useState<string>("Ascending");
-    const [openedDDM, setOpenedDDM] = useState<boolean>(false);
-    const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-    const [genreMenuToOpen, setGenreMenuToOpen] = useState<genre | null>(null);
-    const genres = useLiveQuery(() => local_genres_db.genres.toArray()) ?? [];
+    const [state , dispatch] = useReducer(allGenreReducer, AllGenresState);
     const navigate = useNavigate();
 
     function selectOption(arg: string){
-        if(arg !== sort)setSort(arg); 
-        setOpenedDDM(false);
+        dispatch({ type: reducerType.SET_SORT, payload: {aToz: arg, by: state.sort.by}});
+        dispatch({ type: reducerType.SET_OPENED_DDM, payload: null});
     }
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
-        setCoords(n_co_ords);
-        const matching_genre = genres.find(genre => { return genre.key === key; })
-        setGenreMenuToOpen(matching_genre ? matching_genre : null);
+        dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords });
+        const matching_genre = state.genreList.find(genre => { return genre.key === key; });
+        dispatch({ type: reducerType.SET_GENRE_MENU, payload: matching_genre ? matching_genre : null });
     }
 
     function chooseOption(arg: contextMenuButtons){
@@ -35,6 +33,17 @@ const AllGenres = () => {
     }
 
     function navigateTo(passed_key: number){ navigate(`/GenreView/${passed_key}`); }
+
+    function setList(){
+        dispatch({ type: reducerType.SET_LOADING, payload: true});
+        local_genres_db.genres.toArray().then((list) =>{
+            dispatch({ type: reducerType.SET_LOADING, payload: false});
+            if(state.sort.aToz === "Descending")list = list.reverse();
+            dispatch({ type: reducerType.SET_GENRE_LIST, payload: list });
+        });
+    }
+
+    useEffect(() => { setList(); }, [state.sort])
     
     return (
         <motion.div className="AllGenres"
@@ -46,16 +55,17 @@ const AllGenres = () => {
                 <div className="sort_selector">
                     <h2>Sort A-Z: </h2>
                     <div className="sort_dropdown_container">
-                        <motion.div className="sort_dropdown" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() => setOpenedDDM(!openedDDM)}>
-                            <h4>{sort}</h4>
-                            <motion.div className="chevron_icon" animate={{rotate: openedDDM ? 180 : 0}}>
+                        <motion.div className="sort_dropdown" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} 
+                            onClick={() => setOpenedDDM(state.openedDDM === "aToz" ? null : "aToz", dispatch)}>
+                            <h4>{state.sort.aToz}</h4>
+                            <motion.div className="chevron_icon" animate={{rotate: state.openedDDM ? 180 : 0}}>
                                 <ChevronDown />
                             </motion.div>
                         </motion.div>
                         <div className="DropDownMenu_container">
                             <DropDownMenuSmall
                                 options={["Ascending", "Descending"]} 
-                                isOpen={openedDDM}
+                                isOpen={(state.openedDDM ? true : false)}
                                 selectOption={selectOption}
                             />
                         </div>
@@ -63,7 +73,7 @@ const AllGenres = () => {
                 </div>
             </div>
             <div className="AllGenres_container">
-                    {genres.map((genre) =>
+                    {state.genreList.map((genre) =>
                         <SquareTitleBox 
                         key={genre.key}
                         cover={genre.cover} 
@@ -74,22 +84,13 @@ const AllGenres = () => {
                     )}
             </div>
             {
-                genreMenuToOpen && (
+                state.genreMenuToOpen && (
                     <div className="AllGenres-ContextMenu-container" 
-                    onClick={() => {
-                        setGenreMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }} 
-                    onContextMenu={(e) => {
-                        e.preventDefault();
-                        setGenreMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }}
-                    >
+                        onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 
-                            xPos={co_ords.xPos} 
-                            yPos={co_ords.yPos} 
-                            title={genreMenuToOpen.title} 
+                            xPos={state.co_ords.xPos} 
+                            yPos={state.co_ords.yPos} 
+                            title={state.genreMenuToOpen.title} 
                             CMtype={contextMenuEnum.GenreCM}
                             chooseOption={chooseOption}/>
                     </div>

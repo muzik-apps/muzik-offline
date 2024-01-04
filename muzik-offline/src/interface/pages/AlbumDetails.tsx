@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { AddSongToPlaylistModal, GeneralContextMenu, LargeResizableCover, PropertiesModal, RectangleSongBox } from "@components/index";
 import "@styles/pages/AlbumDetails.scss";
 import { motion } from "framer-motion";
@@ -16,7 +16,6 @@ import { reducerType } from "store";
 
 const AlbumDetails = () => {
     const [state , dispatch] = useReducer(albumDetailsReducer, AlbumDetailsState);
-    const [resizeHeader, setResizeHeader] = useState<boolean>(false);
     const itemsHeightRef = useRef<HTMLDivElement | null>(null);
     const { album_key, artist_name } = useParams(); 
     const navigate = useNavigate();
@@ -62,8 +61,8 @@ const AlbumDetails = () => {
         // If you experience issues with state updates, it's recommended to investigate
         // potential asynchronous behavior and consider removing or adjusting this log.
         console.log;
-        if(scrollY === 0)setResizeHeader(false);
-        else if(resizeHeader === false)setResizeHeader(true);
+        if(scrollY === 0)dispatch({ type: reducerType.SET_RESIZE_HEADER, payload: false});
+        else if(state.resizeHeader === false)dispatch({ type: reducerType.SET_RESIZE_HEADER, payload: true});
     };
 
     async function navigateTo(key: number, type: "artist" | "song"){
@@ -98,10 +97,10 @@ const AlbumDetails = () => {
         animate={{scale: 1, opacity: 1}}
         exit={{scale: 0.9, opacity: 0}}>
             <div className="header_content">
-                <LargeResizableCover id={album_key} resizeHeader={resizeHeader} cover={state.album_metadata.cover} />
+                <LargeResizableCover id={album_key} resizeHeader={state.resizeHeader} cover={state.album_metadata.cover} />
                 <div className="details">
-                    <h2 style={{ marginTop: resizeHeader ? "25px" : "68px" }}>{state.album_metadata.title}</h2>
-                    { !resizeHeader &&
+                    <h2 style={{ marginTop: state.resizeHeader ? "25px" : "68px" }}>{state.album_metadata.title}</h2>
+                    { !state.resizeHeader &&
                         <>
                             <div className="artist_details">
                                 <div className="artist_profile">
@@ -130,7 +129,7 @@ const AlbumDetails = () => {
                 </div>
             </div>
             <motion.div className="main_content" 
-                animate={resizeHeader ? "bigger" : "smaller"}
+                animate={state.resizeHeader ? "bigger" : "smaller"}
                 variants={variants_list}
                 transition={{ type: "tween" }}
                 ref={itemsHeightRef}>
@@ -142,7 +141,7 @@ const AlbumDetails = () => {
                                 keyV={song.id}
                                 index={index + 1}
                                 cover={song.cover}
-                                songName={song.title}
+                                songName={song.name}
                                 artist={song.artist}
                                 length={song.duration}
                                 year={song.year}
@@ -160,7 +159,8 @@ const AlbumDetails = () => {
             </motion.div>
             {
                 state.songMenuToOpen && (
-                    <div className="AlbumDetails-ContextMenu-container" onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
+                    <div className="AlbumDetails-ContextMenu-container" 
+                        onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 
                             xPos={state.co_ords.xPos} 
                             yPos={state.co_ords.yPos} 

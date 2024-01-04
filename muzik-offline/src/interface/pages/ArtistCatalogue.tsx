@@ -1,39 +1,31 @@
 import { Play, Shuffle } from "@assets/icons";
 import { GeneralContextMenu, LargeResizableCover, SquareTitleBox } from "@components/index";
-import { album, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
+import { contextMenuButtons, contextMenuEnum } from "types";
 import { motion } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect, useReducer } from "react";
 import { useParams } from "react-router-dom";
 import { getArtistsAlbums, secondsToTimeFormat } from "utils";
 import { useNavigate } from "react-router-dom";
 import "@styles/pages/ArtistCatalogue.scss";
-
-interface ArtistMD {cover: string | null;artistName: string;album_count: number;song_count: number;length: string;}
-
-const emptyMD: ArtistMD = {cover: null,artistName: "",album_count: 0,song_count: 0,length: ""}
+import { artistCatalogueReducer } from "store/reducerStore";
+import { ArtistCatalogueState } from '../../store/reducerStore';
+import { reducerType } from "store";
+import { closeContextMenu } from "utils/reducerUtils";
 
 const ArtistCatalogue = () => {
-
-    const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-    const [albums, setAlbums] = useState<album[]>([]);
-    const [artist_metadata, setArtistMetadata] = useState<ArtistMD>(emptyMD);
-    const [albumMenuToOpen, setAlbumMenuToOpen] = useState<album | null>(null);
-    
-    const [resizeHeader, setResizeHeader] = useState<boolean>(false);
+    const [state , dispatch] = useReducer(artistCatalogueReducer, ArtistCatalogueState);
     const itemsHeightRef = useRef<HTMLDivElement | null>(null);
     const navigate = useNavigate();
     const { artist_name } = useParams(); 
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
-        setCoords(n_co_ords);
-        const matching_album = albums.find(album => { return album.key === key; })
-        setAlbumMenuToOpen(matching_album ? matching_album : null);
+        const matching_album = state.albumList.find(album => { return album.key === key; });
+        dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords});
+        dispatch({ type: reducerType.SET_ALBUM_MENU, payload: matching_album ? matching_album : null});
     }
 
     function chooseOption(arg: contextMenuButtons){
-        if(arg == contextMenuButtons.ShowAlbum && albumMenuToOpen){
-            navigateTo(albumMenuToOpen.key);
-        }
+        if(arg == contextMenuButtons.ShowAlbum && state.albumMenuToOpen) navigateTo(state.albumMenuToOpen.key);
     }
 
     function handleScroll(){
@@ -42,28 +34,24 @@ const ArtistCatalogue = () => {
         // If you experience issues with state updates, it's recommended to investigate
         // potential asynchronous behavior and consider removing or adjusting this log.
         console.log;
-        if(scrollY === 0){
-            setResizeHeader(false);
-        }
-        else if(resizeHeader === false){
-            setResizeHeader(true);
-        }
+        if(scrollY === 0)dispatch({ type: reducerType.SET_RESIZE_HEADER, payload: false});
+        else if(state.resizeHeader === false)dispatch({ type: reducerType.SET_RESIZE_HEADER, payload: true});
     };
 
     async function setArtistAlbums(){
         if(artist_name === undefined)return;
         const result = await getArtistsAlbums(artist_name);
-        setArtistMetadata({
+        dispatch({type: reducerType.SET_ARTIST_METADATA, payload: {
             cover: result.cover,
             artistName: artist_name,
             album_count: result.albums.length,
             song_count: result.song_count,
             length: secondsToTimeFormat(result.totalDuration)
-        });
-        setAlbums(result.albums);
+        }});
+        dispatch({type: reducerType.SET_ALBUM_LIST, payload: result.albums});
     }
 
-    function navigateTo(passed_key: number){ navigate(`/AlbumDetails/${passed_key}/${artist_metadata.artistName}`); }
+    function navigateTo(passed_key: number){ navigate(`/AlbumDetails/${passed_key}/${state.artist_metadata.artistName}`); }
 
     useEffect(() => {
         setArtistAlbums();
@@ -77,13 +65,13 @@ const ArtistCatalogue = () => {
         animate={{scale: 1, opacity: 1}}
         exit={{scale: 0.9, opacity: 0}}>
             <div className="header_content">
-                <LargeResizableCover id={"1"} resizeHeader={resizeHeader} cover={artist_metadata.cover} />
+                <LargeResizableCover id={"1"} resizeHeader={state.resizeHeader} cover={state.artist_metadata.cover} />
                 <div className="details">
-                    <h2 style={{ marginTop: resizeHeader ? "25px" : "68px" }}>{artist_metadata.artistName}</h2>
-                    { !resizeHeader &&
+                    <h2 style={{ marginTop: state.resizeHeader ? "25px" : "68px" }}>{state.artist_metadata.artistName}</h2>
+                    { !state.resizeHeader &&
                         <>
-                            <h4>{artist_metadata.album_count} albums</h4>
-                            <h4>{artist_metadata.song_count} songs</h4>
+                            <h4>{state.artist_metadata.album_count} albums</h4>
+                            <h4>{state.artist_metadata.song_count} songs</h4>
                             <div className="action_buttons">
                                 <motion.div className="PlayIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
                                     <Play />
@@ -98,8 +86,8 @@ const ArtistCatalogue = () => {
                     }
                 </div>
             </div>
-            <div className="main_content" ref={itemsHeightRef} style={{height: !resizeHeader ? "calc(100vh - 325px)" : "calc(100vh - 160px)"}}>
-                {albums.map((album) => 
+            <div className="main_content" ref={itemsHeightRef} style={{height: !state.resizeHeader ? "calc(100vh - 325px)" : "calc(100vh - 160px)"}}>
+                {state.albumList.map((album) => 
                     <SquareTitleBox 
                     key={album.key}
                     cover={album.cover} 
@@ -111,22 +99,13 @@ const ArtistCatalogue = () => {
                 <div className="footer_content"/>
             </div>
             {
-                albumMenuToOpen && (
+                state.albumMenuToOpen && (
                     <div className="ArtistCatalogue-ContextMenu-container" 
-                    onClick={() => {
-                        setAlbumMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }} 
-                    onContextMenu={(e) => {
-                        e.preventDefault();
-                        setAlbumMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }}
-                    >
+                        onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 
-                            xPos={co_ords.xPos} 
-                            yPos={co_ords.yPos} 
-                            title={albumMenuToOpen.title}
+                            xPos={state.co_ords.xPos} 
+                            yPos={state.co_ords.yPos} 
+                            title={state.albumMenuToOpen.title}
                             CMtype={contextMenuEnum.AlbumCM}
                             chooseOption={chooseOption}/>
                     </div>

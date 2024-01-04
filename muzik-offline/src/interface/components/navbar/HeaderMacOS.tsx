@@ -15,7 +15,10 @@ const HeaderMacOS: FunctionComponent<HeaderMacOSProps>  = (props: HeaderMacOSPro
     const [searchText, setSearchText] = useState<string>("");
     const { setSearch } = useSearchStore((state) => { return { setSearch: state.setSearch}; });
 
-    function captureSearch(e: React.ChangeEvent<HTMLInputElement>){ setSearchText(e.target.value); }
+    function captureSearch(e: React.ChangeEvent<HTMLInputElement>){
+        if(e.target.value === "enter")searchFor();
+        else setSearchText(e.target.value); 
+    }
 
     function searchFor(){ setSearch(searchText); }
 

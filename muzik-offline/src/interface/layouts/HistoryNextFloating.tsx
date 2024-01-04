@@ -21,11 +21,11 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
     const [selectedView, setSelectedView] = useState<string>("Upcoming_tab");
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
+    const [SongQueue, setSongQueue] = useState<Song[]>([]);
+    const [SongHistory, setSongHistory] = useState<Song[]>([]);
     const {SongQueueKeys} = useUpcomingSongs((state) => { return { SongQueueKeys: state.queue}; });
     const {SongHistoryKeys} = useHistorySongs((state) => { return { SongHistoryKeys: state.queue}; });
     const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
-    const [SongQueue, setSongQueue] = useState<Song[]>([]);
-    const [SongHistory, setSongHistory] = useState<Song[]>([]);
     
     const navigate = useNavigate();
 

@@ -118,3 +118,26 @@ export interface AlbumMD {
     song_count: number;
     length: string;
 }
+
+export interface ArtistMD {
+    cover: string | null;
+    artistName: string;
+    album_count: number;
+    song_count: number;
+    length: string;
+}
+
+export interface GenreMD {
+    cover: string | null;
+    genreName: string;
+    song_count: number;
+    length: string;
+}
+
+export interface PlaylistMD {
+    key: number;
+    cover: string | null;
+    playlistName: string;
+    song_count: number;
+    length: string;
+}

@@ -1,55 +1,46 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, CreatePlaylistModal, PropertiesModal } from "@components/index";
 import { ChevronDown, Menu } from "@assets/icons";
 import "@styles/pages/AllPlaylists.scss";
-import { contextMenuButtons, contextMenuEnum, mouse_coOrds, playlist } from "types";
+import { contextMenuButtons, contextMenuEnum } from "types";
 import { local_playlists_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
+import { AllPlaylistsState, allPlaylistsReducer } from "store/reducerStore";
+import { reducerType } from "store";
+import { closeContextMenu, closePlaylistModal, closePropertiesModal, setOpenedDDM } from "utils/reducerUtils";
 
 const AllPlaylists = () => {
-    const [sort, setSort] = useState<string>("Ascending");
-    const [openedDDM, setOpenedDDM] = useState<boolean>(false);
-    const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-    const [playlistMenuToOpen, setPlaylistMenuToOpen] = useState<playlist | null>(null);
-    const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState<boolean>(false);
-    const [isPropertiesModalOpen, setIsPropertiesModalOpen] = useState<boolean>(false);
-    const [playlists, setPlaylists] = useState<playlist[]>([]);
+    const [state , dispatch] = useReducer(allPlaylistsReducer, AllPlaylistsState);
     const navigate = useNavigate();
 
     function selectOption(arg: string){
-        if(arg !== sort)setSort(arg);
-        setOpenedDDM(false);
+        dispatch({ type: reducerType.SET_SORT, payload: {aToz: arg, by: state.sort.by}});
+        dispatch({ type: reducerType.SET_OPENED_DDM, payload: null});
     }
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
-        setCoords(n_co_ords);
-        const matching_playlist = playlists.find(playlist => { return playlist.key === key; })
-        setPlaylistMenuToOpen(matching_playlist ? matching_playlist : null);
+        dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords });
+        const matching_playlist = state.playlistList.find(playlist => { return playlist.key === key; });
+        dispatch({ type: reducerType.SET_PLAYLIST_MENU, payload: matching_playlist ? matching_playlist : null });
     }
 
     function chooseOption(arg: contextMenuButtons){
-        if(arg === contextMenuButtons.ShowInfo){
-            setIsPropertiesModalOpen(true);
-        }
-    }
-
-    async function closePlaylistModal(){
-        setIsPlaylistModalOpen(false);
-        const pl = await local_playlists_db.playlists.toArray();
-        setPlaylists(pl);
+        if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
     }
 
     function navigateTo(passed_key: number){ navigate(`/PlaylistView/${passed_key}`); }
 
-    useEffect(() => {
-        const getPlaylists = async () => {
-            const pl = await local_playlists_db.playlists.toArray();
-            setPlaylists(pl);
-        };
+    function setList(){
+        dispatch({ type: reducerType.SET_LOADING, payload: true});
+        local_playlists_db.playlists.toArray().then((list) =>{
+            dispatch({ type: reducerType.SET_LOADING, payload: false});
+            if(state.sort.aToz === "Descending")list = list.reverse();
+            dispatch({ type: reducerType.SET_PLAYLIST_LIST, payload: list });
+        });
+    }
 
-        getPlaylists();
-    }, [])
+    useEffect(() => { setList(); }, [state.sort])
     
     return (
         <motion.div className="AllPlaylists"
@@ -61,28 +52,30 @@ const AllPlaylists = () => {
                 <div className="sort_selector">
                     <h2>Sort A-Z: </h2>
                     <div className="sort_dropdown_container">
-                        <motion.div className="sort_dropdown" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() => setOpenedDDM(!openedDDM)}>
-                            <h4>{sort}</h4>
-                            <motion.div className="chevron_icon" animate={{rotate: openedDDM ? 180 : 0}}>
+                        <motion.div className="sort_dropdown" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} 
+                        onClick={() => setOpenedDDM(state.openedDDM === "aToz" ? null : "aToz", dispatch)}>
+                            <h4>{state.sort.aToz}</h4>
+                            <motion.div className="chevron_icon" animate={{rotate: state.openedDDM ? 180 : 0}}>
                                 <ChevronDown />
                             </motion.div>
                         </motion.div>
                         <div className="DropDownMenu_container">
                             <DropDownMenuSmall
                                 options={["Ascending", "Descending"]} 
-                                isOpen={openedDDM}
+                                isOpen={(state.openedDDM ? true : false)}
                                 selectOption={selectOption}
                             />
                         </div>
                     </div>
                 </div>
-                <motion.div className="create_playlist" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() => setIsPlaylistModalOpen(true)}>
+                <motion.div className="create_playlist" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} 
+                    onClick={() => dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true})}>
                     <h4>create a playlist</h4>
                     <Menu />
                 </motion.div>
             </div>
             <div className="AllPlaylists_container">
-                    {playlists.map((playlist) =>
+                    {state.playlistList.map((playlist) =>
                         <SquareTitleBox 
                         key={playlist.key}
                         cover={playlist.cover} 
@@ -93,30 +86,21 @@ const AllPlaylists = () => {
                     )}
             </div>
             {
-                playlistMenuToOpen && (
+                state.playlistMenuToOpen && (
                     <div className="AllPlaylists-ContextMenu-container" 
-                    onClick={() => {
-                        setPlaylistMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }} 
-                    onContextMenu={(e) => {
-                        e.preventDefault();
-                        setPlaylistMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }}
-                    >
+                        onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 
-                            xPos={co_ords.xPos} 
-                            yPos={co_ords.yPos} 
-                            title={playlistMenuToOpen.title}
+                            xPos={state.co_ords.xPos} 
+                            yPos={state.co_ords.yPos} 
+                            title={state.playlistMenuToOpen.title}
                             CMtype={contextMenuEnum.PlaylistCM}
                             chooseOption={chooseOption}/>
                     </div>
                 )
             }
             <div className="bottom_margin"/>
-            <CreatePlaylistModal isOpen={isPlaylistModalOpen} closeModal={closePlaylistModal}/>
-            <PropertiesModal isOpen={isPropertiesModalOpen} playlist={playlistMenuToOpen ? playlistMenuToOpen : undefined} closeModal={() => setIsPropertiesModalOpen(false)} />
+            <CreatePlaylistModal isOpen={state.isPlaylistModalOpen} closeModal={() => closePropertiesModal(dispatch)}/>
+            <PropertiesModal isOpen={state.isPropertiesModalOpen} playlist={state.playlistMenuToOpen ? state.playlistMenuToOpen : undefined} closeModal={() => closePlaylistModal(dispatch)} />
         </motion.div>
     )
 }
