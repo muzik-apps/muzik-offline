@@ -4,5 +4,5 @@
 
 #[tauri::command]
 pub fn refresh_paths(paths_as_json_array: String, compress_image_option: bool) -> String {
-
+    return String::from("");
 }

@@ -1,50 +1,46 @@
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useReducer } from "react";
 import { motion } from 'framer-motion';
 import "@styles/components/music/HistoryUpcoming.scss";
-import { Song, contextMenuButtons, contextMenuEnum, mouse_coOrds } from "types";
+import { Song, contextMenuButtons, contextMenuEnum } from "types";
 import { GeneralContextMenu, SongCardResizable } from "@components/index";
 import { useNavigate } from "react-router-dom";
 import { local_albums_db, local_songs_db } from "@database/database";
-import { useUpcomingSongs, useHistorySongs, useSavedObjectStore } from "store";
+import { useUpcomingSongs, useHistorySongs, useSavedObjectStore, reducerType } from "store";
+import { UpcomingHistoryState, upcomingHistoryReducer } from "store/reducerStore";
+import { closeContextMenu } from "utils/reducerUtils";
 
 type HistoryUpcomingProps = { closePlayer: () => void;}
 
 const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: HistoryUpcomingProps) => {
-  const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
-  const [selectedView, setSelectedView] = useState<string>("Upcoming_tab");
-  const [songMenuToOpen, setSongMenuToOpen] = useState< Song | null>(null);
+  const [state , dispatch] = useReducer(upcomingHistoryReducer, UpcomingHistoryState); 
   const {SongQueueKeys} = useUpcomingSongs((state) => { return { SongQueueKeys: state.queue}; });
   const {SongHistoryKeys} = useHistorySongs((state) => { return { SongHistoryKeys: state.queue}; });
   const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
-  const [SongQueue, setSongQueue] = useState<Song[]>([]);
-  const [SongHistory, setSongHistory] = useState<Song[]>([]);
   
   const navigate = useNavigate();
 
-  function selectView(arg: string){setSelectedView(arg);}
-
   function setMenuOpenData__SongQueue(key: number, n_co_ords: {xPos: number; yPos: number;}){
-      setCoords(n_co_ords);
-      const matching_song = SongQueue.find(song => { return song.id === key; })
-      setSongMenuToOpen(matching_song ? matching_song : null);
-  }
+    dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords });
+    const matching_song = state.SongQueue.find(song => { return song.id === key; })
+    dispatch({ type: reducerType.SET_SONG_MENU, payload: matching_song ? matching_song : null });
+}
 
-  function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos: number;}){
-      setCoords(n_co_ords);
-      const matching_song = SongHistory.find(song => { return song.id === key; })
-      setSongMenuToOpen(matching_song ? matching_song : null);
-  }
+function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos: number;}){
+    dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords });
+    const matching_song = state.SongHistory.find(song => { return song.id === key; })
+    dispatch({ type: reducerType.SET_SONG_MENU, payload: matching_song ? matching_song : null });
+}
 
   function chooseOption(arg: contextMenuButtons){
       if(arg === contextMenuButtons.AddToPlaylist){ console.log("Add to playlist"); }
-        else if(arg === contextMenuButtons.PlayNext && songMenuToOpen){ console.log("Play next"); }
-        else if(arg === contextMenuButtons.PlayLater && songMenuToOpen){ console.log("Play later"); }
-        else if(arg === contextMenuButtons.Play && songMenuToOpen){ console.log("Play"); }
+        else if(arg === contextMenuButtons.PlayNext && state.songMenuToOpen){ console.log("Play next"); }
+        else if(arg === contextMenuButtons.PlayLater && state.songMenuToOpen){ console.log("Play later"); }
+        else if(arg === contextMenuButtons.Play && state.songMenuToOpen){ console.log("Play"); }
   }
 
   async function navigateToSH(key: number, type: "artist" | "song"){
     props.closePlayer();
-    const relatedSong = SongHistory.find((value) => value.id === key);
+    const relatedSong = state.SongHistory.find((value) => value.id === key);
     if(!relatedSong)return;
     if(type === "song"){
         const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
@@ -57,7 +53,7 @@ const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: History
 
   async function navigateToSQ(key: number, type: "artist" | "song"){
       props.closePlayer();
-      const relatedSong = SongQueue.find((value) => value.id === key);
+      const relatedSong = state.SongQueue.find((value) => value.id === key);
       if(!relatedSong)return;
       if(type === "song"){
           const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
@@ -79,8 +75,8 @@ const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: History
     const USsongsOrdered = sqkeys.map(key => USsongs.find(item => item.id === key));
     const HSsongsOrdered = hskeys.map(key => HSsongs.find(item => item.id === key));
 
-    setSongQueue(USsongsOrdered as Song[]);
-    setSongHistory(HSsongsOrdered as Song[]);
+    dispatch({ type: reducerType.SET_SONG_QUEUE, payload: USsongsOrdered as Song[] });
+    dispatch({ type: reducerType.SET_SONG_HISTORY, payload: HSsongsOrdered as Song[] });
   }
 
   useEffect(() => {setLists()}, [SongQueueKeys, SongHistoryKeys])
@@ -88,10 +84,10 @@ const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: History
   return (
     <div className="HistoryUpcoming">
       {
-        selectedView === "Upcoming_tab" ?
+        state.selectedView === "Upcoming_tab" ?
           <div className="Upcoming_view">
             {
-                SongQueue.map((song, index) => 
+                state.SongQueue.map((song, index) => 
                     <SongCardResizable 
                         key={song.id * index}
                         cover={song.cover} 
@@ -106,7 +102,7 @@ const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: History
         :
           <div className="History_view">
             {
-                SongHistory.map((song, index) => 
+                state.SongHistory.map((song, index) => 
                     <SongCardResizable 
                         key={song.id * index}
                         cover={song.cover} 
@@ -120,33 +116,26 @@ const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: History
           </div>
       }
       <div className="HistoryUpcoming_tabs">
-        <motion.div className="Upcoming_tab" onClick={() => selectView("Upcoming_tab")} whileTap={{scale: 0.98}}>
-          {selectedView === "Upcoming_tab" && <div className="selected"/>}
-          <h3>Upcoming songs</h3>
+        <motion.div className="Upcoming_tab" whileTap={{scale: 0.98}}
+          onClick={() => dispatch({ type: reducerType.SET_SELECTED_VIEW, payload: "Upcoming_tab" })}>
+            {state.selectedView === "Upcoming_tab" && <div className="selected"/>}
+            <h3>Upcoming songs</h3>
         </motion.div>
-        <motion.div className="History_tab" onClick={() => selectView("History_tab")} whileTap={{scale: 0.98}}>
-          {selectedView === "History_tab" && <div className="selected"/>}
-          <h3>History</h3>
+        <motion.div className="History_tab" whileTap={{scale: 0.98}}
+          onClick={() => dispatch({ type: reducerType.SET_SELECTED_VIEW, payload: "History_tab" })}>
+            {state.selectedView === "History_tab" && <div className="selected"/>}
+            <h3>History</h3>
         </motion.div>
       </div>
 
       {
-          songMenuToOpen && (
+          state.songMenuToOpen && (
               <div className="HistoryUpcoming-ContextMenu-container" 
-              onMouseUp={() => {
-                  setSongMenuToOpen(null);
-                  setCoords({xPos: 0, yPos: 0});
-              }} 
-              onContextMenu={(e) => {
-                  e.preventDefault();
-                  setSongMenuToOpen(null);
-                  setCoords({xPos: 0, yPos: 0});
-              }}
-              >
+                onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                   <GeneralContextMenu 
-                      xPos={co_ords.xPos} 
-                      yPos={co_ords.yPos} 
-                      title={songMenuToOpen.name}
+                      xPos={state.co_ords.xPos} 
+                      yPos={state.co_ords.yPos} 
+                      title={state.songMenuToOpen.name}
                       CMtype={contextMenuEnum.SongCM}
                       chooseOption={chooseOption}/>
               </div>

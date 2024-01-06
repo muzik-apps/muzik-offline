@@ -99,8 +99,8 @@ const AllPlaylists = () => {
                 )
             }
             <div className="bottom_margin"/>
-            <CreatePlaylistModal isOpen={state.isPlaylistModalOpen} closeModal={() => closePropertiesModal(dispatch)}/>
-            <PropertiesModal isOpen={state.isPropertiesModalOpen} playlist={state.playlistMenuToOpen ? state.playlistMenuToOpen : undefined} closeModal={() => closePlaylistModal(dispatch)} />
+            <CreatePlaylistModal isOpen={state.isPlaylistModalOpen} closeModal={() => closePlaylistModal(dispatch)}/>
+            <PropertiesModal isOpen={state.isPropertiesModalOpen} playlist={state.playlistMenuToOpen ? state.playlistMenuToOpen : undefined} closeModal={() => closePropertiesModal(dispatch)}/>
         </motion.div>
     )
 }

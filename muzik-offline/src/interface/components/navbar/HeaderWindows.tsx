@@ -22,6 +22,7 @@ const HeaderWindows: FunctionComponent<HeaderWindowsProps> = (props: HeaderWindo
     const { setSearch } = useSearchStore((state) => { return { setSearch: state.setSearch}; });
 
     function captureSearch(e: React.ChangeEvent<HTMLInputElement>){ 
+        console.log(e.target.value);
         if(e.target.value === "enter")searchFor();
         else setSearchText(e.target.value); 
     }

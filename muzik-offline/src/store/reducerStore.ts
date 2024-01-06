@@ -1,4 +1,4 @@
-import { PlaylistViewInterface, SearchSongInterface } from './reducerTypes';
+import { PlaylistViewInterface, SearchSongInterface, UpcomingHistoryInterface } from './reducerTypes';
 import { Action, AlbumDetailsInterface, AllAlbumsInterface, AllTracksStateInterface,
     AllArtistsInterface, 
     reducerType, 
@@ -253,6 +253,25 @@ export const allPlaylistsReducer = (state: AllPlaylistsInterface, action: Action
         case reducerType.SET_PLAYLIST_MENU: return { ...state, playlistMenuToOpen: action.payload };
         case reducerType.SET_PLAYLIST_MODAL: return { ...state, isPlaylistModalOpen: action.payload };
         case reducerType.SET_PROPERTIES_MODAL: return { ...state, isPropertiesModalOpen: action.payload };
+        default: return state;
+    }
+};
+
+export const UpcomingHistoryState: UpcomingHistoryInterface = {
+    selectedView: "Upcoming_tab",
+    co_ords: { xPos: 0, yPos: 0 },
+    songMenuToOpen: null,
+    SongQueue: [],
+    SongHistory: [],
+};
+
+export const upcomingHistoryReducer = (state: UpcomingHistoryInterface, action: Action) => {
+    switch (action.type) {
+        case reducerType.SET_SELECTED_VIEW: return { ...state, selectedView: action.payload };
+        case reducerType.SET_COORDS: return { ...state, co_ords: action.payload };
+        case reducerType.SET_SONG_MENU: return { ...state, songMenuToOpen: action.payload };
+        case reducerType.SET_SONG_QUEUE: return { ...state, SongQueue: action.payload };
+        case reducerType.SET_SONG_HISTORY: return { ...state, SongHistory: action.payload };
         default: return state;
     }
 };
