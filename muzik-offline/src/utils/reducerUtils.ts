@@ -40,5 +40,24 @@ export function closeContextMenu( dispatch: React.Dispatch<Action>, e?: React.Mo
     }
     dispatch({ type: reducerType.SET_SONG_MENU, payload: null});
     dispatch({ type: reducerType.SET_ALBUM_MENU, payload: null});
+    dispatch({ type: reducerType.SET_ARTIST_MENU, payload: null});
+    dispatch({ type: reducerType.SET_GENRE_MENU, payload: null});
+    dispatch({ type: reducerType.SET_PLAYLIST_MENU, payload: null});
     dispatch({ type: reducerType.SET_COORDS, payload: {xPos: 0, yPos: 0}});
+}
+
+export function processArrowKeysInput(
+    ev: any, 
+    dispatch: React.Dispatch<Action>,
+    selected: number,
+    SongListLength: number
+){
+    if((selected === 1 || selected === 0) && ev.key === "ArrowUp"){
+        return;
+    }
+    else if(selected === SongListLength && ev.key === "ArrowDown"){
+        return;
+    }
+    else if(ev.key === "ArrowUp")selectThisSong(--selected, dispatch);
+    else if(ev.key === "ArrowDown")selectThisSong(++selected, dispatch);
 }

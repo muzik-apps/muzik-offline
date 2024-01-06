@@ -9,12 +9,13 @@ import { useNavigate } from "react-router-dom";
 import { AllTracksState, alltracksReducer, reducerType } from "store";
 import { addThisSongToPlayLater, addThisSongToPlayNext, playThisListNow, startPlayingNewSong } from "utils/playerControl";
 import "@styles/pages/AllTracks.scss";
-import { closeContextMenu, closePlaylistModal, closePropertiesModal, selectSortOption, selectThisSong, setOpenedDDM, setSongList } from "utils/reducerUtils";
+import { closeContextMenu, closePlaylistModal, closePropertiesModal, processArrowKeysInput, selectSortOption, selectThisSong, setOpenedDDM, setSongList } from "utils/reducerUtils";
 
 const AllTracks = () => {
     const [state , dispatch] = useReducer(alltracksReducer, AllTracksState);
     const navigate = useNavigate();
-    const ref = useRef<HTMLDivElement | null>(null);
+    const alltracksRef = useRef<any>(null);
+    const listRef = useRef<any>(null);
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         const matching_song = state.SongList.find(song => { return song.id === key; });
@@ -70,6 +71,26 @@ const AllTracks = () => {
         });
     }
 
+    function keyBoardShortCuts(ev: any){
+        if(ev.target.id !== "gsearch" && (ev.key === "ArrowUp" || ev.key === "ArrowDown")){
+            processArrowKeysInput(ev, dispatch, state.selected, state.SongList.length);
+            if(listRef.current)listRef.current.scrollToIndex({index: state.selected - 1});
+        }
+        else if(ev.target.id !== "gsearch" && state.selected >= 1 && state.selected <= state.SongList.length){
+            dispatch({type: reducerType.SET_SONG_MENU, payload: state.SongList[state.selected - 1]});
+            if(((ev.ctrlKey || ev.metaKey) && (ev.key === "p" || ev.key === "P" )) || ev.key === "Enter")chooseOption(contextMenuButtons.Play);
+            else if((ev.ctrlKey || ev.metaKey) && (ev.key === "i" || ev.key === "I"))chooseOption(contextMenuButtons.ShowInfo);
+            else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "a" || ev.key === "A"))chooseOption(contextMenuButtons.AddToPlaylist);
+            else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "n" || ev.key === "N"))chooseOption(contextMenuButtons.PlayNext);
+            else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "l" || ev.key === "L"))chooseOption(contextMenuButtons.PlayLater);
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener("keydown", keyBoardShortCuts);
+        return () => document.removeEventListener("keydown", keyBoardShortCuts);  
+    }, [state])
+
     useEffect(() => { setList(); }, [state.sort])
     
     return (
@@ -120,7 +141,7 @@ const AllTracks = () => {
                     <Shuffle />
                 </motion.div>
             </div>
-            <div className="AllTracks_container" ref={ref}>
+            <div className="AllTracks_container" ref={alltracksRef}>
                 {state.SongList.length === 0 && state.isloading === false && (
                     <h1>
                         it seems like you may not have added any songs yet.<br/>
@@ -129,7 +150,7 @@ const AllTracks = () => {
                     </h1>
                 )}
                 { state.isloading && <LoaderAnimated /> }
-                <ViewportList viewportRef={ref} items={state.SongList}>
+                <ViewportList viewportRef={alltracksRef} items={state.SongList} ref={listRef}>
                     {(song, index) => (
                         <RectangleSongBox 
                             key={song.id}
@@ -142,7 +163,12 @@ const AllTracks = () => {
                             year={song.year}
                             selected={state.selected === index + 1 ? true : false}
                             navigateTo={navigateTo}
-                            selectThisSong={(index) => selectThisSong(index, dispatch)}
+                            selectThisSong={(index) => {
+                                console.log("previous selected: ", state.selected );
+                                console.log("my index in the array is", index - 1);
+                                console.log("my selected is", index);
+                                selectThisSong(index, dispatch);
+                            }}
                             setMenuOpenData={setMenuOpenData}
                             playThisSong={playThisSong}/>
                     )}
@@ -150,7 +176,7 @@ const AllTracks = () => {
                 <div className="AllTracks_container_bottom_margin"/>
             </div>
             {
-                state.songMenuToOpen && (
+                state.songMenuToOpen && state.co_ords.xPos !== 0 && state.co_ords.yPos !== 0 && (
                     <div className="AllTracks-ContextMenu-container" 
                         onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 

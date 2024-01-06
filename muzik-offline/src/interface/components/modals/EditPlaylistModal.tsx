@@ -6,6 +6,7 @@ import "@styles/components/modals/EditPlaylistModal.scss";
 import { local_playlists_db } from '@database/database';
 import { invoke } from "@tauri-apps/api";
 import { useToastStore } from 'store';
+import { getRandomCover } from 'utils';
 
 type EditPlaylistModalProps = {
     playlistobj: playlist;
@@ -73,7 +74,7 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
                 <div className="playlist_image">
                     <div className="playlist_img">
                         {
-                            playlistObj.cover === null ? <NullCoverNull /> :
+                            playlistObj.cover === null ? (getRandomCover(playlistObj.key))() :
                             <img src={playlistObj.cover} alt="playlist_img"/>
                         }
                     </div>

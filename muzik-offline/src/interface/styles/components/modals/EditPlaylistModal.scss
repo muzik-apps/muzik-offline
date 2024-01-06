@@ -36,7 +36,7 @@
             .playlist_img{
                 width: 150px;
                 height: 150px;
-                border-radius: 50px;
+                border-radius: 40px;
                 overflow: hidden;
 
                 img{
@@ -89,7 +89,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            color: #131313;
+            color: $root-app-navigator-hover-col;
         }
 
         .edit_playlist:hover{

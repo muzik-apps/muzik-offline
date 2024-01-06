@@ -11,6 +11,17 @@ A cross platform, local music player that is an offline(no streaming) version of
 # I am a user/tester
 1. Navigate to the <a href="https://github.com/waveyboym/Muzik-offline/releases">releases tab</a> and find the latest app release for your operating system.
 2. Download it and install and enjoy the application
+3. Please read the <a href="#usage">usage</a> section for some extra information.
+
+# Usage
+1. Some shortcuts include
+    - <small><kbd>**`SPACE`**</kbd></small> - Pause/Play music 
+    - <small><kbd>**`CTRL/CMD`**</kbd> + <kbd>**`I`**</kbd></small> - Show song info 
+    - <small><kbd>**`UP`**</kbd></small> or <small><kbd>**`DOWN`**</kbd></small> - scroll song by song
+    - <small><kbd>**`CTRL/CMD`**</kbd> + <kbd>**`P`**</kbd></small> or <small><kbd>**`ENTER`**</kbd></small> - Play the selected song  
+    - <small><kbd>**`CTRL/CMD`**</kbd> + <kbd>**`SHIFT`**</kbd> + <kbd>**`A`**</kbd></small> - Add to playlist 
+    - <small><kbd>**`CTRL/CMD`**</kbd> + <kbd>**`SHIFT`**</kbd> + <kbd>**`L`**</kbd></small> - Play later 
+    - <small><kbd>**`CTRL/CMD`**</kbd> + <kbd>**`SHIFT`**</kbd> + <kbd>**`N`**</kbd></small> - Play Next 
 
 # I am a developer
 1. Download <a href="https://tauri.app/v1/guides/getting-started/prerequisites">the pre-requisites</a> for tauri only by following the pre-requisites page for your operating system.

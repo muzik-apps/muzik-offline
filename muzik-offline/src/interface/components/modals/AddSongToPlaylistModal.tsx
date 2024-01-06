@@ -4,6 +4,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { FunctionComponent } from "react";
 import { useToastStore } from "store";
 import "@styles/components/modals/AddSongToPlaylistModal.scss";
+import { getRandomCover } from "utils";
 
 type AddSongToPlaylistModalProps = {
     isOpen: boolean;
@@ -43,7 +44,9 @@ const AddSongToPlaylistModal: FunctionComponent<AddSongToPlaylistModalProps> = (
                         playlists.map(playlist => 
                             <div className="playlist" key={playlist.key} onClick={() => chooseThisPlaylist(playlist.key)}>
                                 <div className="playlist_img">
-                                    <img src={playlist.cover.startsWith("data:image/png;base64,") || playlist.cover.startsWith("data:image/jpeg;base64,") ? 
+                                    <img src={
+                                        playlist.cover === null ? getRandomCover(playlist.key) :
+                                        playlist.cover.startsWith("data:image/png;base64,") || playlist.cover.startsWith("data:image/jpeg;base64,") ? 
                                         playlist.cover :
                                         `data:image/png;base64,${playlist.cover}`} alt="playlist_img"/>
                                 </div>

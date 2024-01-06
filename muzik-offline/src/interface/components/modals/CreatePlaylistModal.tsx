@@ -1,4 +1,4 @@
-import { EditImage, NullCoverNull } from "@assets/icons";
+import { EditImage } from "@assets/icons";
 import { playlist, toastType } from "types";
 import { motion } from "framer-motion";
 import { FunctionComponent, useEffect, useState } from "react";
@@ -6,6 +6,7 @@ import { local_playlists_db } from "@database/database";
 import "@styles/components/modals/CreatePlaylistModal.scss";
 import { invoke } from "@tauri-apps/api";
 import { useToastStore } from "store";
+import { getRandomCover } from "utils";
 
 type CreatePlaylistModalProps = {
     isOpen: boolean;
@@ -14,6 +15,7 @@ type CreatePlaylistModalProps = {
 
 const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props: CreatePlaylistModalProps) => {
     const [playlistObj, setPlaylistObj] = useState<playlist>({key: 0,cover: null,title: "",dateCreated: "",dateEdited: "",tracksPaths: []});
+    const [randCover, setrandCover] = useState<number>(0);
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
 
     function uploadImg(e: React.ChangeEvent<HTMLInputElement>){
@@ -66,6 +68,7 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
     
     useEffect(() => {   
         setPlaylistObj({key: 0,cover: null,title: "",dateCreated: "",dateEdited: "",tracksPaths: []});
+        setrandCover(Math.floor(Math.random() * 10));
     }, [props.isOpen])
 
     return (
@@ -77,7 +80,7 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
                 <div className="playlist_image">
                     <div className="playlist_img">
                         {
-                            playlistObj.cover === null ? <NullCoverNull /> :
+                            playlistObj.cover === null ? (getRandomCover(randCover))() :
                             <img src={playlistObj.cover} alt="playlist_img"/>
                         }
                     </div>
