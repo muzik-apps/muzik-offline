@@ -1,4 +1,4 @@
-import { SquareTitleBox, GeneralContextMenu } from "@components/index";
+import { SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
 import { mouse_coOrds, contextMenuEnum, contextMenuButtons, album } from "types";
 import { useEffect, useState } from "react";
 import "@styles/layouts/SearchAlbums.scss";
@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 const SearchAlbums = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [albumMenuToOpen, setAlbumMenuToOpen] = useState<album | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
     const [albums, setAlbums] = useState<album[]>([]);
     const navigate = useNavigate();
@@ -29,7 +30,13 @@ const SearchAlbums = () => {
 
     useEffect(() => {
         const resetAlbums = () => {
-            local_albums_db.albums.where("title").startsWithIgnoreCase(query).toArray().then((res) => { setAlbums(res);});
+            setLoading(true);
+            const regex = new RegExp(query, 'i'); // 'i' flag for case-insensitive search
+            local_albums_db.albums.filter(item => {return regex.test(item.title)}).toArray()
+            .then((res) => { 
+                setAlbums(res);
+                setLoading(false);
+            });
         }
 
         resetAlbums();
@@ -37,6 +44,14 @@ const SearchAlbums = () => {
 
     return (
         <div className="SearchAlbums">
+            {albums.length === 0 && loading === false && (
+                <h6>
+                    it seems like you may not have added any songs yet.<br/>
+                    To add songs, click on the settings button above, scroll down <br/>
+                    and click on "click here to change directories". <br/>
+                </h6>
+            )}
+            { loading && <LoaderAnimated /> }
             <div className="SearchAlbums-container">
                     {albums.map((album) => 
                         <SquareTitleBox 

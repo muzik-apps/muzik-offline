@@ -1,7 +1,7 @@
 import "@styles/components/navbar/Header.scss";
 import { Prev_page, Next_page, Search, Cross, Empty_user } from "@icons/index";
 import { motion } from "framer-motion";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { App_logo } from "@logos/index";
 import { useSearchStore } from "store";
@@ -17,7 +17,7 @@ const HeaderLinuxOS: FunctionComponent<HeaderLinuxOSProps> = (props: HeaderLinux
     const { setSearch } = useSearchStore((state) => { return { setSearch: state.setSearch}; });
 
     function captureSearch(e: React.ChangeEvent<HTMLInputElement>){
-        if(e.target.value === "enter")searchFor();
+        if(e.target.value === "Enter")searchFor();
         else setSearchText(e.target.value); 
     }
 
@@ -27,6 +27,24 @@ const HeaderLinuxOS: FunctionComponent<HeaderLinuxOSProps> = (props: HeaderLinux
         setSearchText("");
         setSearch("");
     }
+
+    function detectKey(e: any){
+        if(e.ctrlKey && e.shiftKey && e.code === "KeyF"){
+            e.preventDefault(); 
+            props.toggleSettings();
+        }
+        else if(e.ctrlKey && e.code === "KeyS"){
+            e.preventDefault();
+            const searchbar: HTMLElement | null = document.getElementById("gsearch");
+            if(searchbar)searchbar.focus();
+        }
+        else if(e.code === "Enter")searchFor();
+    }
+
+    useEffect(() => {
+        document.addEventListener("keypress", detectKey);
+        return () => document.removeEventListener("keypress", detectKey);
+    }, [searchText, props.toggleSettings])
     
     return (
         <div className="Header">

@@ -74,7 +74,7 @@ const AllTracks = () => {
     function keyBoardShortCuts(ev: any){
         if(ev.target.id !== "gsearch" && (ev.key === "ArrowUp" || ev.key === "ArrowDown")){
             processArrowKeysInput(ev, dispatch, state.selected, state.SongList.length);
-            if(listRef.current)listRef.current.scrollToIndex({index: state.selected - 1});
+            if(listRef.current)listRef.current.scrollToIndex({index: state.selected - 1, offset: 3});
         }
         else if(ev.target.id !== "gsearch" && state.selected >= 1 && state.selected <= state.SongList.length){
             dispatch({type: reducerType.SET_SONG_MENU, payload: state.SongList[state.selected - 1]});
@@ -163,12 +163,7 @@ const AllTracks = () => {
                             year={song.year}
                             selected={state.selected === index + 1 ? true : false}
                             navigateTo={navigateTo}
-                            selectThisSong={(index) => {
-                                console.log("previous selected: ", state.selected );
-                                console.log("my index in the array is", index - 1);
-                                console.log("my selected is", index);
-                                selectThisSong(index, dispatch);
-                            }}
+                            selectThisSong={(index) => selectThisSong(index, dispatch)}
                             setMenuOpenData={setMenuOpenData}
                             playThisSong={playThisSong}/>
                     )}

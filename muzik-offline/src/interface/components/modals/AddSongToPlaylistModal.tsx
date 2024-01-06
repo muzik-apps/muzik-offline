@@ -44,11 +44,15 @@ const AddSongToPlaylistModal: FunctionComponent<AddSongToPlaylistModalProps> = (
                         playlists.map(playlist => 
                             <div className="playlist" key={playlist.key} onClick={() => chooseThisPlaylist(playlist.key)}>
                                 <div className="playlist_img">
-                                    <img src={
-                                        playlist.cover === null ? getRandomCover(playlist.key) :
+                                {
+                                playlist.cover === null ? 
+                                    (getRandomCover(playlist.key))() 
+                                :
+                                    (<img src={
                                         playlist.cover.startsWith("data:image/png;base64,") || playlist.cover.startsWith("data:image/jpeg;base64,") ? 
                                         playlist.cover :
-                                        `data:image/png;base64,${playlist.cover}`} alt="playlist_img"/>
+                                        `data:image/png;base64,${playlist.cover}`} alt="playlist_img"/>)
+                                 }
                                 </div>
                                 <h2>{playlist.title}</h2>
                             </div>

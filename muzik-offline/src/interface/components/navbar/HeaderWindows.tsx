@@ -21,17 +21,26 @@ const HeaderWindows: FunctionComponent<HeaderWindowsProps> = (props: HeaderWindo
     const [searchText, setSearchText] = useState<string>("");
     const { setSearch } = useSearchStore((state) => { return { setSearch: state.setSearch}; });
 
-    function captureSearch(e: React.ChangeEvent<HTMLInputElement>){ 
-        console.log(e.target.value);
-        if(e.target.value === "enter")searchFor();
-        else setSearchText(e.target.value); 
-    }
+    function captureSearch(e: any){setSearchText(e.target.value);}
 
     function searchFor(){ setSearch(searchText); }
 
     function clearSearch(){
         setSearchText("");
         setSearch("");
+    }
+
+    function detectKey(e: any){
+        if(e.ctrlKey && e.shiftKey && e.code === "KeyF"){
+            e.preventDefault(); 
+            props.toggleSettings();
+        }
+        else if(e.ctrlKey && e.code === "KeyS"){
+            e.preventDefault();
+            const searchbar: HTMLElement | null = document.getElementById("gsearch");
+            if(searchbar)searchbar.focus();
+        }
+        else if(e.code === "Enter")searchFor();
     }
     
     useEffect(() => {
@@ -72,6 +81,11 @@ const HeaderWindows: FunctionComponent<HeaderWindowsProps> = (props: HeaderWindo
             if(closeID)closeID.removeEventListener('click', () => appWindow.close());
         };
     }, [])
+
+    useEffect(() => {
+        document.addEventListener("keypress", detectKey);
+        return () => document.removeEventListener("keypress", detectKey);
+    }, [searchText, props.toggleSettings])
     
     return (
         <div data-tauri-drag-region className="Header">

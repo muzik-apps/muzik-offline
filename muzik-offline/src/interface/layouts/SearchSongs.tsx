@@ -1,4 +1,4 @@
-import { RectangleSongBox, GeneralContextMenu, AddSongToPlaylistModal, PropertiesModal } from "@components/index";
+import { RectangleSongBox, GeneralContextMenu, AddSongToPlaylistModal, PropertiesModal, LoaderAnimated } from "@components/index";
 import { contextMenuEnum, contextMenuButtons } from "types";
 import { useRef, useEffect, useReducer } from "react";
 import "@styles/layouts/SearchSongs.scss";
@@ -65,7 +65,14 @@ const SearchSongs = () => {
 
     useEffect(() => {
         const resetSongLists = () => {
-            local_songs_db.songs.where("name").startsWithIgnoreCase(query).toArray().then((list) => { setSongList(list, dispatch);;});
+            dispatch({ type: reducerType.SET_LOADING, payload: true});
+            const regex = new RegExp(query, 'i'); // 'i' flag for case-insensitive search
+            local_songs_db.songs.filter(item => {return regex.test(item.name)}).toArray()
+            .then((list) => {
+                    setSongList(list, dispatch);
+                    dispatch({ type: reducerType.SET_LOADING, payload: false});
+                }
+            );
         }
 
         resetSongLists();
@@ -74,6 +81,14 @@ const SearchSongs = () => {
     return (
         <div className="SearchSongs">
             <div className="SearchSongs-container" ref={ref}>
+                {state.SongList.length === 0 && state.isloading === false && (
+                    <h1>
+                        it seems like you may not have added any songs yet.<br/>
+                        To add songs, click on the settings button above, scroll down <br/>
+                        and click on "click here to change directories". <br/>
+                    </h1>
+                )}
+                { state.isloading && <LoaderAnimated /> }
                 <ViewportList viewportRef={ref} items={state.SongList}>
                     {(song, index) => (
                         <RectangleSongBox 
