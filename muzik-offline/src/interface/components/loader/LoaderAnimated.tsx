@@ -1,6 +1,7 @@
-import { BarsAnimated } from '@assets/icons';
+//import { BarsAnimated } from '@assets/icons';
 import { motion } from 'framer-motion';
 import "@styles/components/loader/LoaderAnimated.scss";
+import { AppLogo } from '@assets/logos';
 
 const LoaderAnimated = () => {
     return (
@@ -17,7 +18,7 @@ const LoaderAnimated = () => {
                         repeatType: "reverse",
                         repeatDelay: 1
                     }}>
-                        <BarsAnimated />
+                        <AppLogo/>
                 </motion.div>
             </div>
             <h2>Loading...</h2>

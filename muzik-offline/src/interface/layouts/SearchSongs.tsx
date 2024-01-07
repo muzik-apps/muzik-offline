@@ -82,11 +82,7 @@ const SearchSongs = () => {
         <div className="SearchSongs">
             <div className="SearchSongs-container" ref={ref}>
                 {state.SongList.length === 0 && state.isloading === false && (
-                    <h1>
-                        it seems like you may not have added any songs yet.<br/>
-                        To add songs, click on the settings button above, scroll down <br/>
-                        and click on "click here to change directories". <br/>
-                    </h1>
+                    <h6>no songs found that match "{query}"</h6>
                 )}
                 { state.isloading && <LoaderAnimated /> }
                 <ViewportList viewportRef={ref} items={state.SongList}>

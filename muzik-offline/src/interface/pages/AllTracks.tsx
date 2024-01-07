@@ -74,7 +74,7 @@ const AllTracks = () => {
     function keyBoardShortCuts(ev: any){
         if(ev.target.id !== "gsearch" && (ev.key === "ArrowUp" || ev.key === "ArrowDown")){
             processArrowKeysInput(ev, dispatch, state.selected, state.SongList.length);
-            if(listRef.current)listRef.current.scrollToIndex({index: state.selected - 1, offset: 3});
+            if(listRef.current)listRef.current.scrollToIndex({index: state.selected - 1, offset: 5});
         }
         else if(ev.target.id !== "gsearch" && state.selected >= 1 && state.selected <= state.SongList.length){
             dispatch({type: reducerType.SET_SONG_MENU, payload: state.SongList[state.selected - 1]});

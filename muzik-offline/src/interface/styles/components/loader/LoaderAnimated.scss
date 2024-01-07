@@ -9,15 +9,17 @@
     justify-content: center;
 
     .animation-container{
-        width: 148.5px;
-        height: 154px;
+        width: 150px;
+        height: 111px;
         display: flex;
         align-items: center;
         justify-content: center;
         
         .svg-container{
-            width: 81px;
-            height: 84px;
+            //width: 81px;
+            //height: 84px;
+            width: 140px;
+            height: 104px;
             svg{
                 fill: $app-theme-col;
                 width: 100%;

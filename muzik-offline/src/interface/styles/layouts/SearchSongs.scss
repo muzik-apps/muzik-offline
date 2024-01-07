@@ -3,6 +3,11 @@
 .SearchSongs{
     margin-top: 20px;
     .SearchSongs-container{
+        h6{
+            width: 100%;
+            text-align: center;
+            font-size: 20px;
+        }
         height: calc(100vh - 125px);
         width: 100%;
         overflow-y: scroll;

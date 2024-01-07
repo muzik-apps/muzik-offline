@@ -45,11 +45,7 @@ const SearchAlbums = () => {
     return (
         <div className="SearchAlbums">
             {albums.length === 0 && loading === false && (
-                <h6>
-                    it seems like you may not have added any songs yet.<br/>
-                    To add songs, click on the settings button above, scroll down <br/>
-                    and click on "click here to change directories". <br/>
-                </h6>
+                <h6>no albums found that match "{query}"</h6>
             )}
             { loading && <LoaderAnimated /> }
             <div className="SearchAlbums-container">
