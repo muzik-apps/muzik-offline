@@ -113,12 +113,26 @@ const PropertiesModal = (props: PropertiesModalProps) => {
                 }
                 { props.playlist &&
                     <div className="playlist_songs_paths">
-                        <div className="properties_grid_item">
-                            <h3>Name</h3>
-                            <p>{props.playlist.title}</p>
+                        <div className="playlist_metadata">
+                            <div className="properties_grid_item">
+                                <h3>Name</h3>
+                                <p>{props.playlist.title}</p>
+                            </div>
+                            <div className="properties_grid_item">
+                                <h3>Date created</h3>
+                                <p>{props.playlist.dateCreated}</p>
+                            </div>
+                            <div className="properties_grid_item">
+                                <h3>Date edited</h3>
+                                <p>{props.playlist.dateEdited}</p>
+                            </div>
                         </div>
                         <h3>Playlist songs paths</h3>
                         <div className="playlist_songs_paths_list">
+                            {
+                                props.playlist.tracksPaths.length === 0 &&
+                                <p>There are no songs in this playlist</p>
+                            }
                             {
                                 props.playlist.tracksPaths.map((trackPath, index) => 
                                     <div className="playlist_songs_paths_list_item" key={index}>

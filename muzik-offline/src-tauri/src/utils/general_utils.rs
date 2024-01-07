@@ -62,11 +62,48 @@ pub fn resize_and_compress_image(original_data: &Vec<u8>, target_height: &u32) -
 }
 
 pub fn encode_image_in_parallel(image_as_vec: &Vec<u8>) -> String{
-    let base64str = image_as_vec.par_chunks(51) // Chunk size must always be a multiple of 3 otherwise it will not work
+    let base64str = image_as_vec
+        .par_chunks(51) // Chunk size must always be a multiple of 3 otherwise it will not work
         .map(|chunk| general_purpose::STANDARD.encode(chunk))
         .collect::<Vec<_>>()
         .concat();
     return base64str;
+    /*
+    FURTHER EXPLANATION FOR CHUNK SIZES:
+    This could potentially cause issues because the base64 encoding process involves 
+    converting 3 bytes(each u8 in the image_as_vec is a byte) of input data into 4 bytes of output data. If a chunk doesn’t 
+    contain a multiple of 3 bytes, the base64 encoding for that chunk will be padded 
+    with one or two “=” characters. When you concatenate the encoded chunks, these 
+    padding characters could end up in the middle of the final base64 string, 
+    which would make it invalid.
+
+    additionally seeing “=” characters scattered in the middle of a Base64 string is not a good sign.
+    In Base64 encoding, “=” is used as a padding character and should only appear at the end of the encoded string. 
+    If you’re seeing “=” characters in the middle of your Base64 string, 
+    it suggests that something has gone wrong with the encoding process.
+     */
+}
+
+pub fn decode_image_in_parallel(image_as_string: &String) -> Result<Vec<u8>, String>{
+    let base64str = image_as_string.as_bytes();
+    let decoded_image = base64str
+        .par_chunks(68) // Chunk size must always be a multiple of 4 otherwise it will not work
+        .map(|chunk| general_purpose::STANDARD.decode(chunk))
+        .collect::<Vec<_>>();
+
+    let mut returnable = Vec::new();
+    for chunk in decoded_image.iter(){
+        match chunk{
+            Ok(chunk) => {
+                returnable.extend(chunk);
+            },
+            Err(e) => {
+                return Err(e.to_string());
+            }
+        }
+    }
+
+    return Ok(returnable);
     /*
     FURTHER EXPLANATION FOR CHUNK SIZES:
     This could potentially cause issues because the base64 encoding process involves 

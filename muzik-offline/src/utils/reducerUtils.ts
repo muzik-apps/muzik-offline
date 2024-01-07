@@ -31,6 +31,7 @@ export function closePlaylistModal(dispatch: React.Dispatch<Action>){
 export function closePropertiesModal(dispatch: React.Dispatch<Action>){
     dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: false });
     dispatch({ type: reducerType.SET_SONG_MENU, payload: null});
+    dispatch({ type: reducerType.SET_PLAYLIST_MENU, payload: null});
 }
 
 export function closeContextMenu( dispatch: React.Dispatch<Action>, e?: React.MouseEvent<HTMLDivElement, MouseEvent>,){

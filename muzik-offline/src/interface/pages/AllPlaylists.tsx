@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useReducer } from "react";
-import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, CreatePlaylistModal, PropertiesModal } from "@components/index";
+import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, CreatePlaylistModal, PropertiesModal, LoaderAnimated } from "@components/index";
 import { ChevronDown, Menu } from "@assets/icons";
 import "@styles/pages/AllPlaylists.scss";
 import { contextMenuButtons, contextMenuEnum } from "types";
@@ -74,6 +74,14 @@ const AllPlaylists = () => {
                     <Menu />
                 </motion.div>
             </div>
+            {state.playlistList.length === 0 && state.isloading === false && (
+                <h6>
+                    it seems like you may not have added any songs yet.<br/>
+                    To add songs, click on the settings button above, scroll down <br/>
+                    and click on "click here to change directories". <br/>
+                </h6>
+            )}
+            { state.isloading && <LoaderAnimated /> }
             <div className="AllPlaylists_container">
                     {state.playlistList.map((playlist) =>
                         <SquareTitleBox 

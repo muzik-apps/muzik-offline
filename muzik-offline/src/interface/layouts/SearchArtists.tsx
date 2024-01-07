@@ -1,4 +1,4 @@
-import { SquareTitleBox, GeneralContextMenu } from "@components/index";
+import { SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
 import { mouse_coOrds, contextMenuEnum, contextMenuButtons, artist } from "types";
 import { useEffect, useState } from "react";
 import "@styles/layouts/SearchArtists.scss";
@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 const SearchArtists = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
+    const [loading, setLoading] = useState<boolean>(false);
     const [artistMenuToOpen, setArtistMenuToOpen] = useState<artist | null>(null);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
     const [artists, setArtists] = useState<artist[]>([]);
@@ -29,7 +30,13 @@ const SearchArtists = () => {
 
     useEffect(() => {
         const resetArtists = () => {
-            local_artists_db.artists.where("artist_name").startsWithIgnoreCase(query).toArray().then((res) => { setArtists(res);});
+            setLoading(true);
+            const regex = new RegExp(query, 'i'); // 'i' flag for case-insensitive search
+            local_artists_db.artists.filter(item => {return regex.test(item.artist_name)}).toArray()
+            .then((res) => { 
+                setArtists(res);
+                setLoading(false);
+            });
         }
 
         resetArtists();
@@ -37,6 +44,10 @@ const SearchArtists = () => {
 
     return (
         <div className="SearchArtists">
+            {artists.length === 0 && loading === false && (
+                <h6>no artists found that match "{query}"</h6>
+            )}
+            { loading && <LoaderAnimated /> }
             <div className="SearchArtists-container">
                     {artists.map((artist) => 
                         <SquareTitleBox 
@@ -65,7 +76,7 @@ const SearchArtists = () => {
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
                             title={artistMenuToOpen.artist_name}
-                            CMtype={contextMenuEnum.PlaylistCM}
+                            CMtype={contextMenuEnum.ArtistCM}
                             chooseOption={chooseOption}/>
                     </div>
                 )

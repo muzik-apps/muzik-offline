@@ -1,6 +1,5 @@
 use std::process::Command;
-use crate::utils::general_utils::{resize_and_compress_image, encode_image_in_parallel};
-use base64::{Engine as _, engine::general_purpose};
+use crate::utils::general_utils::{resize_and_compress_image, encode_image_in_parallel, decode_image_in_parallel};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 //#[tauri::command]
@@ -17,7 +16,7 @@ pub fn open_in_file_manager(file_path: &str) {
 
 #[tauri::command]
 pub async fn resize_frontend_image_to_fixed_height(image_as_str: String, height: u32) -> Result<String, String> {
-    match general_purpose::STANDARD.decode(image_as_str){
+    match decode_image_in_parallel(&image_as_str){
         Ok(image) => {
             match resize_and_compress_image(&image, &height as &u32){
                 Some(resized_image) => {
@@ -40,8 +39,12 @@ fn open_file_at(file_path: &str) {
         .arg( file_path ) // <- Specify the directory you'd like to open.
         .spawn( )
     {
-        Ok(_) => {},
-        Err(_) => {},
+        Ok(_) => {
+
+        },
+        Err(_) => {
+            
+        },
     }
 }
 
@@ -51,8 +54,12 @@ fn open_file_at(file_path: &str) {
         .arg( file_path ) // <- Specify the directory you'd like to open.
         .spawn( )
     {
-        Ok(_) => {},
-        Err(_) => {},
+        Ok(_) => {
+
+        },
+        Err(_) => {
+
+        },
     }
 }
 
@@ -62,7 +69,11 @@ fn open_file_at(file_path: &str) {
         .arg( file_path ) // <- Specify the directory you'd like to open.
         .spawn( )
     {
-        Ok(_) => {},
-        Err(_) => {},
+        Ok(_) => {
+
+        },
+        Err(_) => {
+
+        },
     }
 }

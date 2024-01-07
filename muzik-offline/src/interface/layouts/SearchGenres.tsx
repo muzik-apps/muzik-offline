@@ -1,4 +1,4 @@
-import { SquareTitleBox, GeneralContextMenu } from "@components/index";
+import { SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
 import { mouse_coOrds, contextMenuEnum, contextMenuButtons, genre } from "types";
 import { useEffect, useState } from "react";
 import "@styles/layouts/SearchGenres.scss";
@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 const SearchGenres = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
+    const [loading, setLoading] = useState<boolean>(false);
     const [genreMenuToOpen, setGenreMenuToOpen] = useState<genre | null>(null);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
     const [genres, setGenres] = useState<genre[]>([]);
@@ -31,7 +32,13 @@ const SearchGenres = () => {
 
     useEffect(() => {
         const resetGenres = () => {
-            local_genres_db.genres.where("title").startsWithIgnoreCase(query).toArray().then((res) => { setGenres(res);});
+            setLoading(true);
+            const regex = new RegExp(query, 'i'); // 'i' flag for case-insensitive search
+            local_genres_db.genres.filter(item => {return regex.test(item.title)}).toArray()
+            .then((res) => { 
+                setGenres(res);
+                setLoading(false);
+            });
         }
 
         resetGenres();
@@ -39,6 +46,10 @@ const SearchGenres = () => {
 
     return (
         <div className="SearchGenres">
+            {genres.length === 0 && loading === false && (
+                <h6>no genres found that match "{query}"</h6>
+            )}
+            { loading && <LoaderAnimated /> }
             <div className="SearchGenres-container">
                     {genres.map((genre) =>
                         <SquareTitleBox 
@@ -67,7 +78,7 @@ const SearchGenres = () => {
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
                             title={genreMenuToOpen.title}
-                            CMtype={contextMenuEnum.PlaylistCM}
+                            CMtype={contextMenuEnum.GenreCM}
                             chooseOption={chooseOption}/>
                     </div>
                 )

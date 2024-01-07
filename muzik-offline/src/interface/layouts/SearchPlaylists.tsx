@@ -1,4 +1,4 @@
-import { SquareTitleBox, GeneralContextMenu } from "@components/index";
+import { SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
 import { playlist, mouse_coOrds, contextMenuEnum, contextMenuButtons } from "types";
 import { useEffect, useState } from "react";
 import "@styles/layouts/SearchPlaylists.scss";
@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 const SearchPlaylists = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
+    const [loading, setLoading] = useState<boolean>(false);
     const [playlistMenuToOpen, setPlaylistMenuToOpen] = useState<playlist | null>(null);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
     const [playlists, setPlaylists] = useState<playlist[]>([]);
@@ -30,7 +31,13 @@ const SearchPlaylists = () => {
 
     useEffect(() => {
         const resetPlaylists = () => {
-            local_playlists_db.playlists.where("title").startsWithIgnoreCase(query).toArray().then((res) => { setPlaylists(res);});
+            setLoading(true);
+            const regex = new RegExp(query, 'i'); // 'i' flag for case-insensitive search
+            local_playlists_db.playlists.filter(item => {return regex.test(item.title)}).toArray()
+            .then((res) => { 
+                setPlaylists(res);
+                setLoading(false);
+            });
         }
 
         resetPlaylists();
@@ -38,6 +45,10 @@ const SearchPlaylists = () => {
 
     return (
         <div className="SearchPlaylists">
+            {playlists.length === 0 && loading === false && (
+                <h6>no playlists found that match "{query}"</h6>
+            )}
+            { loading && <LoaderAnimated /> }
             <div className="SearchPlaylists-container">
                     {playlists.map((playlist) => 
                         <SquareTitleBox 

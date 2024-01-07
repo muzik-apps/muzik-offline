@@ -59,6 +59,7 @@ const SearchAlbums = () => {
                         setMenuOpenData={setMenuOpenData}/>
                     )}
             </div>
+            
             {
                 albumMenuToOpen && (
                     <div className="SearchAlbums-ContextMenu-container" 
@@ -76,7 +77,7 @@ const SearchAlbums = () => {
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
                             title={albumMenuToOpen.title}
-                            CMtype={contextMenuEnum.PlaylistCM}
+                            CMtype={contextMenuEnum.AlbumCM}
                             chooseOption={chooseOption}/>
                     </div>
                 )

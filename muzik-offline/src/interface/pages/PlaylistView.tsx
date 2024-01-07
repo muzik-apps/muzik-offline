@@ -65,6 +65,19 @@ const PlaylistView = () => {
         else if(state.resizeHeader === false)dispatch({ type: reducerType.SET_RESIZE_HEADER, payload: true});
     };
 
+    async function closeModalAndResetData(){
+        dispatch({ type: reducerType.SET_EDIT_PLAYLIST_MODAL, payload: false});
+        const playlistres = await local_playlists_db.playlists.where("key").equals(state.playlist_metadata.key).toArray();
+        if(playlistres.length !== 1)return;
+        dispatch({ type: reducerType.SET_PLAYLIST_METADATA, payload: {
+            key: state.playlist_metadata.key,
+            cover: playlistres[0].cover, playlistName: playlistres[0].title,
+            song_count: state.playlist_metadata.song_count,
+            length: state.playlist_metadata.length
+            }
+        });
+    }
+
     async function setPlaylistSongs(){
         if(playlist_key === undefined)return;
         const playlistres = await local_playlists_db.playlists.where("key").equals(Number.parseInt(playlist_key)).toArray();
@@ -170,8 +183,7 @@ const PlaylistView = () => {
             }
             <EditPlaylistModal 
                 playlistobj={{key: state.playlist_metadata.key, cover: state.playlist_metadata.cover, title: state.playlist_metadata.playlistName, dateCreated: "", dateEdited: "", tracksPaths: []}}
-                isOpen={state.isEditingPlayListModalOpen} 
-                closeModal={() => dispatch({ type: reducerType.SET_EDIT_PLAYLIST_MODAL, payload: false})}/>
+                isOpen={state.isEditingPlayListModalOpen} closeModal={closeModalAndResetData}/>
             <AddSongToPlaylistModal isOpen={state.isPlaylistModalOpen} songPath={state.songMenuToOpen ? state.songMenuToOpen.path : ""} closeModal={() => closePlaylistModal(dispatch)} />
             <PropertiesModal isOpen={state.isPropertiesModalOpen} song={state.songMenuToOpen ? state.songMenuToOpen : undefined} closeModal={() => closePlaylistModal(dispatch)} />
         </motion.div>

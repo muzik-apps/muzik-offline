@@ -15,8 +15,7 @@ const LoaderAnimated = () => {
                         duration: 1,
                         ease: "easeInOut",
                         repeat: Infinity,
-                        repeatType: "reverse",
-                        repeatDelay: 1
+                        repeatType: "reverse"
                     }}>
                         <AppLogo/>
                 </motion.div>

@@ -73,19 +73,23 @@
         .playlist_songs_paths{
             width: 100%;
             height: 100%;
-            .properties_grid_item{
-                h3{
-                    font-size: 16px;
-                }
+            p{
+                font-size: 12px;
+            }
 
-                p{
-                    font-size: 12px;
+            .playlist_metadata{
+                display: flex;
+                .properties_grid_item{
+                    margin-right: 20px;
+                    width: fit-content;
+                    h3{
+                        font-size: 16px;
+                    }
                 }
             }
 
             .playlist_songs_paths_list{
                 width: 100%;
-                height: calc(100% - 40px);
                 overflow-y: auto;
                 .playlist_songs_paths_list_item{
                     p{

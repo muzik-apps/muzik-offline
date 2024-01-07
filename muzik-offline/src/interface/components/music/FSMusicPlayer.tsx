@@ -14,8 +14,8 @@ type FSMusicPlayerProps = {
 }
 
 const variants={
-    open: {bottom: "-10vh", scale: 1, opacity: 1},
-    closed: {bottom: "-110vh", scale: 0.7, opacity: 0},
+    open: {bottom: "-10vh", scale: 1, borderRadius: "0px"},
+    closed: {bottom: "-110vh", scale: 0.7, borderRadius: "100px"},
 }
 
 const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlayerProps) => {
