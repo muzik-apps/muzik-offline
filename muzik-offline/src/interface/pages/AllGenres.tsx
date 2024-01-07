@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useReducer } from "react";
-import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu } from "@components/index";
+import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
 import { ChevronDown } from "@assets/icons";
 import "@styles/pages/AllGenres.scss";
 import { contextMenuEnum, contextMenuButtons } from "types";
@@ -72,6 +72,14 @@ const AllGenres = () => {
                     </div>
                 </div>
             </div>
+            {state.genreList.length === 0 && state.isloading === false && (
+                <h6>
+                    it seems like you may not have added any songs yet.<br/>
+                    To add songs, click on the settings button above, scroll down <br/>
+                    and click on "click here to change directories". <br/>
+                </h6>
+            )}
+            { state.isloading && <LoaderAnimated /> }
             <div className="AllGenres_container">
                     {state.genreList.map((genre) =>
                         <SquareTitleBox 

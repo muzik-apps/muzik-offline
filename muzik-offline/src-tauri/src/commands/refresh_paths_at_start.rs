@@ -6,3 +6,5 @@
 //pub fn refresh_paths(paths_as_json_array: String, compress_image_option: bool) -> String {
 //    return String::from("");
 //}
+
+//use https://crates.io/crates/dirs to scan the users computer for audio in the audio directory and add it to the library

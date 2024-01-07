@@ -41,6 +41,7 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
                 if(permissionGranted)sendNotification({ title: 'Loading songs...', body: message });
             })
             .catch(async(_error) => {
+                console.log(_error);
                 setToast({title: "Loading songs...", message: "Failed to load all the songs in the paths specified", type: toastType.error, timeout: 5000});
                 const permissionGranted = await isPermissionGranted();
                 if (permissionGranted) {
@@ -105,7 +106,7 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
         if(res.status === "error")message = res.message;
         else message = "Successfully refreshed your library";
 
-        setToast({title: "Refresh library...", message: message, type: toastType.success, timeout: 5000});
+        setToast({title: "Refresh library...", message: message, type: res.status === "error" ? toastType.error : toastType.success, timeout: 5000});
         const permissionGranted = await isPermissionGranted();
         if(permissionGranted)sendNotification({ title: 'Refresh library...', body: message });
     }

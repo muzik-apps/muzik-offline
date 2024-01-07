@@ -1,4 +1,6 @@
 use sled::{Db, Tree};
+use std::path::PathBuf;
+use dirs::home_dir;
 
 pub struct DbManager{
     pub db: Db,
@@ -10,7 +12,14 @@ pub struct DbManager{
 
 impl DbManager{
     pub fn new() -> Result<Self, String> {
-        let db: Db = sled::open("db").map_err(|e| e.to_string())?;
+        let mut db_path = PathBuf::new();
+        match home_dir() {
+            Some(path) => db_path.push(path),
+            None => return Err("Could not find home directory".to_string()),
+        }
+        db_path.push("muzik-offline-local-data");
+        db_path.push("db");
+        let db: Db = sled::open(db_path).map_err(|e| e.to_string())?;
         let song_tree: Tree = db.open_tree(b"songs").map_err(|e| e.to_string())?;
         let album_tree: Tree = db.open_tree(b"albums").map_err(|e| e.to_string())?;
         let artist_tree: Tree = db.open_tree(b"artists").map_err(|e| e.to_string())?;
