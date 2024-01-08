@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import "@styles/components/music/FSMusicPlayer.scss";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, Suspense, useState, useEffect } from "react";
 import { appWindow } from '@tauri-apps/api/window';
 import { HistoryUpcoming, MainMusicPlayer } from "@components/index";
 import { OSTYPEenum } from "types";
@@ -22,6 +22,7 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
 
     const [wasMaximized, setMaximized] = useState<boolean>(false);
     const [appFS, setappFS] = useState<boolean>(false);
+    const [isDoneOpening, setIsDoneOpening] = useState<boolean>(false);
     const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
     const {Player} = usePlayerStore((state) => { return { Player: state.Player}; });
 
@@ -47,6 +48,14 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
         }
     }
 
+    useEffect(() => {
+        if(props.openPlayer === true){
+            const delay = setTimeout(() => { setIsDoneOpening(true); }, 290);
+            return () => clearTimeout(delay);
+        }
+        else setIsDoneOpening(false);
+    }, [props.openPlayer])
+
     return (
         <motion.div className="FSMusicPlayer"
             animate={props.openPlayer ? "open" : "closed"}
@@ -54,24 +63,15 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
             transition={(local_store.OStype === OSTYPEenum.Linux || !local_store.Animations) ? {} : { type: "spring", stiffness: 100, damping: 14 }}>
                 <div className="FSMusicPlayer-container">
                     <div className="background-img">
-                        {props.openPlayer && local_store.Animations ? 
-                            (<motion.div 
-                                className="image-container"
-                                animate={{ rotate: 360 }}
-                                transition={{ ease: "linear", duration: 40, repeat: Infinity, repeatType: "reverse"}}>
-                                    {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
-                                    {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" />)}{/**there is cover art */}
-                                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
-                            </motion.div>)
-                        : props.openPlayer && !local_store.Animations ?
-                            <div className="image-container">
-                                {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
-                                {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" />)}{/**there is cover art */}
-                                {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
-                            </div>
-                        :
-                            <></>
-                        }
+                        {props.openPlayer && isDoneOpening &&
+                            <div className={"image-container" + (local_store.Animations ? " rotate" : "")}>
+                                {!Player.playingSongMetadata && <NullCoverNull />}
+                                {/**no song is loaded onto the player */}
+                                {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" loading="lazy"/>)}
+                                {/**there is cover art */}
+                                {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}
+                                {/**the cover art is null */}
+                            </div>}
                     </div>
                     <div className="frontward_facing_player">
                         <div className="navbar_buttons">
@@ -90,14 +90,17 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
                                 }
                             </motion.div> 
                         </div>
-                        {
-                            props.openPlayer && 
+                        {props.openPlayer && isDoneOpening &&
                                 <div className="main_visible_content">
                                     <div className="main_player">
-                                        <MainMusicPlayer />
+                                        <Suspense fallback={<div>Loading...</div>}>
+                                            <MainMusicPlayer />
+                                        </Suspense>
                                     </div>
                                     <div className="lyrics_history_upcoming">
-                                        <HistoryUpcoming closePlayer={props.closePlayer} />
+                                        <Suspense fallback={<div>Loading...</div>}>
+                                            <HistoryUpcoming closePlayer={props.closePlayer} />
+                                        </Suspense>
                                     </div>
                                 </div>
                         }

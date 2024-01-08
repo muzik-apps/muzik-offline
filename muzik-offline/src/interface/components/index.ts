@@ -1,3 +1,4 @@
+import { lazy } from "react";
 import HeaderWindows from "./navbar/HeaderWindows";
 import HeaderMacOS from './navbar/HeaderMacOS';
 import HeaderLinuxOS from "./navbar/HeaderLinuxOS";
@@ -7,8 +8,8 @@ import FSMusicPlayer from './music/FSMusicPlayer';
 import SettingsNavigator from './buttons/SettingsNavigator';
 import DropDownMenuLarge from './input/DropDownMenuLarge';
 import RadioComponent from './input/RadioComponent';
-import MainMusicPlayer from './music/MainMusicPlayer';
-import HistoryUpcoming from './music/HistoryUpcoming';
+const MainMusicPlayer = lazy(() => import('./music/MainMusicPlayer'));
+const HistoryUpcoming = lazy(() => import('./music/HistoryUpcoming'));
 import SquareTitleBox from './cards/SquareTitleBox';
 import DropDownMenuSmall from './input/DropDownMenuSmall';
 import RectangleSongBox from './cards/RectangleSongBox';

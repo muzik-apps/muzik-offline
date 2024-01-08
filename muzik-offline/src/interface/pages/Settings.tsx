@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { FunctionComponent, useState, useEffect } from 'react';
+import { FunctionComponent, useState, useEffect, Suspense } from 'react';
 import "@styles/pages/Settings.scss";
 import { ChevronDown, ComponentIcon, InformationCircleContained, Layout, Lock, SettingsIcon } from "@icons/index";
 import { DirectoriesModal, SettingsNavigator } from '@components/index';
@@ -47,8 +47,6 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
                 variants={variants}
                 transition={!local_store.Animations ? {} : { type: "spring", stiffness: 100, damping: 14 }}
                 >
-                {   props.openSettings &&
-                    <>
                         <div className="settings_navigator">
                         <div className="title">
                             <motion.div whileTap={{scale: 0.98}} onClick={props.closeSettings}>
@@ -63,29 +61,27 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
                         <SettingsNavigator icon={InformationCircleContained} title={selectedSettingENUM.About} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
                         </div>
                         <div className="settings_panel">
-                            {
-                                (
-                                () => {
-                                    switch(selectedSetting){
-                                        case selectedSettingENUM.General:
-                                            return <GeneralSettings openDirectoryModal={() => setCDModalState(true)}/>
-                                        case selectedSettingENUM.Appearance:
-                                            return <AppearanceSettings />
-                                        case selectedSettingENUM.Security:
-                                            return <SecuritySettings />
-                                        case selectedSettingENUM.Advanced:
-                                            return <AdvancedSettings />
-                                        case selectedSettingENUM.About:
-                                            return <AboutSettings />
-                                        default:
-                                            return <GeneralSettings openDirectoryModal={() => setCDModalState(true)}/>
-                                    }
-                                }
-                                )()
+                            {   props.openSettings &&
+                                <Suspense fallback={<div>Loading...</div>}>
+                                    {(() => {
+                                        switch(selectedSetting){
+                                            case selectedSettingENUM.General:
+                                                return <GeneralSettings openDirectoryModal={() => setCDModalState(true)}/>
+                                            case selectedSettingENUM.Appearance:
+                                                return <AppearanceSettings />
+                                            case selectedSettingENUM.Security:
+                                                return <SecuritySettings />
+                                            case selectedSettingENUM.Advanced:
+                                                return <AdvancedSettings />
+                                            case selectedSettingENUM.About:
+                                                return <AboutSettings />
+                                            default:
+                                                return <GeneralSettings openDirectoryModal={() => setCDModalState(true)}/>
+                                        }
+                                    })()}
+                                </Suspense>
                             }
                         </div>
-                    </>
-                }
             </motion.div>
             <DirectoriesModal isOpen={CDisOpen} closeModal={() => setCDModalState(false)}/>
         </>

@@ -52,6 +52,16 @@
                     height: 100%;
                 }
             }
+
+            .rotate {
+                animation: rotate 40s linear infinite alternate-reverse;
+            }
+
+            @keyframes rotate {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
         }
 
         .frontward_facing_player{

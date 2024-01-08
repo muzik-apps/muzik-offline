@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { FunctionComponent } from 'react';
 import "@styles/components/input/DropDownMenuSmall.scss";
+import { useSavedObjectStore } from 'store';
 
 type DropDownMenuSmallProps = {
     options: string[];
@@ -14,11 +15,14 @@ const variants = {
 }
 
 const DropDownMenuSmall: FunctionComponent<DropDownMenuSmallProps> = (props: DropDownMenuSmallProps) => {
+
+    const {local_store,} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
+    
     return (
         <motion.div className="DropDownMenuSmall"
             animate={props.isOpen ? "open" : "closed"}
             variants={variants}
-            transition={{type: "spring", stiffness: 100, damping: 15 }}
+            transition={!local_store.Animations ? {} : {type: "spring", stiffness: 100, damping: 15 }}
         >
             { props.isOpen ?
                 props.options.map((arg, index) => 
