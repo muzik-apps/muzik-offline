@@ -92,7 +92,7 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
             <motion.div className="HistoryNextFloating"
                 animate={props.FloatingHNState ? "open" : "closed"}
                 variants={variants}
-                transition={{ type: "spring", stiffness: 100, damping: 15 }}
+                transition={!local_store.Animations ? {} : { type: "spring", stiffness: 100, damping: 15 }}
             >
                 { props.FloatingHNState &&
                     <>

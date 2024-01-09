@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useRef } from "react";
-import { AddSongToPlaylistModal, GeneralContextMenu, LargeResizableCover, PropertiesModal, RectangleSongBox } from "@components/index";
+import { AddSongToPlaylistModal, GeneralContextMenu, LargeResizableCover, LoaderAnimated, PropertiesModal, RectangleSongBox } from "@components/index";
 import "@styles/pages/AlbumDetails.scss";
 import { motion } from "framer-motion";
 import { Play, Shuffle } from "@assets/icons";
@@ -10,7 +10,7 @@ import { getAlbumSongs, getRandomCover, secondsToTimeFormat } from "utils";
 import { ViewportList } from "react-viewport-list";
 import { albumDetailsReducer, AlbumDetailsState } from "store/reducerStore";
 import { startPlayingNewSong, playThisListNow, addThisSongToPlayLater, addThisSongToPlayNext } from "utils/playerControl";
-import { closeContextMenu, closePlaylistModal, closePropertiesModal, selectThisSong, setSongList } from "utils/reducerUtils";
+import { closeContextMenu, closePlaylistModal, closePropertiesModal, processArrowKeysInput, selectThisSong, setSongList } from "utils/reducerUtils";
 import { variants_list } from "@content/index";
 import { reducerType } from "store";
 
@@ -19,6 +19,7 @@ const AlbumDetails = () => {
     const itemsHeightRef = useRef<HTMLDivElement | null>(null);
     const { album_key, artist_name } = useParams(); 
     const navigate = useNavigate();
+    const listRef = useRef<any>(null);
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         const matching_song = state.SongList.find(song => { return song.id === key; });
@@ -73,6 +74,7 @@ const AlbumDetails = () => {
 
     async function setAlbumSongs(){
         if(album_key === undefined)return;
+        dispatch({ type: reducerType.SET_LOADING, payload: true});
         const albumres = await local_albums_db.albums.where("key").equals(Number.parseInt(album_key)).toArray();
         if(albumres.length !== 1)return;
         const result = await getAlbumSongs(albumres[0], artist_name && artist_name !== "undefined" ? artist_name : "");
@@ -82,8 +84,29 @@ const AlbumDetails = () => {
                 length: secondsToTimeFormat(result.totalDuration)
             }
         });
+        dispatch({ type: reducerType.SET_LOADING, payload: false});
         setSongList(result.songs, dispatch);
     }
+
+    function keyBoardShortCuts(ev: any){
+        if(ev.target.id !== "gsearch" && (ev.key === "ArrowUp" || ev.key === "ArrowDown")){
+            processArrowKeysInput(ev, dispatch, state.selected, state.SongList.length);
+            if(listRef.current)listRef.current.scrollToIndex({index: state.selected - 1, offset: 5});
+        }
+        else if(ev.target.id !== "gsearch" && state.selected >= 1 && state.selected <= state.SongList.length){
+            dispatch({type: reducerType.SET_SONG_MENU, payload: state.SongList[state.selected - 1]});
+            if(((ev.ctrlKey || ev.metaKey) && (ev.key === "p" || ev.key === "P" )) || ev.key === "Enter")chooseOption(contextMenuButtons.Play);
+            else if((ev.ctrlKey || ev.metaKey) && (ev.key === "i" || ev.key === "I"))chooseOption(contextMenuButtons.ShowInfo);
+            else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "a" || ev.key === "A"))chooseOption(contextMenuButtons.AddToPlaylist);
+            else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "n" || ev.key === "N"))chooseOption(contextMenuButtons.PlayNext);
+            else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "l" || ev.key === "L"))chooseOption(contextMenuButtons.PlayLater);
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener("keydown", keyBoardShortCuts);
+        return () => document.removeEventListener("keydown", keyBoardShortCuts);  
+    }, [state])
 
     useEffect(() => {
         setAlbumSongs();
@@ -133,7 +156,10 @@ const AlbumDetails = () => {
                 variants={variants_list}
                 transition={{ type: "tween" }}
                 ref={itemsHeightRef}>
-                <ViewportList viewportRef={itemsHeightRef} items={state.SongList}>
+                    <div className="loader-animated">
+                        { state.isloading && <LoaderAnimated /> }
+                    </div>
+                <ViewportList viewportRef={itemsHeightRef} items={state.SongList} ref={listRef}>
                     {
                         (song, index) => (
                             <RectangleSongBox 
@@ -158,7 +184,7 @@ const AlbumDetails = () => {
                 </div>
             </motion.div>
             {
-                state.songMenuToOpen && (
+                state.songMenuToOpen && state.co_ords.xPos !== 0 && state.co_ords.yPos !== 0 && (
                     <div className="AlbumDetails-ContextMenu-container" 
                         onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 

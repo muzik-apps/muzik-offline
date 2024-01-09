@@ -127,6 +127,11 @@
         overflow-y: auto;
         transition: height 0.3s ease; 
 
+        .loader-animated{
+            margin-top: 6vh;
+        }
+
+        
         .footer_content{
             margin-bottom: 75px;
             h4{

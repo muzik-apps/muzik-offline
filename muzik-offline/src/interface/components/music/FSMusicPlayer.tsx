@@ -14,8 +14,13 @@ type FSMusicPlayerProps = {
 }
 
 const variants={
-    open: {bottom: "-10vh", scale: 1, borderRadius: "0px"},
-    closed: {bottom: "-110vh", scale: 0.7, borderRadius: "100px"},
+    open: {bottom: "-10vh", scale: 1, opacity: 1, borderRadius: "0px"},
+    closed: {bottom: "-110vh", scale: 0.7, opacity: 0.5, borderRadius: "100px"},
+}
+
+const variants_list_appearance = {
+    open: {opacity: 1},
+    closed: {opacity: 0},
 }
 
 const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlayerProps) => {
@@ -64,14 +69,16 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
                 <div className="FSMusicPlayer-container">
                     <div className="background-img">
                         {props.openPlayer && isDoneOpening &&
-                            <div className={"image-container" + (local_store.Animations ? " rotate" : "")}>
-                                {!Player.playingSongMetadata && <NullCoverNull />}
-                                {/**no song is loaded onto the player */}
-                                {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" loading="lazy"/>)}
-                                {/**there is cover art */}
-                                {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}
-                                {/**the cover art is null */}
-                            </div>}
+                            <motion.div className={"image-container" + (local_store.Animations ? " rotate" : "")}
+                                animate={props.openPlayer && isDoneOpening ? "open" : "closed"}
+                                variants={variants_list_appearance}>
+                                    {!Player.playingSongMetadata && <NullCoverNull />}
+                                    {/**no song is loaded onto the player */}
+                                    {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" loading="lazy"/>)}
+                                    {/**there is cover art */}
+                                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}
+                                    {/**the cover art is null */}
+                            </motion.div>}
                     </div>
                     <div className="frontward_facing_player">
                         <div className="navbar_buttons">
@@ -91,18 +98,20 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
                             </motion.div> 
                         </div>
                         {props.openPlayer && isDoneOpening &&
-                                <div className="main_visible_content">
-                                    <div className="main_player">
-                                        <Suspense fallback={<div>Loading...</div>}>
-                                            <MainMusicPlayer />
-                                        </Suspense>
-                                    </div>
-                                    <div className="lyrics_history_upcoming">
-                                        <Suspense fallback={<div>Loading...</div>}>
-                                            <HistoryUpcoming closePlayer={props.closePlayer} />
-                                        </Suspense>
-                                    </div>
-                                </div>
+                                <motion.div className="main_visible_content"
+                                    animate={props.openPlayer && isDoneOpening ? "open" : "closed"}
+                                    variants={variants_list_appearance}>
+                                        <div className="main_player">
+                                            <Suspense fallback={<div>Loading...</div>}>
+                                                <MainMusicPlayer />
+                                            </Suspense>
+                                        </div>
+                                        <div className="lyrics_history_upcoming">
+                                            <Suspense fallback={<div>Loading...</div>}>
+                                                <HistoryUpcoming closePlayer={props.closePlayer} />
+                                            </Suspense>
+                                        </div>
+                                </motion.div>
                         }
                     </div>
                 </div>
