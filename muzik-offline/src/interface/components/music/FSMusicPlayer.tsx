@@ -55,7 +55,7 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
 
     useEffect(() => {
         if(props.openPlayer === true){
-            const delay = setTimeout(() => { setIsDoneOpening(true); }, 290);
+            const delay = setTimeout(() => { setIsDoneOpening(true); }, local_store.Animations ? 1000 : 290);
             return () => clearTimeout(delay);
         }
         else setIsDoneOpening(false);
