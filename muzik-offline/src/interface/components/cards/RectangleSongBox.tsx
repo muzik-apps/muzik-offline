@@ -25,6 +25,7 @@ const RectangleSongBox: FunctionComponent<RectangleSongBoxProps> = (props: Recta
         <div 
             className={"RectangleSongBox " + (props.selected ? "RectangleSongBox-selected" : "")} 
             onClick={() => props.selectThisSong(props.index)}
+            onDoubleClick={() => props.playThisSong(props.keyV)}
             onContextMenu={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
