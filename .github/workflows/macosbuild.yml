@@ -4,7 +4,7 @@ on:
 
 defaults:
       run:
-        working-directory: muzik-offline/muzik-offline   # Navigate to the correct directory for all steps
+        working-directory: ./muzik-offline   # Navigate to the correct directory for all steps
 
 jobs:
   create-macos-build:
@@ -29,6 +29,9 @@ jobs:
         with:
           node-version: 'lts/*'
           cache: 'npm' # Set this to npm, yarn, or pnpm.
+
+      - name: Debug working directory contents
+        run: ls -lR
 
       - name: Install frontend dependencies
         run: npm install
