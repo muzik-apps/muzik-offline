@@ -1,13 +1,17 @@
-name: Release
+name: Creating MacOS build
 on:
   workflow_dispatch:
 
+defaults:
+      run:
+        working-directory: muzik-offline/muzik-offline   # Navigate to the correct directory for all steps
+
 jobs:
-  release:
+  create-macos-build:
     permissions:
       contents: write
     runs-on: macos-latest
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
