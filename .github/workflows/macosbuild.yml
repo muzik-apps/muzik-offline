@@ -1,0 +1,51 @@
+name: Release
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    permissions:
+      contents: write
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Rust setup
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Sync node version and setup cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm' # Set this to npm, yarn, or pnpm.
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Build the app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          beforeBuildCommand: npm install
+          tagName: ${{ github.ref_name }}
+          releaseName: 'App Name v__VERSION__'
+          releaseBody: 'See the assets to download and install this version.'
+          releaseDraft: false
+          prerelease: false
+
+      - name: Push to a different branch
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git checkout -b macos-build
+          git add .
+          git commit -m "Publishing macOS build"
+          git push origin macos-build
