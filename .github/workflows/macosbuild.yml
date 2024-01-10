@@ -4,7 +4,7 @@ on:
 
 defaults:
       run:
-        working-directory: ./muzik-offline   # Navigate to the correct directory for all steps
+        working-directory: muzik-offline   # Navigate to the correct directory for all steps
 
 jobs:
   create-macos-build:
@@ -23,6 +23,9 @@ jobs:
         uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
+
+      - name: Debug working directory contents
+        run: ls -lR
 
       - name: Sync node version and setup cache
         uses: actions/setup-node@v4
