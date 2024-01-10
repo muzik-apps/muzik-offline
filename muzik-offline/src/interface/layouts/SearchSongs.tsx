@@ -1,14 +1,14 @@
 import { RectangleSongBox, GeneralContextMenu, AddSongToPlaylistModal, PropertiesModal, LoaderAnimated } from "@components/index";
-import { contextMenuEnum, contextMenuButtons } from "types";
+import { contextMenuEnum, contextMenuButtons } from "@muziktypes/index";
 import { useRef, useEffect, useReducer } from "react";
 import "@styles/layouts/SearchSongs.scss";
 import { ViewportList } from 'react-viewport-list';
 import { local_albums_db, local_songs_db } from "@database/database";
-import { reducerType, useSearchStore } from "store";
+import { reducerType, useSearchStore } from "@store/index";
 import { useNavigate } from "react-router-dom";
-import { SearchSongsState, searchSongsReducer } from "store/reducerStore";
-import { addThisSongToPlayLater, addThisSongToPlayNext, playThisListNow, startPlayingNewSong } from "utils/playerControl";
-import { closeContextMenu, closePlaylistModal, closePropertiesModal, selectThisSong, setSongList } from "utils/reducerUtils";
+import { SearchSongsState, searchSongsReducer } from "@store/reducerStore";
+import { addThisSongToPlayLater, addThisSongToPlayNext, playThisListNow, startPlayingNewSong } from "@utils/playerControl";
+import { closeContextMenu, closePlaylistModal, closePropertiesModal, selectThisSong, setSongList } from "@utils/reducerUtils";
 
 const SearchSongs = () => {
     const [state , dispatch] = useReducer(searchSongsReducer, SearchSongsState);

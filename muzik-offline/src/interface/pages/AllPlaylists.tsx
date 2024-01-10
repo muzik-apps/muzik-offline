@@ -3,7 +3,7 @@ import { useEffect, useReducer } from "react";
 import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, CreatePlaylistModal, PropertiesModal, LoaderAnimated } from "@components/index";
 import { ChevronDown, Menu } from "@assets/icons";
 import "@styles/pages/AllPlaylists.scss";
-import { contextMenuButtons, contextMenuEnum } from "types";
+import { contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { local_playlists_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
 import { AllPlaylistsState, allPlaylistsReducer } from "store/reducerStore";

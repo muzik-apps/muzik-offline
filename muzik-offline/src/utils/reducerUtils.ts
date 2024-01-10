@@ -1,5 +1,5 @@
-import { Song } from "types";
-import { Action, reducerType } from "store/reducerTypes";
+import { Song } from "@muziktypes/index";
+import { Action, reducerType } from "@store/reducerTypes";
 
 export function selectThisSong(index: number, dispatch: React.Dispatch<Action>){ 
     dispatch({ type: reducerType.SET_SELECTED, payload: index }); 

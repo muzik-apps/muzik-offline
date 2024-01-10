@@ -1,4 +1,4 @@
-import { Song } from "types";
+import { Song } from "@muziktypes/index";
 
 export interface Player{
     playingSongMetadata: Song | null;

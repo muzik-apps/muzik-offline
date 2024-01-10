@@ -1,9 +1,9 @@
 import { SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
-import { playlist, mouse_coOrds, contextMenuEnum, contextMenuButtons } from "types";
+import { playlist, mouse_coOrds, contextMenuEnum, contextMenuButtons } from "@muziktypes/index";
 import { useEffect, useState } from "react";
 import "@styles/layouts/SearchPlaylists.scss";
 import { local_playlists_db } from "@database/database";
-import { useSearchStore } from "store";
+import { useSearchStore } from "@store/index";
 import { useNavigate } from "react-router-dom";
 
 const SearchPlaylists = () => {

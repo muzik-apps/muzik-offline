@@ -1,9 +1,9 @@
 import { SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
-import { mouse_coOrds, contextMenuEnum, contextMenuButtons, genre } from "types";
+import { mouse_coOrds, contextMenuEnum, contextMenuButtons, genre } from "@muziktypes/index";
 import { useEffect, useState } from "react";
 import "@styles/layouts/SearchGenres.scss";
 import { local_genres_db } from "@database/database";
-import { useSearchStore } from "store";
+import { useSearchStore } from "@store/index";
 import { useNavigate } from "react-router-dom";
 
 const SearchGenres = () => {

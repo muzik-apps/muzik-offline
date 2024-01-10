@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
 import "@styles/layouts/GeneralSettings.scss";
 import { SavedObject, viewableSideEl } from "@database/index";
-import { ChevronDown, Disk, LayersThree, Menu, Microphone, MusicalNote } from "@assets/icons";
-import { selectedGeneralSettingEnum } from "types";
+import { ChevronDown, Disk, LayersThree, Menu, Microphone, MusicalNote } from "@icons/index";
+import { selectedGeneralSettingEnum } from "@muziktypes/index";
 import { FunctionComponent, useState } from "react";
 import { DropDownMenuLarge, RadioComponent } from "@components/index";
-import { useSavedObjectStore, useViewableSideElStore } from "store";
+import { useSavedObjectStore, useViewableSideElStore } from "@store/index";
 
 const settings_data: {
     key: number;

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { getRandomCover } from "utils";
-import { OSTYPEenum } from "types";
+import { OSTYPEenum } from "@muziktypes/index";
 import "@styles/components/cards/LargeResizableCover.scss";
 import { useSavedObjectStore } from "store";
 

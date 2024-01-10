@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { FunctionComponent, useState, useEffect, Suspense } from 'react';
+import { FunctionComponent, useState, useEffect } from 'react';
 import "@styles/pages/Settings.scss";
 import { ChevronDown, ComponentIcon, InformationCircleContained, Layout, Lock, SettingsIcon } from "@icons/index";
 import { DirectoriesModal, SettingsNavigator } from '@components/index';
@@ -62,8 +62,7 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
                         </div>
                         <div className="settings_panel">
                             {   props.openSettings &&
-                                <Suspense fallback={<div>Loading...</div>}>
-                                    {(() => {
+                                    (() => {
                                         switch(selectedSetting){
                                             case selectedSettingENUM.General:
                                                 return <GeneralSettings openDirectoryModal={() => setCDModalState(true)}/>
@@ -78,8 +77,7 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
                                             default:
                                                 return <GeneralSettings openDirectoryModal={() => setCDModalState(true)}/>
                                         }
-                                    })()}
-                                </Suspense>
+                                    })()
                             }
                         </div>
             </motion.div>

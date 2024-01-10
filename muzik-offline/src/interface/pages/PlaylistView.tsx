@@ -1,7 +1,7 @@
 import { Edit, Play, Shuffle } from "@assets/icons";
 import { LargeResizableCover, RectangleSongBox, GeneralContextMenu, EditPlaylistModal, PropertiesModal, AddSongToPlaylistModal } from "@components/index";
 import { local_albums_db, local_playlists_db } from "@database/database";
-import { contextMenuButtons, contextMenuEnum } from "types";
+import { contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { motion } from "framer-motion";
 import { useReducer, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";

@@ -3,7 +3,7 @@ import "@styles/components/music/FSMusicPlayer.scss";
 import { FunctionComponent, Suspense, useState, useEffect } from "react";
 import { appWindow } from '@tauri-apps/api/window';
 import { HistoryUpcoming, MainMusicPlayer } from "@components/index";
-import { OSTYPEenum } from "types";
+import { OSTYPEenum } from "@muziktypes/index";
 import { NullCoverNull } from "@assets/icons";
 import { useSavedObjectStore, usePlayerStore } from "store";
 import { getRandomCover } from "utils";

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { type } from '@tauri-apps/api/os';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { HistoryNextFloating } from "@layouts/index";
-import { OSTYPEenum } from "types";
+import { OSTYPEenum } from "@muziktypes/index";
 import { AnimatePresence } from "framer-motion";
 import { useWallpaperStore, useSavedObjectStore } from "store";
 import { SavedObject } from "@database/saved_object";

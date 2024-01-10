@@ -1,4 +1,4 @@
-import { Song, album, artist, genre, playlist } from 'types';
+import { Song, album, artist, genre, playlist } from '@muziktypes/index';
 import Dexie, { Table } from 'dexie';
 
 export class SongsDexie extends Dexie {

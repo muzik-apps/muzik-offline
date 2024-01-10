@@ -1,4 +1,4 @@
-import { contextMenuButtons, contextMenuEnum } from "types";
+import { contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { FunctionComponent } from "react";
 import { AddToPlaylistButton, PlayButton,
     PlayLaterButton, PlayNextButton, ShowArtistButton, 

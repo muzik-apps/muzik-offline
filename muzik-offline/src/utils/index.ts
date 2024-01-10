@@ -1,6 +1,6 @@
 import { NullCoverOne, NullCoverTwo, NullCoverThree, NullCoverFour } from "@assets/index";
 import { local_albums_db, local_artists_db, local_genres_db, local_songs_db } from "@database/database";
-import { Song, album, artist, genre, playlist } from "types";
+import { Song, album, artist, genre, playlist } from "@muziktypes/index";
 import { invoke } from "@tauri-apps/api";
 const batch_size: number = 50;
 

@@ -1,6 +1,6 @@
 import { useSavedObjectStore, useUpcomingSongs, usePlayerStore, usePlayingPosition, 
-    usePlayingPositionSec, useHistorySongs } from "store";
-import { Song } from "types";
+    usePlayingPositionSec, useHistorySongs } from "@store/index";
+import { Song } from "@muziktypes/index";
 import { invoke } from "@tauri-apps/api";
 import { SavedObject } from "@database/index";
 import { local_songs_db } from "@database/database";

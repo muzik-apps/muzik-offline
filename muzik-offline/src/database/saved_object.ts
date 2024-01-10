@@ -1,4 +1,4 @@
-import { OSTYPEenum } from "types";
+import { OSTYPEenum } from "@muziktypes/index";
 
 export interface SavedObject{
     LaunchTab: string,

@@ -3,11 +3,11 @@ import { useEffect, useReducer } from "react";
 import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
 import { ChevronDown } from "@assets/icons";
 import "@styles/pages/AllAlbums.scss";
-import { contextMenuEnum, contextMenuButtons } from "types";
+import { contextMenuEnum, contextMenuButtons } from "@muziktypes/index";
 import { useNavigate } from "react-router-dom";
-import { AllAlbumsState, allAlbumsReducer } from "store/reducerStore";
-import { reducerType } from "store";
-import { closeContextMenu, setOpenedDDM } from "utils/reducerUtils";
+import { AllAlbumsState, allAlbumsReducer } from "@store/reducerStore";
+import { reducerType } from "@store/index";
+import { closeContextMenu, setOpenedDDM } from "@utils/reducerUtils";
 import { local_albums_db } from "@database/database";
 
 const AllAlbums = () => {

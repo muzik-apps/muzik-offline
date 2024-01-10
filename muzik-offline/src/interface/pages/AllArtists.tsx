@@ -3,12 +3,12 @@ import { useEffect, useReducer } from "react";
 import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
 import { ChevronDown } from "@assets/icons";
 import "@styles/pages/AllArtists.scss";
-import { contextMenuEnum, contextMenuButtons } from "types";
+import { contextMenuEnum, contextMenuButtons } from "@muziktypes/index";
 import { local_artists_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
-import { reducerType } from "store";
-import { allArtistsReducer, AllArtistsState } from "store/reducerStore";
-import { closeContextMenu, setOpenedDDM } from "utils/reducerUtils";
+import { reducerType } from "@store/index";
+import { allArtistsReducer, AllArtistsState } from "@store/reducerStore";
+import { closeContextMenu, setOpenedDDM } from "@utils/reducerUtils";
 
 const AllArtists = () => {
     const [state , dispatch] = useReducer(allArtistsReducer, AllArtistsState);

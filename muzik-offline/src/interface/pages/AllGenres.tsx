@@ -3,7 +3,7 @@ import { useEffect, useReducer } from "react";
 import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
 import { ChevronDown } from "@assets/icons";
 import "@styles/pages/AllGenres.scss";
-import { contextMenuEnum, contextMenuButtons } from "types";
+import { contextMenuEnum, contextMenuButtons } from "@muziktypes/index";
 import { local_genres_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
 import { AllGenresState, allGenreReducer } from '../../store/reducerStore';

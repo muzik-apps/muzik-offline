@@ -3,7 +3,7 @@ import "@styles/components/modals/DirectoriesModal.scss";
 import { invoke } from "@tauri-apps/api";
 import { open } from '@tauri-apps/api/dialog';
 import { appConfigDir } from '@tauri-apps/api/path';
-import { toastType } from "types";
+import { toastType } from "@muziktypes/index";
 import { useDirStore, useSavedObjectStore, useToastStore } from "store";
 import { isPermissionGranted, sendNotification } from '@tauri-apps/api/notification';
 import { motion } from "framer-motion";

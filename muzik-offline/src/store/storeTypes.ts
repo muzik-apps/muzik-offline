@@ -3,7 +3,7 @@ import { Player } from "@database/player";
 import { SavedObject } from "@database/saved_object";
 import { viewableSideEl } from "@database/side_elements";
 import { SavedWallpaper } from "@database/wallpaper";
-import { toast } from "types";
+import { toast } from "@muziktypes/index";
 
 export interface toastInterface{
     toastObject: toast | null;

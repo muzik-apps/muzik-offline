@@ -1,4 +1,4 @@
-import { App_logo } from "@assets/logos";
+import { App_logo } from "@logos/index";
 import "@styles/layouts/AboutSettings.scss";
 import { open } from '@tauri-apps/api/shell';
 import { motion } from "framer-motion";
@@ -13,8 +13,8 @@ const AboutSettings = () => {
             <h3>Copyright 2024 muzik-apps. All rights reserved.</h3>
             <h3>Version 0.1.0</h3>
             <h3>
-                <motion.span whileTap={{scale: 0.98}} onClick={() => open("https://github.com/muzik-apps/Muzik-offline")}>
-                    Muzik-offline
+                <motion.span whileTap={{scale: 0.98}} onClick={() => open("https://github.com/muzik-apps/muzik-offline")}>
+                    muzik-offline
                 </motion.span>
                 is made possible thanks to:
             </h3>
@@ -27,13 +27,13 @@ const AboutSettings = () => {
                 <li>Chrome, Edge, Safari and WebkitGTK-4.0</li>
             </ul>
             <h3>For a full list of packages used by this application, visit 
-                <motion.span whileTap={{scale: 0.98}} onClick={() => open("https://github.com/muzik-apps/Muzik-offline#node-modules-used")}>
+                <motion.span whileTap={{scale: 0.98}} onClick={() => open("https://github.com/muzik-apps/muzik-offline#node-modules-used")}>
                     this
                 </motion.span>
             </h3>
             <h3>
                 Please support and star the repo on 
-                <motion.span whileTap={{scale: 0.98}} onClick={() => open("https://github.com/muzik-apps/Muzik-offline")}>
+                <motion.span whileTap={{scale: 0.98}} onClick={() => open("https://github.com/muzik-apps/muzik-offline")}>
                     github
                 </motion.span>
                 if you like this application and check out our other

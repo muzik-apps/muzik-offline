@@ -1,10 +1,10 @@
-import { ChevronDown } from "@assets/icons";
+import { ChevronDown } from "@icons/index";
 import { DropDownMenuLarge } from "@components/index";
 import { SavedObject } from "@database/index";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useSavedObjectStore } from "store";
-import { selectedGeneralSettingEnum } from "types";
+import { selectedGeneralSettingEnum } from "@muziktypes/index";
 import "@styles/layouts/AdvancedSettings.scss";
 
 const settings_data: {

@@ -1,5 +1,5 @@
 import { local_playlists_db } from "@database/database";
-import { toastType } from "types";
+import { toastType } from "@muziktypes/index";
 import { useLiveQuery } from "dexie-react-hooks";
 import { FunctionComponent } from "react";
 import { useToastStore } from "store";

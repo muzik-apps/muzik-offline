@@ -1,5 +1,5 @@
 import { EditImage } from "@assets/icons";
-import { playlist, toastType } from "types";
+import { playlist, toastType } from "@muziktypes/index";
 import { motion } from "framer-motion";
 import { FunctionComponent, useEffect, useState } from "react";
 import { local_playlists_db } from "@database/database";

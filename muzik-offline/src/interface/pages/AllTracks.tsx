@@ -1,4 +1,4 @@
-import { contextMenuButtons, contextMenuEnum } from "types";
+import { contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { motion } from "framer-motion";
 import { useRef, useEffect, useReducer } from "react";
 import { ChevronDown, Shuffle } from "@assets/icons";

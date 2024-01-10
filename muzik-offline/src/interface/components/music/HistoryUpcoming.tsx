@@ -1,7 +1,7 @@
 import { FunctionComponent, useEffect, useReducer } from "react";
 import { motion } from 'framer-motion';
 import "@styles/components/music/HistoryUpcoming.scss";
-import { Song, contextMenuButtons, contextMenuEnum } from "types";
+import { Song, contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { GeneralContextMenu, SongCardResizable } from "@components/index";
 import { useNavigate } from "react-router-dom";
 import { local_albums_db, local_songs_db } from "@database/database";

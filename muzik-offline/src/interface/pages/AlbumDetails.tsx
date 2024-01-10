@@ -3,16 +3,16 @@ import { AddSongToPlaylistModal, GeneralContextMenu, LargeResizableCover, Loader
 import "@styles/pages/AlbumDetails.scss";
 import { motion } from "framer-motion";
 import { Play, Shuffle } from "@assets/icons";
-import { contextMenuButtons, contextMenuEnum } from "types";
+import { contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { useNavigate, useParams } from "react-router-dom";
 import { local_albums_db } from "@database/database";
 import { getAlbumSongs, getRandomCover, secondsToTimeFormat } from "utils";
 import { ViewportList } from "react-viewport-list";
-import { albumDetailsReducer, AlbumDetailsState } from "store/reducerStore";
-import { startPlayingNewSong, playThisListNow, addThisSongToPlayLater, addThisSongToPlayNext } from "utils/playerControl";
-import { closeContextMenu, closePlaylistModal, closePropertiesModal, processArrowKeysInput, selectThisSong, setSongList } from "utils/reducerUtils";
+import { albumDetailsReducer, AlbumDetailsState } from "@store/reducerStore";
+import { startPlayingNewSong, playThisListNow, addThisSongToPlayLater, addThisSongToPlayNext } from "@utils/playerControl";
+import { closeContextMenu, closePlaylistModal, closePropertiesModal, processArrowKeysInput, selectThisSong, setSongList } from "@utils/reducerUtils";
 import { variants_list } from "@content/index";
-import { reducerType } from "store";
+import { reducerType } from "@store/index";
 
 const AlbumDetails = () => {
     const [state , dispatch] = useReducer(albumDetailsReducer, AlbumDetailsState);

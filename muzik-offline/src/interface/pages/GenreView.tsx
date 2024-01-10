@@ -1,4 +1,4 @@
-import { contextMenuButtons, contextMenuEnum } from "types";
+import { contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { useEffect, useReducer, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getGenreSongs, secondsToTimeFormat } from "utils";
@@ -11,12 +11,13 @@ import { ViewportList } from "react-viewport-list";
 import { GenreViewState, genreViewReducer } from "store/reducerStore";
 import { variants_list } from "@content/index";
 import { reducerType } from "store";
-import { closeContextMenu, closePlaylistModal, closePropertiesModal, selectThisSong, setSongList } from "utils/reducerUtils";
+import { closeContextMenu, closePlaylistModal, closePropertiesModal, processArrowKeysInput, selectThisSong, setSongList } from "utils/reducerUtils";
 import { addThisSongToPlayLater, addThisSongToPlayNext, playThisListNow, startPlayingNewSong } from "utils/playerControl";
 
 const GenreView = () => {
     const [state , dispatch] = useReducer(genreViewReducer, GenreViewState);
     const itemsHeightRef = useRef<HTMLDivElement | null>(null);
+    const listRef = useRef<any>(null);
     const navigate = useNavigate();
     const { genre_key } = useParams();
 
@@ -90,6 +91,26 @@ const GenreView = () => {
             navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
         }
     }
+
+    function keyBoardShortCuts(ev: any){
+        if(ev.target.id !== "gsearch" && (ev.key === "ArrowUp" || ev.key === "ArrowDown")){
+            processArrowKeysInput(ev, dispatch, state.selected, state.SongList.length);
+            if(listRef.current)listRef.current.scrollToIndex({index: state.selected - 1, offset: 5});
+        }
+        else if(ev.target.id !== "gsearch" && state.selected >= 1 && state.selected <= state.SongList.length){
+            dispatch({type: reducerType.SET_SONG_MENU, payload: state.SongList[state.selected - 1]});
+            if(((ev.ctrlKey || ev.metaKey) && (ev.key === "p" || ev.key === "P" )) || ev.key === "Enter")chooseOption(contextMenuButtons.Play);
+            else if((ev.ctrlKey || ev.metaKey) && (ev.key === "i" || ev.key === "I"))chooseOption(contextMenuButtons.ShowInfo);
+            else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "a" || ev.key === "A"))chooseOption(contextMenuButtons.AddToPlaylist);
+            else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "n" || ev.key === "N"))chooseOption(contextMenuButtons.PlayNext);
+            else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "l" || ev.key === "L"))chooseOption(contextMenuButtons.PlayLater);
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener("keydown", keyBoardShortCuts);
+        return () => document.removeEventListener("keydown", keyBoardShortCuts);  
+    }, [state])
 
     useEffect(() => {
         setAlbumSongs();

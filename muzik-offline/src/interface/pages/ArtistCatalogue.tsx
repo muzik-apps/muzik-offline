@@ -1,6 +1,6 @@
 import { Play, Shuffle } from "@assets/icons";
 import { GeneralContextMenu, LargeResizableCover, SquareTitleBox } from "@components/index";
-import { contextMenuButtons, contextMenuEnum } from "types";
+import { contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { motion } from "framer-motion";
 import { useRef, useEffect, useReducer } from "react";
 import { useParams } from "react-router-dom";

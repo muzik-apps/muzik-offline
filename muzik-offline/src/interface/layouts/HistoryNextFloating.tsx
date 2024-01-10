@@ -2,12 +2,12 @@ import { motion } from "framer-motion";
 import { FunctionComponent, useEffect, useReducer } from "react";
 import "@styles/layouts/HistoryNextFloating.scss";
 import { GeneralContextMenu, SongCardResizable } from "@components/index";
-import { Song, contextMenuButtons, contextMenuEnum } from "types";
+import { Song, contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { local_albums_db, local_songs_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
-import { useUpcomingSongs, useHistorySongs, useSavedObjectStore, reducerType } from "store";
-import { UpcomingHistoryState, upcomingHistoryReducer } from "store/reducerStore";
-import { closeContextMenu } from "utils/reducerUtils";
+import { useUpcomingSongs, useHistorySongs, useSavedObjectStore, reducerType } from "@store/index";
+import { UpcomingHistoryState, upcomingHistoryReducer } from "@store/reducerStore";
+import { closeContextMenu } from "@utils/reducerUtils";
 
 type HistoryNextFloatingProps = {
     FloatingHNState: boolean;

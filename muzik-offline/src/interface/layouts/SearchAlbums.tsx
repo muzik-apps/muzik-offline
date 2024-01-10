@@ -1,9 +1,9 @@
 import { SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
-import { mouse_coOrds, contextMenuEnum, contextMenuButtons, album } from "types";
+import { mouse_coOrds, contextMenuEnum, contextMenuButtons, album } from "@muziktypes/index";
 import { useEffect, useState } from "react";
 import "@styles/layouts/SearchAlbums.scss";
 import { local_albums_db } from "@database/database";
-import { useSearchStore } from "store";
+import { useSearchStore } from "@store/index";
 import { useNavigate } from "react-router-dom";
 
 const SearchAlbums = () => {

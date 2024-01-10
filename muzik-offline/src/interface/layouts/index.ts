@@ -1,16 +1,14 @@
-import {lazy} from 'react';
-
-const GeneralSettings = lazy(() => import('./GeneralSettings'));
-const AppearanceSettings = lazy(() => import('./AppearanceSettings'));
+import GeneralSettings from './GeneralSettings';
+import AppearanceSettings from './AppearanceSettings';
 import HistoryNextFloating from './HistoryNextFloating';
 import SearchSongs from './SearchSongs';
 import SearchArtists from './SearchArtists';
 import SearchAlbums from './SearchAlbums';
 import SearchGenres from './SearchGenres';
 import SearchPlaylists from './SearchPlaylists';
-const AdvancedSettings = lazy(() => import('@layouts/AdvancedSettings'));
-const SecuritySettings = lazy(() => import('./SecuritySettings'));
-const AboutSettings = lazy(() => import('./AboutSettings'));
+import AdvancedSettings from './AdvancedSettings';
+import SecuritySettings from './SecuritySettings';
+import AboutSettings from './AboutSettings';
 
 export {
     GeneralSettings, AppearanceSettings, HistoryNextFloating,

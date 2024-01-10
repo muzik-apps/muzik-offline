@@ -5,11 +5,11 @@
 \
 ![application](Presentation/Application.png "Application")
 <br></br>
-# Muzik-offline
+# muzik-offline
 A cross platform, local music player that is an offline(no streaming) version of <a href="https://github.com/waveyboym/Muzik">Muzik</a>. This app allows you to listen to music that is stored on your local machine, that being music in mp3, wav etc format.
 
 # I am a user/tester
-1. Navigate to the <a href="https://github.com/waveyboym/Muzik-offline/releases">releases tab</a> and find the latest app release for your operating system.
+1. Navigate to the <a href="https://github.com/waveyboym/muzik-offline/releases">releases tab</a> and find the latest app release for your operating system.
 2. Download it and install and enjoy the application
 3. Please read the <a href="#usage">usage</a> section for some extra information.
 
@@ -34,7 +34,7 @@ sudo apt-get install libasound2-dev
 3. Clone this repo
 4. run
 ```
-cd Muzik-offline/muzik-offline
+cd muzik-offline/muzik-offline
 ```
 5. run
 ```
@@ -44,7 +44,7 @@ npm install
 ```
 npm run tauri dev
 ```
-Please note that when you run ```npm run tauri``` dev for the first time, it may take a lengthy amount of minutes to compile everything. However this only occurs just on your first run. In subsequent runs, it will be faster.
+Please note that when you run ```npm run tauri dev``` for the first time, it may take a lengthy amount of minutes to compile everything. However this only occurs just on your first run. In subsequent runs, it will be faster.
 
 # Node modules used
 1. <a href="https://www.npmjs.com/package/@tauri-apps/cli">tauri-apps/api</a>

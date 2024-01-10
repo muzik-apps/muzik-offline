@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { FunctionComponent } from "react";
 import "@styles/components/input/DropDownMenuLarge.scss";
-import { selectedGeneralSettingEnum } from "types";
+import { selectedGeneralSettingEnum } from "@muziktypes/index";
 import { useSavedObjectStore } from "store";
 
 type DropDownMenuLargeProps = {

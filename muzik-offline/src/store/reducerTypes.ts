@@ -1,5 +1,5 @@
 import { Song, mouse_coOrds, AlbumMD, album, artist, genre, playlist,
-ArtistMD, GenreMD, PlaylistMD } from "types";
+ArtistMD, GenreMD, PlaylistMD } from "@muziktypes/index";
 
 export enum reducerType {
     SET_LOADING = "SET_LOADING",

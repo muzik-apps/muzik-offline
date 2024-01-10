@@ -2,7 +2,7 @@ import { motion } from "framer-motion"
 import { SavedObject } from "@database/index";
 import "@styles/layouts/AppearanceSettings.scss"; 
 import { ArrowRefresh, CancelRight } from "@assets/icons";
-import { useSavedObjectStore, useWallpaperStore } from "store";
+import { useSavedObjectStore, useWallpaperStore } from "@store/index";
 
 const accentColurs: string[] = ["saucy", "salmon", "violet", "lime", "sunny", "ubuntu", "blueberry", "midnight", "blinding"]
 
