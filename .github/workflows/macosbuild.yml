@@ -4,7 +4,7 @@ on:
 
 defaults:
       run:
-        working-directory: muzik-offline   # Navigate to the correct directory for all steps
+        working-directory: ./muzik-offline   # Navigate to the correct directory for all steps
 
 jobs:
   create-macos-build:
@@ -24,20 +24,15 @@ jobs:
         with:
           workspaces: './src-tauri -> target'
 
-      - name: Debug working directory contents
-        run: ls -lR
-
       - name: Sync node version and setup cache
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
           cache: 'npm' # Set this to npm, yarn, or pnpm.
-
-      - name: Debug working directory contents
-        run: ls -lR
+          cache-dependency-path: './muzik-offline/package-lock.json'
 
       - name: Install frontend dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build the app
         uses: tauri-apps/tauri-action@v0
