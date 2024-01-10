@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Song, playlist } from "@muziktypes/index";
 import "@styles/components/modals/PropertiesModal.scss";
 import { invoke } from "@tauri-apps/api";
+import { modal_variants } from "@content/index";
 
 type PropertiesModalProps = {
     song?: Song;
@@ -34,7 +35,10 @@ const PropertiesModal = (props: PropertiesModalProps) => {
         <div className={"PropertiesModal" + (props.isOpen ? " PropertiesModal-visible" : "")} onClick={
             (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => 
                 {if(e.target === e.currentTarget)props.closeModal()}}>
-            <div className="modal">
+            <motion.div 
+            animate={props.isOpen ? "open" : "closed"}
+            variants={modal_variants}
+            className="modal">
                 <h2>Properties</h2>
                 { props.song && 
                     <div className="properties_grid">
@@ -143,7 +147,7 @@ const PropertiesModal = (props: PropertiesModalProps) => {
                         </div>
                     </div>
                 }
-            </div>
+            </motion.div>
         </div>
     )
 }

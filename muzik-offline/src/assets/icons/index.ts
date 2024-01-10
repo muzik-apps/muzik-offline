@@ -46,6 +46,8 @@ import InformationCircleContainedBlue from './General/InformationCircleContained
 import EditImage from './General/EditImage';
 import Edit from './General/Edit';
 import BarsAnimated from './Media/BarsAnimated';
+import Overlap from './Layout/Overlap';
+import Minimize from './Layout/Minimize';
 
 export {
     Next_page, Prev_page, Search, 
@@ -60,5 +62,5 @@ export {
     NullMusicCoverTwo, NullMusicCoverThree, NullMusicCoverFour, NullCoverNull,
     NullArtistCoverOne, NullArtistCoverTwo, NullArtistCoverThree, NullArtistCoverFour,
     CheckGreen, CrossRed, InformationCircleContainedOrange, InformationCircleContainedBlue,
-    EditImage, Edit, BarsAnimated
+    EditImage, Edit, BarsAnimated, Overlap, Minimize
 }

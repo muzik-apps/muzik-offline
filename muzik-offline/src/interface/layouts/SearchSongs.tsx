@@ -8,12 +8,13 @@ import { reducerType, useSearchStore } from "@store/index";
 import { useNavigate } from "react-router-dom";
 import { SearchSongsState, searchSongsReducer } from "@store/reducerStore";
 import { addThisSongToPlayLater, addThisSongToPlayNext, playThisListNow, startPlayingNewSong } from "@utils/playerControl";
-import { closeContextMenu, closePlaylistModal, closePropertiesModal, selectThisSong, setSongList } from "@utils/reducerUtils";
+import { closeContextMenu, closePlaylistModal, closePropertiesModal, processArrowKeysInput, selectThisSong, setSongList } from "@utils/reducerUtils";
 
 const SearchSongs = () => {
     const [state , dispatch] = useReducer(searchSongsReducer, SearchSongsState);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
     const ref = useRef<HTMLDivElement | null>(null);
+    const listRef = useRef<any>(null);
     const navigate = useNavigate();
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
@@ -62,6 +63,26 @@ const SearchSongs = () => {
             navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
         }
     }
+    
+    function keyBoardShortCuts(ev: any){
+        if(ev.target.id !== "gsearch" && (ev.key === "ArrowUp" || ev.key === "ArrowDown")){
+            processArrowKeysInput(ev, dispatch, state.selected, state.SongList.length);
+            if(listRef.current)listRef.current.scrollToIndex({index: state.selected - 1, offset: 5});
+        }
+        else if(ev.target.id !== "gsearch" && state.selected >= 1 && state.selected <= state.SongList.length){
+            dispatch({type: reducerType.SET_SONG_MENU, payload: state.SongList[state.selected - 1]});
+            if(((ev.ctrlKey || ev.metaKey) && (ev.key === "p" || ev.key === "P" )) || ev.key === "Enter")chooseOption(contextMenuButtons.Play);
+            else if((ev.ctrlKey || ev.metaKey) && (ev.key === "i" || ev.key === "I"))chooseOption(contextMenuButtons.ShowInfo);
+            else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "a" || ev.key === "A"))chooseOption(contextMenuButtons.AddToPlaylist);
+            else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "n" || ev.key === "N"))chooseOption(contextMenuButtons.PlayNext);
+            else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "l" || ev.key === "L"))chooseOption(contextMenuButtons.PlayLater);
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener("keydown", keyBoardShortCuts);
+        return () => document.removeEventListener("keydown", keyBoardShortCuts);  
+    }, [state])
 
     useEffect(() => {
         const resetSongLists = () => {
@@ -85,7 +106,7 @@ const SearchSongs = () => {
                     <h6>no songs found that match "{query}"</h6>
                 )}
                 { state.isloading && <LoaderAnimated /> }
-                <ViewportList viewportRef={ref} items={state.SongList}>
+                <ViewportList viewportRef={ref} items={state.SongList} ref={listRef}>
                     {(song, index) => (
                         <RectangleSongBox 
                         key={song.id}

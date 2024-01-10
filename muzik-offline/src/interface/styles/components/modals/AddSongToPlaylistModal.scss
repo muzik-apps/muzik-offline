@@ -19,6 +19,7 @@
         padding: 10px;
         border: 1px solid $songs-container-border-col;
         background: var(--var-songs-container-bg-col);
+        box-shadow: $box-shadow-10-10-25;
         backdrop-filter: var(--var-bg-blur-150);
         border-radius: 20px;
         display: flex;

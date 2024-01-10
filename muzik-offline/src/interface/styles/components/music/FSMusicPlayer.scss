@@ -74,28 +74,38 @@
             backdrop-filter: var(--var-bg-blur-150);
             
             .navbar_buttons{
+                margin-top: 10px;
                 display: flex;
-                justify-content: center;
+                justify-content: space-between;
+                background: $on-hover-song;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+                height: fit-content;
+                padding: 9px;
+                border-radius: 20px;
 
                 .close_full_screen_player_btn, .toggle_full_screen_player_btn{
-                    margin-top: 40px;
-                    width: 172px;
+                    width: 34px;
                     height: 34px;
                     display: flex;
                     justify-content: center;
                     align-items: center;
                     border-radius: 15px;
                     background: $white-900;
-                    margin-right: 5px;
-                    h2{
+                    width: 157px;
+                    transition: all 0.1s ease-in-out;
+
+                    h3{
+                        font-size: 13px;
+                        margin-left: 9px;
                         color: $gray-1000;
-                        font-size: 12px;
+                        transition: all 0.1s ease-in-out;
                     }
                 }
-    
-                .toggle_full_screen_player_btn{
-                    margin-left: 5px;
-                    margin-right: 0px;
+
+                .give-margin{
+                    margin-right: 9px;
                 }
             }
 

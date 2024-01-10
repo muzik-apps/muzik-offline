@@ -27,6 +27,7 @@
         padding: 20px;
         box-sizing: border-box;
         border: 1px solid $songs-container-border-col;
+        box-shadow: $box-shadow-10-10-25;
         background: var(--var-songs-container-bg-col);
         backdrop-filter: var(--var-bg-blur-150);
         border-radius: 20px;
@@ -62,7 +63,6 @@
             }
         }
     }
-
 }
 
 .DirectoriesModal-visible{

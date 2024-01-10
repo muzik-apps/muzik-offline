@@ -8,6 +8,7 @@ import { invoke } from "@tauri-apps/api";
 import { useToastStore } from 'store';
 import { getRandomCover } from 'utils';
 import { AppLogo } from '@assets/logos';
+import { modal_variants } from '@content/index';
 
 type EditPlaylistModalProps = {
     playlistobj: playlist;
@@ -78,7 +79,10 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
     return (
         <div className={"EditPlaylistModal" + (props.isOpen ? " EditPlaylistModal-visible" : "")} onClick={
             (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {if(e.target === e.currentTarget)props.closeModal()}}>
-            <div className="modal">
+            <motion.div 
+            animate={props.isOpen ? "open" : "closed"}
+            variants={modal_variants}
+            className="modal">
                 <h1>Edit a playlist</h1>
                 <div className="playlist_image">
                     <div className="playlist_img">
@@ -105,7 +109,7 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
                 <h3>Playlist name</h3>
                 <input type="text" value={playlistObj.title} onChange={(e) => setPlaylistObj({ ... playlistObj, title : e.target.value})}/>
                 <motion.div className="edit_playlist" whileTap={{scale: 0.98}} onClick={savePlaylistAndCloseModal}>save changes</motion.div>
-            </div>
+            </motion.div>
         </div>
     )
 }

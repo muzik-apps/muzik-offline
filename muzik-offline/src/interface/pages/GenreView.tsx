@@ -149,7 +149,7 @@ const GenreView = () => {
                 variants={variants_list}
                 transition={{ type: "tween" }}
                 ref={itemsHeightRef}>
-                <ViewportList viewportRef={itemsHeightRef} items={state.SongList}>
+                <ViewportList viewportRef={itemsHeightRef} items={state.SongList} ref={listRef}>
                     {
                         (song, index) => (
                             <RectangleSongBox 

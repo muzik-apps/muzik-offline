@@ -9,11 +9,14 @@ import { isPermissionGranted, sendNotification } from '@tauri-apps/api/notificat
 import { motion } from "framer-motion";
 import { fetch_library_in_chunks } from "utils";
 import { local_albums_db, local_artists_db, local_genres_db, local_songs_db } from "@database/database";
+import { modal_variants } from "@content/index";
 
 type DirectoriesModalProps = {
     isOpen: boolean;
     closeModal: () => void;
 }
+
+
 
 const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: DirectoriesModalProps) => {
     const { dir, setDir } = useDirStore((state) => { return { dir: state.dir, setDir: state.setDir}; });
@@ -118,12 +121,14 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
             (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => 
                 {if(e.target === e.currentTarget)closeModal()}}>
             <h2>type in directories as absolute paths, eg C:\songs\. click anywhere to close</h2>
-            <textarea 
+            <motion.textarea 
+                animate={props.isOpen ? "open" : "closed"}
+                variants={modal_variants}
                 className="modal"
                 value={directories.join(",")}
                 onChange={setDirectoriesVal}
                 placeholder="directory 1, directory 2, etc">
-            </textarea>
+            </motion.textarea>
             <h2>clear directories, refresh your library or select a new directory</h2>
             <div className="action_buttons">
                 <motion.div className="clear_directories" whileTap={{scale: 0.98}} onClick={clearDirectories}>

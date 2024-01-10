@@ -4,7 +4,7 @@ import { FunctionComponent, Suspense, useState, useEffect } from "react";
 import { appWindow } from '@tauri-apps/api/window';
 import { HistoryUpcoming, MainMusicPlayer } from "@components/index";
 import { OSTYPEenum } from "@muziktypes/index";
-import { NullCoverNull } from "@assets/icons";
+import { Minimize, NullCoverNull, Overlap } from "@icons/index";
 import { useSavedObjectStore, usePlayerStore } from "store";
 import { getRandomCover } from "utils";
 
@@ -82,19 +82,13 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
                     </div>
                     <div className="frontward_facing_player">
                         <div className="navbar_buttons">
-                            {   appFS === true ? 
-                                    (<></>)
-                                :
-                                    (<motion.div className="close_full_screen_player_btn" onClick={props.closePlayer} whileTap={{scale: 0.98}}>
-                                        <h2>close player</h2>
+                            {   appFS === false &&
+                                    (<motion.div className={"close_full_screen_player_btn" + (appFS === false && " give-margin")} onClick={props.closePlayer} whileTap={{scale: 0.98}}>
+                                        <Minimize /><h3>close</h3>
                                     </motion.div> )
                             }
                             <motion.div className="toggle_full_screen_player_btn" onClick={appFS === true ? switchtoNONFS : switchtoFS} whileTap={{scale: 0.98}}>
-                                { appFS === true ? 
-                                    (<h2>minimize player</h2>)
-                                    : 
-                                    (<h2>maximize player</h2>)
-                                }
+                                { appFS === false ?  (<><Overlap /><h3>fullscreen</h3></>) : (<><Minimize /><h3>minimize</h3></>) }
                             </motion.div> 
                         </div>
                         {props.openPlayer && isDoneOpening &&

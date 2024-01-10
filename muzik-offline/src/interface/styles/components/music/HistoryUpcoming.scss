@@ -27,22 +27,20 @@
     }
 
     .HistoryUpcoming_tabs{
-        width: 350px;
         display: flex;
         justify-content: space-evenly;
 
         .Upcoming_tab, .History_tab{
             justify-content: center;
             align-items: center;
-            border-radius: 15px;
             position: relative;
+            background: $on-hover-song;
             width: 130px;
             height: 34px;
 
             .selected{
                 background: $white-900;
                 position: absolute;
-                border-radius: 15px;
                 inset: 0;
             }
 
@@ -56,8 +54,28 @@
             }
         }
 
+        .Upcoming_tab{
+            border-top-left-radius: 13px;
+            border-bottom-left-radius: 13px;
+
+            .selected{
+                border-top-left-radius: 13px;
+                border-bottom-left-radius: 13px;
+            }
+        }
+
+        .History_tab{
+            border-top-right-radius: 13px;
+            border-bottom-right-radius: 13px;
+
+            .selected{
+                border-top-right-radius: 13px;
+                border-bottom-right-radius: 13px;
+            }
+        }
+
         .Upcoming_tab:hover, .History_tab:hover{
-            opacity: 0.8;
+            background: $on-hover-song;
         }
     }
 }

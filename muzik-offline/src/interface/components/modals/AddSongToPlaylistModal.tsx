@@ -5,6 +5,8 @@ import { FunctionComponent } from "react";
 import { useToastStore } from "store";
 import "@styles/components/modals/AddSongToPlaylistModal.scss";
 import { getRandomCover } from "utils";
+import { motion } from "framer-motion";
+import { modal_variants } from "@content/index";
 
 type AddSongToPlaylistModalProps = {
     isOpen: boolean;
@@ -36,7 +38,10 @@ const AddSongToPlaylistModal: FunctionComponent<AddSongToPlaylistModalProps> = (
         <div className={"AddSongToPlaylistModal" + (props.isOpen ? " AddSongToPlaylistModal-visible" : "")} onClick={
             (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => 
                 {if(e.target === e.currentTarget)props.closeModal()}}>
-            <div className="modal">
+            <motion.div 
+            animate={props.isOpen ? "open" : "closed"}
+            variants={modal_variants}
+            className="modal">
                 <h1>Add song to playlist</h1>
                 <div className="playlists">
                     {playlists.length === 0 && (<h2>You have no playlists</h2>)}
@@ -52,14 +57,14 @@ const AddSongToPlaylistModal: FunctionComponent<AddSongToPlaylistModalProps> = (
                                         playlist.cover.startsWith("data:image/png;base64,") || playlist.cover.startsWith("data:image/jpeg;base64,") ? 
                                         playlist.cover :
                                         `data:image/png;base64,${playlist.cover}`} alt="playlist_img"/>)
-                                 }
+                                }
                                 </div>
                                 <h2>{playlist.title}</h2>
                             </div>
                         )
                     }
                 </div>
-            </div>
+            </motion.div>
         </div>
     )
 }

@@ -10,6 +10,7 @@
     border: 1px solid $songs-container-border-col;
     background: var(--var-songs-container-bg-col);
     backdrop-filter: var(--var-bg-blur-150);
+    box-shadow: $box-shadow-10-10-25;
     padding: 9px;
     padding-right: 0px;
     top: 47px;
@@ -22,33 +23,32 @@
 
     .Upcoming_view{
         padding-right: 3px;
-        height: 92.5%;
+        height: calc(100% - 44px);
         overflow-y: auto;
     }
 
     .History_view{
         padding-right: 3px;
-        height: 92.5%;
+        height: calc(100% - 44px);
         overflow-y: auto;
     }
 
     .HistoryUpcoming_tabs{
-        width: 230px;
+        width: 225px;
         display: flex;
         justify-content: space-evenly;
 
         .Upcoming_tab, .History_tab{
             justify-content: center;
             align-items: center;
-            border-radius: 15px;
             position: relative;
-            width: 73px;
+            background: $on-hover-song;
+            width: 112px;
             height: 34px;
 
             .selected{
                 background: $white-900;
                 position: absolute;
-                border-radius: 15px;
                 inset: 0;
             }
 
@@ -62,8 +62,28 @@
             }
         }
 
+        .Upcoming_tab{
+            border-top-left-radius: 13px;
+            border-bottom-left-radius: 13px;
+
+            .selected{
+                border-top-left-radius: 13px;
+                border-bottom-left-radius: 13px;
+            }
+        }
+
+        .History_tab{
+            border-top-right-radius: 13px;
+            border-bottom-right-radius: 13px;
+
+            .selected{
+                border-top-right-radius: 13px;
+                border-bottom-right-radius: 13px;
+            }
+        }
+
         .Upcoming_tab:hover, .History_tab:hover{
-            opacity: 0.8;
+            background: $on-hover-song;
         }
     }
 }

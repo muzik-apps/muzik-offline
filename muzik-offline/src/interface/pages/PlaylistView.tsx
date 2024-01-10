@@ -12,11 +12,12 @@ import { variants_list } from "@content/index";
 import { PlaylistViewState, playlistViewReducer } from "store/reducerStore";
 import { reducerType } from "store";
 import { addThisSongToPlayNext, addThisSongToPlayLater, playThisListNow, startPlayingNewSong } from "utils/playerControl";
-import { closeContextMenu, setSongList, selectThisSong, closePlaylistModal } from "utils/reducerUtils";
+import { closeContextMenu, setSongList, selectThisSong, closePlaylistModal, processArrowKeysInput } from "utils/reducerUtils";
 
 const PlaylistView = () => {
     const [state , dispatch] = useReducer(playlistViewReducer, PlaylistViewState);
     const itemsHeightRef = useRef<HTMLDivElement | null>(null);
+    const listRef = useRef<any>(null);
     const { playlist_key } = useParams(); 
     const navigate = useNavigate();
 
@@ -105,6 +106,26 @@ const PlaylistView = () => {
         }
     }
 
+    function keyBoardShortCuts(ev: any){
+        if(ev.target.id !== "gsearch" && (ev.key === "ArrowUp" || ev.key === "ArrowDown")){
+            processArrowKeysInput(ev, dispatch, state.selected, state.SongList.length);
+            if(listRef.current)listRef.current.scrollToIndex({index: state.selected - 1, offset: 5});
+        }
+        else if(ev.target.id !== "gsearch" && state.selected >= 1 && state.selected <= state.SongList.length){
+            dispatch({type: reducerType.SET_SONG_MENU, payload: state.SongList[state.selected - 1]});
+            if(((ev.ctrlKey || ev.metaKey) && (ev.key === "p" || ev.key === "P" )) || ev.key === "Enter")chooseOption(contextMenuButtons.Play);
+            else if((ev.ctrlKey || ev.metaKey) && (ev.key === "i" || ev.key === "I"))chooseOption(contextMenuButtons.ShowInfo);
+            else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "a" || ev.key === "A"))chooseOption(contextMenuButtons.AddToPlaylist);
+            else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "n" || ev.key === "N"))chooseOption(contextMenuButtons.PlayNext);
+            else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "l" || ev.key === "L"))chooseOption(contextMenuButtons.PlayLater);
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener("keydown", keyBoardShortCuts);
+        return () => document.removeEventListener("keydown", keyBoardShortCuts);  
+    }, [state])
+
     useEffect(() => {
         setPlaylistSongs();
         itemsHeightRef.current?.addEventListener('scroll', handleScroll);
@@ -144,7 +165,7 @@ const PlaylistView = () => {
                 variants={variants_list}
                 transition={{ type: "tween" }}
                 ref={itemsHeightRef}>
-                <ViewportList viewportRef={itemsHeightRef} items={state.SongList}>
+                <ViewportList viewportRef={itemsHeightRef} items={state.SongList} ref={listRef}>
                     {
                         (song, index) => (
                             <RectangleSongBox 
