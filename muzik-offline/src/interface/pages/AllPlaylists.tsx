@@ -84,7 +84,7 @@ const AllPlaylists = () => {
                     </div>
                 </div>
                 <motion.div className="create_playlist" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} 
-                    onClick={() => dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true})}>
+                    onClick={() => dispatch({ type: reducerType.SET_CREATE_PLAYLIST_MODAL, payload: true})}>
                     <h4>create a playlist</h4>
                     <Menu />
                 </motion.div>

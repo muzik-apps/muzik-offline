@@ -3,10 +3,11 @@ import { AppNavigator } from "@components/index";
 import "@styles/components/navigation/LeftSidebar.scss";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useSavedObjectStore } from "store";
+import { useSavedObjectStore, useViewableSideElStore } from "@store/index";
 
 const LeftSidebar = () => {
     const {local_store } = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
+    const {viewableEl} = useViewableSideElStore((state) => { return { viewableEl: state.viewableEl}; });
     const [selectedPanel, setSelectedPanel] = useState<string>(local_store.LaunchTab);
     const navigate = useNavigate();
     const location = useLocation();
@@ -45,11 +46,16 @@ const LeftSidebar = () => {
         <div className="LeftSidebar">
             <div className="user_library">
                 <h1>My library</h1>
-                <AppNavigator icon={MusicalNote} text={"All tracks"} selected_panel={selectedPanel} setSelectedPanelF={setSelectedPanelF}/>
-                <AppNavigator icon={Microphone} text={"All artists"} selected_panel={selectedPanel} setSelectedPanelF={setSelectedPanelF}/>
-                <AppNavigator icon={LayersThree} text={"All albums"} selected_panel={selectedPanel} setSelectedPanelF={setSelectedPanelF}/>
-                <AppNavigator icon={Disk} text={"All genres"} selected_panel={selectedPanel} setSelectedPanelF={setSelectedPanelF}/>
-                <AppNavigator icon={Menu} text={"All playlists"} selected_panel={selectedPanel} setSelectedPanelF={setSelectedPanelF}/>
+                {viewableEl.All_tracks && 
+                    <AppNavigator icon={MusicalNote} text={"All tracks"} selected_panel={selectedPanel} setSelectedPanelF={setSelectedPanelF}/>}
+                {viewableEl.All_artists && 
+                    <AppNavigator icon={Microphone} text={"All artists"} selected_panel={selectedPanel} setSelectedPanelF={setSelectedPanelF}/>}
+                {viewableEl.All_albums &&
+                    <AppNavigator icon={LayersThree} text={"All albums"} selected_panel={selectedPanel} setSelectedPanelF={setSelectedPanelF}/>}
+                {viewableEl.All_genres &&
+                    <AppNavigator icon={Disk} text={"All genres"} selected_panel={selectedPanel} setSelectedPanelF={setSelectedPanelF}/>}
+                {viewableEl.All_playlists &&
+                    <AppNavigator icon={Menu} text={"All playlists"} selected_panel={selectedPanel} setSelectedPanelF={setSelectedPanelF}/>}
             </div>
         </div>
     )

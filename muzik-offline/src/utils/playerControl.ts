@@ -21,40 +21,44 @@ export const addThisSongToPlayNext = async(songids: number[]) => {
     }
 }
 
-const findSongs = async(values: {album?: string, artist?: string, genre?: string, playlist?: string}): Promise<Song[]> => {
+const findSongs = async(values: {album?: string, artist?: string, genre?: string, playlist?: string}): Promise<number[]> => {
     if(values.playlist === undefined){
         const result: {album?: string, artist?: string, genre?: string} = {};
         
         if(values.album !== undefined)result.album = values.album;
         if(values.artist !== undefined)result.artist = values.artist;
         if(values.genre !== undefined)result.genre = values.genre;
-        return await local_songs_db.songs.where(result).toArray();
+        return await local_songs_db.songs.where(result).primaryKeys() as number[];
     }
     else{
         const playlist = await local_playlists_db.playlists.where("title").equals(values.playlist).first();
         if(playlist === undefined)return [];
-        return await local_songs_db.songs.where("path").anyOf(playlist.tracksPaths).toArray();
+        return await local_songs_db.songs.where("path").anyOf(playlist.tracksPaths).primaryKeys() as number[];
     }
 }
 
 export const addTheseSongsToPlayNext = async(values: {album?: string, artist?: string, genre?: string, playlist?: string}) => {
     const songs = await findSongs(values);
-    await addThisSongToPlayNext(songs.map((song) => {return song.id}));
+    await addThisSongToPlayNext(songs);
 }
 
 export const addTheseSongsToPlayLater = async(values: {album?: string, artist?: string, genre?: string, playlist?: string}) => {
     const songs = await findSongs(values);
-    await addThisSongToPlayLater(songs.map((song) => {return song.id}));
+    await addThisSongToPlayLater(songs);
 }
 
 export const playTheseSongs = async(values: {album?: string, artist?: string, genre?: string, playlist?: string}) => {
     const songs = await findSongs(values);
     if(songs.length >= 1){
-        useUpcomingSongs.getState().clearQueue();
-        useUpcomingSongs.getState().push_front(songs[0].id);
-        startPlayingNewSong(songs[0]);
+        //get first song
+        const song = await local_songs_db.songs.where("id").equals(songs[0]).first();
+        if(song !== undefined){
+            useUpcomingSongs.getState().clearQueue();
+            useUpcomingSongs.getState().push_front(song.id);
+            startPlayingNewSong(song);
+        }
     }
-    if(songs.length > 1) await addThisSongToPlayNext(songs.slice(1).map((song) => {return song.id}));
+    if(songs.length > 1) await addThisSongToPlayNext(songs.slice(1));
 }
 
 export const addThisSongToPlayLater = async(songids: number[]) => {
