@@ -27,11 +27,11 @@ const AllTracks = () => {
         if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.PlayNext && state.songMenuToOpen){ 
-            addThisSongToPlayNext(state.songMenuToOpen.id);
+            addThisSongToPlayNext([state.songMenuToOpen.id]);
             closeContextMenu(dispatch); 
         }
         else if(arg === contextMenuButtons.PlayLater && state.songMenuToOpen){ 
-            addThisSongToPlayLater(state.songMenuToOpen.id);
+            addThisSongToPlayLater([state.songMenuToOpen.id]);
             closeContextMenu(dispatch); 
         }
         else if(arg === contextMenuButtons.Play && state.songMenuToOpen){

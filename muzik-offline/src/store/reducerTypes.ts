@@ -10,6 +10,7 @@ export enum reducerType {
     SET_OPENED_DDM = "SET_OPENED_DDM",
     SET_PLAYLIST_MODAL = "SET_PLAYLIST_MODAL",
     SET_EDIT_PLAYLIST_MODAL = "SET_EDIT_PLAYLIST_MODAL",
+    SET_CREATE_PLAYLIST_MODAL = "SET_CREATE_PLAYLIST_MODAL",
     SET_PROPERTIES_MODAL = "SET_PROPERTIES_MODAL",
     SET_RESIZE_HEADER = "SET_RESIZE_HEADER",
     SET_SONG_LIST = "SET_SONG_LIST",
@@ -39,6 +40,7 @@ export type Action =
     | { type: reducerType.SET_OPENED_DDM; payload: string | null }
     | { type: reducerType.SET_PLAYLIST_MODAL; payload: boolean }
     | { type: reducerType.SET_EDIT_PLAYLIST_MODAL; payload: boolean }
+    | { type: reducerType.SET_CREATE_PLAYLIST_MODAL; payload: boolean }
     | { type: reducerType.SET_PROPERTIES_MODAL; payload: boolean }
     | { type: reducerType.SET_RESIZE_HEADER; payload: boolean }
     | { type: reducerType.SET_SONG_LIST; payload: Song[] }
@@ -108,6 +110,7 @@ export interface AllAlbumsInterface{
     openedDDM: string | null,
     albumList: album[],
     albumMenuToOpen: album | null,
+    isPlaylistModalOpen: boolean,
 }
 
 export interface AllArtistsInterface{
@@ -118,6 +121,7 @@ export interface AllArtistsInterface{
     openedDDM: string | null,
     artistList: artist[],
     artistMenuToOpen: artist | null,
+    isPlaylistModalOpen: boolean,
 }
 
 export interface ArtistCatalogueInterface{
@@ -127,6 +131,7 @@ export interface ArtistCatalogueInterface{
     albumMenuToOpen: album | null,
     artist_metadata: ArtistMD,
     resizeHeader: boolean;
+    isPlaylistModalOpen: boolean,
 }
 
 export interface AllGenresInterface{
@@ -137,6 +142,7 @@ export interface AllGenresInterface{
     openedDDM: string | null,
     genreList: genre[],
     genreMenuToOpen: genre | null,
+    isPlaylistModalOpen: boolean,
 }
 
 export interface GenreViewInterface{
@@ -160,6 +166,7 @@ export interface AllPlaylistsInterface{
     playlistList: playlist[],
     playlistMenuToOpen: playlist | null,
     isPlaylistModalOpen: boolean,
+    isCreatePlaylistModalOpen: boolean,
     isPropertiesModalOpen: boolean,
 }
 

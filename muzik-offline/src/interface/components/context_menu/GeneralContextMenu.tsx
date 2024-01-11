@@ -47,8 +47,9 @@ const GeneralContextMenu: FunctionComponent<GeneralContextMenuProps> = (props: G
             <PlayNextButton chooseOption={props.chooseOption}/>
             <PlayLaterButton chooseOption={props.chooseOption}/>
             {(props.CMtype === contextMenuEnum.ArtistCM) && <ShowArtistButton title={props.title} chooseOption={props.chooseOption}/>}
-            {(props.CMtype === contextMenuEnum.ArtistCM || props.CMtype === contextMenuEnum.SongCM || props.CMtype === contextMenuEnum.AlbumCM) 
-                    && <AddToPlaylistButton chooseOption={props.chooseOption}/>}
+            {(props.CMtype === contextMenuEnum.ArtistCM || props.CMtype === contextMenuEnum.SongCM || props.CMtype === contextMenuEnum.AlbumCM
+                || props.CMtype === contextMenuEnum.GenreCM  || props.CMtype === contextMenuEnum.PlaylistCM) 
+                && <AddToPlaylistButton chooseOption={props.chooseOption}/>}
             {(props.CMtype === contextMenuEnum.GenreCM) && <ShowGenreButton  title={props.title} chooseOption={props.chooseOption}/>}
             {(props.CMtype === contextMenuEnum.PlaylistCM) && <ShowPlaylistButton  title={props.title} chooseOption={props.chooseOption}/>}
             {(props.CMtype === contextMenuEnum.AlbumCM) && <ShowAlbumButton  title={props.title} chooseOption={props.chooseOption}/>}

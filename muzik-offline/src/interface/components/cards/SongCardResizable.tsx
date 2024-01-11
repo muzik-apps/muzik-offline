@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { FunctionComponent } from 'react';
-import { DotHorizontal, Play } from "@icons/index";
+import { 
+    //DotHorizontal, 
+    Play } from "@icons/index";
 import "@styles/components/cards/SongCardResizable.scss";
 import { getRandomCover } from 'utils';
 
@@ -33,12 +35,12 @@ const SongCardResizable: FunctionComponent<SongCardResizableProps> = (props: Son
             <motion.div className="PlayIcon" whileTap={{scale: 0.95}}>
                 <Play />
             </motion.div>
-            <motion.div whileTap={{scale: 0.95}} onMouseUp={(e) => {
+            {/*<motion.div whileTap={{scale: 0.95}} onMouseUp={(e) => {
                 e.preventDefault();
                 props.setMenuOpenData(props.keyV, {xPos: e.pageX - 200, yPos: e.pageY});
             }}>
                 <DotHorizontal />
-            </motion.div>
+            </motion.div>*/}
         </div>
     )
 }

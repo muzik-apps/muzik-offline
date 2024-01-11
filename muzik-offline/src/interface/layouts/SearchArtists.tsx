@@ -1,14 +1,16 @@
-import { SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
+import { SquareTitleBox, GeneralContextMenu, LoaderAnimated, AddSongsToPlaylistModal } from "@components/index";
 import { mouse_coOrds, contextMenuEnum, contextMenuButtons, artist } from "@muziktypes/index";
 import { useEffect, useState } from "react";
 import "@styles/layouts/SearchArtists.scss";
 import { local_artists_db } from "@database/database";
 import { useSearchStore } from "@store/index";
 import { useNavigate } from "react-router-dom";
+import { addTheseSongsToPlayNext, addTheseSongsToPlayLater, playTheseSongs } from "@utils/playerControl";
 
 const SearchArtists = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [loading, setLoading] = useState<boolean>(false);
+    const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState<boolean>(false);
     const [artistMenuToOpen, setArtistMenuToOpen] = useState<artist | null>(null);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
     const [artists, setArtists] = useState<artist[]>([]);
@@ -20,9 +22,28 @@ const SearchArtists = () => {
         setArtistMenuToOpen(matching_artist ? matching_artist : null);
     }
 
+    function closeContextMenu(e?: any){
+        if(e)e.preventDefault();
+        setArtistMenuToOpen(null);
+        setCoords({xPos: 0, yPos: 0});
+    }
+
     function chooseOption(arg: contextMenuButtons){
         if(arg == contextMenuButtons.ShowArtist && artistMenuToOpen){
             navigateTo(artistMenuToOpen.key);
+        }
+        else if(arg === contextMenuButtons.AddToPlaylist){ setIsPlaylistModalOpen(true); }
+        else if(arg === contextMenuButtons.PlayNext && artistMenuToOpen){ 
+            addTheseSongsToPlayNext({artist: artistMenuToOpen.artist_name});
+            closeContextMenu(); 
+        }
+        else if(arg === contextMenuButtons.PlayLater && artistMenuToOpen){ 
+            addTheseSongsToPlayLater({artist: artistMenuToOpen.artist_name});
+            closeContextMenu(); 
+        }
+        else if(arg === contextMenuButtons.Play && artistMenuToOpen){
+            playTheseSongs({artist: artistMenuToOpen.artist_name});
+            closeContextMenu(); 
         }
     }
 
@@ -62,16 +83,7 @@ const SearchArtists = () => {
             {
                 artistMenuToOpen && (
                     <div className="SearchArtists-ContextMenu-container" 
-                    onClick={() => {
-                        setArtistMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }} 
-                    onContextMenu={(e) => {
-                        e.preventDefault();
-                        setArtistMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }}
-                    >
+                    onClick={closeContextMenu} onContextMenu={closeContextMenu}>
                         <GeneralContextMenu 
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
@@ -81,6 +93,11 @@ const SearchArtists = () => {
                     </div>
                 )
             }
+            <AddSongsToPlaylistModal 
+                isOpen={isPlaylistModalOpen} 
+                title={artistMenuToOpen? artistMenuToOpen.artist_name : ""} 
+                values={{artist: artistMenuToOpen? artistMenuToOpen.artist_name : ""}}
+                closeModal={() => setIsPlaylistModalOpen(false)} />
         </div>
     )
 }

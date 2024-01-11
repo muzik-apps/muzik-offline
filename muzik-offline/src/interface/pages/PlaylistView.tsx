@@ -5,14 +5,14 @@ import { contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { motion } from "framer-motion";
 import { useReducer, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getPlaylistSongs, secondsToTimeFormat } from "utils";
+import { getPlaylistSongs, secondsToTimeFormat } from "@utils/index";
 import "@styles/pages/PlaylistView.scss";
 import { ViewportList } from "react-viewport-list";
 import { variants_list } from "@content/index";
-import { PlaylistViewState, playlistViewReducer } from "store/reducerStore";
-import { reducerType } from "store";
-import { addThisSongToPlayNext, addThisSongToPlayLater, playThisListNow, startPlayingNewSong } from "utils/playerControl";
-import { closeContextMenu, setSongList, selectThisSong, closePlaylistModal, processArrowKeysInput } from "utils/reducerUtils";
+import { PlaylistViewState, playlistViewReducer } from "@store/reducerStore";
+import { reducerType } from "@store/index";
+import { addThisSongToPlayNext, addThisSongToPlayLater, playThisListNow, startPlayingNewSong } from "@utils/playerControl";
+import { closeContextMenu, setSongList, selectThisSong, closePlaylistModal, processArrowKeysInput } from "@utils/reducerUtils";
 
 const PlaylistView = () => {
     const [state , dispatch] = useReducer(playlistViewReducer, PlaylistViewState);
@@ -31,11 +31,11 @@ const PlaylistView = () => {
         if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.PlayNext && state.songMenuToOpen){ 
-            addThisSongToPlayNext(state.songMenuToOpen.id);
+            addThisSongToPlayNext([state.songMenuToOpen.id]);
             closeContextMenu(dispatch); 
         }
         else if(arg === contextMenuButtons.PlayLater && state.songMenuToOpen){ 
-            addThisSongToPlayLater(state.songMenuToOpen.id);
+            addThisSongToPlayLater([state.songMenuToOpen.id]);
             closeContextMenu(dispatch); 
         }
         else if(arg === contextMenuButtons.Play && state.songMenuToOpen){

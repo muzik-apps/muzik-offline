@@ -1,5 +1,5 @@
 import { Play, Shuffle } from "@assets/icons";
-import { GeneralContextMenu, LargeResizableCover, SquareTitleBox } from "@components/index";
+import { AddSongsToPlaylistModal, GeneralContextMenu, LargeResizableCover, SquareTitleBox } from "@components/index";
 import { contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { motion } from "framer-motion";
 import { useRef, useEffect, useReducer } from "react";
@@ -7,10 +7,10 @@ import { useParams } from "react-router-dom";
 import { getArtistsAlbums, secondsToTimeFormat } from "utils";
 import { useNavigate } from "react-router-dom";
 import "@styles/pages/ArtistCatalogue.scss";
-import { artistCatalogueReducer } from "store/reducerStore";
-import { ArtistCatalogueState } from '../../store/reducerStore';
-import { reducerType } from "store";
-import { closeContextMenu } from "utils/reducerUtils";
+import { artistCatalogueReducer, ArtistCatalogueState } from "@store/reducerStore";
+import { reducerType } from "@store/index";
+import { closeContextMenu, closePlaylistModal } from "@utils/reducerUtils";
+import { addTheseSongsToPlayNext, addTheseSongsToPlayLater, playTheseSongs } from "@utils/playerControl";
 
 const ArtistCatalogue = () => {
     const [state , dispatch] = useReducer(artistCatalogueReducer, ArtistCatalogueState);
@@ -25,7 +25,20 @@ const ArtistCatalogue = () => {
     }
 
     function chooseOption(arg: contextMenuButtons){
-        if(arg == contextMenuButtons.ShowAlbum && state.albumMenuToOpen) navigateTo(state.albumMenuToOpen.key);
+        if(arg === contextMenuButtons.ShowAlbum && state.albumMenuToOpen) navigateTo(state.albumMenuToOpen.key);
+        else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
+        else if(arg === contextMenuButtons.PlayNext && state.albumMenuToOpen){ 
+            addTheseSongsToPlayNext({album: state.albumMenuToOpen.title, artist: state.artist_metadata.artistName});
+            closeContextMenu(dispatch); 
+        }
+        else if(arg === contextMenuButtons.PlayLater && state.albumMenuToOpen){ 
+            addTheseSongsToPlayLater({album: state.albumMenuToOpen.title, artist: state.artist_metadata.artistName});
+            closeContextMenu(dispatch); 
+        }
+        else if(arg === contextMenuButtons.Play && state.albumMenuToOpen){
+            playTheseSongs({album: state.albumMenuToOpen.title, artist: state.artist_metadata.artistName});
+            closeContextMenu(dispatch); 
+        }
     }
 
     function handleScroll(){
@@ -111,6 +124,11 @@ const ArtistCatalogue = () => {
                     </div>
                 )
             }
+            <AddSongsToPlaylistModal 
+                isOpen={state.isPlaylistModalOpen} 
+                title={state.albumMenuToOpen? state.albumMenuToOpen.title : ""} 
+                values={{album: state.albumMenuToOpen? state.albumMenuToOpen.title : ""}}
+                closeModal={() => closePlaylistModal(dispatch)} />
         </motion.div>
     )
 }

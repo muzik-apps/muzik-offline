@@ -1,39 +1,38 @@
+import { modal_variants } from "@content/index";
 import { local_playlists_db } from "@database/database";
 import { toastType } from "@muziktypes/index";
+import { useToastStore } from "@store/index";
+import { getRandomCover, getSongPaths } from "@utils/index";
 import { useLiveQuery } from "dexie-react-hooks";
-import { FunctionComponent } from "react";
-import { useToastStore } from "store";
-import "@styles/components/modals/AddSongToPlaylistModal.scss";
-import { getRandomCover } from "utils";
 import { motion } from "framer-motion";
-import { modal_variants } from "@content/index";
+import "@styles/components/modals/AddSongToPlaylistModal.scss";
 
-type AddSongToPlaylistModalProps = {
+type AddSongsToPlaylistModalProps = {
     isOpen: boolean;
-    songPath: string;
+    title: string;
+    values: {album?: string, artist?: string, genre?: string, playlist?: string};
     closeModal: () => void;
 }
 
-const AddSongToPlaylistModal: FunctionComponent<AddSongToPlaylistModalProps> = (props: AddSongToPlaylistModalProps) => {
+const AddSongsToPlaylistModal = (props: AddSongsToPlaylistModalProps) => {
 
     const playlists = useLiveQuery(() => local_playlists_db.playlists.toArray()) ?? [];
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
 
-    function chooseThisPlaylist(key: number){
+    async function chooseThisPlaylist(key: number){
         //check if track path is already in the playlist
         const pl = playlists.find(playlist => playlist.key === key);
         if(pl === undefined)return;
-        if(pl.tracksPaths.includes(props.songPath)){
-            //if the track path is already in the playlist, send a toast letting the user know
-            setToast({title: "Already in playlist", message: "This song is already in the playlist you selected", type: toastType.warning, timeout: 2000});
-            return;
-        }
-        //if the track path is not in the playlist, add it to the local db playlist
-        local_playlists_db.playlists.update(key, {tracksPaths: [...pl.tracksPaths ?? [], props.songPath]});
+        const paths: string[] = await getSongPaths(props.values);
+        const set_a = new Set(pl.tracksPaths);
+        const values_not_in_a = paths.filter(value => !set_a.has(value));
+        //add the paths to the local db playlist with the given key
+        local_playlists_db.playlists.update(key, {tracksPaths: [...pl.tracksPaths ?? [], ...values_not_in_a]});
         props.closeModal();
-        setToast({title: "Added to playlist", message: `The song has been added to ${pl.title}`, type: toastType.info, timeout: 2000});
+        const message = `Songs from ${props.title} have been added to ${pl.title} ` + (paths.length !== values_not_in_a.length ? `but some where in the playlist` : ``);
+        setToast({title: "Added to playlist", message: message, type: toastType.info, timeout: 5000});
     }
-
+    
     return (
         <div className={"AddSongToPlaylistModal" + (props.isOpen ? " AddSongToPlaylistModal-visible" : "")} onClick={
             (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => 
@@ -42,7 +41,7 @@ const AddSongToPlaylistModal: FunctionComponent<AddSongToPlaylistModalProps> = (
             animate={props.isOpen ? "open" : "closed"}
             variants={modal_variants}
             className="modal">
-                <h1>Add song to playlist</h1>
+                <h1>Add to playlist</h1>
                 <div className="playlists">
                     {playlists.length === 0 && (<h2>You have no playlists</h2>)}
                     {
@@ -69,4 +68,4 @@ const AddSongToPlaylistModal: FunctionComponent<AddSongToPlaylistModalProps> = (
     )
 }
 
-export default AddSongToPlaylistModal
+export default AddSongsToPlaylistModal

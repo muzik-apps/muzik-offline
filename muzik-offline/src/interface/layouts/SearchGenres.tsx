@@ -1,14 +1,16 @@
-import { SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
+import { SquareTitleBox, GeneralContextMenu, LoaderAnimated, AddSongsToPlaylistModal } from "@components/index";
 import { mouse_coOrds, contextMenuEnum, contextMenuButtons, genre } from "@muziktypes/index";
 import { useEffect, useState } from "react";
 import "@styles/layouts/SearchGenres.scss";
 import { local_genres_db } from "@database/database";
 import { useSearchStore } from "@store/index";
 import { useNavigate } from "react-router-dom";
+import { addTheseSongsToPlayNext, addTheseSongsToPlayLater, playTheseSongs } from "@utils/playerControl";
 
 const SearchGenres = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [loading, setLoading] = useState<boolean>(false);
+    const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState<boolean>(false);
     const [genreMenuToOpen, setGenreMenuToOpen] = useState<genre | null>(null);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
     const [genres, setGenres] = useState<genre[]>([]);
@@ -20,11 +22,29 @@ const SearchGenres = () => {
         setGenreMenuToOpen(matching_genre ? matching_genre : null);
     }
 
+    function closeContextMenu(e?: any){
+        if(e)e.preventDefault();
+        setGenreMenuToOpen(null);
+        setCoords({xPos: 0, yPos: 0});
+    }
+
     function chooseOption(arg: contextMenuButtons){
-        if(arg === contextMenuButtons.AddToPlaylist){ console.log("Add to playlist"); }
-        else if(arg === contextMenuButtons.PlayNext){ console.log("Play next"); }
-        else if(arg === contextMenuButtons.PlayLater){ console.log("Play later"); }
-        else if(arg === contextMenuButtons.Play){ console.log("Play"); }
+        if(arg == contextMenuButtons.ShowGenre && genreMenuToOpen){
+            navigateTo(genreMenuToOpen.key);
+        }
+        else if(arg === contextMenuButtons.AddToPlaylist){ setIsPlaylistModalOpen(true); }
+        else if(arg === contextMenuButtons.PlayNext && genreMenuToOpen){ 
+            addTheseSongsToPlayNext({genre: genreMenuToOpen.title});
+            closeContextMenu(); 
+        }
+        else if(arg === contextMenuButtons.PlayLater && genreMenuToOpen){ 
+            addTheseSongsToPlayLater({genre: genreMenuToOpen.title});
+            closeContextMenu(); 
+        }
+        else if(arg === contextMenuButtons.Play && genreMenuToOpen){
+            playTheseSongs({genre: genreMenuToOpen.title});
+            closeContextMenu(); 
+        }
     }
     
 
@@ -63,17 +83,8 @@ const SearchGenres = () => {
             </div>
             {
                 genreMenuToOpen && (
-                    <div className="SearchGenres-ContextMenu-container" 
-                    onClick={() => {
-                        setGenreMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }} 
-                    onContextMenu={(e) => {
-                        e.preventDefault();
-                        setGenreMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }}
-                    >
+                    <div className="SearchGenres-ContextMenu-container"
+                    onClick={closeContextMenu} onContextMenu={closeContextMenu}>
                         <GeneralContextMenu 
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
@@ -83,6 +94,11 @@ const SearchGenres = () => {
                     </div>
                 )
             }
+            <AddSongsToPlaylistModal 
+                isOpen={isPlaylistModalOpen} 
+                title={genreMenuToOpen? genreMenuToOpen.title : ""} 
+                values={{genre: genreMenuToOpen? genreMenuToOpen.title : ""}}
+                closeModal={() => setIsPlaylistModalOpen(false)} />
         </div>
     )
 }

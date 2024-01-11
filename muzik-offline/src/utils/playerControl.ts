@@ -3,26 +3,76 @@ import { useSavedObjectStore, useUpcomingSongs, usePlayerStore, usePlayingPositi
 import { Song } from "@muziktypes/index";
 import { invoke } from "@tauri-apps/api";
 import { SavedObject } from "@database/index";
-import { local_songs_db } from "@database/database";
+import { local_playlists_db, local_songs_db } from "@database/database";
 
-export const addThisSongToPlayNext = (songid: number) => {
+export const addThisSongToPlayNext = async(songids: number[]) => {
     //get the song queue
     const res = useUpcomingSongs.getState().queue;
     //add the song to index position 1 in the queue
-    const newQueue = [...res.slice(0, 1), songid, ...res.slice(1)];
+    const newQueue = [...res.slice(0, 1), ...songids, ...res.slice(1)];
     //add the new queue from index 0 to index limit - 1
     useUpcomingSongs.getState().setQueue(newQueue);
+
+    const song = usePlayerStore.getState().Player.playingSongMetadata;
+    if(song === null && songids.length >= 1){
+        const toplay = await local_songs_db.songs.where("id").equals(songids[0]).first();
+        if(toplay === undefined)return;
+        loadNewSong(toplay);
+    }
 }
 
-export const addThisSongToPlayLater = (songid: number) => {
+const findSongs = async(values: {album?: string, artist?: string, genre?: string, playlist?: string}): Promise<Song[]> => {
+    if(values.playlist === undefined){
+        const result: {album?: string, artist?: string, genre?: string} = {};
+        
+        if(values.album !== undefined)result.album = values.album;
+        if(values.artist !== undefined)result.artist = values.artist;
+        if(values.genre !== undefined)result.genre = values.genre;
+        return await local_songs_db.songs.where(result).toArray();
+    }
+    else{
+        const playlist = await local_playlists_db.playlists.where("title").equals(values.playlist).first();
+        if(playlist === undefined)return [];
+        return await local_songs_db.songs.where("path").anyOf(playlist.tracksPaths).toArray();
+    }
+}
+
+export const addTheseSongsToPlayNext = async(values: {album?: string, artist?: string, genre?: string, playlist?: string}) => {
+    const songs = await findSongs(values);
+    await addThisSongToPlayNext(songs.map((song) => {return song.id}));
+}
+
+export const addTheseSongsToPlayLater = async(values: {album?: string, artist?: string, genre?: string, playlist?: string}) => {
+    const songs = await findSongs(values);
+    await addThisSongToPlayLater(songs.map((song) => {return song.id}));
+}
+
+export const playTheseSongs = async(values: {album?: string, artist?: string, genre?: string, playlist?: string}) => {
+    const songs = await findSongs(values);
+    if(songs.length >= 1){
+        useUpcomingSongs.getState().clearQueue();
+        useUpcomingSongs.getState().push_front(songs[0].id);
+        startPlayingNewSong(songs[0]);
+    }
+    if(songs.length > 1) await addThisSongToPlayNext(songs.slice(1).map((song) => {return song.id}));
+}
+
+export const addThisSongToPlayLater = async(songids: number[]) => {
     //get the limit
     const limit = Number.parseInt(useSavedObjectStore.getState().local_store.UpcomingHistoryLimit);
     //get the song queue
     let res = useUpcomingSongs.getState().queue;
     //add the song to the index before the limit
-    res.splice(limit - 1, 0, songid);
+    res.splice(limit - 1, 0, ...songids);
     //add the new queue
     useUpcomingSongs.getState().setQueue(res);
+
+    const song = usePlayerStore.getState().Player.playingSongMetadata;
+    if(song === null && songids.length >= 1){
+        const toplay = await local_songs_db.songs.where("id").equals(songids[0]).first();
+        if(toplay === undefined)return;
+        loadNewSong(toplay);
+    }
 }
 
 export async function startPlayingNewSong(song: Song){

@@ -1,14 +1,15 @@
 import { motion } from "framer-motion";
 import { useEffect, useReducer } from "react";
-import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
+import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, LoaderAnimated, AddSongsToPlaylistModal } from "@components/index";
 import { ChevronDown } from "@assets/icons";
 import "@styles/pages/AllGenres.scss";
 import { contextMenuEnum, contextMenuButtons } from "@muziktypes/index";
 import { local_genres_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
-import { AllGenresState, allGenreReducer } from '../../store/reducerStore';
-import { reducerType } from "store";
-import { closeContextMenu, setOpenedDDM } from "utils/reducerUtils";
+import { AllGenresState, allGenreReducer } from '@store/reducerStore';
+import { reducerType } from "@store/index";
+import { closeContextMenu, closePlaylistModal, setOpenedDDM } from "@utils/reducerUtils";
+import { addTheseSongsToPlayLater, addTheseSongsToPlayNext, playTheseSongs } from "@utils/playerControl";
 
 const AllGenres = () => {
     const [state , dispatch] = useReducer(allGenreReducer, AllGenresState);
@@ -26,10 +27,20 @@ const AllGenres = () => {
     }
 
     function chooseOption(arg: contextMenuButtons){
-        if(arg === contextMenuButtons.AddToPlaylist){ console.log("Add to playlist"); }
-        else if(arg === contextMenuButtons.PlayNext){ console.log("Play next"); }
-        else if(arg === contextMenuButtons.PlayLater){ console.log("Play later"); }
-        else if(arg === contextMenuButtons.Play){ console.log("Play"); }
+        if(arg == contextMenuButtons.ShowGenre && state.genreMenuToOpen)navigateTo(state.genreMenuToOpen.key);
+        else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
+        else if(arg === contextMenuButtons.PlayNext && state.genreMenuToOpen){ 
+            addTheseSongsToPlayNext({genre: state.genreMenuToOpen.title});
+            closeContextMenu(dispatch); 
+        }
+        else if(arg === contextMenuButtons.PlayLater && state.genreMenuToOpen){ 
+            addTheseSongsToPlayLater({genre: state.genreMenuToOpen.title});
+            closeContextMenu(dispatch); 
+        }
+        else if(arg === contextMenuButtons.Play && state.genreMenuToOpen){
+            playTheseSongs({genre: state.genreMenuToOpen.title});
+            closeContextMenu(dispatch); 
+        }
     }
 
     function navigateTo(passed_key: number){ navigate(`/GenreView/${passed_key}`); }
@@ -105,6 +116,11 @@ const AllGenres = () => {
                 )
             }
             <div className="bottom_margin"/>
+            <AddSongsToPlaylistModal 
+                isOpen={state.isPlaylistModalOpen} 
+                title={state.genreMenuToOpen? state.genreMenuToOpen.title : ""} 
+                values={{genre: state.genreMenuToOpen? state.genreMenuToOpen.title : ""}}
+                closeModal={() => closePlaylistModal(dispatch)} />
         </motion.div>
     )
 }

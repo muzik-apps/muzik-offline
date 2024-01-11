@@ -22,23 +22,29 @@
         box-shadow: $box-shadow-10-10-25;
         backdrop-filter: var(--var-bg-blur-150);
         border-radius: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        padding-right: 0px;
 
         h1{
             font-size: 20px;
             margin-top: 0px;
             margin-bottom: 20px;
+            margin-left: 7px;
+            width: 100%;
+            text-align: center;
         }
 
         .playlists{
+            width: 100%;
+            height: 306px;
+            overflow-y: auto;
             .playlist{
                 display: flex;
                 align-items: center;
                 width: 280px;
                 margin-bottom: 10px;
                 height: 40px;
+                padding: 5px;
+                border-radius: 15px;
                 .playlist_img{
                     width: 40px;
                     height: 40px;
@@ -67,6 +73,10 @@
                     margin-bottom: 0px;
                     height: 18px;
                 }
+            }
+
+            .playlist:hover{
+                background: $on-hover-song;
             }
         }
     }

@@ -26,6 +26,10 @@ export function setSongList(songList: Song[], dispatch: React.Dispatch<Action>){
 export function closePlaylistModal(dispatch: React.Dispatch<Action>){
     dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: false });
     dispatch({ type: reducerType.SET_SONG_MENU, payload: null});
+    dispatch({ type: reducerType.SET_ALBUM_MENU, payload: null});
+    dispatch({ type: reducerType.SET_GENRE_MENU, payload: null});
+    dispatch({ type: reducerType.SET_ARTIST_MENU, payload: null});
+    dispatch({ type: reducerType.SET_PLAYLIST_MENU, payload: null});
 }
 
 export function closePropertiesModal(dispatch: React.Dispatch<Action>){
