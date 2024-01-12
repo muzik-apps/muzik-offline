@@ -91,9 +91,7 @@ const AllPlaylists = () => {
             </div>
             {state.playlistList.length === 0 && state.isloading === false && (
                 <h6>
-                    it seems like you may not have added any songs yet.<br/>
-                    To add songs, click on the settings button above, scroll down <br/>
-                    and click on "click here to change directories". <br/>
+                    you have no playlists
                 </h6>
             )}
             { state.isloading && <LoaderAnimated /> }

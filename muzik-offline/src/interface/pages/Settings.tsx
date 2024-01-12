@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
 import { FunctionComponent, useState, useEffect } from 'react';
 import "@styles/pages/Settings.scss";
-import { ChevronDown, ComponentIcon, InformationCircleContained, Layout, Lock, SettingsIcon } from "@icons/index";
+import { ChevronDown, ComponentIcon, InformationCircleContained, Layout, SettingsIcon } from "@icons/index";
 import { DirectoriesModal, SettingsNavigator } from '@components/index';
 import { selectedSettingENUM } from 'types';
-import { AppearanceSettings, GeneralSettings, AdvancedSettings, AboutSettings, SecuritySettings } from '@layouts/index';
+import { AppearanceSettings, GeneralSettings, AdvancedSettings, AboutSettings } from '@layouts/index';
 import { useSavedObjectStore } from 'store';
 
 type SettingsProps = {
@@ -56,7 +56,7 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
                         </div>
                         <SettingsNavigator icon={SettingsIcon} title={selectedSettingENUM.General} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
                         <SettingsNavigator icon={Layout} title={selectedSettingENUM.Appearance} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
-                        <SettingsNavigator icon={Lock} title={selectedSettingENUM.Security} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
+                        {/*<SettingsNavigator icon={Lock} title={selectedSettingENUM.Security} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>*/}
                         <SettingsNavigator icon={ComponentIcon} title={selectedSettingENUM.Advanced} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
                         <SettingsNavigator icon={InformationCircleContained} title={selectedSettingENUM.About} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
                         </div>
@@ -68,8 +68,8 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
                                                 return <GeneralSettings openDirectoryModal={() => setCDModalState(true)}/>
                                             case selectedSettingENUM.Appearance:
                                                 return <AppearanceSettings />
-                                            case selectedSettingENUM.Security:
-                                                return <SecuritySettings />
+                                            //case selectedSettingENUM.Security:
+                                            //    return <SecuritySettings />
                                             case selectedSettingENUM.Advanced:
                                                 return <AdvancedSettings />
                                             case selectedSettingENUM.About:
