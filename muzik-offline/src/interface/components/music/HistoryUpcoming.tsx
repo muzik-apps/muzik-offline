@@ -1,17 +1,16 @@
-import { FunctionComponent, useEffect, useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { motion } from 'framer-motion';
 import "@styles/components/music/HistoryUpcoming.scss";
 import { Song, contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
-import { GeneralContextMenu, SongCardResizable } from "@components/index";
+import { AddSongToPlaylistModal, GeneralContextMenu, PropertiesModal, SongCardResizable } from "@components/index";
 import { useNavigate } from "react-router-dom";
 import { local_albums_db, local_songs_db } from "@database/database";
-import { useUpcomingSongs, useHistorySongs, useSavedObjectStore, reducerType } from "store";
-import { UpcomingHistoryState, upcomingHistoryReducer } from "store/reducerStore";
-import { closeContextMenu } from "utils/reducerUtils";
+import { useUpcomingSongs, useHistorySongs, useSavedObjectStore, reducerType } from "@store/index";
+import { UpcomingHistoryState, upcomingHistoryReducer } from "@store/reducerStore";
+import { closeContextMenu, closePlaylistModal, closePropertiesModal } from "@utils/reducerUtils";
+import { addThisSongToPlayNext, addThisSongToPlayLater, playThisSongFromQueue } from "@utils/playerControl";
 
-type HistoryUpcomingProps = { closePlayer: () => void;}
-
-const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: HistoryUpcomingProps) => {
+const HistoryUpcoming = () => {
   const [state , dispatch] = useReducer(upcomingHistoryReducer, UpcomingHistoryState); 
   const {SongQueueKeys} = useUpcomingSongs((state) => { return { SongQueueKeys: state.queue}; });
   const {SongHistoryKeys} = useHistorySongs((state) => { return { SongHistoryKeys: state.queue}; });
@@ -21,26 +20,43 @@ const HistoryUpcoming: FunctionComponent<HistoryUpcomingProps> = (props: History
 
   function setMenuOpenData__SongQueue(key: number, n_co_ords: {xPos: number; yPos: number;}){
     dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords });
-    const matching_song = state.SongQueue.find(song => { return song.id === key; })
+    const matching_song = state.SongQueue.find((song, index) => { 
+        if(song.id === key)dispatch({ type: reducerType.SET_KEY_INDEX_SONG_QUEUE, payload: {key,index,queueType: "SongQueue"} });
+        return song.id === key; 
+    });
     dispatch({ type: reducerType.SET_SONG_MENU, payload: matching_song ? matching_song : null });
-}
-
-function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos: number;}){
-    dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords });
-    const matching_song = state.SongHistory.find(song => { return song.id === key; })
-    dispatch({ type: reducerType.SET_SONG_MENU, payload: matching_song ? matching_song : null });
-}
-
-  function chooseOption(arg: contextMenuButtons){
-      if(arg === contextMenuButtons.AddToPlaylist){ console.log("Add to playlist"); }
-        else if(arg === contextMenuButtons.PlayNext && state.songMenuToOpen){ console.log("Play next"); }
-        else if(arg === contextMenuButtons.PlayLater && state.songMenuToOpen){ console.log("Play later"); }
-        else if(arg === contextMenuButtons.Play && state.songMenuToOpen){ console.log("Play"); }
   }
 
-  async function navigateToSH(key: number, type: "artist" | "song"){
-    props.closePlayer();
-    const relatedSong = state.SongHistory.find((value) => value.id === key);
+  function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos: number;}){
+      dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords });
+      const matching_song = state.SongHistory.find((song, index) => { 
+          if(song.id === key)dispatch({ type: reducerType.SET_KEY_INDEX_SONG_QUEUE, payload: {key,index,queueType: "SongHistory"} });
+          return song.id === key; 
+      });
+      dispatch({ type: reducerType.SET_SONG_MENU, payload: matching_song ? matching_song : null });
+  }
+
+  function chooseOption(arg: contextMenuButtons){
+    if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
+    else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
+    else if(arg === contextMenuButtons.PlayNext && state.songMenuToOpen){ 
+        addThisSongToPlayNext([state.songMenuToOpen.id]);
+        closeContextMenu(dispatch); 
+    }
+    else if(arg === contextMenuButtons.PlayLater && state.songMenuToOpen){ 
+        addThisSongToPlayLater([state.songMenuToOpen.id]);
+        closeContextMenu(dispatch); 
+    }
+    else if(arg === contextMenuButtons.Play && state.songMenuToOpen){
+        playThisSongFromQueue(state.kindex_sq.key, state.kindex_sq.index, state.kindex_sq.queueType);
+        dispatch({ type: reducerType.SET_KEY_INDEX_SONG_QUEUE, payload: {key: -1, index: -1, queueType: ""} });
+        closeContextMenu(dispatch); 
+    }
+  }
+
+  async function navigateTo(key: number, type: "artist" | "song", queueType: string){
+    const relatedSong = queueType === "SongHistory" ? state.SongHistory.find((value) => value.id === key)
+    : state.SongQueue.find((value) => value.id === key);
     if(!relatedSong)return;
     if(type === "song"){
         const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
@@ -49,19 +65,6 @@ function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos
     else if(type === "artist"){
         navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
     }
-  }
-
-  async function navigateToSQ(key: number, type: "artist" | "song"){
-      props.closePlayer();
-      const relatedSong = state.SongQueue.find((value) => value.id === key);
-      if(!relatedSong)return;
-      if(type === "song"){
-          const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
-          navigate(`/AlbumDetails/${albumres[0].key}/undefined`);
-      }
-      else if(type === "artist"){
-          navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
-      }
   }
 
   async function setLists(){
@@ -89,13 +92,14 @@ function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos
             {
                 state.SongQueue.map((song, index) => 
                     <SongCardResizable 
-                        key={song.id * index}
+                        key={index}
                         cover={song.cover} 
                         songName={song.name}
                         artist={song.artist}
                         keyV={song.id}
                         setMenuOpenData={setMenuOpenData__SongQueue}
-                        navigateTo={navigateToSQ}/>
+                        playThisSong={(key: number) => playThisSongFromQueue(key, index, "SongQueue")}
+                        navigateTo={(key: number, type: "artist" | "song") => navigateTo(key, type, "SongQueue")}/>
                 )
             }
           </div>
@@ -104,13 +108,14 @@ function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos
             {
                 state.SongHistory.map((song, index) => 
                     <SongCardResizable 
-                        key={song.id * index}
+                        key={index}
                         cover={song.cover} 
                         songName={song.name}
                         artist={song.artist}
                         keyV={song.id}
                         setMenuOpenData={setMenuOpenData_SongHistory}
-                        navigateTo={navigateToSH}/>
+                        playThisSong={(key: number) => playThisSongFromQueue(key, index, "SongHistory")}
+                        navigateTo={(key: number, type: "artist" | "song") => navigateTo(key, type, "SongHistory")}/>
                 )
             }
           </div>
@@ -141,6 +146,9 @@ function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos
               </div>
           )
       }
+
+      <PropertiesModal isOpen={state.isPropertiesModalOpen} song={state.songMenuToOpen!} closeModal={() => closePropertiesModal(dispatch)} />
+      <AddSongToPlaylistModal isOpen={state.isPlaylistModalOpen} songPath={state.songMenuToOpen ? state.songMenuToOpen.path : ""} closeModal={() => closePlaylistModal(dispatch)} />
     </div>
   )
 }

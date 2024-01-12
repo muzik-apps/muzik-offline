@@ -10,7 +10,7 @@ import "@styles/pages/ArtistCatalogue.scss";
 import { artistCatalogueReducer, ArtistCatalogueState } from "@store/reducerStore";
 import { reducerType } from "@store/index";
 import { closeContextMenu, closePlaylistModal } from "@utils/reducerUtils";
-import { addTheseSongsToPlayNext, addTheseSongsToPlayLater, playTheseSongs } from "@utils/playerControl";
+import { addTheseSongsToPlayNext, addTheseSongsToPlayLater, playTheseSongs, playSongsFromThisArtist } from "@utils/playerControl";
 
 const ArtistCatalogue = () => {
     const [state , dispatch] = useReducer(artistCatalogueReducer, ArtistCatalogueState);
@@ -86,11 +86,13 @@ const ArtistCatalogue = () => {
                             <h4>{state.artist_metadata.album_count} albums</h4>
                             <h4>{state.artist_metadata.song_count} songs</h4>
                             <div className="action_buttons">
-                                <motion.div className="PlayIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
+                                <motion.div className="PlayIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} 
+                                onClick={() => playSongsFromThisArtist(false, state.artist_metadata.artistName)}>
                                     <Play />
                                     <p>play</p>
                                 </motion.div>
-                                <motion.div className="ShuffleIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
+                                <motion.div className="ShuffleIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} 
+                                onClick={() => playSongsFromThisArtist(true, state.artist_metadata.artistName)}>
                                     <Shuffle />
                                     <p>Shuffle</p>
                                 </motion.div>

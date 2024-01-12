@@ -67,9 +67,9 @@ export const addThisSongToPlayLater = async(songids: number[]) => {
     //get the song queue
     let res = useUpcomingSongs.getState().queue;
     //add the song to the index before the limit
-    res.splice(limit - 1, 0, ...songids);
+    const newQueue = [...res.slice(0, limit - 1), ...songids, ...res.slice(limit - 1)];
     //add the new queue
-    useUpcomingSongs.getState().setQueue(res);
+    useUpcomingSongs.getState().setQueue(newQueue);
 
     const song = usePlayerStore.getState().Player.playingSongMetadata;
     if(song === null && songids.length >= 1){
@@ -80,6 +80,11 @@ export const addThisSongToPlayLater = async(songids: number[]) => {
 }
 
 export async function startPlayingNewSong(song: Song){
+    const US_queue = useUpcomingSongs.getState().queue;
+    if((US_queue.length >= 1 && US_queue[0] != song.id) || US_queue.length === 0){
+        useUpcomingSongs.getState().push_front(song.id);
+    }
+
     const temp = usePlayerStore.getState().Player;
     temp.playingSongMetadata = song;
     temp.lengthOfSongInSeconds = song.duration_seconds;
@@ -207,7 +212,18 @@ export async function playNextSong(){
     usePlayingPositionSec.getState().setPosition(0);
     usePlayingPosition.getState().setPosition(0);
     useUpcomingSongs.getState().dequeue();
-    if(useUpcomingSongs.getState().queue.length === 0)await stopSong();
+    if(useUpcomingSongs.getState().queue.length === 0 && usePlayerStore.getState().Player.repeatingLevel === 0)await stopSong();
+    else if(useUpcomingSongs.getState().queue.length === 0 && usePlayerStore.getState().Player.repeatingLevel === 1){
+        const limit = Number.parseInt(useSavedObjectStore.getState().local_store.UpcomingHistoryLimit);
+        get_next_batch(limit).then(async() => {
+            if(useUpcomingSongs.getState().queue.length >= 1){
+                const toplayid = useUpcomingSongs.getState().queue[0];
+                const toplay = await local_songs_db.songs.where("id").equals(toplayid).first();
+                if(toplay === undefined)return;//the likelihood of this happening is basically impossible
+                loadNewSong(toplay);
+            }
+        });
+    }
     else{
         const toplayid = useUpcomingSongs.getState().queue[0];
         const toplay = await local_songs_db.songs.where("id").equals(toplayid).first();
@@ -254,4 +270,29 @@ export async function get_next_batch(limit: number){
     //append the songs to the end of the queue
     queue.push(...keys);
     useUpcomingSongs.getState().setQueue(queue);
+}
+
+export async function playThisSongFromQueue(key: number, index: number, queueType: string){
+    if(queueType === "SongQueue" || queueType === "SongHistory"){
+        if(queueType === "SongQueue"){
+            //get the song queue
+            const res = useUpcomingSongs.getState().queue;
+            //add the song to index position 1 in the queue
+            const newQueue = [...res.slice(index)];
+            //add the new queue from index 0 to index limit - 1
+            useUpcomingSongs.getState().setQueue(newQueue);
+        }
+        const toplay = await local_songs_db.songs.where("id").equals(key).first();
+        if(toplay === undefined)return;//the likelihood of this happening is basically impossible
+        startPlayingNewSong(toplay);
+    }
+}
+
+export async function playSongsFromThisArtist(shuffle: boolean, artist_name: string){
+    const songkeys = await local_songs_db.songs.where("artist").equals(artist_name).primaryKeys() as number[];
+    if(songkeys.length >= 1){
+        const song = await local_songs_db.songs.where("id").equals(songkeys[0]).first();
+        if(song !== undefined)startPlayingNewSong(song);
+    }
+    if(songkeys.length >= 2)playThisListNow(songkeys.slice(1), shuffle);
 }

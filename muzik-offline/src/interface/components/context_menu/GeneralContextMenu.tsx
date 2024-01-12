@@ -6,6 +6,7 @@ import { AddToPlaylistButton, PlayButton,
     ShowAlbumButton, 
     ShowInfoButton} from "@components/index";
 import "@styles/components/context_menu/GeneralContextMenu.scss";
+import { motion } from "framer-motion";
 
 type GeneralContextMenuProps = {
     xPos: number;
@@ -42,7 +43,10 @@ const GeneralContextMenu: FunctionComponent<GeneralContextMenuProps> = (props: G
     }
 
     return (
-        <div className="GeneralContextMenu" style={{top: getYCoord(props.yPos), left: getXCoord(props.xPos)}}>
+        <motion.div className="GeneralContextMenu" style={{top: getYCoord(props.yPos), left: getXCoord(props.xPos)}}
+        initial={{scale: 0.7, opacity: 0}}
+        animate={{scale: 1, opacity: 1}}
+        exit={{scale: 0.7, opacity: 0}}>
             <PlayButton title={props.title} chooseOption={props.chooseOption}/>
             <PlayNextButton chooseOption={props.chooseOption}/>
             <PlayLaterButton chooseOption={props.chooseOption}/>
@@ -54,7 +58,7 @@ const GeneralContextMenu: FunctionComponent<GeneralContextMenuProps> = (props: G
             {(props.CMtype === contextMenuEnum.PlaylistCM) && <ShowPlaylistButton  title={props.title} chooseOption={props.chooseOption}/>}
             {(props.CMtype === contextMenuEnum.AlbumCM) && <ShowAlbumButton  title={props.title} chooseOption={props.chooseOption}/>}
             {(props.CMtype === contextMenuEnum.PlaylistCM || props.CMtype === contextMenuEnum.SongCM) && <ShowInfoButton chooseOption={props.chooseOption}/>}
-        </div >
+        </motion.div >
     )
 }
 

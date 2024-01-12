@@ -273,6 +273,9 @@ export const UpcomingHistoryState: UpcomingHistoryInterface = {
     songMenuToOpen: null,
     SongQueue: [],
     SongHistory: [],
+    isPlaylistModalOpen: false,
+    isPropertiesModalOpen: false,
+    kindex_sq: {key: -1, index: -1, queueType: ""}
 };
 
 export const upcomingHistoryReducer = (state: UpcomingHistoryInterface, action: Action) => {
@@ -282,6 +285,9 @@ export const upcomingHistoryReducer = (state: UpcomingHistoryInterface, action: 
         case reducerType.SET_SONG_MENU: return { ...state, songMenuToOpen: action.payload };
         case reducerType.SET_SONG_QUEUE: return { ...state, SongQueue: action.payload };
         case reducerType.SET_SONG_HISTORY: return { ...state, SongHistory: action.payload };
+        case reducerType.SET_PLAYLIST_MODAL: return { ...state, isPlaylistModalOpen: action.payload };
+        case reducerType.SET_PROPERTIES_MODAL: return { ...state, isPropertiesModalOpen: action.payload };
+        case reducerType.SET_KEY_INDEX_SONG_QUEUE: return { ...state, kindex_sq: action.payload };
         default: return state;
     }
 };

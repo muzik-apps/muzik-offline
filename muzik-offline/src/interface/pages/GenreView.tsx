@@ -52,8 +52,7 @@ const GenreView = () => {
         if(index === -1)return;
         //get ids of songs from index of matching song to last song in list
         await startPlayingNewSong(state.SongList[index]);
-        const ids: number[] = state.SongList.slice(index + 1).map(song => song.id);
-        await playThisListNow(ids, shuffle_list);
+        await playThisListNow(state.SongList.slice(index + 1).map(song => song.id), shuffle_list);
     }
 
     function handleScroll(){
