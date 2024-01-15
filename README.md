@@ -6,7 +6,7 @@
 ![application](Presentation/Application.png "Application")
 <br></br>
 # muzik-offline
-A cross platform, local music player that is an offline(no streaming) version of <a href="https://github.com/waveyboym/Muzik">Muzik</a>. This app allows you to listen to music that is stored on your local machine, that being music in mp3, wav etc format.
+A cross platform, local music player that is an offline(no streaming) version of <a href="https://github.com/waveyboym/Muzik">Muzik</a>. This app allows you to listen to music that is stored on your local machine, that being music in mp3, wav, ogg and flac format.
 
 # I am a user/tester
 1. Navigate to the <a href="https://github.com/waveyboym/muzik-offline/releases">releases tab</a> and find the latest app release for your operating system.

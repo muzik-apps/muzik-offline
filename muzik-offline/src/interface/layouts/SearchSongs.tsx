@@ -27,11 +27,11 @@ const SearchSongs = () => {
         if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.PlayNext && state.songMenuToOpen){ 
-            addThisSongToPlayNext(state.songMenuToOpen.id);
+            addThisSongToPlayNext([state.songMenuToOpen.id]);
             closeContextMenu(dispatch); 
         }
         else if(arg === contextMenuButtons.PlayLater && state.songMenuToOpen){ 
-            addThisSongToPlayLater(state.songMenuToOpen.id);
+            addThisSongToPlayLater([state.songMenuToOpen.id]);
             closeContextMenu(dispatch); 
         }
         else if(arg === contextMenuButtons.Play && state.songMenuToOpen){
@@ -48,8 +48,7 @@ const SearchSongs = () => {
         if(index === -1)return;
         //get ids of songs from index of matching song to last song in list
         await startPlayingNewSong(state.SongList[index]);
-        const ids: number[] = state.SongList.slice(index + 1).map(song => song.id);
-        await playThisListNow(ids, shuffle_list);
+        await playThisListNow(state.SongList.slice(index + 1).map(song => song.id), shuffle_list);
     }
 
     async function navigateTo(key: number, type: "artist" | "song"){

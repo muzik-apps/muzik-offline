@@ -14,6 +14,7 @@
     --buffered-width: 0%;
     overflow: hidden;
     background: var(--var-glass-music-bar-bg);
+    border-top: 1px solid $songs-container-border-col;
 
     .music_cover_art{
         min-width: 980px;
@@ -38,6 +39,7 @@
         svg{
             width: 100vw;
             height: 100vw;
+            opacity: 0.5;
         }
     }
 
@@ -50,8 +52,8 @@
         display: flex;
         align-items: center;
         justify-content: space-around;
-        border-top-left-radius: 16px;
-        border-top-right-radius: 16px;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
         overflow: hidden;
         position: absolute;
         backdrop-filter: var(--var-bg-blur-150);
@@ -309,26 +311,14 @@
     border: 1px solid $songs-container-border-col;
     min-width: 978px;
     width: calc(100vw - 2px);
-    height: 68px;
-
     .music_cover_art{
         min-width: 978px;
-        width: calc(100vw - 2px);
-        height: 68px;
+    width: calc(100vw - 2px);
     }
-
     .music_art_bg_layer{
         min-width: 978px;
         width: calc(100vw - 2px);
-        height: 68px;
-        margin-top: -68px;
         background: var(--var-glass-music-bar-bg);
         backdrop-filter: var(--var-bg-blur-150);
-        border-top-left-radius: 20px;
-        border-top-right-radius: 20px;
-
-        .art_and_song_details{
-            height: 68px;
-        }
     }
 }

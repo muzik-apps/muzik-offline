@@ -30,6 +30,7 @@ import { PlayButton, PlayNextButton, PlayLaterButton,
 import AddSongToPlaylistModal from "./modals/AddSongToPlaylistModal";
 import LoaderAnimated from './loader/LoaderAnimated';
 import AirplayCastModal from './modals/AirplayCastModal';
+import AddSongsToPlaylistModal from './modals/AddSongsToPlaylistModal';
 
 export {
     HeaderWindows, HeaderMacOS, HeaderLinuxOS, AppNavigator, LeftSidebar, AppMusicPlayer, FSMusicPlayer,
@@ -41,5 +42,5 @@ export {
     ShowAlbumButton, SearchNavigator, DirectoriesModal, ShowInfoButton,
     NotifyBottomRight, PropertiesModal, LargeResizableCover,
     CreatePlaylistModal, EditPlaylistModal, AddSongToPlaylistModal, LoaderAnimated,
-    AirplayCastModal
+    AirplayCastModal, AddSongsToPlaylistModal
 }

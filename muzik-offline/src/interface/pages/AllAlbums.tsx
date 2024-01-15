@@ -1,14 +1,15 @@
 import { motion } from "framer-motion";
 import { useEffect, useReducer } from "react";
-import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
+import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, LoaderAnimated, AddSongsToPlaylistModal } from "@components/index";
 import { ChevronDown } from "@assets/icons";
 import "@styles/pages/AllAlbums.scss";
 import { contextMenuEnum, contextMenuButtons } from "@muziktypes/index";
 import { useNavigate } from "react-router-dom";
 import { AllAlbumsState, allAlbumsReducer } from "@store/reducerStore";
 import { reducerType } from "@store/index";
-import { closeContextMenu, setOpenedDDM } from "@utils/reducerUtils";
+import { closeContextMenu, closePlaylistModal, setOpenedDDM } from "@utils/reducerUtils";
 import { local_albums_db } from "@database/database";
+import { addTheseSongsToPlayNext, addTheseSongsToPlayLater, playTheseSongs } from "@utils/playerControl";
 
 const AllAlbums = () => {
     const [state , dispatch] = useReducer(allAlbumsReducer, AllAlbumsState);
@@ -28,6 +29,18 @@ const AllAlbums = () => {
     function chooseOption(arg: contextMenuButtons){
         if(arg == contextMenuButtons.ShowAlbum && state.albumMenuToOpen){navigateTo(state.albumMenuToOpen.key);}
         else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
+        else if(arg === contextMenuButtons.PlayNext && state.albumMenuToOpen){ 
+            addTheseSongsToPlayNext({album: state.albumMenuToOpen.title});
+            closeContextMenu(dispatch); 
+        }
+        else if(arg === contextMenuButtons.PlayLater && state.albumMenuToOpen){ 
+            addTheseSongsToPlayLater({album: state.albumMenuToOpen.title});
+            closeContextMenu(dispatch); 
+        }
+        else if(arg === contextMenuButtons.Play && state.albumMenuToOpen){
+            playTheseSongs({album: state.albumMenuToOpen.title});
+            closeContextMenu(dispatch); 
+        }
     }
 
     function navigateTo(key: number){ navigate(`/AlbumDetails/${key}/undefined`); }
@@ -103,7 +116,11 @@ const AllAlbums = () => {
                 )
             }
             <div className="bottom_margin"/>
-            {/*<AddSongToPlaylistModal isOpen={state.isPlaylistModalOpen} songPath={state. ? state.songMenuToOpen.path : ""} closeModal={() => closePlaylistModal(dispatch)} />*/}
+            <AddSongsToPlaylistModal 
+                isOpen={state.isPlaylistModalOpen} 
+                title={state.albumMenuToOpen? state.albumMenuToOpen.title : ""} 
+                values={{album: state.albumMenuToOpen? state.albumMenuToOpen.title : ""}}
+                closeModal={() => closePlaylistModal(dispatch)} />
         </motion.div>
     )
 }

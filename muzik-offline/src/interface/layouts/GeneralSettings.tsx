@@ -17,7 +17,7 @@ const settings_data: {
         key: 1,
         title: "Open tab on App launch",
         dropDownName: selectedGeneralSettingEnum.LaunchTab,
-        options: ["Home page", "Artists", "Charts", "All tracks", "All artists", "All albums", "All genres", "All playlists"]
+        options: ["All tracks", "All artists", "All albums", "All genres", "All playlists"]
     },
     {
         key: 2,

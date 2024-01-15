@@ -10,6 +10,7 @@ export enum reducerType {
     SET_OPENED_DDM = "SET_OPENED_DDM",
     SET_PLAYLIST_MODAL = "SET_PLAYLIST_MODAL",
     SET_EDIT_PLAYLIST_MODAL = "SET_EDIT_PLAYLIST_MODAL",
+    SET_CREATE_PLAYLIST_MODAL = "SET_CREATE_PLAYLIST_MODAL",
     SET_PROPERTIES_MODAL = "SET_PROPERTIES_MODAL",
     SET_RESIZE_HEADER = "SET_RESIZE_HEADER",
     SET_SONG_LIST = "SET_SONG_LIST",
@@ -28,6 +29,7 @@ export enum reducerType {
     SET_PLAYLIST_METADATA = "SET_PLAYLIST_METADATA",
     SET_SONG_QUEUE = "SET_SONG_QUEUE",
     SET_SONG_HISTORY = "SET_SONG_HISTORY",
+    SET_KEY_INDEX_SONG_QUEUE = "SET_KEY_INDEX_SONG_QUEUE",
 }
 
 export type Action =
@@ -39,6 +41,7 @@ export type Action =
     | { type: reducerType.SET_OPENED_DDM; payload: string | null }
     | { type: reducerType.SET_PLAYLIST_MODAL; payload: boolean }
     | { type: reducerType.SET_EDIT_PLAYLIST_MODAL; payload: boolean }
+    | { type: reducerType.SET_CREATE_PLAYLIST_MODAL; payload: boolean }
     | { type: reducerType.SET_PROPERTIES_MODAL; payload: boolean }
     | { type: reducerType.SET_RESIZE_HEADER; payload: boolean }
     | { type: reducerType.SET_SONG_LIST; payload: Song[] }
@@ -57,6 +60,7 @@ export type Action =
     | { type: reducerType.SET_PLAYLIST_METADATA; payload: PlaylistMD }
     | { type: reducerType.SET_SONG_QUEUE; payload: Song[] }
     | { type: reducerType.SET_SONG_HISTORY; payload: Song[] }
+    | { type: reducerType.SET_KEY_INDEX_SONG_QUEUE; payload: {key: number, index: number, queueType: string} }
 
 
 
@@ -108,6 +112,7 @@ export interface AllAlbumsInterface{
     openedDDM: string | null,
     albumList: album[],
     albumMenuToOpen: album | null,
+    isPlaylistModalOpen: boolean,
 }
 
 export interface AllArtistsInterface{
@@ -118,6 +123,7 @@ export interface AllArtistsInterface{
     openedDDM: string | null,
     artistList: artist[],
     artistMenuToOpen: artist | null,
+    isPlaylistModalOpen: boolean,
 }
 
 export interface ArtistCatalogueInterface{
@@ -127,6 +133,7 @@ export interface ArtistCatalogueInterface{
     albumMenuToOpen: album | null,
     artist_metadata: ArtistMD,
     resizeHeader: boolean;
+    isPlaylistModalOpen: boolean,
 }
 
 export interface AllGenresInterface{
@@ -137,6 +144,7 @@ export interface AllGenresInterface{
     openedDDM: string | null,
     genreList: genre[],
     genreMenuToOpen: genre | null,
+    isPlaylistModalOpen: boolean,
 }
 
 export interface GenreViewInterface{
@@ -160,6 +168,7 @@ export interface AllPlaylistsInterface{
     playlistList: playlist[],
     playlistMenuToOpen: playlist | null,
     isPlaylistModalOpen: boolean,
+    isCreatePlaylistModalOpen: boolean,
     isPropertiesModalOpen: boolean,
 }
 
@@ -182,4 +191,7 @@ export interface UpcomingHistoryInterface{
     songMenuToOpen: Song | null,
     SongQueue: Song[],
     SongHistory: Song[],
+    isPlaylistModalOpen: boolean,
+    isPropertiesModalOpen: boolean,
+    kindex_sq: {key: number, index: number, queueType: string},
 }

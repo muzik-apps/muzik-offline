@@ -7,11 +7,11 @@
     overflow: hidden;
     display: flex;
     align-items: center;
-    z-index: $z-index-9999;
+    z-index: $z-index-9500;
     user-select: none;
     justify-content: center;
     position: fixed;
-    background: var(--var-glass-music-bar-bg);
+    background: $gray-1000;
 
     .FSMusicPlayer-container{
         position: relative;
@@ -37,7 +37,7 @@
                 overflow: hidden;
                 justify-content: center;
                 align-items: center;
-                filter: var(--var-layer-blur-300);
+                filter: blur(30px);
 
                 img{
                     display: inline;
@@ -45,23 +45,19 @@
                     margin: 0 auto;
                     height: 100%;
                     object-fit: cover;
+                    opacity: 0.5;
                 }
 
                 svg{
                     width: 100%;
                     height: 100%;
+                    opacity: 0.5;
                 }
             }
 
-            .rotate {
-                animation: rotate 40s linear infinite alternate-reverse;
-            }
+            .rotate { animation: rotate 40s linear infinite normal; }
 
-            @keyframes rotate {
-                to {
-                    transform: rotate(360deg);
-                }
-            }
+            @keyframes rotate { to { transform: rotate(360deg); } }
         }
 
         .frontward_facing_player{
@@ -71,7 +67,6 @@
             margin-top: -110vh;
             background: $blur-element;
             position: absolute;
-            backdrop-filter: var(--var-bg-blur-150);
             
             .navbar_buttons{
                 margin-top: 10px;

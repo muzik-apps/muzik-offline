@@ -1,14 +1,16 @@
-import { SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
+import { SquareTitleBox, GeneralContextMenu, LoaderAnimated, AddSongsToPlaylistModal } from "@components/index";
 import { mouse_coOrds, contextMenuEnum, contextMenuButtons, album } from "@muziktypes/index";
 import { useEffect, useState } from "react";
 import "@styles/layouts/SearchAlbums.scss";
 import { local_albums_db } from "@database/database";
 import { useSearchStore } from "@store/index";
 import { useNavigate } from "react-router-dom";
+import { addTheseSongsToPlayNext, addTheseSongsToPlayLater, playTheseSongs } from "@utils/playerControl";
 
 const SearchAlbums = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [albumMenuToOpen, setAlbumMenuToOpen] = useState<album | null>(null);
+    const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
     const [albums, setAlbums] = useState<album[]>([]);
@@ -20,9 +22,28 @@ const SearchAlbums = () => {
         setAlbumMenuToOpen(matching_album ? matching_album : null);
     }
 
+    function closeContextMenu(e?: any){
+        if(e)e.preventDefault();
+        setAlbumMenuToOpen(null);
+        setCoords({xPos: 0, yPos: 0});
+    }
+
     function chooseOption(arg: contextMenuButtons){
         if(arg == contextMenuButtons.ShowAlbum && albumMenuToOpen){
             navigateTo(albumMenuToOpen.key);
+        }
+        else if(arg === contextMenuButtons.AddToPlaylist){ setIsPlaylistModalOpen(true); }
+        else if(arg === contextMenuButtons.PlayNext && albumMenuToOpen){ 
+            addTheseSongsToPlayNext({album: albumMenuToOpen.title});
+            closeContextMenu(); 
+        }
+        else if(arg === contextMenuButtons.PlayLater && albumMenuToOpen){ 
+            addTheseSongsToPlayLater({album: albumMenuToOpen.title});
+            closeContextMenu(); 
+        }
+        else if(arg === contextMenuButtons.Play && albumMenuToOpen){
+            playTheseSongs({album: albumMenuToOpen.title});
+            closeContextMenu(); 
         }
     }
 
@@ -63,16 +84,7 @@ const SearchAlbums = () => {
             {
                 albumMenuToOpen && (
                     <div className="SearchAlbums-ContextMenu-container" 
-                    onClick={() => {
-                        setAlbumMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }} 
-                    onContextMenu={(e) => {
-                        e.preventDefault();
-                        setAlbumMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }}
-                    >
+                    onClick={closeContextMenu} onContextMenu={closeContextMenu}>
                         <GeneralContextMenu 
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
@@ -82,6 +94,11 @@ const SearchAlbums = () => {
                     </div>
                 )
             }
+            <AddSongsToPlaylistModal 
+                isOpen={isPlaylistModalOpen} 
+                title={albumMenuToOpen? albumMenuToOpen.title : ""} 
+                values={{album: albumMenuToOpen? albumMenuToOpen.title : ""}}
+                closeModal={() => setIsPlaylistModalOpen(false)} />
         </div>
     )
 }

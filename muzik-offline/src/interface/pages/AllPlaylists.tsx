@@ -1,14 +1,15 @@
 import { motion } from "framer-motion";
 import { useEffect, useReducer } from "react";
-import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, CreatePlaylistModal, PropertiesModal, LoaderAnimated } from "@components/index";
+import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, CreatePlaylistModal, PropertiesModal, LoaderAnimated, AddSongsToPlaylistModal } from "@components/index";
 import { ChevronDown, Menu } from "@assets/icons";
 import "@styles/pages/AllPlaylists.scss";
-import { contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
+import { contextMenuButtons, contextMenuEnum } from '@muziktypes/index';
 import { local_playlists_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
-import { AllPlaylistsState, allPlaylistsReducer } from "store/reducerStore";
-import { reducerType } from "store";
-import { closeContextMenu, closePlaylistModal, closePropertiesModal, setOpenedDDM } from "utils/reducerUtils";
+import { AllPlaylistsState, allPlaylistsReducer } from "@store/reducerStore";
+import { reducerType } from "@store/index";
+import { closeContextMenu, closePlaylistModal, closePropertiesModal, setOpenedDDM } from "@utils/reducerUtils";
+import { addTheseSongsToPlayNext, addTheseSongsToPlayLater, playTheseSongs } from "@utils/playerControl";
 
 const AllPlaylists = () => {
     const [state , dispatch] = useReducer(allPlaylistsReducer, AllPlaylistsState);
@@ -27,6 +28,20 @@ const AllPlaylists = () => {
 
     function chooseOption(arg: contextMenuButtons){
         if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
+        else if(arg == contextMenuButtons.ShowPlaylist && state.playlistMenuToOpen)navigateTo(state.playlistMenuToOpen.key);
+        else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
+        else if(arg === contextMenuButtons.PlayNext && state.playlistMenuToOpen){ 
+            addTheseSongsToPlayNext({playlist: state.playlistMenuToOpen.title});
+            closeContextMenu(dispatch); 
+        }
+        else if(arg === contextMenuButtons.PlayLater && state.playlistMenuToOpen){ 
+            addTheseSongsToPlayLater({playlist: state.playlistMenuToOpen.title});
+            closeContextMenu(dispatch); 
+        }
+        else if(arg === contextMenuButtons.Play && state.playlistMenuToOpen){
+            playTheseSongs({playlist: state.playlistMenuToOpen.title});
+            closeContextMenu(dispatch); 
+        }
     }
 
     function navigateTo(passed_key: number){ navigate(`/PlaylistView/${passed_key}`); }
@@ -69,16 +84,14 @@ const AllPlaylists = () => {
                     </div>
                 </div>
                 <motion.div className="create_playlist" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} 
-                    onClick={() => dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true})}>
+                    onClick={() => dispatch({ type: reducerType.SET_CREATE_PLAYLIST_MODAL, payload: true})}>
                     <h4>create a playlist</h4>
                     <Menu />
                 </motion.div>
             </div>
             {state.playlistList.length === 0 && state.isloading === false && (
                 <h6>
-                    it seems like you may not have added any songs yet.<br/>
-                    To add songs, click on the settings button above, scroll down <br/>
-                    and click on "click here to change directories". <br/>
+                    you have no playlists
                 </h6>
             )}
             { state.isloading && <LoaderAnimated /> }
@@ -107,8 +120,13 @@ const AllPlaylists = () => {
                 )
             }
             <div className="bottom_margin"/>
-            <CreatePlaylistModal isOpen={state.isPlaylistModalOpen} closeModal={() => closePlaylistModal(dispatch)}/>
+            <CreatePlaylistModal isOpen={state.isCreatePlaylistModalOpen} closeModal={() => dispatch({ type: reducerType.SET_CREATE_PLAYLIST_MODAL, payload: false})}/>
             <PropertiesModal isOpen={state.isPropertiesModalOpen} playlist={state.playlistMenuToOpen ? state.playlistMenuToOpen : undefined} closeModal={() => closePropertiesModal(dispatch)}/>
+            <AddSongsToPlaylistModal 
+                isOpen={state.isPlaylistModalOpen} 
+                title={state.playlistMenuToOpen? state.playlistMenuToOpen.title : ""} 
+                values={{playlist: state.playlistMenuToOpen? state.playlistMenuToOpen.title : ""}}
+                closeModal={() => closePlaylistModal(dispatch)} />
         </motion.div>
     )
 }

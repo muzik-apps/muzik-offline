@@ -1,5 +1,5 @@
 import { NullCoverOne, NullCoverTwo, NullCoverThree, NullCoverFour } from "@assets/index";
-import { local_albums_db, local_artists_db, local_genres_db, local_songs_db } from "@database/database";
+import { local_albums_db, local_artists_db, local_genres_db, local_playlists_db, local_songs_db } from "@database/database";
 import { Song, album, artist, genre, playlist } from "@muziktypes/index";
 import { invoke } from "@tauri-apps/api";
 const batch_size: number = 50;
@@ -181,4 +181,23 @@ export const getRandomCover = (value: number): () => JSX.Element => {
     else if(modv === 1)return NullCoverTwo;
     else if(modv === 2)return NullCoverThree;
     else return NullCoverFour;
+}
+
+export const getSongPaths = async(
+    values: {album?: string, artist?: string, genre?: string, playlist?: string}
+): Promise<string[]> => {
+    if(values.playlist === undefined){
+        const result: {album?: string, artist?: string, genre?: string} = {};
+        
+        if(values.album !== undefined)result.album = values.album;
+        if(values.artist !== undefined)result.artist = values.artist;
+        if(values.genre !== undefined)result.genre = values.genre;
+        const songs = await local_songs_db.songs.where(result).toArray();
+        return (songs.map((song) => {return song.path}));
+    }
+    else{
+        const playlist = await local_playlists_db.playlists.where("title").equals(values.playlist).first();
+        if(playlist === undefined)return [];
+        return playlist.tracksPaths;
+    }
 }

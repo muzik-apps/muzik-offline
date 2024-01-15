@@ -5,14 +5,14 @@ import { contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { motion } from "framer-motion";
 import { useReducer, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getPlaylistSongs, secondsToTimeFormat } from "utils";
+import { getPlaylistSongs, secondsToTimeFormat } from "@utils/index";
 import "@styles/pages/PlaylistView.scss";
 import { ViewportList } from "react-viewport-list";
 import { variants_list } from "@content/index";
-import { PlaylistViewState, playlistViewReducer } from "store/reducerStore";
-import { reducerType } from "store";
-import { addThisSongToPlayNext, addThisSongToPlayLater, playThisListNow, startPlayingNewSong } from "utils/playerControl";
-import { closeContextMenu, setSongList, selectThisSong, closePlaylistModal, processArrowKeysInput } from "utils/reducerUtils";
+import { PlaylistViewState, playlistViewReducer } from "@store/reducerStore";
+import { reducerType } from "@store/index";
+import { addThisSongToPlayNext, addThisSongToPlayLater, playThisListNow, startPlayingNewSong } from "@utils/playerControl";
+import { closeContextMenu, setSongList, selectThisSong, closePlaylistModal, processArrowKeysInput, closePropertiesModal } from "@utils/reducerUtils";
 
 const PlaylistView = () => {
     const [state , dispatch] = useReducer(playlistViewReducer, PlaylistViewState);
@@ -31,11 +31,11 @@ const PlaylistView = () => {
         if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.PlayNext && state.songMenuToOpen){ 
-            addThisSongToPlayNext(state.songMenuToOpen.id);
+            addThisSongToPlayNext([state.songMenuToOpen.id]);
             closeContextMenu(dispatch); 
         }
         else if(arg === contextMenuButtons.PlayLater && state.songMenuToOpen){ 
-            addThisSongToPlayLater(state.songMenuToOpen.id);
+            addThisSongToPlayLater([state.songMenuToOpen.id]);
             closeContextMenu(dispatch); 
         }
         else if(arg === contextMenuButtons.Play && state.songMenuToOpen){
@@ -52,8 +52,7 @@ const PlaylistView = () => {
         if(index === -1)return;
         //get ids of songs from index of matching song to last song in list
         await startPlayingNewSong(state.SongList[index]);
-        const ids: number[] = state.SongList.slice(index + 1).map(song => song.id);
-        await playThisListNow(ids, shuffle_list);
+        await playThisListNow(state.SongList.slice(index + 1).map(song => song.id), shuffle_list);
     }
 
     function handleScroll(){
@@ -143,7 +142,7 @@ const PlaylistView = () => {
                     <h2 style={{ marginTop: state.resizeHeader ? "25px" : "68px" }}>{state.playlist_metadata.playlistName}</h2>
                     { !state.resizeHeader &&
                         <>
-                            <h4>{state.playlist_metadata.song_count} songs</h4>
+                            <h4>{state.playlist_metadata.song_count} {state.playlist_metadata.song_count > 1 ? "songs" : "song"}</h4>
                             <div className="action_buttons">
                                 <motion.div className="PlayIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={() => playThisSong(-1)}>
                                     <Play /><p>play</p>
@@ -181,7 +180,7 @@ const PlaylistView = () => {
                                 selectThisSong={(index) => selectThisSong(index, dispatch)}
                                 setMenuOpenData={setMenuOpenData}
                                 navigateTo={navigateTo}
-                                playThisSong={(_key: number,) => {}}/>
+                                playThisSong={playThisSong}/>
                         )
                     }
                 </ViewportList>
@@ -190,7 +189,7 @@ const PlaylistView = () => {
                 </div>
             </motion.div>
             {
-                state.songMenuToOpen && (
+                state.songMenuToOpen && state.co_ords.xPos !== 0 && state.co_ords.yPos !== 0 && (
                     <div className="PlaylistView-ContextMenu-container" 
                         onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 
@@ -206,7 +205,7 @@ const PlaylistView = () => {
                 playlistobj={{key: state.playlist_metadata.key, cover: state.playlist_metadata.cover, title: state.playlist_metadata.playlistName, dateCreated: "", dateEdited: "", tracksPaths: []}}
                 isOpen={state.isEditingPlayListModalOpen} closeModal={closeModalAndResetData}/>
             <AddSongToPlaylistModal isOpen={state.isPlaylistModalOpen} songPath={state.songMenuToOpen ? state.songMenuToOpen.path : ""} closeModal={() => closePlaylistModal(dispatch)} />
-            <PropertiesModal isOpen={state.isPropertiesModalOpen} song={state.songMenuToOpen ? state.songMenuToOpen : undefined} closeModal={() => closePlaylistModal(dispatch)} />
+            <PropertiesModal isOpen={state.isPropertiesModalOpen} song={state.songMenuToOpen ? state.songMenuToOpen : undefined} closeModal={() => closePropertiesModal(dispatch)} />
         </motion.div>
     )
 }

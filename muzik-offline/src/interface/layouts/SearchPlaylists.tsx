@@ -1,14 +1,17 @@
-import { SquareTitleBox, GeneralContextMenu, LoaderAnimated } from "@components/index";
+import { SquareTitleBox, GeneralContextMenu, LoaderAnimated, AddSongsToPlaylistModal, PropertiesModal } from "@components/index";
 import { playlist, mouse_coOrds, contextMenuEnum, contextMenuButtons } from "@muziktypes/index";
 import { useEffect, useState } from "react";
 import "@styles/layouts/SearchPlaylists.scss";
 import { local_playlists_db } from "@database/database";
 import { useSearchStore } from "@store/index";
 import { useNavigate } from "react-router-dom";
+import { addTheseSongsToPlayNext, addTheseSongsToPlayLater, playTheseSongs } from "@utils/playerControl";
 
 const SearchPlaylists = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
     const [loading, setLoading] = useState<boolean>(false);
+    const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState<boolean>(false);
+    const [isPropertiesModalOpen, setIsPropertiesModalOpen] = useState<boolean>(false);
     const [playlistMenuToOpen, setPlaylistMenuToOpen] = useState<playlist | null>(null);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
     const [playlists, setPlaylists] = useState<playlist[]>([]);
@@ -20,11 +23,28 @@ const SearchPlaylists = () => {
         setPlaylistMenuToOpen(matching_playlist ? matching_playlist : null);
     }
 
+    function closeContextMenu(e?: any){
+        if(e)e.preventDefault();
+        setPlaylistMenuToOpen(null);
+        setCoords({xPos: 0, yPos: 0});
+    }
+
     function chooseOption(arg: contextMenuButtons){
-        if(arg === contextMenuButtons.AddToPlaylist){ console.log("Add to playlist"); }
-        else if(arg === contextMenuButtons.PlayNext){ console.log("Play next"); }
-        else if(arg === contextMenuButtons.PlayLater){ console.log("Play later"); }
-        else if(arg === contextMenuButtons.Play){ console.log("Play"); }
+        if(arg == contextMenuButtons.ShowPlaylist && playlistMenuToOpen)navigateTo(playlistMenuToOpen.key);
+        else if(arg === contextMenuButtons.ShowInfo){ setIsPropertiesModalOpen(true); }
+        else if(arg === contextMenuButtons.AddToPlaylist){ setIsPlaylistModalOpen(true); }
+        else if(arg === contextMenuButtons.PlayNext && playlistMenuToOpen){ 
+            addTheseSongsToPlayNext({playlist: playlistMenuToOpen.title});
+            closeContextMenu(); 
+        }
+        else if(arg === contextMenuButtons.PlayLater && playlistMenuToOpen){ 
+            addTheseSongsToPlayLater({playlist: playlistMenuToOpen.title});
+            closeContextMenu(); 
+        }
+        else if(arg === contextMenuButtons.Play && playlistMenuToOpen){
+            playTheseSongs({playlist: playlistMenuToOpen.title});
+            closeContextMenu(); 
+        }
     }
 
     function navigateTo(passed_key: number){ navigate(`/PlaylistView/${passed_key}`); }
@@ -82,6 +102,12 @@ const SearchPlaylists = () => {
                     </div>
                 )
             }
+            <PropertiesModal isOpen={isPropertiesModalOpen} playlist={playlistMenuToOpen ? playlistMenuToOpen : undefined} closeModal={() => setIsPropertiesModalOpen(false)}/>
+            <AddSongsToPlaylistModal 
+                isOpen={isPlaylistModalOpen} 
+                title={playlistMenuToOpen? playlistMenuToOpen.title : ""} 
+                values={{playlist: playlistMenuToOpen? playlistMenuToOpen.title : ""}}
+                closeModal={() => setIsPlaylistModalOpen(false)} />
         </div>
     )
 }

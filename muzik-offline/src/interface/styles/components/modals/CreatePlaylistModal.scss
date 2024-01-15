@@ -11,7 +11,7 @@
     display: none;
     justify-content: center;
     align-items: center;
-    z-index: $z-index-9500;
+    z-index: $z-index-9999;
 
     .modal{
         width: 300px;
@@ -47,7 +47,8 @@
                     height: 100%;
                     object-fit: cover;
                 }
-                svg{
+                .blank_cover{
+                    background: $gray-600;
                     width: 150px;
                     height: 150px;
                 }

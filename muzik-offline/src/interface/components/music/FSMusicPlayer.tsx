@@ -102,7 +102,7 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
                                         </div>
                                         <div className="lyrics_history_upcoming">
                                             <Suspense fallback={<div>Loading...</div>}>
-                                                <HistoryUpcoming closePlayer={props.closePlayer} />
+                                                <HistoryUpcoming/>
                                             </Suspense>
                                         </div>
                                 </motion.div>
