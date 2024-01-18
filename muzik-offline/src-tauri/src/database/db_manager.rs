@@ -8,6 +8,7 @@ pub struct DbManager{
     pub album_tree: Tree,
     pub artist_tree: Tree,
     pub genre_tree: Tree,
+    pub saved_directories: Tree,
 }
 
 impl DbManager{
@@ -24,6 +25,7 @@ impl DbManager{
         let album_tree: Tree = db.open_tree(b"albums").map_err(|e| e.to_string())?;
         let artist_tree: Tree = db.open_tree(b"artists").map_err(|e| e.to_string())?;
         let genre_tree: Tree = db.open_tree(b"genres").map_err(|e| e.to_string())?;
+        let saved_directories: Tree = db.open_tree(b"saved_directories").map_err(|e| e.to_string())?;
 
         Ok(
             DbManager{
@@ -32,6 +34,7 @@ impl DbManager{
                 album_tree,
                 artist_tree,
                 genre_tree,
+                saved_directories,
             }
         )
     }
