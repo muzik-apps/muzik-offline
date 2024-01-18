@@ -1,0 +1,1 @@
+pub const DATABASE_VERSION: u32 = 1;

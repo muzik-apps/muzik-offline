@@ -6,6 +6,7 @@ mod music;
 mod components;
 mod utils;
 mod database;
+mod constants;
 
 use kira::manager::{AudioManager,AudioManagerSettings,backend::DefaultBackend};
 use components::audio_manager::SharedAudioManager;
@@ -14,7 +15,8 @@ use std::sync::Mutex;
 
 use crate::commands::metadata_retriever::get_all_songs;
 
-use crate::commands::general_commands::{open_in_file_manager, resize_frontend_image_to_fixed_height};
+use crate::commands::{general_commands::{open_in_file_manager, resize_frontend_image_to_fixed_height}, 
+    refresh_paths_at_start::get_the_audio_path};
 
 use crate::music::player::{load_and_play_song_from_path, load_a_song_from_path, set_volume,
     pause_song, resume_playing, seek_to, get_song_position, stop_song};
@@ -53,6 +55,7 @@ fn main() {
                             get_batch_of_albums, 
                             get_batch_of_artists, 
                             get_batch_of_genres,
+                            get_the_audio_path,
                         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

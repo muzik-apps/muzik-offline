@@ -4,7 +4,7 @@ use serde_json::Value;
 use crate::utils::general_utils::encode_image_in_parallel;
 use crate::database::db_api::{
     compare_and_set_hash_map, 
-    start_insertion,
+    start_bulk_insertion,
 };
 use lofty::{ Probe, AudioFile};
 use crate::utils::general_utils::{duration_to_string, extract_file_name, resize_and_compress_image};
@@ -34,7 +34,7 @@ pub async fn get_all_songs(paths_as_json_array: String, compress_image_option: b
 
     let songs_vec_len = songs.len();
 
-    match start_insertion(songs, albums_hash_map, artists_hash_map, genres_hash_map).await{
+    match start_bulk_insertion(songs, albums_hash_map, artists_hash_map, genres_hash_map).await{
         Ok(_) => {
             if songs_vec_len.to_string() == song_id.to_string(){
                 return Ok("{\"status\":\"success\"}".into());
@@ -108,7 +108,8 @@ pub async fn get_songs_in_path(
 }
 
 async fn read_from_path(
-    path: &str, song_id: &mut i32, 
+    path: &str, 
+    song_id: &mut i32, 
     compress_image_option: &bool
 ) -> Result<Song, Box<dyn std::error::Error>> {
     let tag = Tag::read_from_path(path)?;

@@ -1,39 +1,35 @@
 use std::collections::HashMap;
+use std::collections::HashSet;
 use crate::components::{hmaptype::HMapType, song::Song, album::Album, artist::Artist, genre::Genre};
 use super::{db_manager::DbManager, db_struct::ResponseObject};
-use sled::Tree;
 use std::sync::Arc;
+use sled::Tree;
 
 //publicly available api functions
 #[tauri::command]
-pub async fn get_batch_of_songs(batch_size: usize, last_id: u32) -> String{
+pub async fn get_batch_of_songs(batch_size: usize, last_key: String) -> String{
     match DbManager::new(){
         Ok(dbm) => {
             
             let mut songs: Vec<Song> = Vec::new();
-            let keys = get_next_keys(&dbm.song_tree, last_id, batch_size);
+            let mut iter = dbm.song_tree.range(last_key.as_bytes()..);
 
             let could_retrieve_songs = tokio::task::spawn_blocking(move || { 
-                for key in keys{
-                    match dbm.song_tree.get(key.to_ne_bytes()){
-                        Ok(Some(song_as_ivec)) => {
-                            let song_as_bytes = song_as_ivec.as_ref();
-                            let song_as_str = String::from_utf8_lossy(song_as_bytes);
-                            match serde_json::from_str::<Song>(&song_as_str.to_string()){
-                                Ok(song) => {
-                                    songs.push(song);
-                                },
-                                Err(_) => {
-                                    println!("error converting song from json to struct");
-                                },
-                            }
-                        },
-                        Ok(None) => {
-                            println!("error reading song as some ivec");
-                        },
-                        Err(_) => {
-                            println!("error getting this key from the song tree");
-                        },
+                for _ in 0..batch_size{
+                    if let Some(Ok((_, song_as_ivec))) = iter.next() {
+                        let song_as_bytes = song_as_ivec.as_ref();
+                        let song_as_str = String::from_utf8_lossy(song_as_bytes);
+                        match serde_json::from_str::<Song>(&song_as_str.to_string()){
+                            Ok(song) => {
+                                songs.push(song);
+                            },
+                            Err(_) => {
+                                println!("error converting song from json to struct");
+                            },
+                        }
+                    }
+                    else{
+                        break;
                     }
                 }
 
@@ -68,34 +64,29 @@ pub async fn get_batch_of_songs(batch_size: usize, last_id: u32) -> String{
 }
 
 #[tauri::command]
-pub async fn get_batch_of_albums(batch_size: usize, last_id: u32) -> String{
+pub async fn get_batch_of_albums(batch_size: usize, last_key: String) -> String{
     match DbManager::new(){
         Ok(dbm) => {
             
             let mut albums: Vec<Album> = Vec::new();
-            let keys = get_next_keys(&dbm.album_tree, last_id, batch_size);
+            let mut iter = dbm.album_tree.range(last_key.as_bytes()..);
 
             let could_retrieve_albums = tokio::task::spawn_blocking(move || { 
-                for key in keys{
-                    match dbm.album_tree.get(key.to_ne_bytes()){
-                        Ok(Some(album_as_ivec)) => {
-                            let album_as_bytes = album_as_ivec.as_ref();
-                            let album_as_str = String::from_utf8_lossy(album_as_bytes);
-                            match serde_json::from_str::<Album>(&album_as_str.to_string()){
-                                Ok(album) => {
-                                    albums.push(album);
-                                },
-                                Err(_) => {
-                                    println!("error converting album from json to struct");
-                                },
-                            }
-                        },
-                        Ok(None) => {
-                            println!("error reading album as some ivec");
-                        },
-                        Err(_) => {
-                            println!("error getting this key from the album tree");
-                        },
+                for _ in 0..batch_size{
+                    if let Some(Ok((_, album_as_ivec))) = iter.next(){
+                        let album_as_bytes = album_as_ivec.as_ref();
+                        let album_as_str = String::from_utf8_lossy(album_as_bytes);
+                        match serde_json::from_str::<Album>(&album_as_str.to_string()){
+                            Ok(album) => {
+                                albums.push(album);
+                            },
+                            Err(_) => {
+                                println!("error converting album from json to struct");
+                            },
+                        }
+                    }
+                    else{
+                        break;
                     }
                 }
 
@@ -130,34 +121,29 @@ pub async fn get_batch_of_albums(batch_size: usize, last_id: u32) -> String{
 }
 
 #[tauri::command]
-pub async fn get_batch_of_artists(batch_size: usize, last_id: u32) -> String{
+pub async fn get_batch_of_artists(batch_size: usize, last_key: String) -> String{
     match DbManager::new(){
         Ok(dbm) => {
 
             let mut artists: Vec<Artist> = Vec::new();
-            let keys = get_next_keys(&dbm.artist_tree, last_id, batch_size);
+            let mut iter = dbm.artist_tree.range(last_key.as_bytes()..);
 
             let could_retrieve_artists = tokio::task::spawn_blocking(move || { 
-                for key in keys{
-                    match dbm.artist_tree.get(key.to_ne_bytes()){
-                        Ok(Some(artist_as_ivec)) => {
-                            let artist_as_bytes = artist_as_ivec.as_ref();
-                            let artist_as_str = String::from_utf8_lossy(artist_as_bytes);
-                            match serde_json::from_str::<Artist>(&artist_as_str.to_string()){
-                                Ok(artist) => {
-                                    artists.push(artist);
-                                },
-                                Err(_) => {
-                                    println!("error converting artist from json to struct");
-                                },
-                            }
-                        },
-                        Ok(None) => {
-                            println!("error reading artist as some ivec");
-                        },
-                        Err(_) => {
-                            println!("error getting this key from the artist tree");
-                        },
+                for _ in 0..batch_size{
+                    if let Some(Ok((_, artist_as_ivec))) = iter.next(){
+                        let artist_as_bytes = artist_as_ivec.as_ref();
+                        let artist_as_str = String::from_utf8_lossy(artist_as_bytes);
+                        match serde_json::from_str::<Artist>(&artist_as_str.to_string()){
+                            Ok(artist) => {
+                                artists.push(artist);
+                            },
+                            Err(_) => {
+                                println!("error converting artist from json to struct");
+                            },
+                        }
+                    }
+                    else{
+                        break;
                     }
                 }
 
@@ -192,35 +178,30 @@ pub async fn get_batch_of_artists(batch_size: usize, last_id: u32) -> String{
 }
 
 #[tauri::command]
-pub async fn get_batch_of_genres(batch_size: usize, last_id: u32) -> String{
+pub async fn get_batch_of_genres(batch_size: usize, last_key: String) -> String{
     
     match DbManager::new(){
         Ok(dbm) => {
 
             let mut genres: Vec<Genre> = Vec::new();
-            let keys = get_next_keys(&dbm.genre_tree, last_id, batch_size);
+            let mut iter = dbm.artist_tree.range(last_key.as_bytes()..);
 
             let could_retrieve_genres = tokio::task::spawn_blocking(move || { 
-                for key in keys{
-                    match dbm.genre_tree.get(key.to_ne_bytes()){
-                        Ok(Some(genre_as_ivec)) => {
-                            let genre_as_bytes = genre_as_ivec.as_ref();
-                            let genre_as_str = String::from_utf8_lossy(genre_as_bytes);
-                            match serde_json::from_str::<Genre>(&genre_as_str.to_string()){
-                                Ok(genre) => {
-                                    genres.push(genre);
-                                },
-                                Err(_) => {
-                                    println!("error converting genre from json to struct");
-                                },
-                            }
-                        },
-                        Ok(None) => {
-                            println!("error reading genre as some ivec");
-                        },
-                        Err(_) => {
-                            println!("error getting this key from the genre tree");
-                        },
+                for _ in 0..batch_size{
+                    if let Some(Ok((_, genre_as_ivec))) = iter.next(){
+                        let genre_as_bytes = genre_as_ivec.as_ref();
+                        let genre_as_str = String::from_utf8_lossy(genre_as_bytes);
+                        match serde_json::from_str::<Genre>(&genre_as_str.to_string()){
+                            Ok(genre) => {
+                                genres.push(genre);
+                            },
+                            Err(_) => {
+                                println!("error converting genre from json to struct");
+                            },
+                        }
+                    }
+                    else{
+                        break;
                     }
                 }
 
@@ -256,7 +237,7 @@ pub async fn get_batch_of_genres(batch_size: usize, last_id: u32) -> String{
 
 //backend functions
 
-pub async fn start_insertion(
+pub async fn start_bulk_insertion(
     songs: Vec<Song>,
     albums_hash_map: HashMap<String, HMapType>,
     artists_hash_map: HashMap<String, HMapType>,
@@ -345,6 +326,67 @@ pub async fn start_insertion(
     }
 }
 
+fn insert_map_values_into_respective_tree(dbm: &DbManager, hash_map: &HashMap<String, HMapType>, tree_name: &String){
+    match tree_name.as_str(){
+        "albums" => {
+            insert_albums_into_tree(&dbm, &hash_map);
+        },
+        "artists" => {
+            insert_artists_into_tree(&dbm, &hash_map);
+        },
+        "genres" => {
+            insert_genres_into_tree(&dbm, &hash_map);
+        },
+        _ => {},
+    }
+}
+
+pub fn save_paths_to_db(paths: &HashSet<String>){
+    match DbManager::new(){
+        Ok(dbm) => {
+            for path in paths{
+                match dbm.saved_directories.insert(path.as_bytes(), path.as_bytes()){
+                    Ok(_) => {
+
+                    },
+                    Err(_) => {
+
+                    },
+                }
+            }
+        },
+        Err(_) => {
+
+        },
+    }
+}
+
+pub fn get_existing_paths_as_hashset() -> HashSet<String>{
+    let mut paths: HashSet<String> = HashSet::new();
+    match DbManager::new(){
+        Ok(dbm) => {
+            let iter = dbm.saved_directories.iter();
+            for iterable in iter{
+                match iterable{
+                    Ok(path_as_ivec) => {
+                        let path_as_bytes = path_as_ivec.1.as_ref();
+                        let path_as_str = String::from_utf8_lossy(path_as_bytes);
+                        paths.insert(path_as_str.to_string());
+                    },
+                    Err(_) => {
+
+                    },
+                }
+            }
+        },
+        Err(_) => {
+
+        },
+    }
+
+    return paths;
+}
+
 pub fn compare_and_set_hash_map(hash_map: &mut HashMap<String, HMapType>, key: &String, value: &HMapType){
     match hash_map.get(key){
         Some(key_value) => {
@@ -390,13 +432,13 @@ pub fn compare_and_set_hash_map(hash_map: &mut HashMap<String, HMapType>, key: &
 }
 
 fn insert_songs_into_tree(dbm: &DbManager, songs: &Vec<Song>){
-    //clear the song tree
+    //clear tree
     clear_tree(&dbm.song_tree);
 
     for song in songs{
         match serde_json::to_string(&song){
             Ok(song_as_json) => {
-                match dbm.song_tree.insert(song.id.to_ne_bytes(), song_as_json.as_bytes()){
+                match dbm.song_tree.insert(song.path.as_bytes(), song_as_json.as_bytes()){
                     Ok(_) => {
                         
                     },
@@ -412,21 +454,6 @@ fn insert_songs_into_tree(dbm: &DbManager, songs: &Vec<Song>){
     }
 }
 
-fn insert_map_values_into_respective_tree(dbm: &DbManager, hash_map: &HashMap<String, HMapType>, tree_name: &String){
-    match tree_name.as_str(){
-        "albums" => {
-            insert_albums_into_tree(&dbm, &hash_map);
-        },
-        "artists" => {
-            insert_artists_into_tree(&dbm, &hash_map);
-        },
-        "genres" => {
-            insert_genres_into_tree(&dbm, &hash_map);
-        },
-        _ => {},
-    }
-}
-
 fn insert_albums_into_tree(dbm: &DbManager, hash_map: &HashMap<String, HMapType>){
     let mut albums: Vec<Album> = Vec::new();
 
@@ -439,13 +466,13 @@ fn insert_albums_into_tree(dbm: &DbManager, hash_map: &HashMap<String, HMapType>
         albums.push(album);
     }
 
-    //clear the album tree
+    //clear tree
     clear_tree(&dbm.album_tree);
 
     for album in albums{
         match serde_json::to_string(&album){
             Ok(album_as_json) => {
-                match dbm.album_tree.insert(album.key.to_ne_bytes(), album_as_json.as_bytes()){
+                match dbm.album_tree.insert(album.title.as_bytes(), album_as_json.as_bytes()){
                     Ok(_) => {
                         
                     },
@@ -473,13 +500,13 @@ fn insert_artists_into_tree(dbm: &DbManager, hash_map: &HashMap<String, HMapType
         artists.push(artist);
     }
 
-    //clear the artist tree
+    //clear tree
     clear_tree(&dbm.artist_tree);
 
     for artist in artists{
         match serde_json::to_string(&artist){
             Ok(artist_as_json) => {
-                match dbm.artist_tree.insert(artist.key.to_ne_bytes(), artist_as_json.as_bytes()){
+                match dbm.artist_tree.insert(artist.artist_name.as_bytes(), artist_as_json.as_bytes()){
                     Ok(_) => {
                         
                     },
@@ -507,13 +534,13 @@ fn insert_genres_into_tree(dbm: &DbManager, hash_map: &HashMap<String, HMapType>
         genres.push(genre);
     }
 
-    //clear the genre tree
+    //clear tree
     clear_tree(&dbm.genre_tree);
 
     for genre in genres{
         match serde_json::to_string(&genre){
             Ok(genre_as_json) => {
-                match dbm.genre_tree.insert(genre.key.to_ne_bytes(), genre_as_json.as_bytes()){
+                match dbm.genre_tree.insert(genre.title.as_bytes(), genre_as_json.as_bytes()){
                     Ok(_) => {
                         
                     },
@@ -529,30 +556,7 @@ fn insert_genres_into_tree(dbm: &DbManager, hash_map: &HashMap<String, HMapType>
     }
 }
 
-fn get_next_keys(tree: &Tree, start_key: u32, count: usize) -> Vec<i32> {
-    let mut keys = Vec::with_capacity(count);
-    //let end = start_key. + count.;
-    let mut iter = tree.range(start_key.to_ne_bytes()..);//limit the range to start_key + count
-
-    for _ in 0..count {
-        if let Some(Ok((key_bytes, _))) = iter.next() {
-            match key_bytes.as_ref().try_into(){
-                Ok(key_array) => {
-                    keys.push(i32::from_ne_bytes(key_array));
-                },
-                Err(_) => {
-                    break;
-                },
-            }
-        } else {
-            break;
-        }
-    }
-
-    keys
-}
-
-fn clear_tree(tree: &Tree){
+pub fn clear_tree(tree: &Tree){
     for key in tree.iter().keys(){
         match key{
             Ok(key_as_ivec) => {
