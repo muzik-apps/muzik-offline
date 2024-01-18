@@ -6,6 +6,7 @@ mod music;
 mod components;
 mod utils;
 mod database;
+mod socials;
 
 use kira::manager::{AudioManager,AudioManagerSettings,backend::DefaultBackend};
 use components::audio_manager::SharedAudioManager;
