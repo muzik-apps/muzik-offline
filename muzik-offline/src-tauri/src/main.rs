@@ -30,15 +30,8 @@ use crate::socials::discord_rpc::{allow_connection_and_connect_to_discord_rpc,
     attempt_to_connect_if_possible, disallow_connection_and_close_discord_rpc,
     set_discord_rpc_activity, clear_discord_rpc_activity};
 
-use dotenv::dotenv;
-
 fn main() {
     tauri::Builder::default()
-        .setup(|_| {
-            //init env variables
-            dotenv().ok();
-            Ok(())
-        })
         .manage(Mutex::new(SharedAudioManager {
             //this expect is necessary because if the audio manager fails to initialize, the application should not run
             //since we would not be able to play any audio if it fails to initialize

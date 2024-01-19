@@ -1,5 +1,6 @@
 use tauri::State;
 use discord_rich_presence::{activity, DiscordIpc, DiscordIpcClient};
+use dotenv::dotenv;
 use std::env;
 use std::sync::Mutex;
 
@@ -12,6 +13,7 @@ pub struct DiscordRpc {
 impl DiscordRpc {
     pub fn new() -> Result<Self, Box<dyn std::error::Error>> {
         //get client id from env variables
+        dotenv().ok();
         let client_id = env::var("DISCORD_CLIENT_ID").expect("DISCORD_CLIENT_ID env variable not set");
         let client: DiscordIpcClient = DiscordIpcClient::new(&client_id)?;
 

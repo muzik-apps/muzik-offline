@@ -92,7 +92,7 @@ export async function startPlayingNewSong(song: Song){
     const volume = (useSavedObjectStore.getState().local_store.Volume / 100);
     await invoke("load_and_play_song_from_path", { soundPath: song.path, volume: volume });
     usePlayerStore.getState().setPlayer(temp);
-    await setDiscordActivity(song.name);
+    setDiscordActivity(song.name);
 }
 
 export async function loadNewSong(song: Song){
@@ -103,7 +103,7 @@ export async function loadNewSong(song: Song){
     const volume = (useSavedObjectStore.getState().local_store.Volume / 100);
     await invoke("load_a_song_from_path", { soundPath: song.path, volume: volume });
     usePlayerStore.getState().setPlayer(temp);
-    await setDiscordActivity(song.name);
+    setDiscordActivity(song.name);
 }
 
 export async function playSong(){
@@ -129,7 +129,7 @@ export async function pauseSong(){
 export async function stopSong(){
     if(usePlayerStore.getState().Player.playingSongMetadata){
         await invoke("stop_song");
-        await setDiscordActivity(null);
+        setDiscordActivity(null);
         let temp = usePlayerStore.getState().Player;
         temp.playingSongMetadata = null;
         temp.lengthOfSongInSeconds = 0;
@@ -300,14 +300,12 @@ export async function playSongsFromThisArtist(shuffle: boolean, artist_name: str
     if(songkeys.length >= 2)playThisListNow(songkeys.slice(1), shuffle);
 }
 
-async function setDiscordActivity(song_name: string | null){
-    const discordConnectStatus = useSavedObjectStore().local_store.AppActivityDiscord;
+function setDiscordActivity(song_name: string | null){
+    const discordConnectStatus = useSavedObjectStore.getState().local_store.AppActivityDiscord;
     if(discordConnectStatus === "No")return;
 
     if(song_name !== null){
-        await invoke("set_discord_rpc_activity", {songName: song_name, userState: "Listening to music", largeImageKey: ""});
+        invoke("set_discord_rpc_activity", {songName: song_name, userState: "Listening to music", largeImageKey: "app_icon1024x1024"}).then().catch();
     }
-    else{
-        await invoke("clear_discord_rpc_activity");
-    }
+    else invoke("clear_discord_rpc_activity").then().catch();
 }

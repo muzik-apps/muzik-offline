@@ -16,8 +16,6 @@ type DirectoriesModalProps = {
     closeModal: () => void;
 }
 
-
-
 const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: DirectoriesModalProps) => {
     const { dir, setDir } = useDirStore((state) => { return { dir: state.dir, setDir: state.setDir}; });
     const [directories, setDirectories] = useState<string[]>(dir.Dir);
