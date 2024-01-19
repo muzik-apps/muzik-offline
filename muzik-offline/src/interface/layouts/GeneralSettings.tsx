@@ -6,6 +6,7 @@ import { selectedGeneralSettingEnum } from "@muziktypes/index";
 import { FunctionComponent, useState } from "react";
 import { DropDownMenuLarge, RadioComponent } from "@components/index";
 import { useSavedObjectStore, useViewableSideElStore } from "@store/index";
+import { invoke } from "@tauri-apps/api";
 
 const settings_data: {
     key: number;
@@ -47,11 +48,23 @@ const GeneralSettings: FunctionComponent<GeneralSettingsProps> = (props: General
         else setselectedGeneralSetting(arg);
     }
 
-    function setStoreValue(arg: string, type: string){
+    async function setStoreValue(arg: string, type: string){
+        await handleDiscordConnectionChanges(arg, type, local_store.AppActivityDiscord);
         let temp: SavedObject = local_store;
         temp[type as keyof SavedObject] = arg as never;
         setStore(temp);
         setselectedGeneralSetting(selectedGeneralSettingEnum.Nothing);
+    }
+
+    async function handleDiscordConnectionChanges(arg: string, type: string, oldarg: string){
+        if(type === "AppActivityDiscord"){
+            if(arg === "Yes" && oldarg === "No"){//connect
+                await invoke("allow_connection_and_connect_to_discord_rpc"); 
+            }
+            else if(arg === "No" && oldarg === "Yes"){//disconnect
+                await invoke("disallow_connection_and_close_discord_rpc");
+            }
+        }
     }
 
     function setViewableEl(value: boolean, type: string){

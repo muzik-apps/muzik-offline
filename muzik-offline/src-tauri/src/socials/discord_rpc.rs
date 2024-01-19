@@ -6,6 +6,7 @@ use std::sync::Mutex;
 pub struct DiscordRpc {
     client: DiscordIpcClient,
     allowed_to_connect: bool,
+    is_connected: bool,
 }
 
 impl DiscordRpc {
@@ -18,6 +19,7 @@ impl DiscordRpc {
             Self {
                 client,
                 allowed_to_connect: false,
+                is_connected: false,
             }
         )
     }
@@ -27,17 +29,18 @@ impl DiscordRpc {
     }
 
     pub fn connect(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        if self.allowed_to_connect {
+        if self.allowed_to_connect && !self.is_connected {
             self.client.connect()?;
+            self.is_connected = true;
             Ok(())
         }
         else{
-            Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "not allowed to connect to discord rpc")))
+            Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "not allowed to connect to discord rpc or is already connected")))
         }
     }
 
     pub fn set_activity(&mut self, song_name: String, state: String, large_image_key: String) -> Result<(), Box<dyn std::error::Error>> {
-        if self.allowed_to_connect {
+        if self.allowed_to_connect && self.is_connected {
             let activity = activity::Activity::new()
                 .state(&state)
                 .details(&song_name)
@@ -50,27 +53,28 @@ impl DiscordRpc {
             Ok(())
         }
         else{
-            Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "not allowed to connect to discord rpc")))
+            Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "not allowed to connect to discord rpc or is not connected to discord rpc")))
         }
     }
 
     pub fn clear_activity(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        if self.allowed_to_connect {
+        if self.allowed_to_connect && self.is_connected {
             self.client.clear_activity()?;
             Ok(())
         }
         else{
-            Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "not allowed to connect to discord rpc")))
+            Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "not allowed to connect to discord rpc or is not connected to discord rpc")))
         }
     }
 
     pub fn close(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        if self.allowed_to_connect {
+        if self.is_connected {
             self.client.close()?;
+            self.is_connected = false;
             Ok(())
         }
         else{
-            Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "not allowed to connect to discord rpc")))
+            Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "not connected to discord rpc")))
         }
     }
 }
@@ -150,7 +154,7 @@ pub fn disallow_connection_and_close_discord_rpc(discord_rpc: State<Mutex<Discor
 }
 
 #[tauri::command]//this will run when the user changes the song they are listening to
-pub fn set_discord_rpc_activity(discord_rpc: State<Mutex<DiscordRpc>>, song_name: String, state: String, large_image_key: String) -> Result<String, String> {
+pub fn set_discord_rpc_activity(discord_rpc: State<Mutex<DiscordRpc>>, song_name: String, user_state: String, large_image_key: String) -> Result<String, String> {
     match discord_rpc.lock(){
         Ok(mut discord_rpc) => {
             match discord_rpc.clear_activity(){
@@ -162,7 +166,7 @@ pub fn set_discord_rpc_activity(discord_rpc: State<Mutex<DiscordRpc>>, song_name
                 }
             }
 
-            match discord_rpc.set_activity(song_name, state, large_image_key){
+            match discord_rpc.set_activity(song_name, user_state, large_image_key){
                 Ok(_) => {
                     Ok(String::from("set discord rpc activity"))
                 },

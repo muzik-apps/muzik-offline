@@ -4,6 +4,7 @@ import { AllGenres, AllPlaylists, AllTracks, Settings, AlbumDetails,
   AllAlbums, AllArtists, SearchPage, ArtistCatalogue, GenreView, PlaylistView } from "@pages/index";
 import { useEffect, useState } from "react";
 import { type } from '@tauri-apps/api/os';
+import { invoke } from "@tauri-apps/api";
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { HistoryNextFloating } from "@layouts/index";
 import { OSTYPEenum } from "@muziktypes/index";
@@ -41,9 +42,16 @@ const App = () => {
     if(!permissionGranted)await requestPermission();
   }
 
+  async function connect_to_discord(){ 
+    if(local_store.AppActivityDiscord === "Yes"){
+      await invoke("allow_connection_and_connect_to_discord_rpc"); 
+    }
+  }
+
   useEffect(() => {
     checkOSType();
     checkAndRequestNotificationPermission();
+    connect_to_discord();
   }, [])
 
   return (
