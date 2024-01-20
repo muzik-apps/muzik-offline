@@ -31,6 +31,7 @@ fn main() {
             //since we would not be able to play any audio if it fails to initialize
             manager: AudioManager::<DefaultBackend>::new(AudioManagerSettings::default()).expect("failed to initialize audio manager"),
             instance_handle: None,
+            volume: 0.0,
         }))
         .manage(Mutex::new(MLO::new()))
         .invoke_handler(tauri::generate_handler![

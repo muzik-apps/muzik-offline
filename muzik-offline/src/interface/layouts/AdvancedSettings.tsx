@@ -35,7 +35,7 @@ const settings_data: {
         key: 4,
         title: "Show song length or time until song ends",
         dropDownName: selectedGeneralSettingEnum.SongLengthORremaining,
-        options: ["song length", "time until song ends"]
+        options: ["song length", "song ends"]
     },
 ]
 

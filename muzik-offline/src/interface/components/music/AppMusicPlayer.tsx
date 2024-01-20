@@ -3,10 +3,10 @@ import "@styles/components/music/AppMusicPlayer.scss";
 import {ChromeCast, DotHorizontal, NullCoverNull, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
 import { motion } from "framer-motion";
 import { usePlayerStore, usePlayingPosition, usePlayingPositionSec, useSavedObjectStore } from "store";
-import { getRandomCover, secondsToTimeFormat } from "utils";
+import { getRandomCover, secondsToTimeFormat } from "@utils/index";
 import { invoke } from "@tauri-apps/api";
-import { changeVolumeLevel, changeSeekerPosition, changeVolumeLevelBtnPress, dragSeeker, pauseSong, playSong, repeatToggle, shuffleToggle, setVolumeLevel, reconfigurePlayer_AtEndOfSong, playPreviousSong, playNextSong } from "utils/playerControl";
-import { AirplayCastModal } from "..";
+import { changeVolumeLevel, changeSeekerPosition, changeVolumeLevelBtnPress, dragSeeker, pauseSong, playSong, repeatToggle, shuffleToggle, setVolumeLevel, reconfigurePlayer_AtEndOfSong, playPreviousSong, playNextSong, changeSeekerPositionBtnPress } from "@utils/playerControl";
+import { AirplayCastModal } from "@components/index";
 
 type AppMusicPlayerProps = {
     openPlayer: () => void;
@@ -51,12 +51,8 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                 if(Player.isPlaying)pauseSong();
                 else playSong();
             }
-            else if(ev.key === "ArrowRight"){//seek to 10 seconds ahead
-
-            }
-            else if(ev.key === "ArrowLeft"){//seek to 10 seconds behind
-
-            }
+            else if(ev.key === "ArrowRight")changeSeekerPositionBtnPress(false);
+            else if(ev.key === "ArrowLeft")changeSeekerPositionBtnPress(true);
         }
     }
 
