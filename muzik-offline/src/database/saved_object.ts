@@ -15,10 +15,13 @@ export interface SavedObject{
     OStype: string,
     CompressImage: string,
     UpcomingHistoryLimit: string,
+    SeekStepAmount: string,
+    SongLengthORremaining: string,
+
 }
 
 export const emptySavedObject: SavedObject = {
-    LaunchTab: "Home page",
+    LaunchTab: "All tracks",
     AppActivityDiscord: "No",
     BGColour: "blue_purple_gradient",
     ThemeColour: "blueberry",
@@ -32,4 +35,6 @@ export const emptySavedObject: SavedObject = {
     OStype: OSTYPEenum.Windows,
     CompressImage: "No",
     UpcomingHistoryLimit: "10",
+    SeekStepAmount: "10",
+    SongLengthORremaining: "song length",
 }

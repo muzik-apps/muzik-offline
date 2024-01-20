@@ -51,6 +51,12 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                 if(Player.isPlaying)pauseSong();
                 else playSong();
             }
+            else if(ev.key === "ArrowRight"){//seek to 10 seconds ahead
+
+            }
+            else if(ev.key === "ArrowLeft"){//seek to 10 seconds behind
+
+            }
         }
     }
 
@@ -125,7 +131,15 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                                 onChange={draggingSeeker} 
                                 onMouseUp={changeSeeker}
                                 style={{backgroundSize: playingPosition.toString() + "% 100%"}}/>
-                            <p>{Player.playingSongMetadata ? secondsToTimeFormat(Player.lengthOfSongInSeconds) : "~"}</p>
+                            <p>
+                                {Player.playingSongMetadata ? 
+                                    secondsToTimeFormat(
+                                        local_store.SongLengthORremaining === "song length" ?
+                                            Player.lengthOfSongInSeconds : Player.lengthOfSongInSeconds - playingPosInSec
+                                    ) 
+                                    : 
+                                    "~"}
+                            </p>
                         </div>
                     </div>
                     <div className="more_controls_cast_and_volume_controller">

@@ -152,6 +152,22 @@ export function changeSeekerPosition(value: number){
     invoke("seek_to", {position: position}).then(() => {if(usePlayerStore.getState().Player.wasPlayingBeforePause === true)playSong()})
 }
 
+export function changeSeekerPositionBtnPress(isDecreasing: boolean){
+    if(usePlayerStore.getState().Player.playingSongMetadata === null)return;
+    const position = usePlayingPositionSec.getState().position;
+    if(isDecreasing === true){
+        if(position <= 0)return;
+        const level: number = Number(position) - parseInt(useSavedObjectStore.getState().local_store.SeekStepAmount);
+        usePlayingPositionSec.getState().setPosition(level <= 0 ? 0 : level);
+    }
+    else{
+        if(position >= usePlayerStore.getState().Player.lengthOfSongInSeconds)return;
+        const level: number = Number(position) + parseInt(useSavedObjectStore.getState().local_store.SeekStepAmount);
+        usePlayingPositionSec.getState().setPosition(level >= usePlayerStore.getState().Player.lengthOfSongInSeconds ? usePlayerStore.getState().Player.lengthOfSongInSeconds : level);
+    }
+    changeSeekerPosition(usePlayingPositionSec.getState().position);
+}
+
 export function changeVolumeLevel(value: number){
     //that value is bounded between 0 and 100
     let temp: SavedObject = useSavedObjectStore.getState().local_store;

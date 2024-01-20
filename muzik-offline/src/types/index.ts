@@ -13,6 +13,8 @@ export enum selectedGeneralSettingEnum{
     VolumeStepAmount = "VolumeStepAmount",
     CompressImage = "CompressImage",
     UpcomingHistoryLimit = "UpcomingHistoryLimit",
+    SeekStepAmount = "SeekStepAmount",
+    SongLengthORremaining = "SongLengthORremaining"
 }
 
 export enum OSTYPEenum{

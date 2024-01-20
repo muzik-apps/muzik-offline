@@ -15,7 +15,7 @@ const settings_data: {
 }[] = [
     {
         key: 1,
-        title: "Compress images to save space",
+        title: "Compress song images(will only be compressed on subsequent directory scans)",
         dropDownName: selectedGeneralSettingEnum.CompressImage,
         options: ["Yes", "No"]
     },
@@ -24,6 +24,18 @@ const settings_data: {
         title: "Upcoming/History songs limit",
         dropDownName: selectedGeneralSettingEnum.UpcomingHistoryLimit,
         options: ["5", "10", "15", "20"]
+    },
+    {
+        key: 3,
+        title: "Left/right arrows seeking seconds amount",
+        dropDownName: selectedGeneralSettingEnum.SeekStepAmount,
+        options: ["5", "10", "20", "40"]
+    },
+    {
+        key: 4,
+        title: "Show song length or time until song ends",
+        dropDownName: selectedGeneralSettingEnum.SongLengthORremaining,
+        options: ["song length", "time until song ends"]
     },
 ]
 
