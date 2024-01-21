@@ -253,6 +253,31 @@ pub fn seek_to(audio_manager: State<'_, Mutex<SharedAudioManager>>, position: f6
 }
 
 #[tauri::command]
+pub fn seek_by(audio_manager: State<'_, Mutex<SharedAudioManager>>, delta: f64){
+    match audio_manager.lock(){
+        Ok(mut manager) => {
+            match &mut manager.instance_handle{
+                Some(handle) => {
+                    match handle.seek_by(delta){
+                        Ok(_) => {
+                        },
+                        Err(_) => {
+                            //failed to seek by delta
+                        },
+                    }
+                },
+                None => {
+                    //no song is currently paused or playing
+                },
+            }
+        },
+        Err(_) => {
+            //failed to lock audio manager
+        },
+    }
+}
+
+#[tauri::command]
 pub fn get_song_position(audio_manager: State<'_, Mutex<SharedAudioManager>>) -> f64{
     match audio_manager.lock(){
         Ok(mut manager) => {
@@ -317,7 +342,7 @@ fn handle_true_seeking(handle: &mut StreamingSoundHandle<FromFileError>, volume:
     //the only way around this would be to figure out how to clear the audio data from memory
     //or how long the audio data that we want to skip past is and just allow the song to play for that long
     //before pausing it again whilst the volume is 0.0. Hopefully the user won't notice this because
-    //that delay may get as large as 200ms or so depending on the size of the audio data that was loaded into memory
+    //that delay may get as large as 300ms or so depending on the size of the audio data that was loaded into memory
 
     match handle.set_volume(0.0, Tween::default()){
         Ok(_) => {
@@ -332,7 +357,7 @@ fn handle_true_seeking(handle: &mut StreamingSoundHandle<FromFileError>, volume:
         Ok(_) => {
             //resumed song
             //pause the song after a short delay
-            std::thread::sleep(std::time::Duration::from_millis(200));
+            std::thread::sleep(std::time::Duration::from_millis(270));
             match handle.pause(Tween::default()){
                 Ok(_) => {
                     //paused song

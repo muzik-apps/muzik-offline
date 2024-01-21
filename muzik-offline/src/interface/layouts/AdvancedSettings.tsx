@@ -29,7 +29,7 @@ const settings_data: {
         key: 3,
         title: "Left/right arrows seeking seconds amount",
         dropDownName: selectedGeneralSettingEnum.SeekStepAmount,
-        options: ["5", "10", "20", "40"]
+        options: ["5", "10", "15", "20", "30", "60"]
     },
     {
         key: 4,

@@ -17,7 +17,7 @@ use crate::commands::metadata_retriever::get_all_songs;
 use crate::commands::general_commands::{open_in_file_manager, resize_frontend_image_to_fixed_height};
 
 use crate::music::player::{load_and_play_song_from_path, load_a_song_from_path, set_volume,
-    pause_song, resume_playing, seek_to, get_song_position, stop_song};
+    pause_song, resume_playing, seek_to, seek_by, get_song_position, stop_song};
 
 use crate::utils::music_list_organizer::{mlo_set_shuffle_list, mlo_set_repeat_list, 
     mlo_get_next_batch_as_size, mlo_reset_and_set_remaining_keys};
@@ -44,6 +44,7 @@ fn main() {
                             resume_playing,
                             stop_song,
                             seek_to,
+                            seek_by,
                             get_song_position,
                             resize_frontend_image_to_fixed_height,
                             mlo_set_shuffle_list,
