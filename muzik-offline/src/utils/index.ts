@@ -23,7 +23,7 @@ export const fetch_library_in_chunks = async(): Promise<{status: string, message
 
 export const fetch_songs_metadata_in_chunks = async(): Promise<{status: string, message: string}> => {
     //fetch songs in bulk
-    let last_song_id = 0;
+    let last_song_id = "";
     while(true){
         const res: any = await invoke("get_batch_of_songs", {batchSize: batch_size, lastId: last_song_id});
         const responseobject: {status: string, message: string, data: []} = JSON.parse(res);
@@ -43,7 +43,7 @@ export const fetch_songs_metadata_in_chunks = async(): Promise<{status: string, 
 }
 
 export const fetch_albums_metadata_in_chunks = async(): Promise<{status: string, message: string}> => {
-    let last_album_id = 0;
+    let last_album_id = "";
     while(true){
         const res: any = await invoke("get_batch_of_albums", {batchSize: batch_size, lastId: last_album_id});
         const responseobject: {status: string, message: string, data: []} = JSON.parse(res);
@@ -63,7 +63,7 @@ export const fetch_albums_metadata_in_chunks = async(): Promise<{status: string,
 }
 
 export const fetch_artists_metadata_in_chunks = async(): Promise<{status: string, message: string}> => {
-    let last_artist_id = 0;
+    let last_artist_id = "";
     while(true){
         const res: any = await invoke("get_batch_of_artists", {batchSize: batch_size, lastId: last_artist_id});
         const responseobject: {status: string, message: string, data: []} = JSON.parse(res);
@@ -83,7 +83,7 @@ export const fetch_artists_metadata_in_chunks = async(): Promise<{status: string
 }
 
 export const fetch_genres_metadata_in_chunks = async(): Promise<{status: string, message: string}> => {
-    let last_genre_id = 0;
+    let last_genre_id = "";
     while(true){
         const res: any = await invoke("get_batch_of_genres", {batchSize: batch_size, lastId: last_genre_id});
         const responseobject: {status: string, message: string, data: []} = JSON.parse(res);

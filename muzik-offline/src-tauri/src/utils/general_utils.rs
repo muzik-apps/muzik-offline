@@ -2,6 +2,9 @@ use image::imageops::FilterType;
 use std::{path::Path, io::Cursor};
 use rayon::prelude::*;
 use base64::{Engine as _, engine::general_purpose};
+use uuid::Uuid;
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
 
 pub fn duration_to_string(duration: &u64) -> String {
     let seconds = duration;
@@ -118,4 +121,13 @@ pub fn decode_image_in_parallel(image_as_string: &String) -> Result<Vec<u8>, Str
     If you’re seeing “=” characters in the middle of your Base64 string, 
     it suggests that something has gone wrong with the encoding process.
      */
+}
+
+pub fn string_to_uuid(input: &str) -> String {
+    let mut hasher = DefaultHasher::new();
+    input.hash(&mut hasher);
+
+    let hash_result = hasher.finish();
+    let uuid_from_string = Uuid::from_u128(hash_result.into());
+    uuid_from_string.to_string()
 }

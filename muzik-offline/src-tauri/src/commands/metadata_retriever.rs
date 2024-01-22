@@ -1,4 +1,4 @@
-use std::{path::Path, collections::HashMap};
+use std::{path::Path, collections::{HashMap, HashSet}};
 use id3::{Tag, TagLike};
 use serde_json::Value;
 use crate::utils::general_utils::encode_image_in_parallel;
@@ -7,13 +7,14 @@ use crate::database::db_api::{
     start_bulk_insertion,
 };
 use lofty::{ Probe, AudioFile};
-use crate::utils::general_utils::{duration_to_string, extract_file_name, resize_and_compress_image};
+use crate::utils::general_utils::{duration_to_string, extract_file_name, resize_and_compress_image, string_to_uuid};
 use crate::components::{song::Song, hmaptype::HMapType};
+use crate::database::db_api::save_paths_to_db;
 
 #[tauri::command]
 pub async fn get_all_songs(paths_as_json_array: String, compress_image_option: bool) -> Result<String, String> {
     
-    let paths_as_vec = decode_directories(&paths_as_json_array);
+    let paths_as_hashset = decode_directories(&paths_as_json_array);
 
     let mut songs: Vec<Song> = Vec::new();
     let mut albums_hash_map: HashMap<String, HMapType> = HashMap::new();
@@ -21,7 +22,7 @@ pub async fn get_all_songs(paths_as_json_array: String, compress_image_option: b
     let mut genres_hash_map: HashMap<String, HMapType> = HashMap::new();
 
     let mut song_id: i32 = 0;
-    for path in &paths_as_vec{
+    for path in &paths_as_hashset{
         songs.extend(get_songs_in_path(
             &path, 
             &mut song_id, 
@@ -31,6 +32,9 @@ pub async fn get_all_songs(paths_as_json_array: String, compress_image_option: b
             &mut genres_hash_map
         ).await);
     }
+
+    //save paths to the backend
+    save_paths_to_db(&paths_as_hashset);
 
     let songs_vec_len = songs.len();
 
@@ -49,25 +53,29 @@ pub async fn get_all_songs(paths_as_json_array: String, compress_image_option: b
     }
 }
 
-pub fn decode_directories(paths_as_json: &str) -> Vec<String> {
+pub fn decode_directories(paths_as_json: &str) -> HashSet<String> {
     let parsed_json: Result<Value, serde_json::Error> = serde_json::from_str(paths_as_json);
 
     match parsed_json {
         Ok(parsed_json) => {
             // Ensure the parsed JSON is an array
             if let Value::Array(array) = parsed_json {
-                // Convert each element to a String
-                let string_vec: Vec<String> = array
-                    .iter()
-                    .filter_map(|v| v.as_str().map(|s| s.to_string()))
-                    .collect();
 
-                return string_vec;
+                // Convert each element to a String and insert into hashset
+                let mut string_hashshet: HashSet<String> = HashSet::new();
+                for element in array {
+                    if let Value::String(string) = element {
+                        string_hashshet.insert(string);
+                    }
+                }
+
+                // Return the hashset
+                return string_hashshet;
             } else {
-                return Vec::new();
+                return HashSet::new();
             }
         },
-        Err(_) => {return Vec::new()},
+        Err(_) => {return HashSet::new()},
     }
 }
 
@@ -116,7 +124,7 @@ async fn read_from_path(
     *song_id += 1;
 
     let mut song_meta_data = Song {
-        id: *song_id,
+        id: String::from(""),
         title: String::from(""),
         name: String::from(""),
         artist: String::from(""),
@@ -146,6 +154,7 @@ async fn read_from_path(
     set_year(&tag, &mut song_meta_data);
     set_duration_bit_rate_sample_rate_bit_depth_channels(&path, &mut song_meta_data);
     set_path(&path, &mut song_meta_data);
+    set_path_as_uuid(&path, &mut song_meta_data);
     set_cover(&tag, &mut song_meta_data, compress_image_option);
     set_date_recorded(&tag, &mut song_meta_data);
     set_date_released(&tag, &mut song_meta_data);
@@ -250,6 +259,11 @@ fn set_duration_bit_rate_sample_rate_bit_depth_channels(path: &str, song_meta_da
 fn set_path(path: &str, song_meta_data: &mut Song){
     //PATH
     song_meta_data.path = path.clone().to_owned();
+}
+
+fn set_path_as_uuid(path: &str, song_meta_data: &mut Song){
+    //PATH AS UUID
+    song_meta_data.id = string_to_uuid(&path);
 }
 
 fn set_cover(tag: &Tag, song_meta_data: &mut Song, compress_image_option: &bool){

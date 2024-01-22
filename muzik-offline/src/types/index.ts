@@ -56,7 +56,7 @@ export interface toast{
 }
 
 export interface Song{
-    id: number,
+    id: string,
     title: string,
     name: string,
     artist: string,
@@ -79,7 +79,7 @@ export interface Song{
 }
 
 export interface artist {
-    key: number;
+    key: string;
     cover: string | null;
     artist_name: string;
 }
@@ -94,13 +94,13 @@ export interface playlist {
 }
 
 export interface genre {
-    key: number;
+    key: string;
     cover: string | null;
     title: string;
 }
 
 export interface album {
-    key: number;
+    key: string;
     cover: string | null;
     title: string;
 }

@@ -1,4 +1,4 @@
 pub struct HMapType{
-    pub key: i32,
+    pub key: String,
     pub cover: Option<String>
 }

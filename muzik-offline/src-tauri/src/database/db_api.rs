@@ -10,7 +10,7 @@ use sled::Tree;
 pub async fn get_batch_of_songs(batch_size: usize, last_key: String) -> String{
     match DbManager::new(){
         Ok(dbm) => {
-            
+            //send vector of songs you want as json then get them from the tree.
             let mut songs: Vec<Song> = Vec::new();
             let mut iter = dbm.song_tree.range(last_key.as_bytes()..);
 
@@ -252,7 +252,7 @@ pub async fn start_bulk_insertion(
             let could_insert_songs = {
                     let dbm_arced_clone = Arc::clone(&dbm_arced);
                     tokio::task::spawn_blocking(move || { 
-                    insert_songs_into_tree(&dbm_arced_clone, &songs)
+                    insert_songs_into_tree(&dbm_arced_clone, songs)
                 }).await
             };
 
@@ -269,7 +269,7 @@ pub async fn start_bulk_insertion(
             let could_insert_albums = {
                 let dbm_arced_clone = Arc::clone(&dbm_arced);
                 tokio::task::spawn_blocking(move || { 
-                    insert_map_values_into_respective_tree(&dbm_arced_clone, &albums_hash_map, &String::from("albums"))
+                    insert_map_values_into_respective_tree(&dbm_arced_clone, albums_hash_map, &String::from("albums"))
                 }).await
             };
 
@@ -286,7 +286,7 @@ pub async fn start_bulk_insertion(
             let could_insert_artists = {
                 let dbm_arced_clone = Arc::clone(&dbm_arced);
                 tokio::task::spawn_blocking(move || { 
-                    insert_map_values_into_respective_tree(&dbm_arced_clone, &artists_hash_map, &String::from("artists"))
+                    insert_map_values_into_respective_tree(&dbm_arced_clone, artists_hash_map, &String::from("artists"))
                 }).await
             };
 
@@ -303,7 +303,7 @@ pub async fn start_bulk_insertion(
             let could_insert_genres = {
                 let dbm_arced_clone = Arc::clone(&dbm_arced);
                 tokio::task::spawn_blocking(move || { 
-                    insert_map_values_into_respective_tree(&dbm_arced_clone, &genres_hash_map, &String::from("genres"))
+                    insert_map_values_into_respective_tree(&dbm_arced_clone, genres_hash_map, &String::from("genres"))
                 }).await
             };
 
@@ -326,16 +326,16 @@ pub async fn start_bulk_insertion(
     }
 }
 
-fn insert_map_values_into_respective_tree(dbm: &DbManager, hash_map: &HashMap<String, HMapType>, tree_name: &String){
+fn insert_map_values_into_respective_tree(dbm: &DbManager, hash_map: HashMap<String, HMapType>, tree_name: &String){
     match tree_name.as_str(){
         "albums" => {
-            insert_albums_into_tree(&dbm, &hash_map);
+            insert_albums_into_tree(&dbm, hash_map);
         },
         "artists" => {
-            insert_artists_into_tree(&dbm, &hash_map);
+            insert_artists_into_tree(&dbm, hash_map);
         },
         "genres" => {
-            insert_genres_into_tree(&dbm, &hash_map);
+            insert_genres_into_tree(&dbm, hash_map);
         },
         _ => {},
     }
@@ -431,7 +431,7 @@ pub fn compare_and_set_hash_map(hash_map: &mut HashMap<String, HMapType>, key: &
     }
 }
 
-fn insert_songs_into_tree(dbm: &DbManager, songs: &Vec<Song>){
+fn insert_songs_into_tree(dbm: &DbManager, songs: Vec<Song>){
     //clear tree
     clear_tree(&dbm.song_tree);
 
@@ -454,13 +454,13 @@ fn insert_songs_into_tree(dbm: &DbManager, songs: &Vec<Song>){
     }
 }
 
-fn insert_albums_into_tree(dbm: &DbManager, hash_map: &HashMap<String, HMapType>){
+fn insert_albums_into_tree(dbm: &DbManager, hash_map: HashMap<String, HMapType>){
     let mut albums: Vec<Album> = Vec::new();
 
     for (key, value) in hash_map{
         let album = Album{
-            key: value.key.clone(), 
-            cover: value.cover.clone(), 
+            key: value.key, 
+            cover: value.cover, 
             title: key.to_string()
         };
         albums.push(album);
@@ -488,13 +488,13 @@ fn insert_albums_into_tree(dbm: &DbManager, hash_map: &HashMap<String, HMapType>
     }
 }
 
-fn insert_artists_into_tree(dbm: &DbManager, hash_map: &HashMap<String, HMapType>){
+fn insert_artists_into_tree(dbm: &DbManager, hash_map: HashMap<String, HMapType>){
     let mut artists: Vec<Artist> = Vec::new();
 
     for (key, value) in hash_map{
         let artist = Artist{
-            key: value.key.clone(), 
-            cover: value.cover.clone(), 
+            key: value.key, 
+            cover: value.cover, 
             artist_name: key.to_string()
         };
         artists.push(artist);
@@ -522,13 +522,13 @@ fn insert_artists_into_tree(dbm: &DbManager, hash_map: &HashMap<String, HMapType
     }
 }
 
-fn insert_genres_into_tree(dbm: &DbManager, hash_map: &HashMap<String, HMapType>){
+fn insert_genres_into_tree(dbm: &DbManager, hash_map: HashMap<String, HMapType>){
     let mut genres: Vec<Genre> = Vec::new();
 
     for (key, value) in hash_map{
         let genre = Genre{
-            key: value.key.clone(), 
-            cover: value.cover.clone(), 
+            key: value.key, 
+            cover: value.cover, 
             title: key.to_string()
         };
         genres.push(genre);

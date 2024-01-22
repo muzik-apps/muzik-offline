@@ -2,7 +2,7 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct Song {
-    pub id: i32,
+    pub id: String,
     pub title: String,
     pub name: String,
     pub artist: String,

@@ -5,7 +5,7 @@ import { invoke } from "@tauri-apps/api";
 import { SavedObject } from "@database/index";
 import { local_playlists_db, local_songs_db } from "@database/database";
 
-export const addThisSongToPlayNext = async(songids: number[]) => {
+export const addThisSongToPlayNext = async(songids: string[]) => {
     //get the song queue
     const res = useUpcomingSongs.getState().queue;
     //add the song to index position 1 in the queue
@@ -21,19 +21,19 @@ export const addThisSongToPlayNext = async(songids: number[]) => {
     }
 }
 
-const findSongs = async(values: {album?: string, artist?: string, genre?: string, playlist?: string}): Promise<number[]> => {
+const findSongs = async(values: {album?: string, artist?: string, genre?: string, playlist?: string}): Promise<string[]> => {
     if(values.playlist === undefined){
         const result: {album?: string, artist?: string, genre?: string} = {};
         
         if(values.album !== undefined)result.album = values.album;
         if(values.artist !== undefined)result.artist = values.artist;
         if(values.genre !== undefined)result.genre = values.genre;
-        return await local_songs_db.songs.where(result).primaryKeys() as number[];
+        return await local_songs_db.songs.where(result).primaryKeys() as string[];
     }
     else{
         const playlist = await local_playlists_db.playlists.where("title").equals(values.playlist).first();
         if(playlist === undefined)return [];
-        return await local_songs_db.songs.where("path").anyOf(playlist.tracksPaths).primaryKeys() as number[];
+        return await local_songs_db.songs.where("path").anyOf(playlist.tracksPaths).primaryKeys() as string[];
     }
 }
 
@@ -61,7 +61,7 @@ export const playTheseSongs = async(values: {album?: string, artist?: string, ge
     if(songs.length > 1) await addThisSongToPlayNext(songs.slice(1));
 }
 
-export const addThisSongToPlayLater = async(songids: number[]) => {
+export const addThisSongToPlayLater = async(songids: string[]) => {
     //get the limit
     const limit = Number.parseInt(useSavedObjectStore.getState().local_store.UpcomingHistoryLimit);
     //get the song queue
