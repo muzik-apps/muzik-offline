@@ -1,6 +1,8 @@
 import { Song, album, artist, genre, playlist } from '@muziktypes/index';
 import Dexie, { Table } from 'dexie';
 
+const DATABASE_VERSION: number = 2;
+
 export class SongsDexie extends Dexie {
     // 'songs' are added by dexie when declaring the stores()
     // We just tell the typing system this is the case
@@ -8,8 +10,11 @@ export class SongsDexie extends Dexie {
 
     constructor() {
         super('SongsDatabase');
-        this.version(1).stores({
+        this.version(DATABASE_VERSION).stores({
             songs: 'id,title,name,artist,album,genre,year,duration,duration_seconds,path,cover,date_recorded,date_released,file_size,file_type,overall_bit_rate,audio_bit_rate,sample_rate,bit_depth,channels' // Primary key and indexed props
+        }).upgrade(async (tx) => {
+            //clean entire database
+            await tx.table('songs').clear();
         });
     }
 }
@@ -21,8 +26,11 @@ export class AlbumsDexie extends Dexie {
 
     constructor() {
         super('AlbumsDatabase');
-        this.version(1).stores({
+        this.version(DATABASE_VERSION).stores({
             albums: 'key,cover,title' // Primary key and indexed props
+        }).upgrade(async (tx) => {
+            //clean entire database
+            await tx.table('albums').clear();
         });
     }
 }
@@ -34,8 +42,11 @@ export class ArtistsDexie extends Dexie {
 
     constructor() {
         super('ArtistsDatabase');
-        this.version(1).stores({
+        this.version(DATABASE_VERSION).stores({
             artists: 'key,cover,artist_name' // Primary key and indexed props
+        }).upgrade(async (tx) => {
+            //clean entire database
+            await tx.table('artists').clear();
         });
     }
 }
@@ -47,8 +58,11 @@ export class GenresDexie extends Dexie {
 
     constructor() {
         super('GenresDatabase');
-        this.version(1).stores({
+        this.version(DATABASE_VERSION).stores({
             genres: 'key,cover,title' // Primary key and indexed props
+        }).upgrade(async (tx) => {
+            //clean entire database
+            await tx.table('genres').clear();
         });
     }
 }
@@ -60,8 +74,11 @@ export class PlaylistsDexie extends Dexie {
 
     constructor() {
         super('PlaylistsDatabase');
-        this.version(1).stores({
+        this.version(DATABASE_VERSION).stores({
             playlists: '++key,cover,title,dateCreated,dateEdited,tracksPaths' // Primary key and indexed props
+        }).upgrade(async (tx) => {
+            //clean entire database
+            await tx.table('playlists').clear();
         });
     }
 }

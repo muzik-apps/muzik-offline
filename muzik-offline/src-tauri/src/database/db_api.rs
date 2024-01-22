@@ -463,7 +463,7 @@ fn insert_songs_into_tree(dbm: &DbManager, songs: Vec<Song>){
     for song in songs{
         match serde_json::to_string(&song){
             Ok(song_as_json) => {
-                match dbm.song_tree.insert(song.path.as_bytes(), song_as_json.as_bytes()){
+                match dbm.song_tree.insert(song.id.as_bytes(), song_as_json.as_bytes()){
                     Ok(_) => {
                         
                     },
@@ -479,8 +479,29 @@ fn insert_songs_into_tree(dbm: &DbManager, songs: Vec<Song>){
     }
 }
 
-pub fn insert_song_into_tree(){
-    
+pub fn insert_song_into_tree(song: &Song){
+    match DbManager::new(){
+        Ok(dbm) => {
+            match serde_json::to_string(&song){
+                Ok(song_as_json) => {
+                    match dbm.song_tree.insert(song.id.as_bytes(), song_as_json.as_bytes()){
+                        Ok(_) => {
+                            
+                        },
+                        Err(_) => {
+                            
+                        },
+                    }
+                },
+                Err(_) => {
+                    
+                },
+            }
+        },
+        Err(_) => {
+
+        },
+    }
 }
 
 fn insert_albums_into_tree(dbm: &DbManager, hash_map: HashMap<String, HMapType>){
@@ -514,6 +535,37 @@ fn insert_albums_into_tree(dbm: &DbManager, hash_map: HashMap<String, HMapType>)
                 
             },
         }
+    }
+}
+
+pub fn insert_album_into_tree(song: &Song){
+    match DbManager::new(){
+        Ok(dbm) => {
+            let album = Album{
+                key: song.id.clone(), 
+                cover: song.cover.clone(), 
+                title: song.album.clone()
+            };
+            
+            match serde_json::to_string(&album){
+                Ok(album_as_json) => {
+                    match dbm.album_tree.insert(song.album.as_bytes(), album_as_json.as_bytes()){
+                        Ok(_) => {
+                            
+                        },
+                        Err(_) => {
+                            
+                        },
+                    }
+                },
+                Err(_) => {
+                    
+                },
+            }
+        },
+        Err(_) => {
+
+        },
     }
 }
 
@@ -551,6 +603,37 @@ fn insert_artists_into_tree(dbm: &DbManager, hash_map: HashMap<String, HMapType>
     }
 }
 
+pub fn insert_artist_into_tree(song: &Song){
+    match DbManager::new(){
+        Ok(dbm) => {
+            let artist = Artist{
+                key: song.id.clone(), 
+                cover: song.cover.clone(), 
+                artist_name: song.artist.clone()
+            };
+
+            match serde_json::to_string(&artist){
+                Ok(artist_as_json) => {
+                    match dbm.artist_tree.insert(song.artist.as_bytes(), artist_as_json.as_bytes()){
+                        Ok(_) => {
+                            
+                        },
+                        Err(_) => {
+                            
+                        },
+                    }
+                },
+                Err(_) => {
+                    
+                },
+            }
+        },
+        Err(_) => {
+
+        },
+    }
+}
+
 fn insert_genres_into_tree(dbm: &DbManager, hash_map: HashMap<String, HMapType>){
     let mut genres: Vec<Genre> = Vec::new();
 
@@ -582,6 +665,37 @@ fn insert_genres_into_tree(dbm: &DbManager, hash_map: HashMap<String, HMapType>)
                 
             },
         }
+    }
+}
+
+pub fn insert_genre_into_tree(song: &Song){
+    match DbManager::new(){
+        Ok(dbm) => {
+            let genre = Genre{
+                key: song.id.clone(), 
+                cover: song.cover.clone(), 
+                title: song.genre.clone()
+            };
+
+            match serde_json::to_string(&genre){
+                Ok(genre_as_json) => {
+                    match dbm.genre_tree.insert(song.genre.as_bytes(), genre_as_json.as_bytes()){
+                        Ok(_) => {
+                            
+                        },
+                        Err(_) => {
+                            
+                        },
+                    }
+                },
+                Err(_) => {
+                    
+                },
+            }
+        },
+        Err(_) => {
+
+        },
     }
 }
 

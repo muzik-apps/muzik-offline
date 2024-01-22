@@ -52,6 +52,8 @@ pub fn load_and_play_song_from_path(audio_manager: State<'_, Mutex<SharedAudioMa
                         },
                         Err(_) => {
                             //playback failed
+                            //delete song from database
+                            //tell frontend to remove song from list
                         },
                     }
                 },

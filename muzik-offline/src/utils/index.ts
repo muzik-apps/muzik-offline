@@ -176,11 +176,23 @@ export const getArtistsAlbums = async(artist_name: string): Promise<{ albums: al
 }
 
 export const getRandomCover = (value: string): () => JSX.Element => {
-    const modv: number = value % 4;
-    if(modv === 0)return NullCoverOne;
-    else if(modv === 1)return NullCoverTwo;
-    else if(modv === 2)return NullCoverThree;
-    else return NullCoverFour;
+    //value will always be a uuid like: 1cf37779-7c76-48d3-b18d-4fcdb2342dd6
+    const last_char_val = value[value.length - 1];
+    //last char val can be 0-9 or a-z or A-Z
+    const last_char_val_int = parseInt(last_char_val, 36);
+    const cover_index = last_char_val_int % 4;
+    switch(cover_index){
+        case 0:
+            return NullCoverOne;
+        case 1:
+            return NullCoverTwo;
+        case 2:
+            return NullCoverThree;
+        case 3:
+            return NullCoverFour;
+        default:
+            return NullCoverOne;
+    }
 }
 
 export const getSongPaths = async(
