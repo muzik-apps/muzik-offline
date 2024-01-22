@@ -6,9 +6,9 @@ import { getRandomCover } from 'utils';
 type SquareTitleBoxProps = {
     cover: string | null;
     title: string;
-    keyV: number;
-    setMenuOpenData: (key: number, co_ords: {xPos: number; yPos: number;}) => void;
-    navigateTo: (key: number) => void;
+    keyV: string;
+    setMenuOpenData: (key: string, co_ords: {xPos: number; yPos: number;}) => void;
+    navigateTo: (key: string) => void;
 }
 
 const SquareTitleBox: FunctionComponent<SquareTitleBoxProps> = (props: SquareTitleBoxProps) => {

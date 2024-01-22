@@ -18,7 +18,7 @@ const ArtistCatalogue = () => {
     const navigate = useNavigate();
     const { artist_name } = useParams(); 
 
-    function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
+    function setMenuOpenData(key: string, n_co_ords: {xPos: number; yPos: number;}){
         const matching_album = state.albumList.find(album => { return album.key === key; });
         dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords});
         dispatch({ type: reducerType.SET_ALBUM_MENU, payload: matching_album ? matching_album : null});
@@ -64,7 +64,7 @@ const ArtistCatalogue = () => {
         dispatch({type: reducerType.SET_ALBUM_LIST, payload: result.albums});
     }
 
-    function navigateTo(passed_key: number){ navigate(`/AlbumDetails/${passed_key}/${state.artist_metadata.artistName}`); }
+    function navigateTo(passed_key: string){ navigate(`/AlbumDetails/${passed_key}/${state.artist_metadata.artistName}`); }
 
     useEffect(() => {
         setArtistAlbums();

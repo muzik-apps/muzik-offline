@@ -115,7 +115,7 @@ pub async fn get_songs_in_path(
     songs 
 }
 
-async fn read_from_path(
+pub async fn read_from_path(
     path: &str, 
     song_id: &mut i32, 
     compress_image_option: &bool

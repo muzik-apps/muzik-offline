@@ -16,7 +16,7 @@ const SearchGenres = () => {
     const [genres, setGenres] = useState<genre[]>([]);
     const navigate = useNavigate();
 
-    function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
+    function setMenuOpenData(key: string, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
         const matching_genre = genres.find(genre => { return genre.key === key; })
         setGenreMenuToOpen(matching_genre ? matching_genre : null);
@@ -48,7 +48,7 @@ const SearchGenres = () => {
     }
     
 
-    function navigateTo(passed_key: number){ navigate(`/GenreView/${passed_key}`); }
+    function navigateTo(passed_key: string){ navigate(`/GenreView/${passed_key}`); }
 
     useEffect(() => {
         const resetGenres = () => {

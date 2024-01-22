@@ -17,7 +17,7 @@ const AllTracks = () => {
     const alltracksRef = useRef<any>(null);
     const listRef = useRef<any>(null);
 
-    function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
+    function setMenuOpenData(key: string, n_co_ords: {xPos: number; yPos: number;}){
         const matching_song = state.SongList.find(song => { return song.id === key; });
         dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords});
         dispatch({ type: reducerType.SET_SONG_MENU, payload: matching_song ? matching_song : null});
@@ -40,10 +40,10 @@ const AllTracks = () => {
         }
     }
 
-    async function playThisSong(key: number, shuffle_list: boolean = false){
+    async function playThisSong(key: string, shuffle_list: boolean = false){
         if(state.SongList.length === 0)return;
         let songkey = key;
-        if(songkey === -1)songkey = state.SongList[0].id;
+        if(songkey === "")songkey = state.SongList[0].id;
         const index = state.SongList.findIndex(song => song.id === songkey);
         if(index === -1)return;
         //get ids of songs from index of matching song to last song in list
@@ -51,7 +51,7 @@ const AllTracks = () => {
         await playThisListNow(state.SongList.slice(index + 1).map(song => song.id), shuffle_list);
     }
 
-    async function navigateTo(key: number, type: "artist" | "song"){
+    async function navigateTo(key: string, type: "artist" | "song"){
         const relatedSong = state.SongList.find((value) => value.id === key);
         if(!relatedSong)return;
         if(type === "song"){
@@ -135,7 +135,7 @@ const AllTracks = () => {
                         </div>
                     </div>
                 </div>
-                <motion.div className="shuffle-btn" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() => playThisSong(-1, true)}>
+                <motion.div className="shuffle-btn" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() => playThisSong("", true)}>
                     <h4>shuffle & play</h4>
                     <Shuffle />
                 </motion.div>

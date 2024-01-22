@@ -175,7 +175,7 @@ export const getArtistsAlbums = async(artist_name: string): Promise<{ albums: al
     return { albums, totalDuration, cover, song_count: artistSongs.length };
 }
 
-export const getRandomCover = (value: number): () => JSX.Element => {
+export const getRandomCover = (value: string): () => JSX.Element => {
     const modv: number = value % 4;
     if(modv === 0)return NullCoverOne;
     else if(modv === 1)return NullCoverTwo;

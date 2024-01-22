@@ -18,7 +18,7 @@ const HistoryUpcoming = () => {
   
   const navigate = useNavigate();
 
-  function setMenuOpenData__SongQueue(key: number, n_co_ords: {xPos: number; yPos: number;}){
+  function setMenuOpenData__SongQueue(key: string, n_co_ords: {xPos: number; yPos: number;}){
     dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords });
     const matching_song = state.SongQueue.find((song, index) => { 
         if(song.id === key)dispatch({ type: reducerType.SET_KEY_INDEX_SONG_QUEUE, payload: {key,index,queueType: "SongQueue"} });
@@ -27,7 +27,7 @@ const HistoryUpcoming = () => {
     dispatch({ type: reducerType.SET_SONG_MENU, payload: matching_song ? matching_song : null });
   }
 
-  function setMenuOpenData_SongHistory(key: number, n_co_ords: {xPos: number; yPos: number;}){
+  function setMenuOpenData_SongHistory(key: string, n_co_ords: {xPos: number; yPos: number;}){
       dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords });
       const matching_song = state.SongHistory.find((song, index) => { 
           if(song.id === key)dispatch({ type: reducerType.SET_KEY_INDEX_SONG_QUEUE, payload: {key,index,queueType: "SongHistory"} });
@@ -49,12 +49,12 @@ const HistoryUpcoming = () => {
     }
     else if(arg === contextMenuButtons.Play && state.songMenuToOpen){
         playThisSongFromQueue(state.kindex_sq.key, state.kindex_sq.index, state.kindex_sq.queueType);
-        dispatch({ type: reducerType.SET_KEY_INDEX_SONG_QUEUE, payload: {key: -1, index: -1, queueType: ""} });
+        dispatch({ type: reducerType.SET_KEY_INDEX_SONG_QUEUE, payload: {key: "", index: -1, queueType: ""} });
         closeContextMenu(dispatch); 
     }
   }
 
-  async function navigateTo(key: number, type: "artist" | "song", queueType: string){
+  async function navigateTo(key: string, type: "artist" | "song", queueType: string){
     const relatedSong = queueType === "SongHistory" ? state.SongHistory.find((value) => value.id === key)
     : state.SongQueue.find((value) => value.id === key);
     if(!relatedSong)return;
@@ -98,8 +98,8 @@ const HistoryUpcoming = () => {
                         artist={song.artist}
                         keyV={song.id}
                         setMenuOpenData={setMenuOpenData__SongQueue}
-                        playThisSong={(key: number) => playThisSongFromQueue(key, index, "SongQueue")}
-                        navigateTo={(key: number, type: "artist" | "song") => navigateTo(key, type, "SongQueue")}/>
+                        playThisSong={(key: string) => playThisSongFromQueue(key, index, "SongQueue")}
+                        navigateTo={(key: string, type: "artist" | "song") => navigateTo(key, type, "SongQueue")}/>
                 )
             }
           </div>
@@ -114,8 +114,8 @@ const HistoryUpcoming = () => {
                         artist={song.artist}
                         keyV={song.id}
                         setMenuOpenData={setMenuOpenData_SongHistory}
-                        playThisSong={(key: number) => playThisSongFromQueue(key, index, "SongHistory")}
-                        navigateTo={(key: number, type: "artist" | "song") => navigateTo(key, type, "SongHistory")}/>
+                        playThisSong={(key: string) => playThisSongFromQueue(key, index, "SongHistory")}
+                        navigateTo={(key: string, type: "artist" | "song") => navigateTo(key, type, "SongHistory")}/>
                 )
             }
           </div>

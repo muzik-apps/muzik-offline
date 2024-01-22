@@ -10,9 +10,16 @@ use sled::Tree;
 pub async fn get_batch_of_songs(batch_size: usize, last_key: String) -> String{
     match DbManager::new(){
         Ok(dbm) => {
+            let mut iter = 
+                if last_key == ""{ 
+                    dbm.song_tree.iter() 
+                }
+                else{ 
+                    dbm.song_tree.range(last_key.as_bytes()..) 
+                };
+
             //send vector of songs you want as json then get them from the tree.
             let mut songs: Vec<Song> = Vec::new();
-            let mut iter = dbm.song_tree.range(last_key.as_bytes()..);
 
             let could_retrieve_songs = tokio::task::spawn_blocking(move || { 
                 for _ in 0..batch_size{
@@ -69,7 +76,13 @@ pub async fn get_batch_of_albums(batch_size: usize, last_key: String) -> String{
         Ok(dbm) => {
             
             let mut albums: Vec<Album> = Vec::new();
-            let mut iter = dbm.album_tree.range(last_key.as_bytes()..);
+            let mut iter = 
+                if last_key == ""{ 
+                    dbm.album_tree.iter() 
+                }
+                else{ 
+                    dbm.album_tree.range(last_key.as_bytes()..) 
+                };
 
             let could_retrieve_albums = tokio::task::spawn_blocking(move || { 
                 for _ in 0..batch_size{
@@ -126,7 +139,13 @@ pub async fn get_batch_of_artists(batch_size: usize, last_key: String) -> String
         Ok(dbm) => {
 
             let mut artists: Vec<Artist> = Vec::new();
-            let mut iter = dbm.artist_tree.range(last_key.as_bytes()..);
+            let mut iter = 
+                if last_key == ""{ 
+                    dbm.artist_tree.iter() 
+                }
+                else{ 
+                    dbm.artist_tree.range(last_key.as_bytes()..) 
+                };
 
             let could_retrieve_artists = tokio::task::spawn_blocking(move || { 
                 for _ in 0..batch_size{
@@ -184,7 +203,13 @@ pub async fn get_batch_of_genres(batch_size: usize, last_key: String) -> String{
         Ok(dbm) => {
 
             let mut genres: Vec<Genre> = Vec::new();
-            let mut iter = dbm.artist_tree.range(last_key.as_bytes()..);
+            let mut iter = 
+                if last_key == ""{ 
+                    dbm.genre_tree.iter() 
+                }
+                else{ 
+                    dbm.genre_tree.range(last_key.as_bytes()..) 
+                };
 
             let could_retrieve_genres = tokio::task::spawn_blocking(move || { 
                 for _ in 0..batch_size{
@@ -454,6 +479,10 @@ fn insert_songs_into_tree(dbm: &DbManager, songs: Vec<Song>){
     }
 }
 
+pub fn insert_song_into_tree(){
+    
+}
+
 fn insert_albums_into_tree(dbm: &DbManager, hash_map: HashMap<String, HMapType>){
     let mut albums: Vec<Album> = Vec::new();
 
@@ -573,5 +602,77 @@ pub fn clear_tree(tree: &Tree){
                 
             },
         }
+    }
+}
+
+pub fn is_key_contained_in_song_tree(key: &String) -> Result<bool, String>{
+    match DbManager::new(){
+        Ok(dbm) => {
+            match dbm.song_tree.contains_key(key.as_bytes()){
+                Ok(res) => {
+                    return Ok(res);
+                },
+                Err(_) => {
+                    return Err(String::from(""));
+                },
+            }
+        }
+        Err(_) => {
+            return Err(String::from(""));
+        },
+    }
+}
+
+pub fn is_key_contained_in_album_tree(key: &String) -> Result<bool, String>{
+    match DbManager::new(){
+        Ok(dbm) => {
+            match dbm.song_tree.contains_key(key.as_bytes()){
+                Ok(res) => {
+                    return Ok(res);
+                },
+                Err(_) => {
+                    return Err(String::from(""));
+                },
+            }
+        }
+        Err(_) => {
+            return Err(String::from(""));
+        },
+    }
+}
+
+pub fn is_key_contained_in_artist_tree(key: &String) -> Result<bool, String>{
+    match DbManager::new(){
+        Ok(dbm) => {
+            match dbm.song_tree.contains_key(key.as_bytes()){
+                Ok(res) => {
+                    return Ok(res);
+                },
+                Err(_) => {
+                    return Err(String::from(""));
+                },
+            }
+        }
+        Err(_) => {
+            return Err(String::from(""));
+        },
+    }
+}
+
+pub fn is_key_contained_in_genre_tree(key: &String) -> Result<bool, String>{
+    match DbManager::new(){
+        Ok(dbm) => {
+            match dbm.song_tree.contains_key(key.as_bytes()){
+                Ok(res) => {
+                    return Ok(res);
+                },
+                Err(_) => {
+                    return Err(String::from(""));
+                },
+            }
+        }
+        Err(_) => {
+            return Err(String::from(""));
+        },
     }
 }

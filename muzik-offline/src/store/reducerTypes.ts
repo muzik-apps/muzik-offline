@@ -60,7 +60,7 @@ export type Action =
     | { type: reducerType.SET_PLAYLIST_METADATA; payload: PlaylistMD }
     | { type: reducerType.SET_SONG_QUEUE; payload: Song[] }
     | { type: reducerType.SET_SONG_HISTORY; payload: Song[] }
-    | { type: reducerType.SET_KEY_INDEX_SONG_QUEUE; payload: {key: number, index: number, queueType: string} }
+    | { type: reducerType.SET_KEY_INDEX_SONG_QUEUE; payload: {key: string, index: number, queueType: string} }
 
 
 
@@ -193,5 +193,5 @@ export interface UpcomingHistoryInterface{
     SongHistory: Song[],
     isPlaylistModalOpen: boolean,
     isPropertiesModalOpen: boolean,
-    kindex_sq: {key: number, index: number, queueType: string},
+    kindex_sq: {key: string, index: number, queueType: string},
 }

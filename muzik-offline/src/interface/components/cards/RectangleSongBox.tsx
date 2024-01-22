@@ -12,11 +12,11 @@ type RectangleSongBoxProps = {
     length: number | string;
     year: number;
     selected: boolean;
-    keyV: number;
-    navigateTo: (key: number, type: "artist" | "song") => void;
+    keyV: string;
+    navigateTo: (key: string, type: "artist" | "song") => void;
     selectThisSong: (index: number) => void;
-    setMenuOpenData: (key: number, co_ords: {xPos: number; yPos: number;}) => void;
-    playThisSong: (key: number) => void;
+    setMenuOpenData: (key: string, co_ords: {xPos: number; yPos: number;}) => void;
+    playThisSong: (key: string) => void;
 }
 
 const RectangleSongBox: FunctionComponent<RectangleSongBoxProps> = (props: RectangleSongBoxProps) => {

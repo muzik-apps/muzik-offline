@@ -250,7 +250,7 @@ export async function playPreviousSong(){
     }
 }
 
-export async function playThisListNow(list: number[], shuffle_list: boolean){
+export async function playThisListNow(list: string[], shuffle_list: boolean){
     const resp = await invoke("mlo_set_shuffle_list", {shuffleList: shuffle_list});
     if(resp === "FAILED")return;
     const res = await invoke("mlo_reset_and_set_remaining_keys", {remainingKeys: list});
@@ -272,7 +272,7 @@ export async function get_next_batch(limit: number){
     useUpcomingSongs.getState().setQueue(queue);
 }
 
-export async function playThisSongFromQueue(key: number, index: number, queueType: string){
+export async function playThisSongFromQueue(key: string, index: number, queueType: string){
     if(queueType === "SongQueue" || queueType === "SongHistory"){
         if(queueType === "SongQueue"){
             //get the song queue
@@ -289,7 +289,7 @@ export async function playThisSongFromQueue(key: number, index: number, queueTyp
 }
 
 export async function playSongsFromThisArtist(shuffle: boolean, artist_name: string){
-    const songkeys = await local_songs_db.songs.where("artist").equals(artist_name).primaryKeys() as number[];
+    const songkeys = await local_songs_db.songs.where("artist").equals(artist_name).primaryKeys() as string[];
     if(songkeys.length >= 1){
         const song = await local_songs_db.songs.where("id").equals(songkeys[0]).first();
         if(song !== undefined)startPlayingNewSong(song);

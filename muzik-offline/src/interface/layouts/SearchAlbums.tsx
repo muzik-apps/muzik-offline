@@ -16,7 +16,7 @@ const SearchAlbums = () => {
     const [albums, setAlbums] = useState<album[]>([]);
     const navigate = useNavigate();
 
-    function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
+    function setMenuOpenData(key: string, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
         const matching_album = albums.find(album => { return album.key === key; });
         setAlbumMenuToOpen(matching_album ? matching_album : null);
@@ -47,7 +47,7 @@ const SearchAlbums = () => {
         }
     }
 
-    function navigateTo(key: number){ navigate(`/AlbumDetails/${key}/undefined`); }
+    function navigateTo(key: string){ navigate(`/AlbumDetails/${key}/undefined`); }
 
     useEffect(() => {
         const resetAlbums = () => {

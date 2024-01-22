@@ -21,7 +21,7 @@ const GenreView = () => {
     const navigate = useNavigate();
     const { genre_key } = useParams();
 
-    function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
+    function setMenuOpenData(key: string, n_co_ords: {xPos: number; yPos: number;}){
         const matching_song = state.SongList.find(song => { return song.id === key; });
         dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords});
         dispatch({ type: reducerType.SET_SONG_MENU, payload: matching_song ? matching_song : null});
@@ -44,10 +44,10 @@ const GenreView = () => {
         }
     }
 
-    async function playThisSong(key: number, shuffle_list: boolean = false){
+    async function playThisSong(key: string, shuffle_list: boolean = false){
         if(state.SongList.length === 0)return;
         let songkey = key;
-        if(songkey === -1)songkey = state.SongList[0].id;
+        if(songkey === "")songkey = state.SongList[0].id;
         const index = state.SongList.findIndex(song => song.id === songkey);
         if(index === -1)return;
         //get ids of songs from index of matching song to last song in list
@@ -65,9 +65,9 @@ const GenreView = () => {
         else if(state.resizeHeader === false)dispatch({ type: reducerType.SET_RESIZE_HEADER, payload: true});
     };
 
-    async function setAlbumSongs(){
+    async function setGenreSongs(){
         if(genre_key === undefined)return;
-        const genreres = await local_genres_db.genres.where("key").equals(Number.parseInt(genre_key)).toArray();
+        const genreres = await local_genres_db.genres.where("key").equals(genre_key).toArray();
         if(genreres.length !== 1)return;
         const result = await getGenreSongs(genreres[0]);
         dispatch({ type: reducerType.SET_GENRE_METADATA, payload: {
@@ -79,7 +79,7 @@ const GenreView = () => {
         setSongList(result.songs, dispatch);
     }
 
-    async function navigateTo(key: number, type: "artist" | "song"){
+    async function navigateTo(key: string, type: "artist" | "song"){
         const relatedSong = state.SongList.find((value) => value.id === key);
         if(!relatedSong)return;
         if(type === "song"){
@@ -112,7 +112,7 @@ const GenreView = () => {
     }, [state])
 
     useEffect(() => {
-        setAlbumSongs();
+        setGenreSongs();
         itemsHeightRef.current?.addEventListener('scroll', handleScroll);
         return () =>  itemsHeightRef.current?.removeEventListener('scroll', handleScroll);
     }, [])
@@ -130,11 +130,11 @@ const GenreView = () => {
                         <>
                             <h4>{state.genre_metadata.song_count} songs</h4>
                             <div className="action_buttons">
-                                <motion.div className="PlayIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={() => playThisSong(-1)}>
+                                <motion.div className="PlayIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={() => playThisSong("")}>
                                     <Play />
                                     <p>play</p>
                                 </motion.div>
-                                <motion.div className="ShuffleIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={() => playThisSong(-1, true)}>
+                                <motion.div className="ShuffleIcon" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={() => playThisSong("", true)}>
                                     <Shuffle />
                                     <p>Shuffle</p>
                                 </motion.div>
@@ -164,7 +164,7 @@ const GenreView = () => {
                                 selectThisSong={(index) => selectThisSong(index, dispatch)}
                                 setMenuOpenData={setMenuOpenData} 
                                 navigateTo={navigateTo}
-                                playThisSong={(_key: number,) => {}}/>
+                                playThisSong={(_key: string,) => {}}/>
                         )
                     }
                 </ViewportList>

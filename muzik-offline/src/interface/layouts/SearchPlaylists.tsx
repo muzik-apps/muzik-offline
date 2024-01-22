@@ -17,9 +17,9 @@ const SearchPlaylists = () => {
     const [playlists, setPlaylists] = useState<playlist[]>([]);
     const navigate = useNavigate();
 
-    function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
+    function setMenuOpenData(key: string, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
-        const matching_playlist = playlists.find(playlist => { return playlist.key === key; })
+        const matching_playlist = playlists.find(playlist => { return playlist.key === Number.parseInt(key); })
         setPlaylistMenuToOpen(matching_playlist ? matching_playlist : null);
     }
 
@@ -30,7 +30,7 @@ const SearchPlaylists = () => {
     }
 
     function chooseOption(arg: contextMenuButtons){
-        if(arg == contextMenuButtons.ShowPlaylist && playlistMenuToOpen)navigateTo(playlistMenuToOpen.key);
+        if(arg == contextMenuButtons.ShowPlaylist && playlistMenuToOpen)navigateTo(playlistMenuToOpen.key.toString());
         else if(arg === contextMenuButtons.ShowInfo){ setIsPropertiesModalOpen(true); }
         else if(arg === contextMenuButtons.AddToPlaylist){ setIsPlaylistModalOpen(true); }
         else if(arg === contextMenuButtons.PlayNext && playlistMenuToOpen){ 
@@ -47,7 +47,7 @@ const SearchPlaylists = () => {
         }
     }
 
-    function navigateTo(passed_key: number){ navigate(`/PlaylistView/${passed_key}`); }
+    function navigateTo(passed_key: string){ navigate(`/PlaylistView/${passed_key}`); }
 
     useEffect(() => {
         const resetPlaylists = () => {
@@ -75,7 +75,7 @@ const SearchPlaylists = () => {
                         key={playlist.key}
                         cover={playlist.cover} 
                         title={playlist.title}
-                        keyV={playlist.key}
+                        keyV={playlist.key.toString()}
                         navigateTo={navigateTo}
                         setMenuOpenData={setMenuOpenData}/>
                     )}

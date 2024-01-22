@@ -16,7 +16,7 @@ const SearchArtists = () => {
     const [artists, setArtists] = useState<artist[]>([]);
     const navigate = useNavigate();
 
-    function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
+    function setMenuOpenData(key: string, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
         const matching_artist = artists.find(artist => { return artist.key === key; })
         setArtistMenuToOpen(matching_artist ? matching_artist : null);
@@ -47,7 +47,15 @@ const SearchArtists = () => {
         }
     }
 
-    function navigateTo(key: number){ navigate("/ArtistCatalogue/" + artists[key].artist_name); }
+    function find_artist_name(key: string): string | null{
+        const matching_artist = artists.find(artist => { return artist.key === key; });
+        return matching_artist ? matching_artist.artist_name : null;
+    }
+
+    function navigateTo(key: string){ 
+        const artist_name = find_artist_name(key);
+        if(artist_name)navigate("/ArtistCatalogue/" + artist_name); 
+    }
 
     useEffect(() => {
         const resetArtists = () => {

@@ -20,15 +20,15 @@ const AllPlaylists = () => {
         dispatch({ type: reducerType.SET_OPENED_DDM, payload: null});
     }
 
-    function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
+    function setMenuOpenData(key: string, n_co_ords: {xPos: number; yPos: number;}){
         dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords });
-        const matching_playlist = state.playlistList.find(playlist => { return playlist.key === key; });
+        const matching_playlist = state.playlistList.find(playlist => { return playlist.key === Number.parseInt(key); });
         dispatch({ type: reducerType.SET_PLAYLIST_MENU, payload: matching_playlist ? matching_playlist : null });
     }
 
     function chooseOption(arg: contextMenuButtons){
         if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
-        else if(arg == contextMenuButtons.ShowPlaylist && state.playlistMenuToOpen)navigateTo(state.playlistMenuToOpen.key);
+        else if(arg == contextMenuButtons.ShowPlaylist && state.playlistMenuToOpen)navigateTo(state.playlistMenuToOpen.key.toString());
         else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.PlayNext && state.playlistMenuToOpen){ 
             addTheseSongsToPlayNext({playlist: state.playlistMenuToOpen.title});
@@ -44,7 +44,7 @@ const AllPlaylists = () => {
         }
     }
 
-    function navigateTo(passed_key: number){ navigate(`/PlaylistView/${passed_key}`); }
+    function navigateTo(passed_key: string){ navigate(`/PlaylistView/${passed_key}`); }
 
     function setList(){
         dispatch({ type: reducerType.SET_LOADING, payload: true});
@@ -101,7 +101,7 @@ const AllPlaylists = () => {
                         key={playlist.key}
                         cover={playlist.cover} 
                         title={playlist.title}
-                        keyV={playlist.key}
+                        keyV={playlist.key.toString()}
                         navigateTo={navigateTo}
                         setMenuOpenData={setMenuOpenData}/>
                     )}

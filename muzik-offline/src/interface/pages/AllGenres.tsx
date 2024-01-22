@@ -20,7 +20,7 @@ const AllGenres = () => {
         dispatch({ type: reducerType.SET_OPENED_DDM, payload: null});
     }
 
-    function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
+    function setMenuOpenData(key: string, n_co_ords: {xPos: number; yPos: number;}){
         dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords });
         const matching_genre = state.genreList.find(genre => { return genre.key === key; });
         dispatch({ type: reducerType.SET_GENRE_MENU, payload: matching_genre ? matching_genre : null });
@@ -43,7 +43,7 @@ const AllGenres = () => {
         }
     }
 
-    function navigateTo(passed_key: number){ navigate(`/GenreView/${passed_key}`); }
+    function navigateTo(passed_key: string){ navigate(`/GenreView/${passed_key}`); }
 
     function setList(){
         dispatch({ type: reducerType.SET_LOADING, payload: true});

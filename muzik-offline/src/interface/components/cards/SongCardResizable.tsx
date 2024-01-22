@@ -8,10 +8,10 @@ type SongCardResizableProps = {
     cover: string | null;
     songName: string;
     artist: string;
-    keyV: number;
-    navigateTo: (key: number, type: "artist" | "song") => void;
-    setMenuOpenData: (key: number, co_ords: {xPos: number; yPos: number;}) => void;
-    playThisSong: (key: number) => void;
+    keyV: string;
+    navigateTo: (key: string, type: "artist" | "song") => void;
+    setMenuOpenData: (key: string, co_ords: {xPos: number; yPos: number;}) => void;
+    playThisSong: (key: string) => void;
 }
 
 const SongCardResizable: FunctionComponent<SongCardResizableProps> = (props: SongCardResizableProps) => {

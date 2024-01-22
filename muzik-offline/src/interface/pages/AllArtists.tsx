@@ -20,7 +20,7 @@ const AllArtists = () => {
         dispatch({ type: reducerType.SET_OPENED_DDM, payload: null});
     }
 
-    function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
+    function setMenuOpenData(key: string, n_co_ords: {xPos: number; yPos: number;}){
         dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords });
         const matching_artist = state.artistList.find(artist => { return artist.key === key; });
         dispatch({ type: reducerType.SET_ARTIST_MENU, payload: matching_artist ? matching_artist : null });
@@ -43,7 +43,7 @@ const AllArtists = () => {
         }
     }
 
-    function navigateTo(key: number){ 
+    function navigateTo(key: string){ 
         const artist_to_go_to = state.artistList.find((value) => value.key == key);
         if(artist_to_go_to)navigate(`/ArtistCatalogue/${artist_to_go_to.artist_name}`); 
     }

@@ -20,7 +20,7 @@ const AllAlbums = () => {
         dispatch({ type: reducerType.SET_OPENED_DDM, payload: null});
     }
 
-    function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
+    function setMenuOpenData(key: string, n_co_ords: {xPos: number; yPos: number;}){
         dispatch({ type: reducerType.SET_COORDS, payload: n_co_ords });
         const matching_album = state.albumList.find(album => { return album.key === key; });
         dispatch({ type: reducerType.SET_ALBUM_MENU, payload: matching_album ? matching_album : null });
@@ -43,7 +43,7 @@ const AllAlbums = () => {
         }
     }
 
-    function navigateTo(key: number){ navigate(`/AlbumDetails/${key}/undefined`); }
+    function navigateTo(key: string){ navigate(`/AlbumDetails/${key}/undefined`); }
 
     function setList(){
         dispatch({ type: reducerType.SET_LOADING, payload: true});
