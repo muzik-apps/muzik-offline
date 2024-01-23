@@ -78,7 +78,7 @@ const App = () => {
                 <HeaderMacOS toggleSettings={toggleSettings}/> 
                 :
                 <HeaderLinuxOS toggleSettings={toggleSettings}/>
-              }
+            }
             <div className="main_app_container">
               <div className="left_sidebar">
                 <LeftSidebar />

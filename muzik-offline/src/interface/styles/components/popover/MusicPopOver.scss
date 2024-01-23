@@ -68,6 +68,7 @@
         .buttons{
             width: 234px;
             display: flex;
+            justify-content: center;
 
             .button-left, .button-right{
                 justify-content: center;
