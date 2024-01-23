@@ -36,6 +36,7 @@ pub async fn resize_frontend_image_to_fixed_height(image_as_str: String, height:
 #[cfg(target_os = "macos")]
 fn open_file_at(file_path: &str) {
     match Command::new( "open" )
+        .arg("-R")
         .arg( file_path ) // <- Specify the directory you'd like to open.
         .spawn( )
     {
@@ -51,6 +52,7 @@ fn open_file_at(file_path: &str) {
 #[cfg(target_os = "windows")]
 fn open_file_at(file_path: &str) {
     match Command::new( "explorer" )
+        .arg("/select,")
         .arg( file_path ) // <- Specify the directory you'd like to open.
         .spawn( )
     {
