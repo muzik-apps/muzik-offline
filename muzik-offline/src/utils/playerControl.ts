@@ -152,7 +152,29 @@ export async function dragSeeker(){
 export function changeSeekerPosition(value: number){
     if(usePlayerStore.getState().Player.playingSongMetadata === null)return;
     const position = (value / 100) * usePlayerStore.getState().Player.lengthOfSongInSeconds;
-    invoke("seek_to", {position: position}).then(() => {if(usePlayerStore.getState().Player.wasPlayingBeforePause === true)playSong()})
+    invoke("seek_to", {position: position}).then(() => {if(usePlayerStore.getState().Player.wasPlayingBeforePause === true)playSong()});
+}
+
+export function changeSeekerPositionBtnPress(isDecreasing: boolean){
+    if(usePlayerStore.getState().Player.playingSongMetadata === null)return;
+    const position = usePlayingPositionSec.getState().position;
+    const seekstepamount = parseInt(useSavedObjectStore.getState().local_store.SeekStepAmount);
+    if(position <= 0 || position >= usePlayerStore.getState().Player.lengthOfSongInSeconds)return;
+    let delta_amount = 0;
+    if(isDecreasing === true){
+        if(position <= seekstepamount)delta_amount = -(position);
+        else delta_amount = -(seekstepamount);
+        usePlayingPositionSec.getState().setPosition(position + delta_amount);
+    }
+    else{
+        if(position > usePlayerStore.getState().Player.lengthOfSongInSeconds - seekstepamount)
+            delta_amount = usePlayerStore.getState().Player.lengthOfSongInSeconds - position;
+        else delta_amount = seekstepamount;
+        usePlayingPositionSec.getState().setPosition(position + delta_amount);
+    }
+    invoke("seek_by", {
+        delta: delta_amount ? delta_amount : 10.0
+    }).then(() => {if(usePlayerStore.getState().Player.wasPlayingBeforePause === true)playSong()});
 }
 
 export function changeVolumeLevel(value: number){

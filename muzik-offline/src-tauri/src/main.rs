@@ -19,7 +19,7 @@ use crate::commands::metadata_retriever::get_all_songs;
 use crate::commands::general_commands::{open_in_file_manager, resize_frontend_image_to_fixed_height};
 
 use crate::music::player::{load_and_play_song_from_path, load_a_song_from_path, set_volume,
-    pause_song, resume_playing, seek_to, get_song_position, stop_song};
+    pause_song, resume_playing, seek_to, seek_by, get_song_position, stop_song};
 
 use crate::utils::music_list_organizer::{mlo_set_shuffle_list, mlo_set_repeat_list, 
     mlo_get_next_batch_as_size, mlo_reset_and_set_remaining_keys};
@@ -37,6 +37,7 @@ fn main() {
             //since we would not be able to play any audio if it fails to initialize
             manager: AudioManager::<DefaultBackend>::new(AudioManagerSettings::default()).expect("failed to initialize audio manager"),
             instance_handle: None,
+            volume: 0.0,
         }))
         .manage(Mutex::new(MLO::new()))
         .manage(Mutex::new(DiscordRpc::new().expect("failed to initialize discord rpc")))
@@ -53,6 +54,7 @@ fn main() {
                             resume_playing,
                             stop_song,
                             seek_to,
+                            seek_by,
                             get_song_position,
 
                             //UTILS
