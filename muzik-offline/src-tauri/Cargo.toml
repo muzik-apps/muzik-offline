@@ -13,7 +13,7 @@ edition = "2021"
 tauri-build = { version = "1.5", features = [] }
 
 [dependencies]
-tauri = { version = "1.5", features = [ "path-all", "dialog-open", "notification-all", "os-all", "window-set-resizable", "window-set-fullscreen", "shell-open"] }
+tauri = { version = "1.5", features = [ "window-start-dragging", "window-minimize", "window-close", "window-show", "window-unmaximize", "window-unminimize", "window-hide", "window-maximize", "path-all", "dialog-open", "notification-all", "os-all", "window-set-resizable", "window-set-fullscreen", "shell-open"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 id3 = "1.10.0"
@@ -26,6 +26,8 @@ rand = "0.8.5"
 rayon = "1.8.0"
 sled = "0.34.7"
 dirs = "5.0.1"
+discord-rich-presence = "0.2.3"
+dotenv = "0.15.0"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
