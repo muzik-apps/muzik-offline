@@ -26,10 +26,13 @@
         backdrop-filter: var(--var-bg-blur-150);
         border-radius: 20px;
         padding-right: 0px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
 
         h2{
             font-size: 20px;
-            margin-top: 10px;
+            margin-top: 20px;
             margin-bottom: 20px;
             text-align: center;
         }
@@ -63,9 +66,8 @@
             display: flex;
             width: calc(100% - 10px);
             height: 34px;
-            border-radius: 14px;
             margin-top: 10px;
-            margin-bottom: 10px;
+            border-radius: 14px;
             align-items: center;
             background: $app-theme-col;
     

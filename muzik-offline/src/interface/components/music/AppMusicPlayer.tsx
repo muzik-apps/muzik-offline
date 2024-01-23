@@ -1,6 +1,6 @@
 import {FunctionComponent, useEffect, useRef, useState} from "react";
 import "@styles/components/music/AppMusicPlayer.scss";
-import {ChromeCast, DotHorizontal, NullCoverNull, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
+import {ChromeCast, ListIcon, NullCoverNull, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
 import { motion } from "framer-motion";
 import { usePlayerStore, usePlayingPosition, usePlayingPositionSec, useSavedObjectStore } from "store";
 import { getRandomCover, secondsToTimeFormat } from "@utils/index";
@@ -140,7 +140,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                     </div>
                     <div className="more_controls_cast_and_volume_controller">
                         <motion.div className="more_icon" whileTap={{scale: 0.98}} onClick={props.toggleFloatingHNState}>
-                            <DotHorizontal />
+                            <ListIcon />
                         </motion.div>
                         <motion.div className="cast_icon" whileTap={{scale: 0.98}} onClick={() => setOpenAirplayCastModal(true)}>
                             <ChromeCast />
