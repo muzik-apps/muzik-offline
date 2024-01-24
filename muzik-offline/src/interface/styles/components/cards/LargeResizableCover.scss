@@ -36,6 +36,7 @@
 
     .first_cover{
         filter: $bg-blur-150;
+        -webkit-filter: $bg-blur-150;
     }
 
     .second_cover{

@@ -11,6 +11,7 @@
     border: 1px solid $songs-container-border-col;
     background: var(--var-songs-container-bg-col);
     backdrop-filter: var(--var-bg-blur-150);
+    -webkit-backdrop-filter: var(--var-bg-blur-150);
     box-shadow: $box-shadow-10-10-25;
     bottom: 86px;
     display: flex;
@@ -54,6 +55,7 @@
 
         .first_cover{
             filter: $layer-blur-50;
+            -webkit-filter: $layer-blur-50;
         }
 
         .second_cover{
