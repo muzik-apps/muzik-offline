@@ -11,6 +11,7 @@ import { AirplayCastModal, MusicPopOver } from "@components/index";
 type AppMusicPlayerProps = {
     openPlayer: () => void;
     toggleFloatingHNState: () => void;
+    openMiniPlayer: () => void;
 }
 
 const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusicPlayerProps) => {
@@ -172,7 +173,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                 artist={Player.playingSongMetadata ? Player.playingSongMetadata.artist : null}
                 onClose={(action: "fullscreen" | "miniplayer" | "popover" | "navigateSong" | "navigateArtist") => {
                     if(action === "fullscreen")props.openPlayer();
-                    else if(action === "miniplayer"){}
+                    else if(action === "miniplayer")props.openMiniPlayer();
                     else if(action === "navigateSong"){}
                     else if(action === "navigateArtist"){}
                     setOpenMusicPopOver(false);
