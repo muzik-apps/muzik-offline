@@ -1,20 +1,22 @@
 import {FunctionComponent, useEffect, useRef, useState} from "react";
 import "@styles/components/music/AppMusicPlayer.scss";
-import {ChromeCast, DotHorizontal, NullCoverNull, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
+import {ChromeCast, ListIcon, NullCoverNull, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
 import { motion } from "framer-motion";
 import { usePlayerStore, usePlayingPosition, usePlayingPositionSec, useSavedObjectStore } from "store";
 import { getRandomCover, secondsToTimeFormat } from "@utils/index";
 import { invoke } from "@tauri-apps/api";
 import { changeVolumeLevel, changeSeekerPosition, changeVolumeLevelBtnPress, dragSeeker, pauseSong, playSong, repeatToggle, shuffleToggle, setVolumeLevel, reconfigurePlayer_AtEndOfSong, playPreviousSong, playNextSong, changeSeekerPositionBtnPress } from "@utils/playerControl";
-import { AirplayCastModal } from "@components/index";
+import { AirplayCastModal, MusicPopOver } from "@components/index";
 
 type AppMusicPlayerProps = {
     openPlayer: () => void;
     toggleFloatingHNState: () => void;
+    openMiniPlayer: () => void;
 }
 
 const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusicPlayerProps) => {
     const [openAirplayCastModal, setOpenAirplayCastModal] = useState<boolean>(false);
+    const [openMusicPopOver, setOpenMusicPopOver] = useState<boolean>(false);
     const {Player} = usePlayerStore((state) => { return { Player: state.Player}; });
     const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
     const {playingPosInSec, setplayingPosInSec} = usePlayingPositionSec((state) => { return {playingPosInSec: state.position, setplayingPosInSec: state.setPosition}; });
@@ -80,7 +82,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                 </div>
                 <div className="music_art_bg_layer">
                     <div className="art_and_song_details">
-                        <motion.div className="mini_art_container" whileTap={{scale: 0.98}} onClick={props.openPlayer}>
+                        <motion.div className="mini_art_container" whileTap={{scale: 0.98}} onMouseEnter={() => setOpenMusicPopOver(true)}>
                                 {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
                                 {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" />)}{/**there is cover art */}
                                 {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
@@ -140,7 +142,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                     </div>
                     <div className="more_controls_cast_and_volume_controller">
                         <motion.div className="more_icon" whileTap={{scale: 0.98}} onClick={props.toggleFloatingHNState}>
-                            <DotHorizontal />
+                            <ListIcon />
                         </motion.div>
                         <motion.div className="cast_icon" whileTap={{scale: 0.98}} onClick={() => setOpenAirplayCastModal(true)}>
                             <ChromeCast />
@@ -162,6 +164,21 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                 </div>
             </div>
             <AirplayCastModal isOpen={openAirplayCastModal} closeModal={() => setOpenAirplayCastModal(false)}/>
+            <MusicPopOver 
+                isOpen={openMusicPopOver}
+                isPlayingSong={Player.playingSongMetadata ? true : false}
+                songid={Player.playingSongMetadata ? Player.playingSongMetadata.id : null}
+                cover={Player.playingSongMetadata ? Player.playingSongMetadata.cover : null}
+                name={Player.playingSongMetadata ? Player.playingSongMetadata.name : null}
+                artist={Player.playingSongMetadata ? Player.playingSongMetadata.artist : null}
+                onClose={(action: "fullscreen" | "miniplayer" | "popover" | "navigateSong" | "navigateArtist") => {
+                    if(action === "fullscreen")props.openPlayer();
+                    else if(action === "miniplayer")props.openMiniPlayer();
+                    else if(action === "navigateSong"){}
+                    else if(action === "navigateArtist"){}
+                    setOpenMusicPopOver(false);
+                }}
+            />
         </>
     )
 }

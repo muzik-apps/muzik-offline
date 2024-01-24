@@ -107,7 +107,7 @@
                     height: 15px;
                     overflow: hidden;
                     font-family: 'inter-italic-regular', sans-serif;
-            font-style: italic;
+                    font-style: italic;
                     text-overflow: ellipsis;
                 }
             }
@@ -313,7 +313,7 @@
     width: calc(100vw - 2px);
     .music_cover_art{
         min-width: 978px;
-    width: calc(100vw - 2px);
+        width: calc(100vw - 2px);
     }
     .music_art_bg_layer{
         min-width: 978px;

@@ -18,6 +18,14 @@
       },
       "window": {
         "all": false,
+        "close": true,
+        "hide": true,
+        "show": true,
+        "maximize": true,
+        "minimize": true,
+        "unmaximize": true,
+        "unminimize": true,
+        "startDragging": true,
         "setFullscreen": true,
         "setResizable": true
       },
@@ -68,7 +76,7 @@
         "minWidth": 980,
         "minHeight": 623,
         "titleBarStyle": "Transparent",
-        "decorations": true,
+        "decorations": false,
         "center": true
       }
     ]

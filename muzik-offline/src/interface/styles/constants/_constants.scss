@@ -30,8 +30,23 @@
     --root-app-navigator-hover-col: #505050;
 }
 
+[data-theme='gloss'] {
+    --root-app-theme-col: #ef90fc;
+    --root-app-navigator-hover-col: #505050;
+}
+
+[data-theme='lipstick'] {
+    --root-app-theme-col: #eb55ff;
+    --root-app-navigator-hover-col: #ececec;
+}
+
 [data-theme='lime'] {
     --root-app-theme-col: #acfd9f;
+    --root-app-navigator-hover-col: #505050;
+}
+
+[data-theme='grass'] {
+    --root-app-theme-col: #8bff55;
     --root-app-navigator-hover-col: #505050;
 }
 
@@ -48,6 +63,11 @@
 [data-theme='blueberry'] {
     --root-app-theme-col: #9fa8fd;
     --root-app-navigator-hover-col: #505050;
+}
+
+[data-theme='sky'] {
+    --root-app-theme-col: #557dff;
+    --root-app-navigator-hover-col: #ececec;
 }
 
 [data-theme='midnight'] {

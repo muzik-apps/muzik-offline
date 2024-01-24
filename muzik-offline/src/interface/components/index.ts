@@ -31,6 +31,7 @@ import AddSongToPlaylistModal from "./modals/AddSongToPlaylistModal";
 import LoaderAnimated from './loader/LoaderAnimated';
 import AirplayCastModal from './modals/AirplayCastModal';
 import AddSongsToPlaylistModal from './modals/AddSongsToPlaylistModal';
+import MusicPopOver from "./popover/MusicPopOver";
 
 export {
     HeaderWindows, HeaderMacOS, HeaderLinuxOS, AppNavigator, LeftSidebar, AppMusicPlayer, FSMusicPlayer,
@@ -42,5 +43,5 @@ export {
     ShowAlbumButton, SearchNavigator, DirectoriesModal, ShowInfoButton,
     NotifyBottomRight, PropertiesModal, LargeResizableCover,
     CreatePlaylistModal, EditPlaylistModal, AddSongToPlaylistModal, LoaderAnimated,
-    AirplayCastModal, AddSongsToPlaylistModal
+    AirplayCastModal, AddSongsToPlaylistModal, MusicPopOver
 }

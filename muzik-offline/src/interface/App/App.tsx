@@ -12,8 +12,10 @@ import { AnimatePresence } from "framer-motion";
 import { useWallpaperStore, useSavedObjectStore, useToastStore } from "store";
 import { SavedObject } from "@database/saved_object";
 import { isPermissionGranted, requestPermission } from '@tauri-apps/api/notification';
+import { MiniPlayer } from "@App/index";
 
 const App = () => {
+  const [openMiniPlayer, setOpenMiniPlayer] = useState<boolean>(false);
   const [openSettings, setOpenSettings] = useState<boolean>(false);
   const [FSplayerState, setFSplayerState] = useState<boolean>(false);
   const [FloatingHNState, setFloatingHNState] = useState<boolean>(false);
@@ -53,6 +55,12 @@ const App = () => {
     }
   }
 
+  async function ToggleMiniPlayer(){
+    let MPV = openMiniPlayer;
+    setOpenMiniPlayer(!openMiniPlayer);
+    await invoke("toggle_miniplayer_view", {openMiniPlayer: !MPV});
+  }
+
   useEffect(() => {
     checkOSType();
     checkAndRequestNotificationPermission();
@@ -60,54 +68,60 @@ const App = () => {
   }, [])
 
   return (
-    <Router>
-      <div 
-        className={"app_container " + (local_store.OStype ===  OSTYPEenum.Linux || !local_store.AppThemeBlur ? " linux-config " : "")} 
-        data-theme={local_store.ThemeColour} 
-        wallpaper-opacity={local_store.WallpaperOpacityAmount}
-        onContextMenu={(e) => e.preventDefault()}>
-          <div className={"background_img " + (wallpaper && wallpaper.DisplayWallpaper ? "" : local_store.BGColour)}>
-            {wallpaper && wallpaper.DisplayWallpaper && (<img src={wallpaper.DisplayWallpaper} alt="wallpaper"/>)}
-          </div>
-          <div className={"app_darkness_layer " + (wallpaper && wallpaper.DisplayWallpaper ? "image_layer" : "color_layer")}>
-            {
-              local_store.OStype ===  OSTYPEenum.Windows ? 
-                <HeaderWindows toggleSettings={toggleSettings}/>
-                :
-                local_store.OStype ===  OSTYPEenum.macOS ? 
-                <HeaderMacOS toggleSettings={toggleSettings}/> 
-                :
-                <HeaderLinuxOS toggleSettings={toggleSettings}/>
-              }
-            <div className="main_app_container">
-              <div className="left_sidebar">
-                <LeftSidebar />
-              </div>
-              <div className="center_activity">
-                    <AnimatePresence>
-                      <Routes>
-                            <Route path="/" element={<AllTracks/>}/>
-                            <Route path="/AllArtists" element={<AllArtists/>}/>
-                            <Route path="/AllAlbums" element={<AllAlbums/>}/>
-                            <Route path="/AllGenres" element={<AllGenres/>}/>
-                            <Route path="/AllPlaylists" element={<AllPlaylists/>}/>
-                            <Route path="/SearchPage" element={<SearchPage/>}/>
-                            <Route path="/AlbumDetails/:album_key/:artist_name" element={<AlbumDetails/>}/>
-                            <Route path="/ArtistCatalogue/:artist_name" element={<ArtistCatalogue/>}/>
-                            <Route path="/GenreView/:genre_key" element={<GenreView/>}/>
-                            <Route path="/PlaylistView/:playlist_key" element={<PlaylistView/>}/>
-                      </Routes>
-                    </AnimatePresence>
-              </div>
+    <>
+    { !openMiniPlayer ?
+      <Router>
+        <div 
+          className={"app_container " + (local_store.OStype ===  OSTYPEenum.Linux || !local_store.AppThemeBlur ? " linux-config " : "")} 
+          data-theme={local_store.ThemeColour} 
+          wallpaper-opacity={local_store.WallpaperOpacityAmount}
+          onContextMenu={(e) => e.preventDefault()}>
+            <div className={"background_img " + (wallpaper && wallpaper.DisplayWallpaper ? "" : local_store.BGColour)}>
+              {wallpaper && wallpaper.DisplayWallpaper && (<img src={wallpaper.DisplayWallpaper} alt="wallpaper"/>)}
             </div>
-              <AppMusicPlayer openPlayer={openPlayer} toggleFloatingHNState={toggleFloatingHNState}/>
-              <Settings openSettings={openSettings} closeSettings={closeSetting}/>
-              <FSMusicPlayer openPlayer={FSplayerState} closePlayer={closePlayer}/>
-              <HistoryNextFloating FloatingHNState={FloatingHNState} toggleFloatingHNState={toggleFloatingHNState}/>
-              <NotifyBottomRight/>
-          </div>
-      </div>
-    </Router>
+            <div className={"app_darkness_layer " + (wallpaper && wallpaper.DisplayWallpaper ? "image_layer" : "color_layer")}>
+              {
+                local_store.OStype ===  OSTYPEenum.Windows ? 
+                  <HeaderWindows toggleSettings={toggleSettings}/>
+                  :
+                  local_store.OStype ===  OSTYPEenum.macOS ? 
+                  <HeaderMacOS toggleSettings={toggleSettings}/> 
+                  :
+                  <HeaderLinuxOS toggleSettings={toggleSettings}/>
+              }
+              <div className="main_app_container">
+                <div className="left_sidebar">
+                  <LeftSidebar />
+                </div>
+                <div className="center_activity">
+                      <AnimatePresence>
+                        <Routes>
+                              <Route path="/" element={<AllTracks/>}/>
+                              <Route path="/AllArtists" element={<AllArtists/>}/>
+                              <Route path="/AllAlbums" element={<AllAlbums/>}/>
+                              <Route path="/AllGenres" element={<AllGenres/>}/>
+                              <Route path="/AllPlaylists" element={<AllPlaylists/>}/>
+                              <Route path="/SearchPage" element={<SearchPage/>}/>
+                              <Route path="/AlbumDetails/:album_key/:artist_name" element={<AlbumDetails/>}/>
+                              <Route path="/ArtistCatalogue/:artist_name" element={<ArtistCatalogue/>}/>
+                              <Route path="/GenreView/:genre_key" element={<GenreView/>}/>
+                              <Route path="/PlaylistView/:playlist_key" element={<PlaylistView/>}/>
+                        </Routes>
+                      </AnimatePresence>
+                </div>
+              </div>
+                <AppMusicPlayer openPlayer={openPlayer} toggleFloatingHNState={toggleFloatingHNState} openMiniPlayer={ToggleMiniPlayer}/>
+                <Settings openSettings={openSettings} closeSettings={closeSetting}/>
+                <FSMusicPlayer openPlayer={FSplayerState} closePlayer={closePlayer}/>
+                <HistoryNextFloating FloatingHNState={FloatingHNState} toggleFloatingHNState={toggleFloatingHNState}/>
+                <NotifyBottomRight/>
+            </div>
+        </div>
+      </Router>
+      :
+      <MiniPlayer isOpen={openMiniPlayer} closeMiniPlayer={ToggleMiniPlayer}/>
+    }
+    </>
   );
 }
 
