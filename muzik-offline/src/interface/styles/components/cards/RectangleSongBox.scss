@@ -96,6 +96,7 @@
 .RectangleSongBox:hover, .RectangleSongBox-selected{
     background: $on-hover-song;
     backdrop-filter: var(--var-bg-blur-150);
+    -webkit-backdrop-filter: var(--var-bg-blur-150);
 }
 
 .RectangleSongBox:active{

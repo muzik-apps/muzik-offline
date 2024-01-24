@@ -27,6 +27,7 @@
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
         filter: var(--var-layer-blur-300);
+        -webkit-filter: var(--var-layer-blur-300);
 
         img{
             display: inline;
@@ -57,6 +58,7 @@
         overflow: hidden;
         position: absolute;
         backdrop-filter: var(--var-bg-blur-150);
+        -webkit-backdrop-filter: var(--var-bg-blur-150);
 
         .art_and_song_details{
             display: flex;
@@ -320,5 +322,6 @@
         width: calc(100vw - 2px);
         background: var(--var-glass-music-bar-bg);
         backdrop-filter: var(--var-bg-blur-150);
+        -webkit-backdrop-filter: var(--var-bg-blur-150);
     }
 }
