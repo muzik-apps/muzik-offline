@@ -19,7 +19,7 @@ use crate::app::controller::{toggle_app_pin, toggle_miniplayer_view};
 
 use crate::commands::metadata_retriever::get_all_songs;
 
-use crate::commands::general_commands::{open_in_file_manager, resize_frontend_image_to_fixed_height};
+use crate::commands::general_commands::{open_in_file_manager, resize_frontend_image_to_fixed_height, get_audio_dir};
 
 use crate::music::player::{load_and_play_song_from_path, load_a_song_from_path, set_volume,
     pause_song, resume_playing, seek_to, seek_by, get_song_position, stop_song};
@@ -53,6 +53,7 @@ fn main() {
                             get_all_songs, 
                             open_in_file_manager,
                             set_volume,
+                            get_audio_dir,
 
                             //MUSIC PLAYER
                             load_and_play_song_from_path,

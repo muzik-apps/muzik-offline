@@ -9,7 +9,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { HistoryNextFloating } from "@layouts/index";
 import { OSTYPEenum, toastType } from "@muziktypes/index";
 import { AnimatePresence } from "framer-motion";
-import { useWallpaperStore, useSavedObjectStore, useToastStore } from "store";
+import { useWallpaperStore, useSavedObjectStore, useToastStore } from "@store/index";
 import { SavedObject } from "@database/saved_object";
 import { isPermissionGranted, requestPermission } from '@tauri-apps/api/notification';
 import { MiniPlayer } from "@App/index";

@@ -1,4 +1,5 @@
 use std::process::Command;
+use dirs::audio_dir;
 use crate::utils::general_utils::{resize_and_compress_image, encode_image_in_parallel, decode_image_in_parallel};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -30,6 +31,27 @@ pub async fn resize_frontend_image_to_fixed_height(image_as_str: String, height:
         Err(_) => {
             Err(String::from("FAILED"))
         },
+    }
+}
+
+#[tauri::command]
+pub fn get_audio_dir() -> String{
+    //get the audio path
+    match audio_dir() {
+        Some(path) => {
+            match path.to_str(){
+                Some(path) => {
+                    //inserting this path won't have an effect if it already exists
+                    return String::from(path);
+                },
+                None => {
+                    return String::from("");
+                }
+            }
+        },
+        None => {
+            return String::from("");
+        }
     }
 }
 

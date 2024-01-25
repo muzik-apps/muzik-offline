@@ -55,7 +55,9 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
         const val: string[] = e.target.value.split(/\s*,\s*/).map(function(item) {
             return item.replace(/\n$/, ''); // Removes trailing newline character
         });
-        setDirectories(val);
+        //remove duplicates from array
+        const unique = [...new Set(val)];
+        setDirectories(unique);
     }
 
     function areArraysDifferent(array1: string[], array2: string[]) {
@@ -88,8 +90,8 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
             // user cancelled the selection so return
         } 
         else{
-            //add the selected directory to setDirectories array
-            setDirectories(oldArray => [...oldArray, selected]);
+            //if directory is not contained already add the selected directory to setDirectories array
+            if(!directories.includes(selected))setDirectories([...directories, selected]);
         }
     };
 
