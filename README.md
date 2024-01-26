@@ -28,6 +28,7 @@ A cross platform, local music player that is an offline(no streaming) version of
     - <small><kbd>**`CTRL/CMD`**</kbd> + <kbd>**`SHIFT`**</kbd> + <kbd>**`N`**</kbd></small> - Play Next
 
 # I am a developer
+## Development Cycle
 1. Download <a href="https://tauri.app/v1/guides/getting-started/prerequisites">the pre-requisites</a> for tauri only by following the pre-requisites page for your operating system.
 2. If you are on linux OS(debian/ubuntu), run
 ```
@@ -53,7 +54,23 @@ DISCORD_CLIENT_ID=<Your client id goes here>
 ```
 npm run tauri dev
 ```
-11. If you want to create a production build, run
+
+## Building
+1. Before you create a build, you will have to embed any env variables into the rust code otherwise the application will panic if you try to run it. The env variables are only meant to be used in the development cycle.
+2. To embed the env variables, copy your ```DISCORD_CLIENT_ID``` from the ```.env``` file.
+3. Go to <a href="https://github.com/muzik-apps/muzik-offline/blob/main-app-dev/muzik-offline/src-tauri/src/socials/discord_rpc.rs">discord_rpc.rs</a> and comment out these snippets of code:
+```
+3 -> use dotenv::dotenv;
+4 -> use std::env;
+
+15 -> //get client id from env variables
+16 -> dotenv().ok();
+17 -> let client_id = env::var("DISCORD_CLIENT_ID").expect("DISCORD_CLIENT_ID env variable not set");
+```
+4. In this snippet of code ```let client: DiscordIpcClient = DiscordIpcClient::new(&client_id)?;```, replace ```&client_id``` with ```"<Your client id goes here>"```
+5. You can also remove the <a href="https://github.com/muzik-apps/muzik-offline/blob/main-app-dev/muzik-offline/src-tauri/Cargo.toml#L30">dotnev crate</a> by just removing that line of code.
+6. If you want to go back to dev, you will have to undo all the steps above.
+7. If you want to create a production build, run
 ```
 npm run tauri build
 ```
