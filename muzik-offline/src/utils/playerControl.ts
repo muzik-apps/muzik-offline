@@ -92,6 +92,7 @@ export async function startPlayingNewSong(song: Song){
     const volume = (useSavedObjectStore.getState().local_store.Volume / 100);
     await invoke("load_and_play_song_from_path", { soundPath: song.path, volume: volume });
     usePlayerStore.getState().setPlayer(temp);
+    setDiscordActivity(song.name);
 }
 
 export async function loadNewSong(song: Song){
@@ -102,6 +103,7 @@ export async function loadNewSong(song: Song){
     const volume = (useSavedObjectStore.getState().local_store.Volume / 100);
     await invoke("load_a_song_from_path", { soundPath: song.path, volume: volume });
     usePlayerStore.getState().setPlayer(temp);
+    setDiscordActivity(song.name);
 }
 
 export async function playSong(){
@@ -127,6 +129,7 @@ export async function pauseSong(){
 export async function stopSong(){
     if(usePlayerStore.getState().Player.playingSongMetadata){
         await invoke("stop_song");
+        setDiscordActivity(null);
         let temp = usePlayerStore.getState().Player;
         temp.playingSongMetadata = null;
         temp.lengthOfSongInSeconds = 0;
@@ -149,7 +152,29 @@ export async function dragSeeker(){
 export function changeSeekerPosition(value: number){
     if(usePlayerStore.getState().Player.playingSongMetadata === null)return;
     const position = (value / 100) * usePlayerStore.getState().Player.lengthOfSongInSeconds;
-    invoke("seek_to", {position: position}).then(() => {if(usePlayerStore.getState().Player.wasPlayingBeforePause === true)playSong()})
+    invoke("seek_to", {position: position}).then(() => {if(usePlayerStore.getState().Player.wasPlayingBeforePause === true)playSong()});
+}
+
+export function changeSeekerPositionBtnPress(isDecreasing: boolean){
+    if(usePlayerStore.getState().Player.playingSongMetadata === null)return;
+    const position = usePlayingPositionSec.getState().position;
+    const seekstepamount = parseInt(useSavedObjectStore.getState().local_store.SeekStepAmount);
+    if(position <= 0 || position >= usePlayerStore.getState().Player.lengthOfSongInSeconds)return;
+    let delta_amount = 0;
+    if(isDecreasing === true){
+        if(position <= seekstepamount)delta_amount = -(position);
+        else delta_amount = -(seekstepamount);
+        usePlayingPositionSec.getState().setPosition(position + delta_amount);
+    }
+    else{
+        if(position > usePlayerStore.getState().Player.lengthOfSongInSeconds - seekstepamount)
+            delta_amount = usePlayerStore.getState().Player.lengthOfSongInSeconds - position;
+        else delta_amount = seekstepamount;
+        usePlayingPositionSec.getState().setPosition(position + delta_amount);
+    }
+    invoke("seek_by", {
+        delta: delta_amount ? delta_amount : 10.0
+    }).then(() => {if(usePlayerStore.getState().Player.wasPlayingBeforePause === true)playSong()});
 }
 
 export function changeVolumeLevel(value: number){
@@ -295,4 +320,14 @@ export async function playSongsFromThisArtist(shuffle: boolean, artist_name: str
         if(song !== undefined)startPlayingNewSong(song);
     }
     if(songkeys.length >= 2)playThisListNow(songkeys.slice(1), shuffle);
+}
+
+function setDiscordActivity(song_name: string | null){
+    const discordConnectStatus = useSavedObjectStore.getState().local_store.AppActivityDiscord;
+    if(discordConnectStatus === "No")return;
+
+    if(song_name !== null){
+        invoke("set_discord_rpc_activity", {songName: song_name, userState: "Listening to music", largeImageKey: "app_icon1024x1024"}).then().catch();
+    }
+    else invoke("clear_discord_rpc_activity").then().catch();
 }

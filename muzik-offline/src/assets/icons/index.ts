@@ -48,6 +48,7 @@ import Edit from './General/Edit';
 import BarsAnimated from './Media/BarsAnimated';
 import Overlap from './Layout/Overlap';
 import Minimize from './Layout/Minimize';
+import ListIcon from './General/ListIcon';
 
 export {
     Next_page, Prev_page, Search, 
@@ -62,5 +63,6 @@ export {
     NullMusicCoverTwo, NullMusicCoverThree, NullMusicCoverFour, NullCoverNull,
     NullArtistCoverOne, NullArtistCoverTwo, NullArtistCoverThree, NullArtistCoverFour,
     CheckGreen, CrossRed, InformationCircleContainedOrange, InformationCircleContainedBlue,
-    EditImage, Edit, BarsAnimated, Overlap, Minimize
+    EditImage, Edit, BarsAnimated, Overlap, Minimize,
+    ListIcon, 
 }
