@@ -57,6 +57,20 @@ const App = () => {
 
   async function ToggleMiniPlayer(){
     let MPV = openMiniPlayer;
+    //if miniplayer is open, set the body and html min height to 376px and min width to 218px
+    if(!MPV){
+      document.body.style.minHeight = "376px";
+      document.body.style.minWidth = "218px";
+      document.documentElement.style.minHeight = "376px";
+      document.documentElement.style.minWidth = "218px";
+    }
+    //else set the body and html min height to 623px and min width to 980px
+    else{
+      document.body.style.minHeight = "623px";
+      document.body.style.minWidth = "980px";
+      document.documentElement.style.minHeight = "623px";
+      document.documentElement.style.minWidth = "980px";
+    }
     setOpenMiniPlayer(!openMiniPlayer);
     await invoke("toggle_miniplayer_view", {openMiniPlayer: !MPV});
   }
