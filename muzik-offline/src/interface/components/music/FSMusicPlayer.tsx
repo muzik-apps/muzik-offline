@@ -33,7 +33,7 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
 
     async function switchtoFS(){
         const isMaximized: boolean = await appWindow.isMaximized();
-        if(isMaximized === true){
+        if(isMaximized === true && local_store.OStype === OSTYPEenum.Windows){
             setMaximized(true);
             appWindow.unmaximize();
         }
@@ -47,7 +47,7 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
         appWindow.setResizable(true);
         setappFS(false);
 
-        if(wasMaximized === true){
+        if(wasMaximized === true && local_store.OStype === OSTYPEenum.Windows){
             setMaximized(false);
             appWindow.maximize();
         }
