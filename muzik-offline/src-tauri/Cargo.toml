@@ -21,12 +21,13 @@ tokio = { version = "1.35.0", features = ["full"] }
 base64 = "0.21.5"
 image = "0.24.7"
 kira = "0.8.5"
-lofty = "0.17.1"
+lofty = "0.18.2"
 rand = "0.8.5"
 rayon = "1.8.0"
 sled = "0.34.7"
 dirs = "5.0.1"
 uuid = "1.7.0"
+discord-rich-presence = "0.2.3"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
