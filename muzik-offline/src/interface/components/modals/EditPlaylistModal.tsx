@@ -97,7 +97,7 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
                                 <AppLogo/>
                             </motion.div>
                             :
-                            playlistObj.cover === null ? (getRandomCover(playlistObj.key))() :
+                            playlistObj.cover === null ? (getRandomCover(playlistObj.key.toString()))() :
                             <img src={`data:image/png;base64,${playlistObj.cover}`} alt="playlist_img"/>
                         }
                     </div>

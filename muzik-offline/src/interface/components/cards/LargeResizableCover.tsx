@@ -37,7 +37,7 @@ const LargeResizableCover = (props: LargeResizableCoverProps) => {
                                 props.cover :
                                 `data:image/png;base64,${props.cover}`} alt="first-cover"/>
                         :
-                        getRandomCover(props.id ? Number.parseInt(props.id) : 0)()
+                        getRandomCover(props.id ? props.id : "0")()
                     }
                 </motion.div>
                 : <motion.div className="first_cover" 
@@ -55,7 +55,7 @@ const LargeResizableCover = (props: LargeResizableCoverProps) => {
                             props.cover :
                             `data:image/png;base64,${props.cover}`} alt="second-cover"/>
                     :
-                    getRandomCover(props.id ? Number.parseInt(props.id) : 0)()
+                    getRandomCover(props.id ? props.id : "0")()
                 }
             </motion.div>
         </motion.div>

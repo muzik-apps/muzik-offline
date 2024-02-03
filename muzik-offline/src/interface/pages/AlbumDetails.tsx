@@ -130,7 +130,7 @@ const AlbumDetails = () => {
                                         state.album_metadata.cover ?
                                             <img src={`data:image/png;base64,${state.album_metadata.cover}`} alt="second-cover"/>
                                         :
-                                        getRandomCover(album_key ? Number.parseInt(album_key) : 2)()
+                                        getRandomCover(album_key ? album_key : state.album_metadata.artist)()
                                     }
                                 </div>
                                 <motion.h3 whileTap={{scale: 0.98}} onClick={() => navigate(`/ArtistCatalogue/${state.album_metadata.artist}`)}>{state.album_metadata.artist}</motion.h3>

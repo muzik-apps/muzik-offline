@@ -79,14 +79,14 @@ const MiniPlayer: FunctionComponent<MiniPlayerProps> = (props: MiniPlayerProps) 
                 <div className="music_cover_art">
                     {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
                     {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="cover-art" />)}{/**there is cover art */}
-                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
+                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : "0"))()}{/**the cover art is null */}
                 </div>
             </div>
             <div data-tauri-drag-region className="player">
                 <div className="art_container" onMouseDown={dragWindow}>
                     {!Player.playingSongMetadata && <NullCoverNull/>}{/**no song is loaded onto the player */}
                     {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" />)}{/**there is cover art */}
-                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
+                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : "0"))()}{/**the cover art is null */}
                 </div>
                 <div className="song_details">
                     <h2>{Player.playingSongMetadata ? Player.playingSongMetadata.name : "No song is playing"}</h2>

@@ -1,4 +1,3 @@
-//import { BarsAnimated } from '@assets/icons';
 import { motion } from 'framer-motion';
 import "@styles/components/loader/LoaderAnimated.scss";
 import { AppLogo } from '@assets/logos';

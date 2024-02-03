@@ -7,7 +7,7 @@ import { modal_variants } from "@content/index";
 type MusicPopOverProps = {
     isOpen: boolean;
     isPlayingSong: boolean;
-    songid: number | null;
+    songid: string | null;
     cover: string | null;
     name: string | null;
     artist: string | null;
@@ -24,7 +24,7 @@ const MusicPopOver = (props: MusicPopOverProps) => {
                 <div className="music_cover_art">
                     {!props.isPlayingSong && <NullCoverNull />}{/**no song is loaded onto the player */}
                     {props.isPlayingSong && props.cover && (<img src={`data:image/png;base64,${props.cover}`} alt="song-art" />)}{/**there is cover art */}
-                    {props.isPlayingSong && !props.cover && (getRandomCover(props.songid ? props.songid : 0))()}{/**the cover art is null */}
+                    {props.isPlayingSong && !props.cover && (getRandomCover(props.songid ? props.songid : "0"))()}{/**the cover art is null */}
                 </div>
                 <h2 onClick={() => props.onClose("navigateSong")}>{props.name ? props.name : "No song is playing"}</h2>
                 <h3 onClick={() => props.onClose("navigateArtist")}>{props.artist ? props.artist : "No song is playing"}</h3>

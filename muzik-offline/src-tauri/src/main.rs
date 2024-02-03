@@ -8,6 +8,7 @@ mod components;
 mod utils;
 mod database;
 mod socials;
+mod constants;
 
 use kira::manager::{AudioManager,AudioManagerSettings,backend::DefaultBackend};
 use components::audio_manager::SharedAudioManager;
@@ -19,7 +20,8 @@ use crate::app::controller::{toggle_app_pin, toggle_miniplayer_view, drag_app_wi
 
 use crate::commands::metadata_retriever::get_all_songs;
 
-use crate::commands::general_commands::{open_in_file_manager, resize_frontend_image_to_fixed_height, get_audio_dir};
+use crate::commands::general_commands::{open_in_file_manager, resize_frontend_image_to_fixed_height, get_audio_dir}, 
+    refresh_paths_at_start::{get_the_audio_path, check_if_songs_have_changed_in_paths};
 
 use crate::music::player::{load_and_play_song_from_path, load_a_song_from_path, set_volume,
     pause_song, resume_playing, seek_to, seek_by, get_song_position, stop_song};
@@ -55,6 +57,8 @@ fn main() {
                             open_in_file_manager,
                             set_volume,
                             get_audio_dir,
+                            get_the_audio_path,
+                            check_if_songs_have_changed_in_paths,
 
                             //MUSIC PLAYER
                             load_and_play_song_from_path,

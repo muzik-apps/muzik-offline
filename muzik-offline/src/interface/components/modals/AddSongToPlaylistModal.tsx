@@ -51,7 +51,7 @@ const AddSongToPlaylistModal: FunctionComponent<AddSongToPlaylistModalProps> = (
                                 <div className="playlist_img">
                                 {
                                 playlist.cover === null ? 
-                                    (getRandomCover(playlist.key))() 
+                                    (getRandomCover(playlist.key.toString()))() 
                                 :
                                     (<img src={
                                         playlist.cover.startsWith("data:image/png;base64,") || playlist.cover.startsWith("data:image/jpeg;base64,") ? 

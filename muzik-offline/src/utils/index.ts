@@ -180,7 +180,7 @@ export const getRandomCover = (value: string): () => JSX.Element => {
     const last_char_val = value[value.length - 1];
     //last char val can be 0-9 or a-z or A-Z
     const last_char_val_int = parseInt(last_char_val, 36);
-    const cover_index = last_char_val_int % 4;
+    const cover_index = Number.isNaN(last_char_val_int) ? 0 : last_char_val_int % 4;
     switch(cover_index){
         case 0:
             return NullCoverOne;
