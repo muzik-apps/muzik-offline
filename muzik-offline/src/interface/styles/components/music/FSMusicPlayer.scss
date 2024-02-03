@@ -68,6 +68,10 @@
             margin-top: -110vh;
             background: $blur-element;
             position: absolute;
+
+            .navbar_container{
+                width: 100%;
+            }
             
             .navbar_buttons{
                 margin-top: 10px;
