@@ -2,10 +2,11 @@ import { motion } from "framer-motion";
 import "@styles/layouts/GeneralSettings.scss";
 import { SavedObject, viewableSideEl } from "@database/index";
 import { ChevronDown, Disk, LayersThree, Menu, Microphone, MusicalNote } from "@icons/index";
-import { selectedGeneralSettingEnum } from "@muziktypes/index";
+import { selectedGeneralSettingEnum, toastType } from "@muziktypes/index";
 import { FunctionComponent, useState } from "react";
 import { DropDownMenuLarge, RadioComponent } from "@components/index";
-import { useSavedObjectStore, useViewableSideElStore } from "@store/index";
+import { useSavedObjectStore, useViewableSideElStore, useToastStore } from "@store/index";
+import { invoke } from "@tauri-apps/api";
 
 const settings_data: {
     key: number;
@@ -41,6 +42,7 @@ const GeneralSettings: FunctionComponent<GeneralSettingsProps> = (props: General
     const [selectedGeneralSetting, setselectedGeneralSetting] = useState<selectedGeneralSettingEnum>(selectedGeneralSettingEnum.Nothing);
     const {local_store, setStore} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
     const {viewableEl, setviewableEl } = useViewableSideElStore((state) => { return { viewableEl: state.viewableEl, setviewableEl: state.setviewableEl}; });
+    const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
 
     function toggleDropDown(arg: selectedGeneralSettingEnum){
         if(arg === selectedGeneralSetting)setselectedGeneralSetting(selectedGeneralSettingEnum.Nothing);
@@ -48,8 +50,41 @@ const GeneralSettings: FunctionComponent<GeneralSettingsProps> = (props: General
     }
 
     function setStoreValue(arg: string, type: string){
+        if(type === "AppActivityDiscord"){
+            if(arg === "Yes" && local_store.AppActivityDiscord === "No"){//connect
+                handleDiscordConnectionChanges("Yes");
+                invoke("allow_connection_and_connect_to_discord_rpc").then().catch(() => {
+                    setToast({
+                        title: "Discord connection...", 
+                        message: "Failed to establish connection with discord", 
+                        type: toastType.error, timeout: 5000
+                    });
+                    handleDiscordConnectionChanges("No");
+                });
+            }
+            else if(arg === "No" && local_store.AppActivityDiscord === "Yes"){//disconnect
+                handleDiscordConnectionChanges("No");
+                invoke("disallow_connection_and_close_discord_rpc").then().catch(() => {
+                    setToast({
+                        title: "Discord connection...", 
+                        message: "Failed to disconnect from discord", 
+                        type: toastType.error, timeout: 5000
+                    });
+                    handleDiscordConnectionChanges("Yes");
+                });
+            }
+        }
+        else{
+            let temp: SavedObject = local_store;
+            temp[type as keyof SavedObject] = arg as never;
+            setStore(temp);
+            setselectedGeneralSetting(selectedGeneralSettingEnum.Nothing);
+        }
+    }
+
+    function handleDiscordConnectionChanges(arg: string){
         let temp: SavedObject = local_store;
-        temp[type as keyof SavedObject] = arg as never;
+        temp.AppActivityDiscord = arg;
         setStore(temp);
         setselectedGeneralSetting(selectedGeneralSettingEnum.Nothing);
     }

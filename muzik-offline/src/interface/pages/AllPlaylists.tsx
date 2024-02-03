@@ -107,7 +107,7 @@ const AllPlaylists = () => {
                     )}
             </div>
             {
-                state.playlistMenuToOpen && (
+                state.playlistMenuToOpen && state.co_ords.xPos != 0 && state.co_ords.yPos != 0 && (
                     <div className="AllPlaylists-ContextMenu-container" 
                         onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 

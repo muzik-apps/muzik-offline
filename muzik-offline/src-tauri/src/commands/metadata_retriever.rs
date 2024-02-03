@@ -258,7 +258,7 @@ fn set_duration_bit_rate_sample_rate_bit_depth_channels(path: &str, song_meta_da
 
 fn set_path(path: &str, song_meta_data: &mut Song){
     //PATH
-    song_meta_data.path = path.clone().to_owned();
+    song_meta_data.path = path.to_owned();
 }
 
 fn set_path_as_uuid(path: &str, song_meta_data: &mut Song){

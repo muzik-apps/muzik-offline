@@ -38,6 +38,7 @@
                 justify-content: center;
                 align-items: center;
                 filter: blur(30px);
+                -webkit-filter: blur(30px);
 
                 img{
                     display: inline;
@@ -45,7 +46,7 @@
                     margin: 0 auto;
                     height: 100%;
                     object-fit: cover;
-                    opacity: 0.5;
+                    opacity: 0.7;
                 }
 
                 svg{
@@ -67,6 +68,10 @@
             margin-top: -110vh;
             background: $blur-element;
             position: absolute;
+
+            .navbar_container{
+                width: 100%;
+            }
             
             .navbar_buttons{
                 margin-top: 10px;
@@ -78,7 +83,7 @@
                 margin-right: auto;
                 height: fit-content;
                 padding: 9px;
-                border-radius: 20px;
+                border-radius: 24px;
 
                 .close_full_screen_player_btn, .toggle_full_screen_player_btn{
                     width: 34px;

@@ -4,7 +4,8 @@ import "@styles/layouts/AppearanceSettings.scss";
 import { ArrowRefresh, CancelRight } from "@assets/icons";
 import { useSavedObjectStore, useWallpaperStore } from "@store/index";
 
-const accentColurs: string[] = ["saucy", "salmon", "violet", "lime", "sunny", "ubuntu", "blueberry", "midnight", "blinding"]
+const accentColurs: string[] = ["saucy", "salmon", "violet","gloss", "lipstick", "lime", "grass",
+    "sunny", "ubuntu", "blueberry", "sky", "midnight", "blinding"]
 
 const opacityAmount: string[] = ["0", "2", "4", "6", "8", "10"]
 
@@ -108,7 +109,9 @@ const AppearanceSettings = () => {
                     {
                         accentColurs.map((color, index) => 
                             <motion.div key={index} className={`button_select ${color} ` + (local_store.ThemeColour === color ? "button_selected" : "")}
-                                whileHover={{scale: 1.03}} whileTap={{scale: 0.98}} onClick={() => SetThemeColour(color)}/>
+                                whileHover={{scale: 1.03}} whileTap={{scale: 0.98}} onClick={() => SetThemeColour(color)}>
+                                    {color}
+                            </motion.div>
                         )
                     }
                 </div>

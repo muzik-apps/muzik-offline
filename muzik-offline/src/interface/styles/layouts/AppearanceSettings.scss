@@ -103,6 +103,10 @@
                 border-radius: 20px;
                 margin-right: 15px;
                 margin-bottom: 20px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 12px;
             }
 
             .button_selected{
@@ -117,18 +121,36 @@
 
             .salmon{
                 background: $red-300;
+                color: $gray-900;
             }
 
             .violet{
                 background: $purple-300;
+                color: $gray-900;
+            }
+
+            .gloss{
+                background: #ef90fc;
+                color: $gray-900;
+            }
+
+            .lipstick{
+                background: #eb55ff;
             }
 
             .lime{
                 background: $green-300;
+                color: $gray-900;
+            }
+
+            .grass{
+                background: #8bff55;
+                color: $gray-900;
             }
 
             .sunny{
                 background: $yellow-300;
+                color: $gray-900;
             }
 
             .ubuntu{
@@ -137,6 +159,11 @@
 
             .blueberry{
                 background: $blue-300;
+                color: $gray-900;
+            }
+
+            .sky{
+                background: #557dff;
             }
 
             .midnight{
@@ -145,6 +172,7 @@
 
             .blinding{
                 background: $white-900;
+                color: $gray-900;
             }
         }
 

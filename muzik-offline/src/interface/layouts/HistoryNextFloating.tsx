@@ -153,7 +153,7 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
                 }
             </motion.div>
             {
-                state.songMenuToOpen && (
+                state.songMenuToOpen && state.co_ords.xPos != 0 && state.co_ords.yPos != 0 && (
                     <div className="HistoryNextFloating-ContextMenu-container" 
                         onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 

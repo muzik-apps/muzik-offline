@@ -103,7 +103,7 @@ const AllAlbums = () => {
                 )}
             </div>
             {
-                state.albumMenuToOpen && (
+                state.albumMenuToOpen && state.co_ords.xPos != 0 && state.co_ords.yPos != 0 && (
                     <div className="AllAlbums-ContextMenu-container" 
                         onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 
