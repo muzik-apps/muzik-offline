@@ -81,16 +81,16 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
                             </motion.div>}
                     </div>
                     <div className="frontward_facing_player">
-                        {local_store.OStype === OSTYPEenum.Windows ?
+                        {local_store.OStype === OSTYPEenum.Windows && appFS === false ?
                             <div className="navbar_container" data-tauri-drag-region>
                                 <div className="navbar_buttons">
                                     {   appFS === false &&
-                                            (<motion.div className={"close_full_screen_player_btn" + (appFS === false && " give-margin")} onClick={props.closePlayer} whileTap={{scale: 0.98}}>
+                                            (<motion.div className="close_full_screen_player_btn give-margin" onClick={props.closePlayer} whileTap={{scale: 0.98}}>
                                                 <Minimize /><h3>close</h3>
                                             </motion.div> )
                                     }
-                                    <motion.div className="toggle_full_screen_player_btn" onClick={appFS === true ? switchtoNONFS : switchtoFS} whileTap={{scale: 0.98}}>
-                                        { appFS === false ?  (<><Overlap /><h3>fullscreen</h3></>) : (<><Minimize /><h3>minimize</h3></>) }
+                                    <motion.div className="toggle_full_screen_player_btn" onClick={switchtoFS} whileTap={{scale: 0.98}}>
+                                        <><Overlap /><h3>fullscreen</h3></>
                                     </motion.div> 
                                 </div>
                             </div>
