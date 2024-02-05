@@ -120,7 +120,8 @@ const PlaylistView = () => {
     }
 
     async function onDragEnd(result: DropResult){
-        const reordered_songs = await onDragEndInPlaylistView(result, state.SongList, state.playlist_metadata.key);
+        if(state.playlist_metadata.playlist_data === null)return;
+        const reordered_songs = await onDragEndInPlaylistView(result, state.SongList, state.playlist_metadata.playlist_data.key);
         setSongList(reordered_songs, dispatch);
     }
 
