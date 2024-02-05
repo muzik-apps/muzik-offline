@@ -1,6 +1,8 @@
 import { NullCoverOne, NullCoverTwo, NullCoverThree, NullCoverFour } from "@assets/index";
 import { local_albums_db, local_artists_db, local_genres_db, local_playlists_db, local_songs_db } from "@database/database";
+import { DropResult } from "@hello-pangea/dnd";
 import { Song, album, artist, genre, playlist } from "@muziktypes/index";
+import { useHistorySongs, useUpcomingSongs } from "@store/index";
 import { invoke } from "@tauri-apps/api";
 const batch_size: number = 50;
 
@@ -200,4 +202,25 @@ export const getSongPaths = async(
         if(playlist === undefined)return [];
         return playlist.tracksPaths;
     }
+}
+
+export const reorderArray = (array: any[], from: number, to: number): any[] => {
+    const newArray = [...array];
+    const [removed] = newArray.splice(from, 1);
+    newArray.splice(to, 0, removed);
+    return newArray;
+}
+
+export function onDragEnd(result: DropResult, queueType: "SongHistory" | "SongQueue"){
+    if(!result.destination)return;
+    if(result.destination.index === result.source.index)return;
+    if(result.destination.index === 0 && queueType === "SongQueue")return;
+
+    const songs_queue = queueType === "SongQueue" ?
+    reorderArray(useUpcomingSongs.getState().queue, result.source.index, result.destination.index)
+    :
+    reorderArray(useHistorySongs.getState().queue, result.source.index, result.destination.index);
+
+    if(queueType === "SongQueue")useUpcomingSongs.getState().setQueue(songs_queue);
+    else useHistorySongs.getState().setQueue(songs_queue);
 }

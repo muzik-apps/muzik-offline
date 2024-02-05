@@ -32,6 +32,7 @@ import LoaderAnimated from './loader/LoaderAnimated';
 import AirplayCastModal from './modals/AirplayCastModal';
 import AddSongsToPlaylistModal from './modals/AddSongsToPlaylistModal';
 import MusicPopOver from "./popover/MusicPopOver";
+import SongCardResizableDraggable from './lists/SongCardResizableDraggable';
 
 export {
     HeaderWindows, HeaderMacOS, HeaderLinuxOS, AppNavigator, LeftSidebar, AppMusicPlayer, FSMusicPlayer,
@@ -43,5 +44,5 @@ export {
     ShowAlbumButton, SearchNavigator, DirectoriesModal, ShowInfoButton,
     NotifyBottomRight, PropertiesModal, LargeResizableCover,
     CreatePlaylistModal, EditPlaylistModal, AddSongToPlaylistModal, LoaderAnimated,
-    AirplayCastModal, AddSongsToPlaylistModal, MusicPopOver
+    AirplayCastModal, AddSongsToPlaylistModal, MusicPopOver, SongCardResizableDraggable
 }
