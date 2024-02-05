@@ -74,11 +74,11 @@ const AlbumDetails = () => {
     async function setAlbumSongs(){
         if(album_key === undefined)return;
         dispatch({ type: reducerType.SET_LOADING, payload: true});
-        const albumres = await local_albums_db.albums.where("key").equals(album_key).toArray();
-        if(albumres.length !== 1)return;
-        const result = await getAlbumSongs(albumres[0], artist_name && artist_name !== "undefined" ? artist_name : "");
+        const albumres = await local_albums_db.albums.where("key").equals(Number.parseInt(album_key)).first();
+        if(albumres === undefined)return;
+        const result = await getAlbumSongs(albumres, artist_name && artist_name !== "undefined" ? artist_name : "");
         dispatch({ type: reducerType.SET_ALBUM_METADATA, payload: {
-                cover: result.cover, title: albumres[0].title, artist: result.songs[0].artist,
+                cover: result.cover, title: albumres.title, artist: result.songs[0].artist,
                 year: result.songs[0].year.toString(),song_count: result.songs.length,
                 length: secondsToTimeFormat(result.totalDuration)
             }
