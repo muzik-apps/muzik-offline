@@ -86,7 +86,7 @@ impl DiscordRpc {
             Ok(())
         }
         else{
-            Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "not connected to discord rpc")))
+            Ok(())
         }
     }
 }

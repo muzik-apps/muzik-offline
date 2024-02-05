@@ -137,9 +137,7 @@ export interface GenreMD {
 }
 
 export interface PlaylistMD {
-    key: number;
-    cover: string | null;
-    playlistName: string;
+    playlist_data: playlist | null,
     song_count: number;
     length: string;
 }

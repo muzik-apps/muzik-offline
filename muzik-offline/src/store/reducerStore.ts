@@ -214,7 +214,7 @@ export const PlaylistViewState: PlaylistViewInterface = {
     selected: 0,
     co_ords: { xPos: 0, yPos: 0 },
     SongList: [],
-    playlist_metadata: {key: 0,cover: null,playlistName: "",song_count: 0,length: ""},
+    playlist_metadata: {playlist_data: null,song_count: 0,length: ""},
     songMenuToOpen: null,
     isEditingPlayListModalOpen: false,
     isPlaylistModalOpen: false,
