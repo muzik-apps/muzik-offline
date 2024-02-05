@@ -67,7 +67,7 @@ const GenreView = () => {
 
     async function setGenreSongs(){
         if(genre_key === undefined)return;
-        const genreres = await local_genres_db.genres.where("key").equals(Number.parseInt(genre_key)).first();
+        const genreres = await local_genres_db.genres.where("key").equals(genre_key).first();
         if(genreres === undefined)return;
         const result = await getGenreSongs(genreres);
         dispatch({ type: reducerType.SET_GENRE_METADATA, payload: {

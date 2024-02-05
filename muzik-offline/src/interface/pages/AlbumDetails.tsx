@@ -74,7 +74,7 @@ const AlbumDetails = () => {
     async function setAlbumSongs(){
         if(album_key === undefined)return;
         dispatch({ type: reducerType.SET_LOADING, payload: true});
-        const albumres = await local_albums_db.albums.where("key").equals(Number.parseInt(album_key)).first();
+        const albumres = await local_albums_db.albums.where("key").equals(album_key).first();
         if(albumres === undefined)return;
         const result = await getAlbumSongs(albumres, artist_name && artist_name !== "undefined" ? artist_name : "");
         dispatch({ type: reducerType.SET_ALBUM_METADATA, payload: {
