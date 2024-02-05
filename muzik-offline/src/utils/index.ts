@@ -151,13 +151,15 @@ export const getGenreSongs = async(res: genre): Promise<{ songs: Song[]; totalDu
 export const getPlaylistSongs = async(res: playlist): Promise<{ songs: Song[]; totalDuration: number; cover: string | null;}> => {
     const playlistSongs: Song[] = await local_songs_db.songs.where("path").anyOf(res.tracksPaths).toArray();
     let totalDuration = 0;
-    const songs: Song[] = [];
+    const pathIndexMap: Record<string, number> = {};
     let cover: string | null = null;
-    playlistSongs.forEach((song) => {
+    playlistSongs.forEach((song, index) => {
         totalDuration += song.duration_seconds;
-        songs.push(song);
+        pathIndexMap[song.path] = index;
         if(cover === null && song.cover)cover = song.cover;
     });
+    
+    const songs: Song[] = res.tracksPaths.map((path) => {return playlistSongs[pathIndexMap[path]]});
     return { songs, totalDuration, cover };
 }
 
@@ -223,4 +225,19 @@ export function onDragEnd(result: DropResult, queueType: "SongHistory" | "SongQu
 
     if(queueType === "SongQueue")useUpcomingSongs.getState().setQueue(songs_queue);
     else useHistorySongs.getState().setQueue(songs_queue);
+}
+
+export async function onDragEndInPlaylistView(result: DropResult, SongList: Song[], playlistKey: number): Promise<Song[]>{
+    if(!result.destination)return SongList;
+    if(result.destination.index === result.source.index)return SongList;
+    const playlistobj = await local_playlists_db.playlists.where("key").equals(playlistKey).first();
+    if(playlistobj === undefined)return SongList;
+    const reordered_list: Song[] = reorderArray(SongList, result.source.index, result.destination.index);
+
+    //extract track paths
+    playlistobj.tracksPaths = reordered_list.map((song) => song.path);
+
+    await local_playlists_db.playlists.update(playlistKey, playlistobj);
+
+    return reordered_list;
 }
