@@ -1,0 +1,19 @@
+@import "../../constants/constants";
+
+.DeletePlaylistModal{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background: $blur-element;
+    flex-direction: column;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: $z-index-9999;
+}
+
+.DeletePlaylistModal-visible{
+    display: flex;
+}

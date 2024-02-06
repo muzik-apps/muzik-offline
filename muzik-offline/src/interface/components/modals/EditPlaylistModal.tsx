@@ -110,7 +110,10 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
                 <h3>Playlist name</h3>
                 <input type="text" value={playlistObj.title} onChange={(e) => setPlaylistObj({ ... playlistObj, title : e.target.value})}/>
                 <motion.div className="edit_playlist" whileTap={{scale: 0.98}} onClick={savePlaylistAndCloseModal}>save changes</motion.div>
+                <motion.div className="delete_playlist" whileTap={{scale: 0.98}} onClick={props.closeModal}>delete playlist</motion.div>
             </motion.div>
+
+            
         </div>
     )
 }

@@ -127,6 +127,8 @@ const AllPlaylists = () => {
                 title={state.playlistMenuToOpen? state.playlistMenuToOpen.title : ""} 
                 values={{playlist: state.playlistMenuToOpen? state.playlistMenuToOpen.title : ""}}
                 closeModal={() => closePlaylistModal(dispatch)} />
+
+            {/*delete playlist modal */}
         </motion.div>
     )
 }

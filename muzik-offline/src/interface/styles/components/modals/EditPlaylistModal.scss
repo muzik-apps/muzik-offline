@@ -16,7 +16,7 @@
     .modal{
         width: 300px;
         height: 350px;
-        padding: 20px;
+        padding: 13px;
         border: 1px solid $songs-container-border-col;
         background: var(--var-songs-container-bg-col);
         box-shadow: $box-shadow-10-10-25;
@@ -38,7 +38,7 @@
             .playlist_img{
                 width: 150px;
                 height: 150px;
-                border-radius: 40px;
+                border-radius: 35px;
                 overflow: hidden;
                 display: flex;
                 align-items: center;
@@ -83,23 +83,23 @@
 
         input[type="text"]{
             width: calc(100% - 8px);
-            height: 50px;
+            height: 27px;
             border: none;
             padding: 4px;
             outline: none;
             background: $btn-clickable;
-            border-radius: 16px;
+            border-radius: 13px;
             font-size: 22px;
             color: $white-900;
             margin-top: 2px;
         }
 
-        .edit_playlist{
-            margin-top: 10px;
+        .edit_playlist, .delete_playlist{
+            margin-top: 7px;
             width: 100%;
-            height: 50px;
-            background-color: $app-theme-col;
-            border-radius: 16px;
+            height: 35px;
+            background: $app-theme-col;
+            border-radius: 13px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -107,8 +107,13 @@
             color: $root-app-navigator-hover-col;
         }
 
-        .edit_playlist:hover{
+        .edit_playlist:hover, .delete_playlist:hover{
             opacity: 0.8;
+        }
+
+        .delete_playlist{
+            background: $red-900;
+            color: $white-900;
         }
     }
 }
