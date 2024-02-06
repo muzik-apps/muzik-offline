@@ -120,32 +120,27 @@ const HeaderWindows: FunctionComponent<HeaderWindowsProps> = (props: HeaderWindo
                     <Empty_user />
                     <h2>settings</h2>
                 </motion.div>
-                <div className="window_controls_section">
-                    {isFS === false &&
-                        <>
-                            <div className="button_area" id="minimize">
-                                <img className="icon" srcSet={`${min_w_10} 1x, ${min_w_12} 1.25x, ${min_w_15} 1.5x, ${min_w_15} 1.75x,
-                                    ${min_w_20} 2x, ${min_w_20} 2.25x, ${min_w_24} 2.5x, ${min_w_30} 3x, ${min_w_30} 3.5x`}/>
+                <div className={"window_controls_section " + (isFS === true ? "window_controls_section-hidden" : "")}>
+                    <div className="button_area" id="minimize">
+                        <img className="icon" srcSet={`${min_w_10} 1x, ${min_w_12} 1.25x, ${min_w_15} 1.5x, ${min_w_15} 1.75x,
+                            ${min_w_20} 2x, ${min_w_20} 2.25x, ${min_w_24} 2.5x, ${min_w_30} 3x, ${min_w_30} 3.5x`}/>
+                    </div>
+                    <div className="inter_changeable_btn">
+                        <div className="button_area" id="maximize">
+                            <img className="icon" srcSet={`${max_w_10} 1x, ${max_w_12} 1.25x, ${max_w_15} 1.5x, ${max_w_15} 1.75x,
+                                ${max_w_20} 2x, ${max_w_20} 2.25x, ${max_w_24} 2.5x, ${max_w_30} 3x, ${max_w_30} 3.5x`}/>
+                        </div>
+                        <div className="button_area" id="restore">
+                            <div className="restore_sub_area">
+                                <img className="icon" srcSet={`${restore_w_10} 1x, ${restore_w_12} 1.25x, ${restore_w_15} 1.5x, ${restore_w_15} 1.75x,
+                                    ${restore_w_20} 2x, ${restore_w_20} 2.25x, ${restore_w_24} 2.5x, ${restore_w_30} 3x, ${restore_w_30} 3.5x`}/>
                             </div>
-                            <div className="inter_changeable_btn">
-                                <div className="button_area" id="maximize">
-                                    <img className="icon" srcSet={`${max_w_10} 1x, ${max_w_12} 1.25x, ${max_w_15} 1.5x, ${max_w_15} 1.75x,
-                                        ${max_w_20} 2x, ${max_w_20} 2.25x, ${max_w_24} 2.5x, ${max_w_30} 3x, ${max_w_30} 3.5x`}/>
-                                </div>
-                                <div className="button_area" id="restore">
-                                    <div className="restore_sub_area">
-                                        <img className="icon" srcSet={`${restore_w_10} 1x, ${restore_w_12} 1.25x, ${restore_w_15} 1.5x, ${restore_w_15} 1.75x,
-                                            ${restore_w_20} 2x, ${restore_w_20} 2.25x, ${restore_w_24} 2.5x, ${restore_w_30} 3x, ${restore_w_30} 3.5x`}/>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div className="button_area" id="close">
-                                <img className="icon" srcSet={`${close_w_10} 1x, ${close_w_12} 1.25x, ${close_w_15} 1.5x, ${close_w_15} 1.75x,
-                                    ${close_w_20} 2x, ${close_w_20} 2.25x, ${close_w_24} 2.5x, ${close_w_30} 3x, ${close_w_30} 3.5x`}/>
-                            </div>
-                        </>
-                    }
+                        </div>
+                    </div>
+                    <div className="button_area" id="close">
+                        <img className="icon" srcSet={`${close_w_10} 1x, ${close_w_12} 1.25x, ${close_w_15} 1.5x, ${close_w_15} 1.75x,
+                            ${close_w_20} 2x, ${close_w_20} 2.25x, ${close_w_24} 2.5x, ${close_w_30} 3x, ${close_w_30} 3.5x`}/>
+                    </div>
                 </div>
             </div>
         </div>
