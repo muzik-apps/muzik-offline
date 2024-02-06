@@ -1,5 +1,5 @@
 import { Edit, Play, Shuffle } from "@assets/icons";
-import { LargeResizableCover, RectangleSongBox, GeneralContextMenu, EditPlaylistModal, PropertiesModal, AddSongToPlaylistModal } from "@components/index";
+import { LargeResizableCover, RectangleSongBox, GeneralContextMenu, EditPlaylistModal, PropertiesModal, AddSongToPlaylistModal, DeleteSongFromPlaylistModal } from "@components/index";
 import { local_albums_db, local_playlists_db } from "@database/database";
 import { contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { motion } from "framer-motion";
@@ -30,6 +30,7 @@ const PlaylistView = () => {
     function chooseOption(arg: contextMenuButtons){
         if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
+        else if(arg === contextMenuButtons.Delete){ dispatch({ type: reducerType.SET_DELETE_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.PlayNext && state.songMenuToOpen){ 
             addThisSongToPlayNext([state.songMenuToOpen.id]);
             closeContextMenu(dispatch); 
@@ -119,6 +120,40 @@ const PlaylistView = () => {
         }
     }
 
+    async function shouldDeleteSong(deleteSong: boolean){
+        if(deleteSong && state.songMenuToOpen !== null){
+            //remove song from playlist path
+            const playlist_mt = state.playlist_metadata.playlist_data;
+            if(playlist_mt !== null){
+                const path_to_remove = state.songMenuToOpen.path;
+                const newTracks = playlist_mt.tracksPaths.filter((path) => path !== path_to_remove);
+                playlist_mt.tracksPaths = newTracks;
+                await local_playlists_db.playlists.update(playlist_mt.key, playlist_mt);
+                //remove song from song list
+                const id_to_remove = state.songMenuToOpen.id;
+                const newSongList = state.SongList.filter((song) => song.id !== id_to_remove);
+                //update the song list
+                setSongList(newSongList, dispatch);
+                //recalculate the playlist length
+                let acc = 0;
+                newSongList.map((curr) => { acc = acc + curr.duration_seconds});
+                //update the playlist metadata
+                dispatch({ type: reducerType.SET_PLAYLIST_METADATA, payload: {
+                    playlist_data: playlist_mt,
+                    song_count: newSongList.length,
+                    length: secondsToTimeFormat(acc)
+                    }
+                });
+            }
+            dispatch({ type: reducerType.SET_DELETE_MODAL, payload: false});
+            dispatch({ type: reducerType.SET_SONG_MENU, payload: null});
+        }
+        else{
+            dispatch({ type: reducerType.SET_DELETE_MODAL, payload: false});
+            dispatch({ type: reducerType.SET_SONG_MENU, payload: null});
+        }
+    }
+
     useEffect(() => {
         document.addEventListener("keydown", keyBoardShortCuts);
         return () => document.removeEventListener("keydown", keyBoardShortCuts);  
@@ -195,7 +230,7 @@ const PlaylistView = () => {
                             xPos={state.co_ords.xPos} 
                             yPos={state.co_ords.yPos} 
                             title={state.songMenuToOpen.name}
-                            CMtype={contextMenuEnum.SongCM}
+                            CMtype={contextMenuEnum.PlaylistSongsCM}
                             chooseOption={chooseOption}/>
                     </div>
                 )
@@ -206,6 +241,10 @@ const PlaylistView = () => {
                 isOpen={state.isEditingPlayListModalOpen} closeModal={closeModalAndResetData}/>
             <AddSongToPlaylistModal isOpen={state.isPlaylistModalOpen} songPath={state.songMenuToOpen ? state.songMenuToOpen.path : ""} closeModal={() => closePlaylistModal(dispatch)} />
             <PropertiesModal isOpen={state.isPropertiesModalOpen} song={state.songMenuToOpen ? state.songMenuToOpen : undefined} closeModal={() => closePropertiesModal(dispatch)} />
+            <DeleteSongFromPlaylistModal 
+                title={state.songMenuToOpen ? state.songMenuToOpen.name : ""} 
+                isOpen={state.isDeleteSongModalOpen} 
+                closeModal={shouldDeleteSong}/>
         </motion.div>
     )
 }

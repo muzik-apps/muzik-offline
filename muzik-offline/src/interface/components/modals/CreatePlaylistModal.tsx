@@ -62,6 +62,10 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
 
     async function createPlaylistAndCloseModal(){
         const PLobj = playlistObj;
+        if(PLobj.title === ""){
+            setToast({title: "Playlist title", message: "Playlist title cannot be empty", type: toastType.warning, timeout: 3000});
+            return;
+        }
         PLobj.dateCreated = new Date().toLocaleDateString();
         PLobj.dateEdited = new Date().toLocaleDateString();
         //set key of PLobj as the last key in the database + 1
@@ -109,8 +113,9 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
                     </motion.label>
                 </div>
                 <h3>Playlist name</h3>
-                <input type="text" value={playlistObj.title} onChange={(e) => setPlaylistObj({ ... playlistObj, title : e.target.value})}/>
+                <input type="text" placeholder="enter playlist name here" value={playlistObj.title} onChange={(e) => setPlaylistObj({ ... playlistObj, title : e.target.value})}/>
                 <motion.div className="create_playlist" whileTap={{scale: 0.98}} onClick={createPlaylistAndCloseModal}>create playlist</motion.div>
+                <motion.div className="cancel_creation" whileTap={{scale: 0.98}} onClick={props.closeModal}>cancel</motion.div>
             </motion.div>
         </div>
     )

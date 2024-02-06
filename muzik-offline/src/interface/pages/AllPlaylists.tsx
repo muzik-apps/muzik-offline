@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useReducer } from "react";
-import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, CreatePlaylistModal, PropertiesModal, LoaderAnimated, AddSongsToPlaylistModal } from "@components/index";
+import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, CreatePlaylistModal, PropertiesModal, LoaderAnimated, AddSongsToPlaylistModal, DeletePlaylistModal } from "@components/index";
 import { ChevronDown, Menu } from "@assets/icons";
 import "@styles/pages/AllPlaylists.scss";
 import { contextMenuButtons, contextMenuEnum } from '@muziktypes/index';
@@ -30,6 +30,7 @@ const AllPlaylists = () => {
         if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
         else if(arg == contextMenuButtons.ShowPlaylist && state.playlistMenuToOpen)navigateTo(state.playlistMenuToOpen.key);
         else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
+        else if(arg === contextMenuButtons.Delete){ dispatch({ type: reducerType.SET_DELETE_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.PlayNext && state.playlistMenuToOpen){ 
             addTheseSongsToPlayNext({playlist: state.playlistMenuToOpen.title});
             closeContextMenu(dispatch); 
@@ -55,7 +56,19 @@ const AllPlaylists = () => {
         });
     }
 
-    useEffect(() => { setList(); }, [state.sort, state.isCreatePlaylistModalOpen])
+    async function shouldDeletePlaylist(deletePlaylist: boolean){
+        if(deletePlaylist && state.playlistMenuToOpen){
+            await local_playlists_db.playlists.delete(state.playlistMenuToOpen.key);
+            dispatch({ type: reducerType.SET_DELETE_MODAL, payload: false});
+            dispatch({ type: reducerType.SET_PLAYLIST_MENU, payload: null});
+        }
+        else{
+            dispatch({ type: reducerType.SET_DELETE_MODAL, payload: false});
+            dispatch({ type: reducerType.SET_PLAYLIST_MENU, payload: null});
+        }
+    }
+
+    useEffect(() => { setList(); }, [state.sort, state.isCreatePlaylistModalOpen, state.isDeletePlayListModalOpen])
     
     return (
         <motion.div className="AllPlaylists"
@@ -127,6 +140,10 @@ const AllPlaylists = () => {
                 title={state.playlistMenuToOpen? state.playlistMenuToOpen.title : ""} 
                 values={{playlist: state.playlistMenuToOpen? state.playlistMenuToOpen.title : ""}}
                 closeModal={() => closePlaylistModal(dispatch)} />
+            <DeletePlaylistModal 
+                isOpen={state.isDeletePlayListModalOpen} 
+                title={state.playlistMenuToOpen? state.playlistMenuToOpen.title : ""} 
+                closeModal={shouldDeletePlaylist} />
         </motion.div>
     )
 }

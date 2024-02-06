@@ -15,7 +15,7 @@
     padding: 9px;
 
     .Play, .PlayNext, .PlayLater, .ShowArtist, .Add_to_playlist,
-    .Genre, .ShowPlaylist, .ShowAlbum, .ShowInfo{
+    .Genre, .ShowPlaylist, .ShowAlbum, .ShowInfo, .DeleteButton{
         display: flex;
         height: 34px;
         border-radius: 10px;
@@ -39,7 +39,7 @@
     }
 
     .Play:hover, .PlayNext:hover, .PlayLater:hover, .ShowArtist:hover, .Add_to_playlist:hover,
-    .Genre:hover, .ShowPlaylist:hover, .ShowAlbum:hover, .ShowInfo:hover{
+    .Genre:hover, .ShowPlaylist:hover, .ShowAlbum:hover, .ShowInfo:hover, .DeleteButton:hover{
         opacity: 0.8;
     }
 }

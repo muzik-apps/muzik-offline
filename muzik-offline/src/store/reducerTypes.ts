@@ -12,6 +12,7 @@ export enum reducerType {
     SET_EDIT_PLAYLIST_MODAL = "SET_EDIT_PLAYLIST_MODAL",
     SET_CREATE_PLAYLIST_MODAL = "SET_CREATE_PLAYLIST_MODAL",
     SET_PROPERTIES_MODAL = "SET_PROPERTIES_MODAL",
+    SET_DELETE_MODAL = "SET_DELETE_MODAL",
     SET_RESIZE_HEADER = "SET_RESIZE_HEADER",
     SET_SONG_LIST = "SET_SONG_LIST",
     SET_SONG_MENU = "SET_SONG_MENU",
@@ -43,6 +44,7 @@ export type Action =
     | { type: reducerType.SET_EDIT_PLAYLIST_MODAL; payload: boolean }
     | { type: reducerType.SET_CREATE_PLAYLIST_MODAL; payload: boolean }
     | { type: reducerType.SET_PROPERTIES_MODAL; payload: boolean }
+    | { type: reducerType.SET_DELETE_MODAL; payload: boolean }
     | { type: reducerType.SET_RESIZE_HEADER; payload: boolean }
     | { type: reducerType.SET_SONG_LIST; payload: Song[] }
     | { type: reducerType.SET_SONG_MENU; payload: Song | null }
@@ -170,6 +172,7 @@ export interface AllPlaylistsInterface{
     isPlaylistModalOpen: boolean,
     isCreatePlaylistModalOpen: boolean,
     isPropertiesModalOpen: boolean,
+    isDeletePlayListModalOpen: boolean
 }
 
 export interface PlaylistViewInterface{
@@ -182,6 +185,7 @@ export interface PlaylistViewInterface{
     isEditingPlayListModalOpen: boolean,
     isPlaylistModalOpen: boolean,
     isPropertiesModalOpen: boolean,
+    isDeleteSongModalOpen: boolean,
     resizeHeader: boolean;
 }
 
