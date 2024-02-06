@@ -28,7 +28,7 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
         const reader = new FileReader();
 
         reader.onload = async (e) => {
-            if (e.target?.result) {
+            if(e.target?.result){
                 const originalDataUrl = e.target.result as string;
                 let toSend = "";
         
@@ -98,7 +98,8 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
                             </motion.div>
                             :
                             playlistObj.cover === null ? (getRandomCover(playlistObj.key))() :
-                            <img src={`data:image/png;base64,${playlistObj.cover}`} alt="playlist_img"/>
+                            <img src={playlistObj.cover.startsWith("data:image/png;base64,") || playlistObj.cover.startsWith("data:image/jpeg;base64,") ? 
+                                playlistObj.cover :`data:image/png;base64,${playlistObj.cover}`} alt="playlist_img"/>
                         }
                     </div>
                     <motion.label className="EditImageicon" whileHover={{scale: 1.03}} whileTap={{scale: 0.97}}>

@@ -55,7 +55,7 @@ const AllPlaylists = () => {
         });
     }
 
-    useEffect(() => { setList(); }, [state.sort])
+    useEffect(() => { setList(); }, [state.sort, state.isCreatePlaylistModalOpen])
     
     return (
         <motion.div className="AllPlaylists"
