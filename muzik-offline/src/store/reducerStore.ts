@@ -279,7 +279,7 @@ export const UpcomingHistoryState: UpcomingHistoryInterface = {
     SongHistory: [],
     isPlaylistModalOpen: false,
     isPropertiesModalOpen: false,
-    kindex_sq: {key: -1, index: -1, queueType: ""}
+    kindex_sq: {key: -1, index: -1, queueType: "SongQueue"}
 };
 
 export const upcomingHistoryReducer = (state: UpcomingHistoryInterface, action: Action) => {

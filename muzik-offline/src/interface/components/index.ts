@@ -32,6 +32,8 @@ import LoaderAnimated from './loader/LoaderAnimated';
 import AirplayCastModal from './modals/AirplayCastModal';
 import AddSongsToPlaylistModal from './modals/AddSongsToPlaylistModal';
 import MusicPopOver from "./popover/MusicPopOver";
+import SongCardResizableDraggable from './lists/SongCardResizableDraggable';
+import RectangleSongBoxDraggable from './lists/RectangleSongBoxDraggable';
 import DeletePlaylistModal from './modals/DeletePlaylistModal';
 import DeleteSongFromPlaylistModal from './modals/DeleteSongFromPlaylistModal';
 
@@ -45,6 +47,7 @@ export {
     ShowAlbumButton, SearchNavigator, DirectoriesModal, ShowInfoButton,
     NotifyBottomRight, PropertiesModal, LargeResizableCover,
     CreatePlaylistModal, EditPlaylistModal, AddSongToPlaylistModal, LoaderAnimated,
-    AirplayCastModal, AddSongsToPlaylistModal, MusicPopOver, DeletePlaylistModal,
+    AirplayCastModal, AddSongsToPlaylistModal, MusicPopOver, SongCardResizableDraggable,
+    RectangleSongBoxDraggable, DeletePlaylistModal,
     DeleteButton, DeleteSongFromPlaylistModal
 }
