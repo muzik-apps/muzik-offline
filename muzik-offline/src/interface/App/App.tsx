@@ -115,7 +115,7 @@ const App = () => {
                               <Route path="/AllAlbums" element={<AllAlbums/>}/>
                               <Route path="/AllGenres" element={<AllGenres/>}/>
                               <Route path="/AllPlaylists" element={<AllPlaylists/>}/>
-                              <Route path="/SearchPage" element={<SearchPage/>}/>
+                              <Route path="/SearchPage/*" element={<SearchPage/>}/>
                               <Route path="/AlbumDetails/:album_key/:artist_name" element={<AlbumDetails/>}/>
                               <Route path="/ArtistCatalogue/:artist_name" element={<ArtistCatalogue/>}/>
                               <Route path="/GenreView/:genre_key" element={<GenreView/>}/>

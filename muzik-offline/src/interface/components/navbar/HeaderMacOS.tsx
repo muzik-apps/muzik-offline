@@ -62,7 +62,7 @@ const HeaderMacOS: FunctionComponent<HeaderMacOSProps>  = (props: HeaderMacOSPro
                     id="gsearch" 
                     placeholder="Search..."
                     onChange={captureSearch} 
-                    onFocus={() => navigate("/SearchPage")}/>
+                    onFocus={() => navigate("/SearchPage/songs")}/>
                 {
                     searchText !== "" &&
                     <motion.div onClick={clearSearch} whileTap={{scale: 0.97}}>

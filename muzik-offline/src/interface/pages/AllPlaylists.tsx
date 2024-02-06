@@ -57,15 +57,9 @@ const AllPlaylists = () => {
     }
 
     async function shouldDeletePlaylist(deletePlaylist: boolean){
-        if(deletePlaylist && state.playlistMenuToOpen){
-            await local_playlists_db.playlists.delete(state.playlistMenuToOpen.key);
-            dispatch({ type: reducerType.SET_DELETE_MODAL, payload: false});
-            dispatch({ type: reducerType.SET_PLAYLIST_MENU, payload: null});
-        }
-        else{
-            dispatch({ type: reducerType.SET_DELETE_MODAL, payload: false});
-            dispatch({ type: reducerType.SET_PLAYLIST_MENU, payload: null});
-        }
+        if(deletePlaylist && state.playlistMenuToOpen)await local_playlists_db.playlists.delete(state.playlistMenuToOpen.key);
+        dispatch({ type: reducerType.SET_DELETE_MODAL, payload: false});
+        dispatch({ type: reducerType.SET_PLAYLIST_MENU, payload: null});
     }
 
     useEffect(() => { setList(); }, [state.sort, state.isCreatePlaylistModalOpen, state.isDeletePlayListModalOpen])
