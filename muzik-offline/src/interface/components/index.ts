@@ -33,6 +33,7 @@ import AirplayCastModal from './modals/AirplayCastModal';
 import AddSongsToPlaylistModal from './modals/AddSongsToPlaylistModal';
 import MusicPopOver from "./popover/MusicPopOver";
 import DeletePlaylistModal from './modals/DeletePlaylistModal';
+import DeleteSongFromPlaylistModal from './modals/DeleteSongFromPlaylistModal';
 
 export {
     HeaderWindows, HeaderMacOS, HeaderLinuxOS, AppNavigator, LeftSidebar, AppMusicPlayer, FSMusicPlayer,
@@ -45,5 +46,5 @@ export {
     NotifyBottomRight, PropertiesModal, LargeResizableCover,
     CreatePlaylistModal, EditPlaylistModal, AddSongToPlaylistModal, LoaderAnimated,
     AirplayCastModal, AddSongsToPlaylistModal, MusicPopOver, DeletePlaylistModal,
-    DeleteButton
+    DeleteButton, DeleteSongFromPlaylistModal
 }

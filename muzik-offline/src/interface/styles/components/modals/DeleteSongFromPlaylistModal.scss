@@ -1,6 +1,6 @@
 @import "../../constants/constants";
 
-.DeletePlaylistModal{
+.DeleteSongFromPlaylistModal{
     position: fixed;
     width: 100vw;
     height: 100vh;
@@ -89,6 +89,6 @@
     }
 }
 
-.DeletePlaylistModal-visible{
+.DeleteSongFromPlaylistModal-visible{
     display: flex;
 }

@@ -1,18 +1,18 @@
-import { modal_variants } from '@content/index';
-import { motion } from 'framer-motion';
-import { FunctionComponent } from 'react';
-import "@styles/components/modals/DeletePlaylistModal.scss";
-import { AlertTriangle } from '@assets/icons';
+import { AlertTriangle } from "@assets/icons";
+import { modal_variants } from "@content/index";
+import { motion } from "framer-motion";
+import { FunctionComponent } from "react";
+import "@styles/components/modals/DeleteSongFromPlaylistModal.scss";
 
-type DeletePlaylistModalProps = {
+type DeleteSongFromPlaylistModalProps = {
     title: string;
     isOpen: boolean;
-    closeModal: (deletePlaylist: boolean) => void;
+    closeModal: (deleteSong: boolean) => void;
 }
 
-const DeletePlaylistModal: FunctionComponent<DeletePlaylistModalProps> = (props: DeletePlaylistModalProps) => {
+const DeleteSongFromPlaylistModal: FunctionComponent<DeleteSongFromPlaylistModalProps> = (props: DeleteSongFromPlaylistModalProps) => {
     return (
-        <div className={"DeletePlaylistModal" + (props.isOpen ? " DeletePlaylistModal-visible" : "")} onClick={
+        <div className={"DeleteSongFromPlaylistModal" + (props.isOpen ? " DeleteSongFromPlaylistModal-visible" : "")} onClick={
             (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {if(e.target === e.currentTarget)props.closeModal(false)}}>
             <motion.div 
                 animate={props.isOpen ? "open" : "closed"}
@@ -36,4 +36,4 @@ const DeletePlaylistModal: FunctionComponent<DeletePlaylistModalProps> = (props:
     )
 }
 
-export default DeletePlaylistModal
+export default DeleteSongFromPlaylistModal

@@ -185,6 +185,7 @@ export interface PlaylistViewInterface{
     isEditingPlayListModalOpen: boolean,
     isPlaylistModalOpen: boolean,
     isPropertiesModalOpen: boolean,
+    isDeleteSongModalOpen: boolean,
     resizeHeader: boolean;
 }
 

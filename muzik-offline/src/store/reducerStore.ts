@@ -219,6 +219,7 @@ export const PlaylistViewState: PlaylistViewInterface = {
     isEditingPlayListModalOpen: false,
     isPlaylistModalOpen: false,
     isPropertiesModalOpen: false,
+    isDeleteSongModalOpen: false,
     resizeHeader: false,
 };
 
@@ -233,6 +234,7 @@ export const playlistViewReducer = (state: PlaylistViewInterface, action: Action
         case reducerType.SET_EDIT_PLAYLIST_MODAL: return { ...state, isEditingPlayListModalOpen: action.payload };
         case reducerType.SET_PLAYLIST_MODAL: return { ...state, isPlaylistModalOpen: action.payload };
         case reducerType.SET_PROPERTIES_MODAL: return { ...state, isPropertiesModalOpen: action.payload };
+        case reducerType.SET_DELETE_MODAL: return { ...state, isDeleteSongModalOpen: action.payload };
         case reducerType.SET_RESIZE_HEADER: return { ...state, resizeHeader: action.payload };
         default: return state;
     }
