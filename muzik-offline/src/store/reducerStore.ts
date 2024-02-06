@@ -249,6 +249,7 @@ export const AllPlaylistsState: AllPlaylistsInterface = {
     isPlaylistModalOpen: false,
     isCreatePlaylistModalOpen: false,
     isPropertiesModalOpen: false,
+    isDeletePlayListModalOpen: false
 };
 
 export const allPlaylistsReducer = (state: AllPlaylistsInterface, action: Action) => {
@@ -263,6 +264,7 @@ export const allPlaylistsReducer = (state: AllPlaylistsInterface, action: Action
         case reducerType.SET_PLAYLIST_MODAL: return { ...state, isPlaylistModalOpen: action.payload };
         case reducerType.SET_PROPERTIES_MODAL: return { ...state, isPropertiesModalOpen: action.payload };
         case reducerType.SET_CREATE_PLAYLIST_MODAL: return { ...state, isCreatePlaylistModalOpen: action.payload };
+        case reducerType.SET_DELETE_MODAL: return { ...state, isDeletePlayListModalOpen: action.payload };
         default: return state;
     }
 };

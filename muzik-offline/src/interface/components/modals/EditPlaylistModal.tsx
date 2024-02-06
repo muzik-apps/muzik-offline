@@ -9,6 +9,8 @@ import { useToastStore } from 'store';
 import { getRandomCover } from 'utils';
 import { AppLogo } from '@assets/logos';
 import { modal_variants } from '@content/index';
+import { DeletePlaylistModal } from '@components/index';
+import { useNavigate } from "react-router-dom";
 
 type EditPlaylistModalProps = {
     playlistobj: playlist;
@@ -18,6 +20,8 @@ type EditPlaylistModalProps = {
 
 const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: EditPlaylistModalProps) => {
     const [playlistObj, setPlaylistObj] = useState<playlist>(props.playlistobj);
+    const [deletePlaylistModal, setDeletePlaylistModal] = useState<boolean>(false);
+    const navigate = useNavigate();
     const [isloading, setIsLoading] = useState<boolean>(false);
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
 
@@ -71,9 +75,21 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
         props.closeModal();
     }
 
+    async function shouldDeletePlaylist(deletePlaylist: boolean){
+        if(deletePlaylist){
+            await local_playlists_db.playlists.delete(playlistObj.key);
+            //navigate to playlist page
+            navigate("/AllPlaylists");
+        }
+        else{
+            setDeletePlaylistModal(false);
+        }
+    }
+
     useEffect(() => {   
         setPlaylistObj(props.playlistobj);
         setIsLoading(false);
+        setDeletePlaylistModal(false);
     }, [props.isOpen])
 
     return (
@@ -110,10 +126,10 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
                 <h3>Playlist name</h3>
                 <input type="text" value={playlistObj.title} onChange={(e) => setPlaylistObj({ ... playlistObj, title : e.target.value})}/>
                 <motion.div className="edit_playlist" whileTap={{scale: 0.98}} onClick={savePlaylistAndCloseModal}>save changes</motion.div>
-                <motion.div className="delete_playlist" whileTap={{scale: 0.98}} onClick={props.closeModal}>delete playlist</motion.div>
+                <motion.div className="delete_playlist" whileTap={{scale: 0.98}} onClick={() => setDeletePlaylistModal(true)}>delete playlist</motion.div>
             </motion.div>
 
-            
+            <DeletePlaylistModal title={playlistObj.title} isOpen={deletePlaylistModal} closeModal={shouldDeletePlaylist}/>
         </div>
     )
 }

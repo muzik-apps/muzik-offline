@@ -195,7 +195,7 @@ const PlaylistView = () => {
                             xPos={state.co_ords.xPos} 
                             yPos={state.co_ords.yPos} 
                             title={state.songMenuToOpen.name}
-                            CMtype={contextMenuEnum.SongCM}
+                            CMtype={contextMenuEnum.PlaylistSongsCM}
                             chooseOption={chooseOption}/>
                     </div>
                 )
