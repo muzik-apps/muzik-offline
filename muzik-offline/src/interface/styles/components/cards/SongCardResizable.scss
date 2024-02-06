@@ -52,17 +52,12 @@
     }
 
     .PlayIcon{
-        cursor: default;
         svg{
             path{
                 fill: $app-theme-col;
                 stroke: $app-theme-col;
             }
         }
-    }
-
-    .DotHorizontalIcon{
-        cursor: default;
     }
 
     margin-bottom: 5px;

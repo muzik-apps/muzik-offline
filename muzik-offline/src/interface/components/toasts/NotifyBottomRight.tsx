@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion';
 import "@styles/components/toasts/NotifyBottomRight.scss";
 import { toast } from 'types';
-import { CheckGreen, Cross, CrossRed, InformationCircleContained, InformationCircleContainedBlue, InformationCircleContainedOrange } from '@assets/icons';
+import { CheckGreen, Cross, CrossRed, InformationCircleContained, InformationCircleContainedBlue, AlertTriangle } from '@assets/icons';
 import { useToastStore } from 'store';
 
 const variants={
@@ -20,7 +20,7 @@ const NotifyBottomRight = () => {
         else if(toast_d.type === "error")return CrossRed;
         else if(toast_d.type === "info")return InformationCircleContainedBlue;
         else if(toast_d.type === "success")return CheckGreen;
-        else if(toast_d.type === "warning")return InformationCircleContainedOrange;
+        else if(toast_d.type === "warning")return AlertTriangle;
         else return InformationCircleContained;
     }
 

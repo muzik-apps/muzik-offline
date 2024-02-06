@@ -18,7 +18,7 @@ const SongCardResizable: FunctionComponent<SongCardResizableProps> = (props: Son
 
     return (
         <div className="SongCardResizable">
-            <motion.div className="song_cover" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
+            <motion.div className="song_cover" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={() => props.navigateTo(props.keyV, "song")}>
                 { 
                     !props.cover ? (getRandomCover(props.keyV))()
                     :
@@ -34,8 +34,10 @@ const SongCardResizable: FunctionComponent<SongCardResizableProps> = (props: Son
             <motion.div className="PlayIcon" whileTap={{scale: 0.95}} onMouseUp={() => props.playThisSong(props.keyV)}>
                 <Play />
             </motion.div>
-            <motion.div whileTap={{scale: 0.95}} className="DotHorizontalIcon" 
-                onMouseUp={(e) => {props.setMenuOpenData(props.keyV, {xPos: e.pageX - 200, yPos: e.pageY});}}>
+            <motion.div whileTap={{scale: 0.95}} onMouseUp={(e) => {
+                e.preventDefault();
+                props.setMenuOpenData(props.keyV, {xPos: e.pageX - 200, yPos: e.pageY});
+            }}>
                 <DotHorizontal />
             </motion.div>
         </div>

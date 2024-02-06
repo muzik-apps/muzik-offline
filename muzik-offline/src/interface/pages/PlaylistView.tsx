@@ -1,18 +1,18 @@
 import { Edit, Play, Shuffle } from "@assets/icons";
-import { LargeResizableCover, GeneralContextMenu, EditPlaylistModal, PropertiesModal, AddSongToPlaylistModal, RectangleSongBoxDraggable } from "@components/index";
+import { LargeResizableCover, RectangleSongBox, GeneralContextMenu, EditPlaylistModal, PropertiesModal, AddSongToPlaylistModal, DeleteSongFromPlaylistModal } from "@components/index";
 import { local_albums_db, local_playlists_db } from "@database/database";
 import { contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { motion } from "framer-motion";
 import { useReducer, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getPlaylistSongs, onDragEndInPlaylistView, secondsToTimeFormat } from "@utils/index";
+import { getPlaylistSongs, secondsToTimeFormat } from "@utils/index";
 import "@styles/pages/PlaylistView.scss";
+import { ViewportList } from "react-viewport-list";
 import { variants_list } from "@content/index";
 import { PlaylistViewState, playlistViewReducer } from "@store/reducerStore";
 import { reducerType } from "@store/index";
 import { addThisSongToPlayNext, addThisSongToPlayLater, playThisListNow, startPlayingNewSong } from "@utils/playerControl";
 import { closeContextMenu, setSongList, selectThisSong, closePlaylistModal, processArrowKeysInput, closePropertiesModal } from "@utils/reducerUtils";
-import { DropResult } from "@hello-pangea/dnd";
 
 const PlaylistView = () => {
     const [state , dispatch] = useReducer(playlistViewReducer, PlaylistViewState);
@@ -30,6 +30,7 @@ const PlaylistView = () => {
     function chooseOption(arg: contextMenuButtons){
         if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
+        else if(arg === contextMenuButtons.Delete){ dispatch({ type: reducerType.SET_DELETE_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.PlayNext && state.songMenuToOpen){ 
             addThisSongToPlayNext([state.songMenuToOpen.id]);
             closeContextMenu(dispatch); 
@@ -124,6 +125,40 @@ const PlaylistView = () => {
         const reordered_songs = await onDragEndInPlaylistView(result, state.SongList, state.playlist_metadata.playlist_data.key);
         setSongList(reordered_songs, dispatch);
     }
+  
+    async function shouldDeleteSong(deleteSong: boolean){
+        if(deleteSong && state.songMenuToOpen !== null){
+            //remove song from playlist path
+            const playlist_mt = state.playlist_metadata.playlist_data;
+            if(playlist_mt !== null){
+                const path_to_remove = state.songMenuToOpen.path;
+                const newTracks = playlist_mt.tracksPaths.filter((path) => path !== path_to_remove);
+                playlist_mt.tracksPaths = newTracks;
+                await local_playlists_db.playlists.update(playlist_mt.key, playlist_mt);
+                //remove song from song list
+                const id_to_remove = state.songMenuToOpen.id;
+                const newSongList = state.SongList.filter((song) => song.id !== id_to_remove);
+                //update the song list
+                setSongList(newSongList, dispatch);
+                //recalculate the playlist length
+                let acc = 0;
+                newSongList.map((curr) => { acc = acc + curr.duration_seconds});
+                //update the playlist metadata
+                dispatch({ type: reducerType.SET_PLAYLIST_METADATA, payload: {
+                    playlist_data: playlist_mt,
+                    song_count: newSongList.length,
+                    length: secondsToTimeFormat(acc)
+                    }
+                });
+            }
+            dispatch({ type: reducerType.SET_DELETE_MODAL, payload: false});
+            dispatch({ type: reducerType.SET_SONG_MENU, payload: null});
+        }
+        else{
+            dispatch({ type: reducerType.SET_DELETE_MODAL, payload: false});
+            dispatch({ type: reducerType.SET_SONG_MENU, payload: null});
+        }
+    }
 
     useEffect(() => {
         document.addEventListener("keydown", keyBoardShortCuts);
@@ -169,19 +204,29 @@ const PlaylistView = () => {
                 variants={variants_list}
                 transition={{ type: "tween" }}
                 ref={itemsHeightRef}>
-                    <RectangleSongBoxDraggable 
-                        selected={state.selected} 
-                        listRef={listRef} 
-                        itemsHeightRef={itemsHeightRef} 
-                        SongList={state.SongList} 
-                        onDragEnd={onDragEnd} 
-                        selectThisSong={(index: number) => selectThisSong(index, dispatch)} 
-                        setMenuOpenData={setMenuOpenData} 
-                        navigateTo={navigateTo} 
-                        playThisSong={playThisSong}/>
-                    <div className="footer_content">
-                        <h4>{state.playlist_metadata.song_count} {state.playlist_metadata.song_count > 1 ? "Songs" : "Song"}, {state.playlist_metadata.length} listen time</h4>
-                    </div>
+                <ViewportList viewportRef={itemsHeightRef} items={state.SongList} ref={listRef}>
+                    {
+                        (song, index) => (
+                            <RectangleSongBox 
+                                key={song.id}
+                                keyV={song.id}
+                                index={index + 1} 
+                                cover={song.cover} 
+                                songName={song.name} 
+                                artist={song.artist}
+                                length={song.duration} 
+                                year={song.year}
+                                selected={state.selected === index + 1 ? true : false}
+                                selectThisSong={(index) => selectThisSong(index, dispatch)}
+                                setMenuOpenData={setMenuOpenData}
+                                navigateTo={navigateTo}
+                                playThisSong={playThisSong}/>
+                        )
+                    }
+                </ViewportList>
+                <div className="footer_content">
+                    <h4>{state.playlist_metadata.song_count} {state.playlist_metadata.song_count > 1 ? "Songs" : "Song"}, {state.playlist_metadata.length} listen time</h4>
+                </div>
             </motion.div>
             {
                 state.songMenuToOpen && state.co_ords.xPos !== 0 && state.co_ords.yPos !== 0 && (
@@ -191,7 +236,7 @@ const PlaylistView = () => {
                             xPos={state.co_ords.xPos} 
                             yPos={state.co_ords.yPos} 
                             title={state.songMenuToOpen.name}
-                            CMtype={contextMenuEnum.SongCM}
+                            CMtype={contextMenuEnum.PlaylistSongsCM}
                             chooseOption={chooseOption}/>
                     </div>
                 )
@@ -202,6 +247,10 @@ const PlaylistView = () => {
                 isOpen={state.isEditingPlayListModalOpen} closeModal={closeModalAndResetData}/>
             <AddSongToPlaylistModal isOpen={state.isPlaylistModalOpen} songPath={state.songMenuToOpen ? state.songMenuToOpen.path : ""} closeModal={() => closePlaylistModal(dispatch)} />
             <PropertiesModal isOpen={state.isPropertiesModalOpen} song={state.songMenuToOpen ? state.songMenuToOpen : undefined} closeModal={() => closePropertiesModal(dispatch)} />
+            <DeleteSongFromPlaylistModal 
+                title={state.songMenuToOpen ? state.songMenuToOpen.name : ""} 
+                isOpen={state.isDeleteSongModalOpen} 
+                closeModal={shouldDeleteSong}/>
         </motion.div>
     )
 }

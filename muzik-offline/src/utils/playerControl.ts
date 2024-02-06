@@ -297,18 +297,20 @@ export async function get_next_batch(limit: number){
     useUpcomingSongs.getState().setQueue(queue);
 }
 
-export async function playThisSongFromQueue(key: number, index: number, queueType: "SongQueue" | "SongHistory"){
-    if(queueType === "SongQueue"){
-        //get the song queue
-        const res = useUpcomingSongs.getState().queue;
-        //add the song to index position 1 in the queue
-        const newQueue = [...res.slice(index)];
-        //add the new queue from index 0 to index limit - 1
-        useUpcomingSongs.getState().setQueue(newQueue);
+export async function playThisSongFromQueue(key: number, index: number, queueType: string){
+    if(queueType === "SongQueue" || queueType === "SongHistory"){
+        if(queueType === "SongQueue"){
+            //get the song queue
+            const res = useUpcomingSongs.getState().queue;
+            //add the song to index position 1 in the queue
+            const newQueue = [...res.slice(index)];
+            //add the new queue from index 0 to index limit - 1
+            useUpcomingSongs.getState().setQueue(newQueue);
+        }
+        const toplay = await local_songs_db.songs.where("id").equals(key).first();
+        if(toplay === undefined)return;//the likelihood of this happening is basically impossible
+        startPlayingNewSong(toplay);
     }
-    const toplay = await local_songs_db.songs.where("id").equals(key).first();
-    if(toplay === undefined)return;//the likelihood of this happening is basically impossible
-    startPlayingNewSong(toplay);
 }
 
 export async function playSongsFromThisArtist(shuffle: boolean, artist_name: string){

@@ -219,6 +219,7 @@ export const PlaylistViewState: PlaylistViewInterface = {
     isEditingPlayListModalOpen: false,
     isPlaylistModalOpen: false,
     isPropertiesModalOpen: false,
+    isDeleteSongModalOpen: false,
     resizeHeader: false,
 };
 
@@ -233,6 +234,7 @@ export const playlistViewReducer = (state: PlaylistViewInterface, action: Action
         case reducerType.SET_EDIT_PLAYLIST_MODAL: return { ...state, isEditingPlayListModalOpen: action.payload };
         case reducerType.SET_PLAYLIST_MODAL: return { ...state, isPlaylistModalOpen: action.payload };
         case reducerType.SET_PROPERTIES_MODAL: return { ...state, isPropertiesModalOpen: action.payload };
+        case reducerType.SET_DELETE_MODAL: return { ...state, isDeleteSongModalOpen: action.payload };
         case reducerType.SET_RESIZE_HEADER: return { ...state, resizeHeader: action.payload };
         default: return state;
     }
@@ -249,6 +251,7 @@ export const AllPlaylistsState: AllPlaylistsInterface = {
     isPlaylistModalOpen: false,
     isCreatePlaylistModalOpen: false,
     isPropertiesModalOpen: false,
+    isDeletePlayListModalOpen: false
 };
 
 export const allPlaylistsReducer = (state: AllPlaylistsInterface, action: Action) => {
@@ -263,6 +266,7 @@ export const allPlaylistsReducer = (state: AllPlaylistsInterface, action: Action
         case reducerType.SET_PLAYLIST_MODAL: return { ...state, isPlaylistModalOpen: action.payload };
         case reducerType.SET_PROPERTIES_MODAL: return { ...state, isPropertiesModalOpen: action.payload };
         case reducerType.SET_CREATE_PLAYLIST_MODAL: return { ...state, isCreatePlaylistModalOpen: action.payload };
+        case reducerType.SET_DELETE_MODAL: return { ...state, isDeletePlayListModalOpen: action.payload };
         default: return state;
     }
 };
@@ -275,7 +279,7 @@ export const UpcomingHistoryState: UpcomingHistoryInterface = {
     SongHistory: [],
     isPlaylistModalOpen: false,
     isPropertiesModalOpen: false,
-    kindex_sq: {key: -1, index: -1, queueType: "SongQueue"}
+    kindex_sq: {key: -1, index: -1, queueType: ""}
 };
 
 export const upcomingHistoryReducer = (state: UpcomingHistoryInterface, action: Action) => {
