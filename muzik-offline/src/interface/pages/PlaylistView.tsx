@@ -1,18 +1,18 @@
 import { Edit, Play, Shuffle } from "@assets/icons";
-import { LargeResizableCover, RectangleSongBox, GeneralContextMenu, EditPlaylistModal, PropertiesModal, AddSongToPlaylistModal, DeleteSongFromPlaylistModal } from "@components/index";
+import { LargeResizableCover, GeneralContextMenu, EditPlaylistModal, PropertiesModal, AddSongToPlaylistModal, RectangleSongBoxDraggable, DeleteSongFromPlaylistModal } from "@components/index";
 import { local_albums_db, local_playlists_db } from "@database/database";
 import { contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { motion } from "framer-motion";
 import { useReducer, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getPlaylistSongs, secondsToTimeFormat } from "@utils/index";
+import { getPlaylistSongs, onDragEndInPlaylistView, secondsToTimeFormat } from "@utils/index";
 import "@styles/pages/PlaylistView.scss";
-import { ViewportList } from "react-viewport-list";
 import { variants_list } from "@content/index";
 import { PlaylistViewState, playlistViewReducer } from "@store/reducerStore";
 import { reducerType } from "@store/index";
 import { addThisSongToPlayNext, addThisSongToPlayLater, playThisListNow, startPlayingNewSong } from "@utils/playerControl";
 import { closeContextMenu, setSongList, selectThisSong, closePlaylistModal, processArrowKeysInput, closePropertiesModal } from "@utils/reducerUtils";
+import { DropResult } from "@hello-pangea/dnd";
 
 const PlaylistView = () => {
     const [state , dispatch] = useReducer(playlistViewReducer, PlaylistViewState);
@@ -204,29 +204,19 @@ const PlaylistView = () => {
                 variants={variants_list}
                 transition={{ type: "tween" }}
                 ref={itemsHeightRef}>
-                <ViewportList viewportRef={itemsHeightRef} items={state.SongList} ref={listRef}>
-                    {
-                        (song, index) => (
-                            <RectangleSongBox 
-                                key={song.id}
-                                keyV={song.id}
-                                index={index + 1} 
-                                cover={song.cover} 
-                                songName={song.name} 
-                                artist={song.artist}
-                                length={song.duration} 
-                                year={song.year}
-                                selected={state.selected === index + 1 ? true : false}
-                                selectThisSong={(index) => selectThisSong(index, dispatch)}
-                                setMenuOpenData={setMenuOpenData}
-                                navigateTo={navigateTo}
-                                playThisSong={playThisSong}/>
-                        )
-                    }
-                </ViewportList>
-                <div className="footer_content">
-                    <h4>{state.playlist_metadata.song_count} {state.playlist_metadata.song_count > 1 ? "Songs" : "Song"}, {state.playlist_metadata.length} listen time</h4>
-                </div>
+                    <RectangleSongBoxDraggable 
+                        selected={state.selected} 
+                        listRef={listRef} 
+                        itemsHeightRef={itemsHeightRef} 
+                        SongList={state.SongList} 
+                        onDragEnd={onDragEnd} 
+                        selectThisSong={(index: number) => selectThisSong(index, dispatch)} 
+                        setMenuOpenData={setMenuOpenData} 
+                        navigateTo={navigateTo} 
+                        playThisSong={playThisSong}/>
+                    <div className="footer_content">
+                        <h4>{state.playlist_metadata.song_count} {state.playlist_metadata.song_count > 1 ? "Songs" : "Song"}, {state.playlist_metadata.length} listen time</h4>
+                    </div>
             </motion.div>
             {
                 state.songMenuToOpen && state.co_ords.xPos !== 0 && state.co_ords.yPos !== 0 && (
