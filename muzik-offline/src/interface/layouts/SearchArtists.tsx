@@ -18,7 +18,7 @@ const SearchArtists = () => {
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
-        const matching_artist = artists.find(artist => { return artist.key === key; })
+        const matching_artist = artists.find(artist => { return artist.key === key; });
         setArtistMenuToOpen(matching_artist ? matching_artist : null);
     }
 
@@ -47,7 +47,10 @@ const SearchArtists = () => {
         }
     }
 
-    function navigateTo(key: number){ navigate("/ArtistCatalogue/" + artists[key].artist_name); }
+    function navigateTo(key: number){ 
+        const matching_artist = artists.find(artist => { return artist.key === key; });
+        if(matching_artist !== undefined)navigate("/ArtistCatalogue/" + matching_artist.artist_name); 
+    }
 
     useEffect(() => {
         const resetArtists = () => {

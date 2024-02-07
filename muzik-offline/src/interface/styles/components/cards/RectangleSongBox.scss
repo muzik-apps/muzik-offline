@@ -84,6 +84,7 @@
 
     .PlayIcon{
         margin-right: 23px;
+        cursor: default;
         svg{
             path{
                 fill: $app-theme-col;

@@ -1,4 +1,4 @@
-import { SquareTitleBox, GeneralContextMenu, LoaderAnimated, AddSongsToPlaylistModal, PropertiesModal } from "@components/index";
+import { SquareTitleBox, GeneralContextMenu, LoaderAnimated, AddSongsToPlaylistModal, PropertiesModal, DeletePlaylistModal } from "@components/index";
 import { playlist, mouse_coOrds, contextMenuEnum, contextMenuButtons } from "@muziktypes/index";
 import { useEffect, useState } from "react";
 import "@styles/layouts/SearchPlaylists.scss";
@@ -13,6 +13,7 @@ const SearchPlaylists = () => {
     const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState<boolean>(false);
     const [isPropertiesModalOpen, setIsPropertiesModalOpen] = useState<boolean>(false);
     const [playlistMenuToOpen, setPlaylistMenuToOpen] = useState<playlist | null>(null);
+    const [isDeletePlaylistModalOpen, setIsDeletePlaylistModalOpen] = useState<boolean>(false);
     const { query } = useSearchStore((state) => { return { query: state.query}; });
     const [playlists, setPlaylists] = useState<playlist[]>([]);
     const navigate = useNavigate();
@@ -33,6 +34,7 @@ const SearchPlaylists = () => {
         if(arg == contextMenuButtons.ShowPlaylist && playlistMenuToOpen)navigateTo(playlistMenuToOpen.key);
         else if(arg === contextMenuButtons.ShowInfo){ setIsPropertiesModalOpen(true); }
         else if(arg === contextMenuButtons.AddToPlaylist){ setIsPlaylistModalOpen(true); }
+        else if(arg === contextMenuButtons.Delete){ setIsDeletePlaylistModalOpen(true); }
         else if(arg === contextMenuButtons.PlayNext && playlistMenuToOpen){ 
             addTheseSongsToPlayNext({playlist: playlistMenuToOpen.title});
             closeContextMenu(); 
@@ -45,6 +47,13 @@ const SearchPlaylists = () => {
             playTheseSongs({playlist: playlistMenuToOpen.title});
             closeContextMenu(); 
         }
+    }
+
+    async function shouldDeletePlaylist(deletePlaylist: boolean){
+        if(deletePlaylist && playlistMenuToOpen)await local_playlists_db.playlists.delete(playlistMenuToOpen.key);
+        setPlaylistMenuToOpen(null);
+        setCoords({xPos: 0, yPos: 0});
+        setIsDeletePlaylistModalOpen(false);
     }
 
     function navigateTo(passed_key: number){ navigate(`/PlaylistView/${passed_key}`); }
@@ -61,7 +70,7 @@ const SearchPlaylists = () => {
         }
 
         resetPlaylists();
-    }, [query])
+    }, [query, isDeletePlaylistModalOpen])
 
     return (
         <div className="SearchPlaylists">
@@ -108,6 +117,10 @@ const SearchPlaylists = () => {
                 title={playlistMenuToOpen? playlistMenuToOpen.title : ""} 
                 values={{playlist: playlistMenuToOpen? playlistMenuToOpen.title : ""}}
                 closeModal={() => setIsPlaylistModalOpen(false)} />
+            <DeletePlaylistModal 
+                isOpen={isDeletePlaylistModalOpen} 
+                title={playlistMenuToOpen? playlistMenuToOpen.title : ""} 
+                closeModal={shouldDeletePlaylist} />
         </div>
     )
 }
