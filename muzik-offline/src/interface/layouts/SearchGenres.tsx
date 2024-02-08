@@ -82,7 +82,7 @@ const SearchGenres = () => {
                     )}
             </div>
             {
-                genreMenuToOpen && (
+                genreMenuToOpen && co_ords.xPos !== 0 && co_ords.yPos !== 0 && (
                     <div className="SearchGenres-ContextMenu-container"
                     onClick={closeContextMenu} onContextMenu={closeContextMenu}>
                         <GeneralContextMenu 
@@ -98,7 +98,10 @@ const SearchGenres = () => {
                 isOpen={isPlaylistModalOpen} 
                 title={genreMenuToOpen? genreMenuToOpen.title : ""} 
                 values={{genre: genreMenuToOpen? genreMenuToOpen.title : ""}}
-                closeModal={() => setIsPlaylistModalOpen(false)} />
+                closeModal={() => {
+                    setIsPlaylistModalOpen(false);
+                    closeContextMenu();
+                }} />
         </div>
     )
 }

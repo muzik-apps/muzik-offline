@@ -51,8 +51,7 @@ const SearchPlaylists = () => {
 
     async function shouldDeletePlaylist(deletePlaylist: boolean){
         if(deletePlaylist && playlistMenuToOpen)await local_playlists_db.playlists.delete(playlistMenuToOpen.key);
-        setPlaylistMenuToOpen(null);
-        setCoords({xPos: 0, yPos: 0});
+        closeContextMenu();
         setIsDeletePlaylistModalOpen(false);
     }
 
@@ -90,18 +89,9 @@ const SearchPlaylists = () => {
                     )}
             </div>
             {
-                playlistMenuToOpen && (
+                playlistMenuToOpen && co_ords.xPos !== 0 && co_ords.yPos !== 0 && (
                     <div className="SearchPlaylists-ContextMenu-container" 
-                    onClick={() => {
-                        setPlaylistMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }} 
-                    onContextMenu={(e) => {
-                        e.preventDefault();
-                        setPlaylistMenuToOpen(null);
-                        setCoords({xPos: 0, yPos: 0});
-                    }}
-                    >
+                    onClick={closeContextMenu} onContextMenu={closeContextMenu}>
                         <GeneralContextMenu 
                             xPos={co_ords.xPos} 
                             yPos={co_ords.yPos} 
@@ -111,12 +101,19 @@ const SearchPlaylists = () => {
                     </div>
                 )
             }
-            <PropertiesModal isOpen={isPropertiesModalOpen} playlist={playlistMenuToOpen ? playlistMenuToOpen : undefined} closeModal={() => setIsPropertiesModalOpen(false)}/>
+            <PropertiesModal isOpen={isPropertiesModalOpen} playlist={playlistMenuToOpen ? playlistMenuToOpen : undefined} 
+                closeModal={() => {
+                    setIsPropertiesModalOpen(false);
+                    closeContextMenu();
+                }}/>
             <AddSongsToPlaylistModal 
                 isOpen={isPlaylistModalOpen} 
                 title={playlistMenuToOpen? playlistMenuToOpen.title : ""} 
                 values={{playlist: playlistMenuToOpen? playlistMenuToOpen.title : ""}}
-                closeModal={() => setIsPlaylistModalOpen(false)} />
+                closeModal={() => {
+                    setIsPlaylistModalOpen(false); 
+                    closeContextMenu();
+                }} />
             <DeletePlaylistModal 
                 isOpen={isDeletePlaylistModalOpen} 
                 title={playlistMenuToOpen? playlistMenuToOpen.title : ""} 

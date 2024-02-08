@@ -37,6 +37,7 @@ const App = () => {
     const osType = await type();
     let temp: SavedObject = local_store;
     temp.OStype = osType.toString();
+    if(osType === OSTYPEenum.Linux)temp.AppThemeBlur = false;
     setStore(temp);
   }
 
