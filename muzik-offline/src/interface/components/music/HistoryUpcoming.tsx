@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { FunctionComponent, useEffect, useReducer } from "react";
 import { motion } from 'framer-motion';
 import "@styles/components/music/HistoryUpcoming.scss";
 import { Song, contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
@@ -11,7 +11,11 @@ import { closeContextMenu, closePlaylistModal, closePropertiesModal } from "@uti
 import { addThisSongToPlayNext, addThisSongToPlayLater, playThisSongFromQueue } from "@utils/playerControl";
 import { onDragEnd } from "@utils/index";
 
-const HistoryUpcoming = () => {
+type HistoryUpcomingprops = {
+  closePlayer: () => void;
+}
+
+const HistoryUpcoming: FunctionComponent<HistoryUpcomingprops> = (props: HistoryUpcomingprops) => {
   const [state , dispatch] = useReducer(upcomingHistoryReducer, UpcomingHistoryState); 
   const {SongQueueKeys} = useUpcomingSongs((state) => { return { SongQueueKeys: state.queue}; });
   const {SongHistoryKeys} = useHistorySongs((state) => { return { SongHistoryKeys: state.queue}; });
@@ -60,11 +64,14 @@ const HistoryUpcoming = () => {
     : state.SongQueue.find((value) => value.id === key);
     if(!relatedSong)return;
     if(type === "song"){
-        const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
-        navigate(`/AlbumDetails/${albumres[0].key}/undefined`);
+        const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).first();
+        if(albumres === undefined)return;
+        navigate(`/AlbumDetails/${albumres.key}/undefined`);
+        props.closePlayer();
     }
     else if(type === "artist"){
         navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
+        props.closePlayer();
     }
   }
 

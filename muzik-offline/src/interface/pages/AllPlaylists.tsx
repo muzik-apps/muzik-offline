@@ -8,7 +8,7 @@ import { local_playlists_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
 import { AllPlaylistsState, allPlaylistsReducer } from "@store/reducerStore";
 import { reducerType } from "@store/index";
-import { closeContextMenu, closePlaylistModal, closePropertiesModal, setOpenedDDM } from "@utils/reducerUtils";
+import { closeContextMenu, closeCreatePlaylistModal, closeDeletePlaylistModal, closePlaylistModal, closePropertiesModal, setOpenedDDM } from "@utils/reducerUtils";
 import { addTheseSongsToPlayNext, addTheseSongsToPlayLater, playTheseSongs } from "@utils/playerControl";
 
 const AllPlaylists = () => {
@@ -58,8 +58,7 @@ const AllPlaylists = () => {
 
     async function shouldDeletePlaylist(deletePlaylist: boolean){
         if(deletePlaylist && state.playlistMenuToOpen)await local_playlists_db.playlists.delete(state.playlistMenuToOpen.key);
-        dispatch({ type: reducerType.SET_DELETE_MODAL, payload: false});
-        dispatch({ type: reducerType.SET_PLAYLIST_MENU, payload: null});
+        closeDeletePlaylistModal(dispatch);
     }
 
     useEffect(() => { setList(); }, [state.sort, state.isCreatePlaylistModalOpen, state.isDeletePlayListModalOpen])
@@ -127,8 +126,9 @@ const AllPlaylists = () => {
                 )
             }
             <div className="bottom_margin"/>
-            <CreatePlaylistModal isOpen={state.isCreatePlaylistModalOpen} closeModal={() => dispatch({ type: reducerType.SET_CREATE_PLAYLIST_MODAL, payload: false})}/>
-            <PropertiesModal isOpen={state.isPropertiesModalOpen} playlist={state.playlistMenuToOpen ? state.playlistMenuToOpen : undefined} closeModal={() => closePropertiesModal(dispatch)}/>
+            <CreatePlaylistModal isOpen={state.isCreatePlaylistModalOpen} closeModal={() => closeCreatePlaylistModal(dispatch)}/>
+            <PropertiesModal isOpen={state.isPropertiesModalOpen} playlist={state.playlistMenuToOpen ? state.playlistMenuToOpen : undefined} 
+                closeModal={() => closePropertiesModal(dispatch)}/>
             <AddSongsToPlaylistModal 
                 isOpen={state.isPlaylistModalOpen} 
                 title={state.playlistMenuToOpen? state.playlistMenuToOpen.title : ""} 

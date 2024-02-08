@@ -21,6 +21,7 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
 
     function uploadImg(e: React.ChangeEvent<HTMLInputElement>){
         if(e.target.files === null)return;
+        setIsLoading(true);
         const image = e.target.files[0];
         const reader = new FileReader();
 

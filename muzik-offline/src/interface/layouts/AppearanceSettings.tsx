@@ -3,6 +3,7 @@ import { SavedObject } from "@database/index";
 import "@styles/layouts/AppearanceSettings.scss"; 
 import { ArrowRefresh, CancelRight } from "@assets/icons";
 import { useSavedObjectStore, useWallpaperStore } from "@store/index";
+import { OSTYPEenum } from "@muziktypes/index";
 
 const accentColurs: string[] = ["saucy", "salmon", "violet","gloss", "lipstick", "lime", "grass",
     "sunny", "ubuntu", "blueberry", "sky", "midnight", "blinding"]
@@ -117,13 +118,23 @@ const AppearanceSettings = () => {
                 </div>
                 <h3>Player bar</h3>
                 <div className="playerbar_select">
-                    <motion.div 
-                        className={"button_select glass " + (local_store.PlayerBar ? "button_selected" : "")} 
-                        whileHover={{scale: 1.03}} 
-                        whileTap={{scale: 0.98}}
-                        onClick={() => {SetPlayerBar(true)}}>
-                        <h4>glass blur</h4>
-                    </motion.div>
+                    { local_store.OStype !== OSTYPEenum.Linux ?
+                            <motion.div 
+                                className={"button_select glass " + (local_store.PlayerBar ? "button_selected" : "")} 
+                                whileHover={{scale: 1.03}} 
+                                whileTap={{scale: 0.98}}
+                                onClick={() => {SetPlayerBar(true)}}>
+                                <h4>glass blur</h4>
+                            </motion.div>
+                        :
+                            <motion.div 
+                                className={"button_select black_linear " + (local_store.PlayerBar ? "button_selected" : "")} 
+                                whileHover={{scale: 1.03}} 
+                                whileTap={{scale: 0.98}}
+                                onClick={() => {SetPlayerBar(true)}}>
+                                <h4>dark cover</h4>
+                            </motion.div>
+                    }
                     <motion.div 
                         className={"button_select album_cover " + (!local_store.PlayerBar ? "button_selected" : "")}
                         whileHover={{scale: 1.03}} 
@@ -153,13 +164,20 @@ const AppearanceSettings = () => {
                 </div>
                 <h3>App themed blur</h3>
                 <div className="Themeblur_select">
-                    <motion.div 
-                        className={"button_select glass " + (local_store.AppThemeBlur ? "button_selected" : "")} 
-                        whileHover={{scale: 1.03}} 
-                        whileTap={{scale: 0.98}}
-                        onClick={() => {SetAppThemeBlur(true)}}>
-                        <h4>glass blur</h4>
-                    </motion.div>
+                    { local_store.OStype !== OSTYPEenum.Linux ?
+                        <motion.div 
+                            className={"button_select glass " + (local_store.AppThemeBlur ? "button_selected" : "")} 
+                            whileHover={{scale: 1.03}} 
+                            whileTap={{scale: 0.98}}
+                            onClick={() => {SetAppThemeBlur(true)}}>
+                            <h4>glass blur</h4>
+                        </motion.div>
+                        :
+                        <motion.div 
+                            className="button_select not-clickable">
+                            <h4>glass blur is not supported</h4>
+                        </motion.div>
+                    }
                     <motion.div 
                         className={"button_select black_linear " + (!local_store.AppThemeBlur ? "button_selected" : "")}
                         whileHover={{scale: 1.03}} 

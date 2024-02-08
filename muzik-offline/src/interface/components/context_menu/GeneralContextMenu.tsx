@@ -23,7 +23,7 @@ const GeneralContextMenu: FunctionComponent<GeneralContextMenuProps> = (props: G
         const winWidth: number = window.innerWidth - 20;
         const scmWidth: number = 155;
         if(props.overRideX)return xPos;
-        else return xPos > winWidth - scmWidth ? (winWidth - scmWidth - scmWidth + 20) : xPos;
+        else return xPos > winWidth - scmWidth ? (xPos - 174) : xPos;
     }
 
     function getYCoord(yPos: number){

@@ -11,7 +11,7 @@ import { variants_list } from "@content/index";
 import { PlaylistViewState, playlistViewReducer } from "@store/reducerStore";
 import { reducerType } from "@store/index";
 import { addThisSongToPlayNext, addThisSongToPlayLater, playThisListNow, startPlayingNewSong } from "@utils/playerControl";
-import { closeContextMenu, setSongList, selectThisSong, closePlaylistModal, processArrowKeysInput, closePropertiesModal } from "@utils/reducerUtils";
+import { closeContextMenu, setSongList, selectThisSong, closePlaylistModal, processArrowKeysInput, closePropertiesModal, closeDeletePlaylistModal } from "@utils/reducerUtils";
 import { DropResult } from "@hello-pangea/dnd";
 
 const PlaylistView = () => {
@@ -97,8 +97,9 @@ const PlaylistView = () => {
         const relatedSong = state.SongList.find((value) => value.id === key);
         if(!relatedSong)return;
         if(type === "song"){
-            const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
-            navigate(`/AlbumDetails/${albumres[0].key}/undefined`);
+            const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).first();
+            if(albumres === undefined)return;
+            navigate(`/AlbumDetails/${albumres.key}/undefined`);
         }
         else if(type === "artist"){
             navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
@@ -151,13 +152,8 @@ const PlaylistView = () => {
                     }
                 });
             }
-            dispatch({ type: reducerType.SET_DELETE_MODAL, payload: false});
-            dispatch({ type: reducerType.SET_SONG_MENU, payload: null});
         }
-        else{
-            dispatch({ type: reducerType.SET_DELETE_MODAL, payload: false});
-            dispatch({ type: reducerType.SET_SONG_MENU, payload: null});
-        }
+        closeDeletePlaylistModal(dispatch);
     }
 
     useEffect(() => {

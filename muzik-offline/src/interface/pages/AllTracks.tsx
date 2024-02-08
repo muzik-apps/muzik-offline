@@ -55,8 +55,9 @@ const AllTracks = () => {
         const relatedSong = state.SongList.find((value) => value.id === key);
         if(!relatedSong)return;
         if(type === "song"){
-            const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
-            navigate(`/AlbumDetails/${albumres[0].key}/undefined`);
+            const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).first();
+            if(albumres === undefined)return;
+            navigate(`/AlbumDetails/${albumres.key}/undefined`);
         }
         else if(type === "artist")navigate(`/ArtistCatalogue/${relatedSong.artist}`);
     }

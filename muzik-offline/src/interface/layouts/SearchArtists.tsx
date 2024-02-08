@@ -84,7 +84,7 @@ const SearchArtists = () => {
                     )}
             </div>
             {
-                artistMenuToOpen && (
+                artistMenuToOpen && co_ords.xPos !== 0 && co_ords.yPos !== 0 && (
                     <div className="SearchArtists-ContextMenu-container" 
                     onClick={closeContextMenu} onContextMenu={closeContextMenu}>
                         <GeneralContextMenu 
@@ -100,7 +100,10 @@ const SearchArtists = () => {
                 isOpen={isPlaylistModalOpen} 
                 title={artistMenuToOpen? artistMenuToOpen.artist_name : ""} 
                 values={{artist: artistMenuToOpen? artistMenuToOpen.artist_name : ""}}
-                closeModal={() => setIsPlaylistModalOpen(false)} />
+                closeModal={() => {
+                    setIsPlaylistModalOpen(false);
+                    closeContextMenu();
+                }} />
         </div>
     )
 }

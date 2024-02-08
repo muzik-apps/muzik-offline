@@ -24,7 +24,7 @@ const DeleteSongFromPlaylistModal: FunctionComponent<DeleteSongFromPlaylistModal
                                 <AlertTriangle />
                             </div>
                         </div>
-                        <h3>Are you sure you want to delete {props.title} ?</h3>
+                        <h3>Are you sure you want to delete {props.title} from this playlist?</h3>
                         <motion.div whileTap={{scale: 0.95}} className="delete_button" onClick={() => props.closeModal(true)}>
                             <h4>delete</h4>
                         </motion.div>
