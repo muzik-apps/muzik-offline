@@ -2,14 +2,19 @@ import { Disk, LayersThree, Menu, Microphone, MusicalNote } from "@assets/icons"
 import { SearchNavigator } from "@components/index";
 import {SearchAlbums, SearchArtists, SearchGenres, SearchPlaylists, SearchSongs} from "@layouts/index";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "@styles/pages/SearchPage.scss";
+import {  Route, Routes } from 'react-router-dom';
+import { useState } from "react";
 
 const SearchPage = () => {
-    const [selected, setSelected] = useState<string>("songs");
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [selected, setSelected] = useState<string>(location.pathname.replace("/SearchPage/", ""));
 
     function setSelectedF(arg: string){ 
         setSelected(arg);
+        navigate(`/SearchPage/${arg}`);
     }
 
     return (
@@ -25,18 +30,13 @@ const SearchPage = () => {
                 <SearchNavigator icon={Menu} text={"playlists"} selected={selected} select={setSelectedF}/>
             </div>
             <div className="content-container">
-                {
-                    selected === "songs" ?
-                        <SearchSongs />
-                    : selected === "artists" ?
-                        <SearchArtists />
-                    : selected === "albums" ?
-                        <SearchAlbums />
-                    : selected === "genres" ?
-                        <SearchGenres />
-                    :
-                        <SearchPlaylists />
-                }
+                <Routes>
+                    <Route index path="songs" element={<SearchSongs/>}/>
+                    <Route path="artists" element={<SearchArtists/>}/>
+                    <Route path="albums" element={<SearchAlbums/>}/>
+                    <Route path="genres" element={<SearchGenres/>}/>
+                    <Route path="playlists" element={<SearchPlaylists/>}/>
+                </Routes>
             </div>
         </motion.div>
     )

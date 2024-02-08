@@ -1,6 +1,8 @@
 import { NullCoverOne, NullCoverTwo, NullCoverThree, NullCoverFour } from "@assets/index";
 import { local_albums_db, local_artists_db, local_genres_db, local_playlists_db, local_songs_db } from "@database/database";
+import { DropResult } from "@hello-pangea/dnd";
 import { Song, album, artist, genre, playlist } from "@muziktypes/index";
+import { useHistorySongs, useUpcomingSongs } from "@store/index";
 import { invoke } from "@tauri-apps/api";
 const batch_size: number = 50;
 
@@ -149,13 +151,15 @@ export const getGenreSongs = async(res: genre): Promise<{ songs: Song[]; totalDu
 export const getPlaylistSongs = async(res: playlist): Promise<{ songs: Song[]; totalDuration: number; cover: string | null;}> => {
     const playlistSongs: Song[] = await local_songs_db.songs.where("path").anyOf(res.tracksPaths).toArray();
     let totalDuration = 0;
-    const songs: Song[] = [];
+    const pathIndexMap: Record<string, number> = {};
     let cover: string | null = null;
-    playlistSongs.forEach((song) => {
+    playlistSongs.forEach((song, index) => {
         totalDuration += song.duration_seconds;
-        songs.push(song);
+        pathIndexMap[song.path] = index;
         if(cover === null && song.cover)cover = song.cover;
     });
+    
+    const songs: Song[] = res.tracksPaths.map((path) => {return playlistSongs[pathIndexMap[path]]});
     return { songs, totalDuration, cover };
 }
 
@@ -200,4 +204,40 @@ export const getSongPaths = async(
         if(playlist === undefined)return [];
         return playlist.tracksPaths;
     }
+}
+
+export const reorderArray = (array: any[], from: number, to: number): any[] => {
+    const newArray = [...array];
+    const [removed] = newArray.splice(from, 1);
+    newArray.splice(to, 0, removed);
+    return newArray;
+}
+
+export function onDragEnd(result: DropResult, queueType: "SongHistory" | "SongQueue"){
+    if(!result.destination)return;
+    if(result.destination.index === result.source.index)return;
+    if(result.destination.index === 0 && queueType === "SongQueue")return;
+
+    const songs_queue = queueType === "SongQueue" ?
+    reorderArray(useUpcomingSongs.getState().queue, result.source.index, result.destination.index)
+    :
+    reorderArray(useHistorySongs.getState().queue, result.source.index, result.destination.index);
+
+    if(queueType === "SongQueue")useUpcomingSongs.getState().setQueue(songs_queue);
+    else useHistorySongs.getState().setQueue(songs_queue);
+}
+
+export async function onDragEndInPlaylistView(result: DropResult, SongList: Song[], playlistKey: number): Promise<Song[]>{
+    if(!result.destination)return SongList;
+    if(result.destination.index === result.source.index)return SongList;
+    const playlistobj = await local_playlists_db.playlists.where("key").equals(playlistKey).first();
+    if(playlistobj === undefined)return SongList;
+    const reordered_list: Song[] = reorderArray(SongList, result.source.index, result.destination.index);
+
+    //extract track paths
+    playlistobj.tracksPaths = reordered_list.map((song) => song.path);
+
+    await local_playlists_db.playlists.update(playlistKey, playlistobj);
+
+    return reordered_list;
 }

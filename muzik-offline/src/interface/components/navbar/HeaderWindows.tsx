@@ -19,6 +19,7 @@ const HeaderWindows: FunctionComponent<HeaderWindowsProps> = (props: HeaderWindo
 
     const navigate = useNavigate();
     const [searchText, setSearchText] = useState<string>("");
+    const [isFS, setIsFS] = useState<boolean>(false);
     const { setSearch } = useSearchStore((state) => { return { setSearch: state.setSearch}; });
 
     function captureSearch(e: any){setSearchText(e.target.value);}
@@ -65,6 +66,8 @@ const HeaderWindows: FunctionComponent<HeaderWindowsProps> = (props: HeaderWindo
                 if(maximizebtn)maximizebtn.style.visibility = "visible";
                 if(restorebtn)restorebtn.style.visibility = "hidden";
             }
+            const fs_conf: boolean = await appWindow.isFullscreen();
+            setIsFS(fs_conf);
         }
     
         window.addEventListener("resize", handleScreenResize);
@@ -104,7 +107,7 @@ const HeaderWindows: FunctionComponent<HeaderWindowsProps> = (props: HeaderWindo
                     id="gsearch" 
                     placeholder="Search..."
                     onChange={captureSearch} 
-                    onFocus={() => navigate("/SearchPage")}/>
+                    onFocus={() => navigate("/SearchPage/songs")}/>
                 {
                     searchText !== "" &&
                     <motion.div onClick={clearSearch} whileTap={{scale: 0.97}}>
@@ -117,7 +120,7 @@ const HeaderWindows: FunctionComponent<HeaderWindowsProps> = (props: HeaderWindo
                     <Empty_user />
                     <h2>settings</h2>
                 </motion.div>
-                <div className="window_controls_section">
+                <div className={"window_controls_section " + (isFS === true ? "window_controls_section-hidden" : "")}>
                     <div className="button_area" id="minimize">
                         <img className="icon" srcSet={`${min_w_10} 1x, ${min_w_12} 1.25x, ${min_w_15} 1.5x, ${min_w_15} 1.75x,
                             ${min_w_20} 2x, ${min_w_20} 2.25x, ${min_w_24} 2.5x, ${min_w_30} 3x, ${min_w_30} 3.5x`}/>
@@ -134,7 +137,6 @@ const HeaderWindows: FunctionComponent<HeaderWindowsProps> = (props: HeaderWindo
                             </div>
                         </div>
                     </div>
-                    
                     <div className="button_area" id="close">
                         <img className="icon" srcSet={`${close_w_10} 1x, ${close_w_12} 1.25x, ${close_w_15} 1.5x, ${close_w_15} 1.75x,
                             ${close_w_20} 2x, ${close_w_20} 2.25x, ${close_w_24} 2.5x, ${close_w_30} 3x, ${close_w_30} 3.5x`}/>

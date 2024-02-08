@@ -45,10 +45,11 @@ import InformationCircleContainedOrange from './General/InformationCircleContain
 import InformationCircleContainedBlue from './General/InformationCircleContainedBlue';
 import EditImage from './General/EditImage';
 import Edit from './General/Edit';
-import BarsAnimated from './Media/BarsAnimated';
 import Overlap from './Layout/Overlap';
 import Minimize from './Layout/Minimize';
 import ListIcon from './General/ListIcon';
+import AlertTriangle from './General/AlertTriangle';
+import Trash from './General/Trash';
 
 export {
     Next_page, Prev_page, Search, 
@@ -63,6 +64,6 @@ export {
     NullMusicCoverTwo, NullMusicCoverThree, NullMusicCoverFour, NullCoverNull,
     NullArtistCoverOne, NullArtistCoverTwo, NullArtistCoverThree, NullArtistCoverFour,
     CheckGreen, CrossRed, InformationCircleContainedOrange, InformationCircleContainedBlue,
-    EditImage, Edit, BarsAnimated, Overlap, Minimize,
-    ListIcon, 
+    EditImage, Edit, Overlap, Minimize,
+    ListIcon, AlertTriangle, Trash
 }
