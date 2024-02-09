@@ -30,6 +30,7 @@
 
         .background_select{
             display: flex;
+            flex-wrap: wrap;
             margin-bottom: 10px;
 
             .button_select{
@@ -55,16 +56,24 @@
                 input[type="file"]{display: none;} 
             }
 
-            .black_linear{
-                background: $black-linear;
-            }
+            .black_linear{ background: $black-linear; }
 
-            .pink_blue_gradient{
-                background: $pink_blue_gradient;
-            }
+            .translucency{ background: $btn-clickable; }
 
-            .blue_purple_gradient{
-                background: $blue_purple_gradient;
+            .pink_blue_gradient{ background: $pink_blue_gradient; }
+
+            .blue_purple_gradient{ background: $blue_purple_gradient; }
+
+            .not-clickable{
+                background: $btn-clickable;
+                mix-blend-mode: overlay;
+                opacity: 0.8;
+
+                h4{
+                    width: 150px;
+                    text-align: center;
+                    text-wrap: wrap;
+                }
             }
         }
 
@@ -198,17 +207,11 @@
                 }
             }
 
-            .glass{
-                background: $btn-clickable;
-            }
+            .glass{ background: $btn-clickable; }
 
-            .album_cover{
-                background: $pink_blue_gradient;
-            }
+            .album_cover{ background: $pink_blue_gradient; }
 
-            .black_linear{
-                background: $black-linear;
-            }
+            .black_linear{ background: $black-linear; }
 
             .not-clickable{
                 background: $btn-clickable;

@@ -4,6 +4,8 @@ import "@styles/layouts/AppearanceSettings.scss";
 import { ArrowRefresh, CancelRight } from "@assets/icons";
 import { useSavedObjectStore, useWallpaperStore } from "@store/index";
 import { OSTYPEenum } from "@muziktypes/index";
+import { invoke } from "@tauri-apps/api";
+import { version } from '@tauri-apps/api/os';
 
 const accentColurs: string[] = ["saucy", "salmon", "violet","gloss", "lipstick", "lime", "grass",
     "sunny", "ubuntu", "blueberry", "sky", "midnight", "blinding"]
@@ -25,8 +27,18 @@ const AppearanceSettings = () => {
         setStore(temp);
     }
 
-    function changeToBgCCOL(obj: string){
+    async function changeToBgCCOL(obj: string){
         let temp: SavedObject = local_store;
+        if(obj === temp.BGColour)return;
+
+        if(temp.BGColour === "translucency_background"){
+            const osVersion = await version();
+            invoke("turn_off_translucency", {osVersion: osVersion});
+        }
+        else if(obj === "translucency_background"){
+            const osVersion = await version();
+            invoke("turn_on_translucency", {osVersion: osVersion});
+        }
         temp.BGColour = obj;
         setStore(temp);
         unsetWallpaper();
@@ -62,6 +74,10 @@ const AppearanceSettings = () => {
         setStore(temp);
     }
 
+    async function isTranslucencySupported(){
+        return true;
+    }
+
     return (
         <div className="AppearanceSettings">
             <h2>Appearance</h2>
@@ -79,6 +95,21 @@ const AppearanceSettings = () => {
                         onClick={() => {changeToBgCCOL("black_linear")}}>
                             <h4>dark background</h4>
                     </motion.div>
+                    {
+                        (local_store.OStype === OSTYPEenum.Windows && local_store.OSversion.startsWith("11") 
+                        || local_store.OStype === OSTYPEenum.macOS) ?
+                            <motion.div 
+                                className={"button_select translucency " + (local_store.BGColour === "translucency_background" ? "button_selected" : "")}
+                                whileHover={{scale: 1.03}} 
+                                whileTap={{scale: 0.98}} 
+                                onClick={() => {changeToBgCCOL("translucency_background")}}>
+                                    <h4>translucency</h4>
+                            </motion.div>
+                            :
+                            <motion.div className="button_select not-clickable ">
+                                    <h4>translucency is not supported on your os</h4>
+                            </motion.div>
+                    }
                     <motion.div 
                         className={"button_select pink_blue_gradient " + (local_store.BGColour === "pink_blue_gradient" ? "button_selected" : "")}
                         whileHover={{scale: 1.03}} 

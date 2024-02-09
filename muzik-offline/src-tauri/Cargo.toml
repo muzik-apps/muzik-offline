@@ -28,6 +28,7 @@ sled = "0.34.7"
 dirs = "5.0.1"
 discord-rich-presence = "0.2.3"
 dotenv = "0.15.0"
+window-vibrancy = "0.4.0" #Do not upgrade the version number to 0.5.0 or higher, it will break the app since this uses tauri V1 and not V2
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

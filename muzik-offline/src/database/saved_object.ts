@@ -13,11 +13,11 @@ export interface SavedObject{
     AppThemeBlur: boolean,
     WallpaperOpacityAmount: string,
     OStype: string,
+    OSversion: string,
     CompressImage: string,
     UpcomingHistoryLimit: string,
     SeekStepAmount: string,
     SongLengthORremaining: string,
-
 }
 
 export const emptySavedObject: SavedObject = {
@@ -33,6 +33,7 @@ export const emptySavedObject: SavedObject = {
     AppThemeBlur: true,
     WallpaperOpacityAmount: "8",
     OStype: OSTYPEenum.Windows,
+    OSversion: "",
     CompressImage: "No",
     UpcomingHistoryLimit: "10",
     SeekStepAmount: "10",

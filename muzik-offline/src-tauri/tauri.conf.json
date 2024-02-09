@@ -66,6 +66,7 @@
     "security": {
       "csp": null
     },
+    "macOSPrivateApi": false,
     "windows": [
       {
         "fullscreen": false,
@@ -77,7 +78,8 @@
         "minHeight": 623,
         "titleBarStyle": "Transparent",
         "decorations": false,
-        "center": true
+        "center": true,
+        "transparent": true
       }
     ]
   }

@@ -15,7 +15,7 @@ use utils::music_list_organizer::MLO;
 use crate::socials::discord_rpc::DiscordRpc;
 use std::sync::Mutex;
 
-use crate::app::controller::{toggle_app_pin, toggle_miniplayer_view, drag_app_window};
+use crate::app::controller::{toggle_app_pin, toggle_miniplayer_view, drag_app_window, turn_on_translucency, turn_off_translucency};
 
 use crate::commands::metadata_retriever::get_all_songs;
 
@@ -49,6 +49,8 @@ fn main() {
                             toggle_app_pin,
                             toggle_miniplayer_view,
                             drag_app_window,
+                            turn_on_translucency,
+                            turn_off_translucency,
 
                             //GENERAL COMMANDS
                             get_all_songs, 

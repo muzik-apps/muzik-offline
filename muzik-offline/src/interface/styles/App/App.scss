@@ -7,6 +7,7 @@ html{
     min-height: 623px;
     overflow-x: hidden;
     overflow: overlay;
+    background: transparent;
 }
 
 body {
@@ -19,6 +20,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow: overlay;
+    background: transparent;
     -webkit-user-select: none;  /* Chrome all / Safari all */
     -moz-user-select: none;     /* Firefox all */
     -ms-user-select: none;      /* IE 10+ */
@@ -66,7 +68,11 @@ body {
         background: $blue_purple_gradient;
     }
 
-    .app_darkness_layer{
+    .translucency_background{
+        background: transparent;
+    }
+
+    .ui_app_container{
         width: 100vw;
         height: 100vh;
         min-width: 980px;
@@ -86,4 +92,12 @@ body {
     .color_layer{
         background: $bg-dark-overlay;
     }
+
+    .translucent_layer{
+        background: transparent;
+    }
+}
+
+.no-background{
+    background: transparent;
 }
