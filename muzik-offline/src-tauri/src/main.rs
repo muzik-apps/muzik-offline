@@ -12,7 +12,8 @@ mod socials;
 use kira::manager::{AudioManager,AudioManagerSettings,backend::DefaultBackend};
 use components::audio_manager::SharedAudioManager;
 use utils::music_list_organizer::MLO;
-use crate::socials::discord_rpc::DiscordRpc;
+use socials::discord_rpc::DiscordRpc;
+use music::media_control_api::MCA;
 use std::sync::Mutex;
 
 use crate::app::controller::{toggle_app_pin, toggle_miniplayer_view, drag_app_window};
@@ -44,6 +45,7 @@ fn main() {
         }))
         .manage(Mutex::new(MLO::new()))
         .manage(Mutex::new(DiscordRpc::new().expect("failed to initialize discord rpc")))
+        .manage(Mutex::new(MCA::new().expect("failed to initialize media control api")))
         .invoke_handler(tauri::generate_handler![
                             //WINDOW CONTROL
                             toggle_app_pin,

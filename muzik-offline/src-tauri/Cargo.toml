@@ -28,6 +28,7 @@ sled = "0.34.7"
 dirs = "5.0.1"
 discord-rich-presence = "0.2.3"
 dotenv = "0.15.0"
+souvlaki = "0.7.3"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
