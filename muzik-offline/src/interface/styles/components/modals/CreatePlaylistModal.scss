@@ -16,7 +16,7 @@
     .modal{
         width: 300px;
         height: 350px;
-        padding: 20px;
+        padding: 13px;
         border: 1px solid $songs-container-border-col;
         background: var(--var-songs-container-bg-col);
         box-shadow: $box-shadow-10-10-25;
@@ -38,7 +38,7 @@
             .playlist_img{
                 width: 150px;
                 height: 150px;
-                border-radius: 40px;
+                border-radius: 35px;
                 overflow: hidden;
 
                 img{
@@ -71,23 +71,23 @@
 
         input[type="text"]{
             width: calc(100% - 8px);
-            height: 50px;
+            height: 27px;
             border: none;
             padding: 4px;
             outline: none;
             background: $btn-clickable;
-            border-radius: 16px;
+            border-radius: 13px;
             font-size: 22px;
             color: $white-900;
             margin-top: 2px;
         }
 
-        .create_playlist{
-            margin-top: 10px;
+        .create_playlist, .cancel_creation{
+            margin-top: 7px;
             width: 100%;
-            height: 50px;
-            background-color: $app-theme-col;
-            border-radius: 16px;
+            height: 35px;
+            background: $app-theme-col;
+            border-radius: 13px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -95,8 +95,13 @@
             color: $root-app-navigator-hover-col;
         }
 
-        .create_playlist:hover{
+        .create_playlist:hover, .cancel_creation:hover{
             opacity: 0.8;
+        }
+
+        .cancel_creation{
+            background: $on-hover-song;
+            color: $white-900;
         }
     }
 }

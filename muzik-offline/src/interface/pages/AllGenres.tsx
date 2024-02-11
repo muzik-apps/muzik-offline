@@ -103,7 +103,7 @@ const AllGenres = () => {
                     )}
             </div>
             {
-                state.genreMenuToOpen && (
+                state.genreMenuToOpen && state.co_ords.xPos != 0 && state.co_ords.yPos != 0 && (
                     <div className="AllGenres-ContextMenu-container" 
                         onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 

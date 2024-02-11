@@ -190,6 +190,12 @@
                 align-items: center;
                 justify-content: space-around;
                 font-size: 13px;
+
+                h4{
+                    width: 150px;
+                    text-align: center;
+                    text-wrap: wrap;
+                }
             }
 
             .glass{
@@ -204,10 +210,26 @@
                 background: $black-linear;
             }
 
+            .not-clickable{
+                background: $btn-clickable;
+                mix-blend-mode: overlay;
+                opacity: 0.8;
+            }
+
             .button_selected{
                 border: 3px solid $app-theme-col;
                 width: 144px;
                 height: 94px;
+            }
+        }
+
+        .animations_select{
+            .button_select{
+                h4{
+                    width: fit-content;
+                    text-align: start;
+                    text-wrap: nowrap;
+                }
             }
         }
     }

@@ -9,7 +9,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { HistoryNextFloating } from "@layouts/index";
 import { OSTYPEenum, toastType } from "@muziktypes/index";
 import { AnimatePresence } from "framer-motion";
-import { useWallpaperStore, useSavedObjectStore, useToastStore } from "store";
+import { useWallpaperStore, useSavedObjectStore, useToastStore } from "@store/index";
 import { SavedObject } from "@database/saved_object";
 import { isPermissionGranted, requestPermission } from '@tauri-apps/api/notification';
 import { MiniPlayer } from "@App/index";
@@ -37,6 +37,7 @@ const App = () => {
     const osType = await type();
     let temp: SavedObject = local_store;
     temp.OStype = osType.toString();
+    if(osType === OSTYPEenum.Linux)temp.AppThemeBlur = false;
     setStore(temp);
   }
 
@@ -57,6 +58,20 @@ const App = () => {
 
   async function ToggleMiniPlayer(){
     let MPV = openMiniPlayer;
+    //if miniplayer is open, set the body and html min height to 376px and min width to 218px
+    if(!MPV){
+      document.body.style.minHeight = "376px";
+      document.body.style.minWidth = "218px";
+      document.documentElement.style.minHeight = "376px";
+      document.documentElement.style.minWidth = "218px";
+    }
+    //else set the body and html min height to 623px and min width to 980px
+    else{
+      document.body.style.minHeight = "623px";
+      document.body.style.minWidth = "980px";
+      document.documentElement.style.minHeight = "623px";
+      document.documentElement.style.minWidth = "980px";
+    }
     setOpenMiniPlayer(!openMiniPlayer);
     await invoke("toggle_miniplayer_view", {openMiniPlayer: !MPV});
   }
@@ -101,7 +116,7 @@ const App = () => {
                               <Route path="/AllAlbums" element={<AllAlbums/>}/>
                               <Route path="/AllGenres" element={<AllGenres/>}/>
                               <Route path="/AllPlaylists" element={<AllPlaylists/>}/>
-                              <Route path="/SearchPage" element={<SearchPage/>}/>
+                              <Route path="/SearchPage/*" element={<SearchPage/>}/>
                               <Route path="/AlbumDetails/:album_key/:artist_name" element={<AlbumDetails/>}/>
                               <Route path="/ArtistCatalogue/:artist_name" element={<ArtistCatalogue/>}/>
                               <Route path="/GenreView/:genre_key" element={<GenreView/>}/>

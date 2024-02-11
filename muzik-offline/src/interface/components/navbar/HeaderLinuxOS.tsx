@@ -63,7 +63,7 @@ const HeaderLinuxOS: FunctionComponent<HeaderLinuxOSProps> = (props: HeaderLinux
                     id="gsearch" 
                     placeholder="Search..."
                     onChange={captureSearch} 
-                    onFocus={() => navigate("/SearchPage")}/>
+                    onFocus={() => navigate("/SearchPage/songs")}/>
                 {
                     searchText !== "" &&
                     <motion.div onClick={clearSearch} whileTap={{scale: 0.97}}>

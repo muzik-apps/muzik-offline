@@ -38,6 +38,10 @@ const MiniPlayer: FunctionComponent<MiniPlayerProps> = (props: MiniPlayerProps) 
         if(value === Player.lengthOfSongInSeconds && Player.playingSongMetadata){
             reconfigurePlayer_AtEndOfSong();
         }
+        else if(value === usePlayingPositionSec.getState().position
+            && value >= Player.lengthOfSongInSeconds - 3 && value <= Player.lengthOfSongInSeconds){
+            reconfigurePlayer_AtEndOfSong();
+        }
         else{
             setplayingPosInSec(Math.floor(value));
             setplayingPosition(Math.floor((value / Player.lengthOfSongInSeconds) * 100));
@@ -60,6 +64,8 @@ const MiniPlayer: FunctionComponent<MiniPlayerProps> = (props: MiniPlayerProps) 
         setPinned(!isPinned);
     }
 
+    async function dragWindow(){ await invoke("drag_app_window"); }
+
     useEffect(() => {
         window.addEventListener("keydown", detectKeyPress);
         return () => {  window.removeEventListener("keydown", detectKeyPress); }
@@ -81,9 +87,9 @@ const MiniPlayer: FunctionComponent<MiniPlayerProps> = (props: MiniPlayerProps) 
                 </div>
             </div>
             <div data-tauri-drag-region className="player">
-                <div className="art_container">
-                    {!Player.playingSongMetadata && <NullCoverNull data-tauri-drag-region/>}{/**no song is loaded onto the player */}
-                    {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img data-tauri-drag-region src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" />)}{/**there is cover art */}
+                <div className="art_container" onMouseDown={dragWindow}>
+                    {!Player.playingSongMetadata && <NullCoverNull/>}{/**no song is loaded onto the player */}
+                    {Player.playingSongMetadata && Player.playingSongMetadata.cover && (<img src={`data:image/png;base64,${Player.playingSongMetadata.cover}`} alt="song-art" />)}{/**there is cover art */}
                     {Player.playingSongMetadata && !Player.playingSongMetadata.cover && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
                 </div>
                 <div className="song_details">
@@ -139,10 +145,10 @@ const MiniPlayer: FunctionComponent<MiniPlayerProps> = (props: MiniPlayerProps) 
                 </div>
                 <div className="player_control_buttons">
                     <motion.div className="button-left" whileTap={{scale: 0.98}} onClick={() => props.closeMiniPlayer()}>
-                        <h3>player</h3>
+                        <h3>Player</h3>
                     </motion.div>
                     <motion.div className="button-right" whileTap={{scale: 0.98}} onClick={toggleWindowPinState}>
-                        <h3>{isPinned ? "unpin" : "pin"}</h3>
+                        <h3>{isPinned ? "Unpin" : "Pin"}</h3>
                     </motion.div>
                 </div>
             </div>

@@ -1,16 +1,21 @@
-import { useEffect, useReducer } from "react";
+import { FunctionComponent, useEffect, useReducer } from "react";
 import { motion } from 'framer-motion';
 import "@styles/components/music/HistoryUpcoming.scss";
 import { Song, contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
-import { AddSongToPlaylistModal, GeneralContextMenu, PropertiesModal, SongCardResizable } from "@components/index";
+import { AddSongToPlaylistModal, GeneralContextMenu, PropertiesModal, SongCardResizableDraggable } from "@components/index";
 import { useNavigate } from "react-router-dom";
 import { local_albums_db, local_songs_db } from "@database/database";
 import { useUpcomingSongs, useHistorySongs, useSavedObjectStore, reducerType } from "@store/index";
 import { UpcomingHistoryState, upcomingHistoryReducer } from "@store/reducerStore";
 import { closeContextMenu, closePlaylistModal, closePropertiesModal } from "@utils/reducerUtils";
 import { addThisSongToPlayNext, addThisSongToPlayLater, playThisSongFromQueue } from "@utils/playerControl";
+import { onDragEnd } from "@utils/index";
 
-const HistoryUpcoming = () => {
+type HistoryUpcomingprops = {
+  closePlayer: () => void;
+}
+
+const HistoryUpcoming: FunctionComponent<HistoryUpcomingprops> = (props: HistoryUpcomingprops) => {
   const [state , dispatch] = useReducer(upcomingHistoryReducer, UpcomingHistoryState); 
   const {SongQueueKeys} = useUpcomingSongs((state) => { return { SongQueueKeys: state.queue}; });
   const {SongHistoryKeys} = useHistorySongs((state) => { return { SongHistoryKeys: state.queue}; });
@@ -49,7 +54,7 @@ const HistoryUpcoming = () => {
     }
     else if(arg === contextMenuButtons.Play && state.songMenuToOpen){
         playThisSongFromQueue(state.kindex_sq.key, state.kindex_sq.index, state.kindex_sq.queueType);
-        dispatch({ type: reducerType.SET_KEY_INDEX_SONG_QUEUE, payload: {key: -1, index: -1, queueType: ""} });
+        dispatch({ type: reducerType.SET_KEY_INDEX_SONG_QUEUE, payload: {key: -1, index: -1, queueType: "SongQueue"} });
         closeContextMenu(dispatch); 
     }
   }
@@ -59,11 +64,14 @@ const HistoryUpcoming = () => {
     : state.SongQueue.find((value) => value.id === key);
     if(!relatedSong)return;
     if(type === "song"){
-        const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
-        navigate(`/AlbumDetails/${albumres[0].key}/undefined`);
+        const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).first();
+        if(albumres === undefined)return;
+        navigate(`/AlbumDetails/${albumres.key}/undefined`);
+        props.closePlayer();
     }
     else if(type === "artist"){
         navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
+        props.closePlayer();
     }
   }
 
@@ -89,35 +97,23 @@ const HistoryUpcoming = () => {
       {
         state.selectedView === "Upcoming_tab" ?
           <div className="Upcoming_view">
-            {
-                state.SongQueue.map((song, index) => 
-                    <SongCardResizable 
-                        key={index}
-                        cover={song.cover} 
-                        songName={song.name}
-                        artist={song.artist}
-                        keyV={song.id}
-                        setMenuOpenData={setMenuOpenData__SongQueue}
-                        playThisSong={(key: number) => playThisSongFromQueue(key, index, "SongQueue")}
-                        navigateTo={(key: number, type: "artist" | "song") => navigateTo(key, type, "SongQueue")}/>
-                )
-            }
+            <SongCardResizableDraggable 
+                SongQueue={state.SongQueue} 
+                queueType={"SongQueue"} 
+                onDragEnd={onDragEnd} 
+                setMenuOpenData={setMenuOpenData__SongQueue} 
+                playThisSong={playThisSongFromQueue} 
+                navigateTo={navigateTo} /> 
           </div>
         :
           <div className="History_view">
-            {
-                state.SongHistory.map((song, index) => 
-                    <SongCardResizable 
-                        key={index}
-                        cover={song.cover} 
-                        songName={song.name}
-                        artist={song.artist}
-                        keyV={song.id}
-                        setMenuOpenData={setMenuOpenData_SongHistory}
-                        playThisSong={(key: number) => playThisSongFromQueue(key, index, "SongHistory")}
-                        navigateTo={(key: number, type: "artist" | "song") => navigateTo(key, type, "SongHistory")}/>
-                )
-            }
+            <SongCardResizableDraggable 
+                SongQueue={state.SongHistory} 
+                queueType={"SongHistory"} 
+                onDragEnd={onDragEnd} 
+                setMenuOpenData={setMenuOpenData_SongHistory} 
+                playThisSong={playThisSongFromQueue} 
+                navigateTo={navigateTo} /> 
           </div>
       }
       <div className="HistoryUpcoming_tabs">

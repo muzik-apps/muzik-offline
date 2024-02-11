@@ -18,7 +18,7 @@ const SearchArtists = () => {
 
     function setMenuOpenData(key: number, n_co_ords: {xPos: number; yPos: number;}){
         setCoords(n_co_ords);
-        const matching_artist = artists.find(artist => { return artist.key === key; })
+        const matching_artist = artists.find(artist => { return artist.key === key; });
         setArtistMenuToOpen(matching_artist ? matching_artist : null);
     }
 
@@ -47,7 +47,10 @@ const SearchArtists = () => {
         }
     }
 
-    function navigateTo(key: number){ navigate("/ArtistCatalogue/" + artists[key].artist_name); }
+    function navigateTo(key: number){ 
+        const matching_artist = artists.find(artist => { return artist.key === key; });
+        if(matching_artist !== undefined)navigate("/ArtistCatalogue/" + matching_artist.artist_name); 
+    }
 
     useEffect(() => {
         const resetArtists = () => {
@@ -81,7 +84,7 @@ const SearchArtists = () => {
                     )}
             </div>
             {
-                artistMenuToOpen && (
+                artistMenuToOpen && co_ords.xPos !== 0 && co_ords.yPos !== 0 && (
                     <div className="SearchArtists-ContextMenu-container" 
                     onClick={closeContextMenu} onContextMenu={closeContextMenu}>
                         <GeneralContextMenu 
@@ -97,7 +100,10 @@ const SearchArtists = () => {
                 isOpen={isPlaylistModalOpen} 
                 title={artistMenuToOpen? artistMenuToOpen.artist_name : ""} 
                 values={{artist: artistMenuToOpen? artistMenuToOpen.artist_name : ""}}
-                closeModal={() => setIsPlaylistModalOpen(false)} />
+                closeModal={() => {
+                    setIsPlaylistModalOpen(false);
+                    closeContextMenu();
+                }} />
         </div>
     )
 }

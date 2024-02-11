@@ -29,7 +29,7 @@ const AddSongsToPlaylistModal = (props: AddSongsToPlaylistModalProps) => {
         //add the paths to the local db playlist with the given key
         local_playlists_db.playlists.update(key, {tracksPaths: [...pl.tracksPaths ?? [], ...values_not_in_a]});
         props.closeModal();
-        const message = `Songs from ${props.title} have been added to ${pl.title} ` + (paths.length !== values_not_in_a.length ? `but some where in the playlist` : ``);
+        const message = `Songs from ${props.title} have been added to ${pl.title} ` + (paths.length !== values_not_in_a.length ? `but some were already in the playlist` : ``);
         setToast({title: "Added to playlist", message: message, type: toastType.info, timeout: 5000});
     }
     

@@ -55,8 +55,9 @@ const SearchSongs = () => {
         const relatedSong = state.SongList.find((value) => value.id === key);
         if(!relatedSong)return;
         if(type === "song"){
-            const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
-            navigate(`/AlbumDetails/${albumres[0].key}/undefined`);
+            const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).first();
+            if(albumres === undefined)return;
+            navigate(`/AlbumDetails/${albumres.key}/undefined`);
         }
         else if(type === "artist"){
             navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
@@ -126,7 +127,7 @@ const SearchSongs = () => {
                 <div className="AllTracks_container_bottom_margin"/>
             </div>
             {
-                state.songMenuToOpen && (
+                state.songMenuToOpen && state.co_ords.xPos != 0 && state.co_ords.yPos != 0 && (
                     <div className="SearchSongs-ContextMenu-container" 
                         onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 

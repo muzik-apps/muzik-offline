@@ -82,7 +82,7 @@ const SearchAlbums = () => {
             </div>
             
             {
-                albumMenuToOpen && (
+                albumMenuToOpen && co_ords.xPos !== 0 && co_ords.yPos !== 0 && (
                     <div className="SearchAlbums-ContextMenu-container" 
                     onClick={closeContextMenu} onContextMenu={closeContextMenu}>
                         <GeneralContextMenu 
@@ -98,7 +98,10 @@ const SearchAlbums = () => {
                 isOpen={isPlaylistModalOpen} 
                 title={albumMenuToOpen? albumMenuToOpen.title : ""} 
                 values={{album: albumMenuToOpen? albumMenuToOpen.title : ""}}
-                closeModal={() => setIsPlaylistModalOpen(false)} />
+                closeModal={() => {
+                    setIsPlaylistModalOpen(false);
+                    closeContextMenu();
+                }} />
         </div>
     )
 }

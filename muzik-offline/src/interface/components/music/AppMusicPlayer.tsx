@@ -41,6 +41,10 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
         if(value === Player.lengthOfSongInSeconds && Player.playingSongMetadata){
             reconfigurePlayer_AtEndOfSong();
         }
+        else if(value === usePlayingPositionSec.getState().position
+            && value >= Player.lengthOfSongInSeconds - 3 && value <= Player.lengthOfSongInSeconds){
+            reconfigurePlayer_AtEndOfSong();
+        }
         else{
             setplayingPosInSec(Math.floor(value));
             setplayingPosition(Math.floor((value / Player.lengthOfSongInSeconds) * 100));

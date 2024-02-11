@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { FunctionComponent, useEffect, useReducer } from "react";
 import "@styles/layouts/HistoryNextFloating.scss";
-import { AddSongToPlaylistModal, GeneralContextMenu, PropertiesModal, SongCardResizable } from "@components/index";
+import { AddSongToPlaylistModal, GeneralContextMenu, PropertiesModal, SongCardResizableDraggable } from "@components/index";
 import { Song, contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { local_albums_db, local_songs_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import { useUpcomingSongs, useHistorySongs, useSavedObjectStore, reducerType } f
 import { UpcomingHistoryState, upcomingHistoryReducer } from "@store/reducerStore";
 import { closeContextMenu, closePlaylistModal, closePropertiesModal } from "@utils/reducerUtils";
 import { addThisSongToPlayNext, addThisSongToPlayLater, playThisSongFromQueue } from "@utils/playerControl";
+import { onDragEnd } from "@utils/index";
 
 type HistoryNextFloatingProps = {
     FloatingHNState: boolean;
@@ -59,7 +60,7 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
         }
         else if(arg === contextMenuButtons.Play && state.songMenuToOpen){
             playThisSongFromQueue(state.kindex_sq.key, state.kindex_sq.index, state.kindex_sq.queueType);
-            dispatch({ type: reducerType.SET_KEY_INDEX_SONG_QUEUE, payload: {key: -1, index: -1, queueType: ""} });
+            dispatch({ type: reducerType.SET_KEY_INDEX_SONG_QUEUE, payload: {key: -1, index: -1, queueType: "SongQueue"} });
             closeContextMenu(dispatch); 
         }
     }
@@ -69,8 +70,9 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
         : state.SongQueue.find((value) => value.id === key);
         if(!relatedSong)return;
         if(type === "song"){
-            const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
-            navigate(`/AlbumDetails/${albumres[0].key}/undefined`);
+            const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).first();
+            if(albumres === undefined)return;
+            navigate(`/AlbumDetails/${albumres.key}/undefined`);
         }
         else if(type === "artist"){
             navigate(`/ArtistCatalogue/${relatedSong.artist}`); 
@@ -106,35 +108,23 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
                         {
                             state.selectedView === "Upcoming_tab" ?
                             <div className="Upcoming_view">
-                                {
-                                    state.SongQueue.map((song, index) => 
-                                        <SongCardResizable 
-                                            key={index}
-                                            cover={song.cover} 
-                                            songName={song.name}
-                                            artist={song.artist}
-                                            keyV={song.id}
-                                            setMenuOpenData={setMenuOpenData__SongQueue}
-                                            playThisSong={(key: number) => playThisSongFromQueue(key, index, "SongQueue")}
-                                            navigateTo={(key: number, type: "artist" | "song") => navigateTo(key, type, "SongQueue")}/>
-                                    )
-                                }
+                                <SongCardResizableDraggable 
+                                    SongQueue={state.SongQueue} 
+                                    queueType={"SongQueue"} 
+                                    onDragEnd={onDragEnd} 
+                                    setMenuOpenData={setMenuOpenData__SongQueue} 
+                                    playThisSong={playThisSongFromQueue} 
+                                    navigateTo={navigateTo} />                        
                             </div>
                             :
                             <div className="History_view">
-                                {
-                                    state.SongHistory.map((song, index) => 
-                                        <SongCardResizable 
-                                            key={index}
-                                            cover={song.cover} 
-                                            songName={song.name}
-                                            artist={song.artist}
-                                            keyV={song.id}
-                                            setMenuOpenData={setMenuOpenData_SongHistory}
-                                            playThisSong={(key: number) => playThisSongFromQueue(key, index, "SongHistory")}
-                                            navigateTo={(key: number, type: "artist" | "song") => navigateTo(key, type, "SongHistory")}/>
-                                    )
-                                }
+                                <SongCardResizableDraggable 
+                                    SongQueue={state.SongHistory} 
+                                    queueType={"SongHistory"} 
+                                    onDragEnd={onDragEnd} 
+                                    setMenuOpenData={setMenuOpenData_SongHistory} 
+                                    playThisSong={playThisSongFromQueue} 
+                                    navigateTo={navigateTo} /> 
                             </div>
                         }
                         <div className="HistoryUpcoming_tabs">
@@ -153,7 +143,7 @@ const HistoryNextFloating : FunctionComponent<HistoryNextFloatingProps> = (props
                 }
             </motion.div>
             {
-                state.songMenuToOpen && (
+                state.songMenuToOpen && state.co_ords.xPos != 0 && state.co_ords.yPos != 0 && (
                     <div className="HistoryNextFloating-ContextMenu-container" 
                         onClick={(e) => closeContextMenu(dispatch, e)} onContextMenu={(e) => closeContextMenu(dispatch, e)}>
                         <GeneralContextMenu 
