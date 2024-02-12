@@ -36,6 +36,7 @@ import SongCardResizableDraggable from './lists/SongCardResizableDraggable';
 import RectangleSongBoxDraggable from './lists/RectangleSongBoxDraggable';
 import DeletePlaylistModal from './modals/DeletePlaylistModal';
 import DeleteSongFromPlaylistModal from './modals/DeleteSongFromPlaylistModal';
+import EqualizerSlider from './sliders/EqualizerSlider';
 
 export {
     HeaderWindows, HeaderMacOS, HeaderLinuxOS, AppNavigator, LeftSidebar, AppMusicPlayer, FSMusicPlayer,
@@ -49,5 +50,5 @@ export {
     CreatePlaylistModal, EditPlaylistModal, AddSongToPlaylistModal, LoaderAnimated,
     AirplayCastModal, AddSongsToPlaylistModal, MusicPopOver, SongCardResizableDraggable,
     RectangleSongBoxDraggable, DeletePlaylistModal,
-    DeleteButton, DeleteSongFromPlaylistModal
+    DeleteButton, DeleteSongFromPlaylistModal, EqualizerSlider
 }

@@ -17,7 +17,8 @@ export interface SavedObject{
     UpcomingHistoryLimit: string,
     SeekStepAmount: string,
     SongLengthORremaining: string,
-
+    AudioLabPreset: string,
+    SavedPresets: string[],
 }
 
 export const emptySavedObject: SavedObject = {
@@ -37,4 +38,6 @@ export const emptySavedObject: SavedObject = {
     UpcomingHistoryLimit: "10",
     SeekStepAmount: "10",
     SongLengthORremaining: "song length",
+    AudioLabPreset: "flat",
+    SavedPresets: ["flat", "hip-hop"]
 }

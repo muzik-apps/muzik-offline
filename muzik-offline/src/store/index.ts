@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { PlayerInterface, PlayingPositionInterface, QueueInterface, SavedDirectoriesInterface, SavedObjectInterface, searchInterface, toastInterface, viewableSideElInterface, wallpaperInterface } from './storeTypes';
+import { PlayerInterface, PlayingPositionInterface, QueueInterface, SavedDirectoriesInterface, SavedObjectInterface, SavedPresetsValues, searchInterface, toastInterface, viewableSideElInterface, wallpaperInterface } from './storeTypes';
 import { emptyDirectories } from '@database/directories';
 import { emptyPlayer } from '@database/player';
 import { emptySavedObject } from '@database/saved_object';
@@ -8,6 +8,8 @@ import { viewableSideElements } from '@database/side_elements';
 import { emptyWallpaper } from '@database/wallpaper';
 import { alltracksReducer, AllTracksState } from './reducerStore';
 import { reducerType, AllTracksStateInterface, Action } from './reducerTypes';
+import { AudioLabPreset } from '@muziktypes/index';
+import { premade_audio_labs } from '@content/index';
 
 export type{
     AllTracksStateInterface, Action
@@ -16,6 +18,18 @@ export type{
 export {
     reducerType,
     alltracksReducer, AllTracksState, 
+}
+
+export const FlatAudioLab: AudioLabPreset = {
+    SixtyTwoHz: 50,
+    OneTwentyFiveHz: 50,
+    TwoFiftyHz: 50,
+    FiveHundredHz: 50,
+    OnekHz: 50,
+    TwokHz: 50,
+    FourkHz: 50,
+    EightkHz: 50,
+    SixteenkHz: 50,
 }
 
 export const useToastStore = create<toastInterface>()(
@@ -124,5 +138,12 @@ export const useHistorySongs = create<QueueInterface>()(
         push_front: (song) => set((state) => ({ queue: [song, ...state.queue] })),
         pop_back: () => set((state) => ({ queue: state.queue.slice(0, state.queue.length - 1) })),
         setQueue: (setTo) => set((_state) => ({ queue: setTo })),
+    }),
+)
+
+export const useSavedPresetsValues = create<SavedPresetsValues>()(
+    (set) => ({
+        map: premade_audio_labs,
+        addValue: (key: string, value: AudioLabPreset) => set((state) => ({ map: state.map.set(key, value) })),
     }),
 )

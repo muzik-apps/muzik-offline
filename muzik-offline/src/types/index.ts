@@ -1,6 +1,7 @@
 export enum selectedSettingENUM {
     General = "General",
     Appearance = "Appearance", 
+    AudioLab = "AudioLab",
     Security = "Security",
     Advanced = "Advanced",
     About = "About"
@@ -14,7 +15,8 @@ export enum selectedGeneralSettingEnum{
     CompressImage = "CompressImage",
     UpcomingHistoryLimit = "UpcomingHistoryLimit",
     SeekStepAmount = "SeekStepAmount",
-    SongLengthORremaining = "SongLengthORremaining"
+    SongLengthORremaining = "SongLengthORremaining",
+    AudioLabPreset = "AudioLabPreset"
 }
 
 export enum OSTYPEenum{
@@ -142,4 +144,16 @@ export interface PlaylistMD {
     playlist_data: playlist | null,
     song_count: number;
     length: string;
+}
+
+export interface AudioLabPreset{
+    SixtyTwoHz: number;
+    OneTwentyFiveHz: number;
+    TwoFiftyHz: number;
+    FiveHundredHz: number;
+    OnekHz: number;
+    TwokHz: number;
+    FourkHz: number;
+    EightkHz: number;
+    SixteenkHz: number;
 }
