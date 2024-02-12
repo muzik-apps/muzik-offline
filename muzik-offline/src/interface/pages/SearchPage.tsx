@@ -1,11 +1,11 @@
 import { Disk, LayersThree, Menu, Microphone, MusicalNote } from "@assets/icons";
 import { SearchNavigator } from "@components/index";
-import {SearchAlbums, SearchArtists, SearchGenres, SearchPlaylists, SearchSongs} from "@layouts/index";
+import { SearchAlbums, SearchArtists, SearchGenres, SearchPlaylists, SearchSongs } from "@layouts/index";
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import "@styles/pages/SearchPage.scss";
-import {  Route, Routes } from 'react-router-dom';
-import { useState } from "react";
+import { Route, Routes } from 'react-router-dom';
+import { useEffect, useState } from "react";
 
 const SearchPage = () => {
     const navigate = useNavigate();
@@ -17,6 +17,8 @@ const SearchPage = () => {
         navigate(`/SearchPage/${arg}`);
     }
 
+    useEffect(() => { setSelected(location.pathname.replace("/SearchPage/", "")); }, [location]);
+    
     return (
         <motion.div className="SearchPage"
         initial={{scale: 0.9, opacity: 0}}
