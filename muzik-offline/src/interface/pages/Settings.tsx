@@ -36,10 +36,8 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
     
     useEffect(() => {
         if(!props.openSettings)setSelectedSetting(selectedSettingENUM.General);
-
     }, [props.openSettings])
     
-
     return (
         <>
             <motion.div className="settings_section"
