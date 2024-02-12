@@ -26,7 +26,6 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
     function convertToEnum(arg: string){
         if(arg === selectedSettingENUM.General)return selectedSettingENUM.General;
         else if(arg === selectedSettingENUM.Appearance)return selectedSettingENUM.Appearance;
-        else if(arg === selectedSettingENUM.AudioLab)return selectedSettingENUM.AudioLab;
         else if(arg === selectedSettingENUM.Security)return selectedSettingENUM.Security;
         else if(arg === selectedSettingENUM.Advanced)return selectedSettingENUM.Advanced;
         else if(arg === selectedSettingENUM.About)return selectedSettingENUM.About;
