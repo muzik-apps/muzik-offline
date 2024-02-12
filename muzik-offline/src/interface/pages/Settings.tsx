@@ -24,12 +24,12 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
     const {local_store,} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
 
     function convertToEnum(arg: string){
-        if(arg == "General")return selectedSettingENUM.General;
-        else if(arg == "Appearance")return selectedSettingENUM.Appearance;
-        else if(arg == "AudioLab")return selectedSettingENUM.AudioLab;
-        else if(arg == "Security")return selectedSettingENUM.Security;
-        else if(arg == "Advanced")return selectedSettingENUM.Advanced;
-        else if(arg == "About")return selectedSettingENUM.About;
+        if(arg === selectedSettingENUM.General)return selectedSettingENUM.General;
+        else if(arg === selectedSettingENUM.Appearance)return selectedSettingENUM.Appearance;
+        else if(arg === selectedSettingENUM.AudioLab)return selectedSettingENUM.AudioLab;
+        else if(arg === selectedSettingENUM.Security)return selectedSettingENUM.Security;
+        else if(arg === selectedSettingENUM.Advanced)return selectedSettingENUM.Advanced;
+        else if(arg === selectedSettingENUM.About)return selectedSettingENUM.About;
         else return selectedSettingENUM.General;
     }
 
