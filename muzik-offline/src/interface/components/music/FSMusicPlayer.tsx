@@ -117,7 +117,10 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
                                         </div>
                                         <div className="lyrics_history_upcoming">
                                             <Suspense fallback={<div>Loading...</div>}>
-                                                <HistoryUpcoming/>
+                                                <HistoryUpcoming closePlayer={() => {
+                                                    if(appFS === true)switchtoNONFS();
+                                                    props.closePlayer();
+                                                }}/>
                                             </Suspense>
                                         </div>
                                 </motion.div>

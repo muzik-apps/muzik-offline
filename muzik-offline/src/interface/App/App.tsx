@@ -37,6 +37,7 @@ const App = () => {
     const osType = await type();
     let temp: SavedObject = local_store;
     temp.OStype = osType.toString();
+    if(osType === OSTYPEenum.Linux)temp.AppThemeBlur = false;
     setStore(temp);
   }
 
@@ -115,7 +116,7 @@ const App = () => {
                               <Route path="/AllAlbums" element={<AllAlbums/>}/>
                               <Route path="/AllGenres" element={<AllGenres/>}/>
                               <Route path="/AllPlaylists" element={<AllPlaylists/>}/>
-                              <Route path="/SearchPage" element={<SearchPage/>}/>
+                              <Route path="/SearchPage/*" element={<SearchPage/>}/>
                               <Route path="/AlbumDetails/:album_key/:artist_name" element={<AlbumDetails/>}/>
                               <Route path="/ArtistCatalogue/:artist_name" element={<ArtistCatalogue/>}/>
                               <Route path="/GenreView/:genre_key" element={<GenreView/>}/>

@@ -145,10 +145,10 @@ const MiniPlayer: FunctionComponent<MiniPlayerProps> = (props: MiniPlayerProps) 
                 </div>
                 <div className="player_control_buttons">
                     <motion.div className="button-left" whileTap={{scale: 0.98}} onClick={() => props.closeMiniPlayer()}>
-                        <h3>player</h3>
+                        <h3>Player</h3>
                     </motion.div>
                     <motion.div className="button-right" whileTap={{scale: 0.98}} onClick={toggleWindowPinState}>
-                        <h3>{isPinned ? "unpin" : "pin"}</h3>
+                        <h3>{isPinned ? "Unpin" : "Pin"}</h3>
                     </motion.div>
                 </div>
             </div>

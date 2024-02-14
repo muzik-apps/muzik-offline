@@ -866,6 +866,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0c87e182de0887fd5361989c677c4e8f5000cd9491d6d563161a8f3a5519fc7f"
 
 [[package]]
+name = "data-encoding"
+version = "2.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7e962a19be5cfc3f3bf6dd8f61eb50107f356ad6270fbb3ed41476571db78be5"
+
+[[package]]
 name = "deranged"
 version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2100,17 +2106,16 @@ dependencies = [
 
 [[package]]
 name = "lofty"
-version = "0.17.1"
+version = "0.18.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e9d514acc39ec2bee7392e451db35e5f5eb06ab26e1cae83746c3017e8c95099"
+checksum = "f75066eb1d25a7047fb2667edb410ae2592439ed81546f95c28b0a1c7d7d3818"
 dependencies = [
- "base64 0.21.7",
  "byteorder",
+ "data-encoding",
  "flate2",
  "lofty_attr",
  "log",
  "ogg_pager",
- "once_cell",
  "paste",
 ]
 
@@ -2271,7 +2276,7 @@ dependencies = [
 
 [[package]]
 name = "muzik-offline"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "base64 0.21.7",
  "dirs",
@@ -2534,9 +2539,9 @@ dependencies = [
 
 [[package]]
 name = "ogg_pager"
-version = "0.5.0"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0d218a406e5de88e1c492d0162d569916f7436efe851ba5cc40a4bf4fa97cb40"
+checksum = "c949d63b387b25c332f6e39d1762dd4b405008289dd7681f02c258b1294653ca"
 dependencies = [
  "byteorder",
 ]

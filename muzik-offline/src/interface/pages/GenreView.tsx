@@ -67,11 +67,11 @@ const GenreView = () => {
 
     async function setAlbumSongs(){
         if(genre_key === undefined)return;
-        const genreres = await local_genres_db.genres.where("key").equals(Number.parseInt(genre_key)).toArray();
-        if(genreres.length !== 1)return;
-        const result = await getGenreSongs(genreres[0]);
+        const genreres = await local_genres_db.genres.where("key").equals(Number.parseInt(genre_key)).first();
+        if(genreres === undefined)return;
+        const result = await getGenreSongs(genreres);
         dispatch({ type: reducerType.SET_GENRE_METADATA, payload: {
-            cover: result.cover, genreName: genreres[0].title,
+            cover: result.cover, genreName: genreres.title,
             song_count: result.songs.length,
             length: secondsToTimeFormat(result.totalDuration)
             }
@@ -83,8 +83,9 @@ const GenreView = () => {
         const relatedSong = state.SongList.find((value) => value.id === key);
         if(!relatedSong)return;
         if(type === "song"){
-            const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).toArray();
-            navigate(`/AlbumDetails/${albumres[0].key}/undefined`);
+            const albumres = await local_albums_db.albums.where("title").equals(relatedSong.album).first();
+            if(albumres === undefined)return;
+            navigate(`/AlbumDetails/${albumres.key}/undefined`);
         }
         else if(type === "artist"){
             navigate(`/ArtistCatalogue/${relatedSong.artist}`); 

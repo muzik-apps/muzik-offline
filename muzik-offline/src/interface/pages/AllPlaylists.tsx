@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useReducer } from "react";
-import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, CreatePlaylistModal, PropertiesModal, LoaderAnimated, AddSongsToPlaylistModal } from "@components/index";
+import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, CreatePlaylistModal, PropertiesModal, LoaderAnimated, AddSongsToPlaylistModal, DeletePlaylistModal } from "@components/index";
 import { ChevronDown, Menu } from "@assets/icons";
 import "@styles/pages/AllPlaylists.scss";
 import { contextMenuButtons, contextMenuEnum } from '@muziktypes/index';
@@ -8,7 +8,7 @@ import { local_playlists_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
 import { AllPlaylistsState, allPlaylistsReducer } from "@store/reducerStore";
 import { reducerType } from "@store/index";
-import { closeContextMenu, closePlaylistModal, closePropertiesModal, setOpenedDDM } from "@utils/reducerUtils";
+import { closeContextMenu, closeCreatePlaylistModal, closeDeletePlaylistModal, closePlaylistModal, closePropertiesModal, setOpenedDDM } from "@utils/reducerUtils";
 import { addTheseSongsToPlayNext, addTheseSongsToPlayLater, playTheseSongs } from "@utils/playerControl";
 
 const AllPlaylists = () => {
@@ -30,6 +30,7 @@ const AllPlaylists = () => {
         if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
         else if(arg == contextMenuButtons.ShowPlaylist && state.playlistMenuToOpen)navigateTo(state.playlistMenuToOpen.key);
         else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
+        else if(arg === contextMenuButtons.Delete){ dispatch({ type: reducerType.SET_DELETE_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.PlayNext && state.playlistMenuToOpen){ 
             addTheseSongsToPlayNext({playlist: state.playlistMenuToOpen.title});
             closeContextMenu(dispatch); 
@@ -55,7 +56,12 @@ const AllPlaylists = () => {
         });
     }
 
-    useEffect(() => { setList(); }, [state.sort])
+    async function shouldDeletePlaylist(deletePlaylist: boolean){
+        if(deletePlaylist && state.playlistMenuToOpen)await local_playlists_db.playlists.delete(state.playlistMenuToOpen.key);
+        closeDeletePlaylistModal(dispatch);
+    }
+
+    useEffect(() => { setList(); }, [state.sort, state.isCreatePlaylistModalOpen, state.isDeletePlayListModalOpen])
     
     return (
         <motion.div className="AllPlaylists"
@@ -120,13 +126,18 @@ const AllPlaylists = () => {
                 )
             }
             <div className="bottom_margin"/>
-            <CreatePlaylistModal isOpen={state.isCreatePlaylistModalOpen} closeModal={() => dispatch({ type: reducerType.SET_CREATE_PLAYLIST_MODAL, payload: false})}/>
-            <PropertiesModal isOpen={state.isPropertiesModalOpen} playlist={state.playlistMenuToOpen ? state.playlistMenuToOpen : undefined} closeModal={() => closePropertiesModal(dispatch)}/>
+            <CreatePlaylistModal isOpen={state.isCreatePlaylistModalOpen} closeModal={() => closeCreatePlaylistModal(dispatch)}/>
+            <PropertiesModal isOpen={state.isPropertiesModalOpen} playlist={state.playlistMenuToOpen ? state.playlistMenuToOpen : undefined} 
+                closeModal={() => closePropertiesModal(dispatch)}/>
             <AddSongsToPlaylistModal 
                 isOpen={state.isPlaylistModalOpen} 
                 title={state.playlistMenuToOpen? state.playlistMenuToOpen.title : ""} 
                 values={{playlist: state.playlistMenuToOpen? state.playlistMenuToOpen.title : ""}}
                 closeModal={() => closePlaylistModal(dispatch)} />
+            <DeletePlaylistModal 
+                isOpen={state.isDeletePlayListModalOpen} 
+                title={state.playlistMenuToOpen? state.playlistMenuToOpen.title : ""} 
+                closeModal={shouldDeletePlaylist} />
         </motion.div>
     )
 }

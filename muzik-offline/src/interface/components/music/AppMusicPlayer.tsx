@@ -54,6 +54,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
     function detectKeyPress(this: Window, ev: any){
         if(ev.target.id !== "gsearch"){
             if(ev.key === " "){//pause/play song
+                ev.preventDefault();
                 if(Player.isPlaying)pauseSong();
                 else playSong();
             }

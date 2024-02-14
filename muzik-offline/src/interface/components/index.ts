@@ -18,7 +18,6 @@ import AppNavigator from './buttons/AppNavigator';
 import GeneralContextMenu from './context_menu/GeneralContextMenu';
 import SearchNavigator from './buttons/SearchNavigator';
 import DirectoriesModal from "./modals/DirectoriesModal";
-import { ShowInfoButton } from './context_menu/ContextMenuButtons';
 import NotifyBottomRight from './toasts/NotifyBottomRight';
 import PropertiesModal from './modals/PropertiesModal';
 import LargeResizableCover from './cards/LargeResizableCover';
@@ -26,12 +25,17 @@ import CreatePlaylistModal from './modals/CreatePlaylistModal';
 import EditPlaylistModal from './modals/EditPlaylistModal';
 import { PlayButton, PlayNextButton, PlayLaterButton, 
     ShowArtistButton, AddToPlaylistButton, ShowGenreButton, 
-    ShowPlaylistButton, ShowAlbumButton } from './context_menu/ContextMenuButtons';
+    ShowPlaylistButton, ShowAlbumButton, ShowInfoButton, 
+    DeleteButton } from './context_menu/ContextMenuButtons';
 import AddSongToPlaylistModal from "./modals/AddSongToPlaylistModal";
 import LoaderAnimated from './loader/LoaderAnimated';
 import AirplayCastModal from './modals/AirplayCastModal';
 import AddSongsToPlaylistModal from './modals/AddSongsToPlaylistModal';
 import MusicPopOver from "./popover/MusicPopOver";
+import SongCardResizableDraggable from './lists/SongCardResizableDraggable';
+import RectangleSongBoxDraggable from './lists/RectangleSongBoxDraggable';
+import DeletePlaylistModal from './modals/DeletePlaylistModal';
+import DeleteSongFromPlaylistModal from './modals/DeleteSongFromPlaylistModal';
 
 export {
     HeaderWindows, HeaderMacOS, HeaderLinuxOS, AppNavigator, LeftSidebar, AppMusicPlayer, FSMusicPlayer,
@@ -43,5 +47,7 @@ export {
     ShowAlbumButton, SearchNavigator, DirectoriesModal, ShowInfoButton,
     NotifyBottomRight, PropertiesModal, LargeResizableCover,
     CreatePlaylistModal, EditPlaylistModal, AddSongToPlaylistModal, LoaderAnimated,
-    AirplayCastModal, AddSongsToPlaylistModal, MusicPopOver
+    AirplayCastModal, AddSongsToPlaylistModal, MusicPopOver, SongCardResizableDraggable,
+    RectangleSongBoxDraggable, DeletePlaylistModal,
+    DeleteButton, DeleteSongFromPlaylistModal
 }

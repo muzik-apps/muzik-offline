@@ -23,19 +23,29 @@ export function setSongList(songList: Song[], dispatch: React.Dispatch<Action>){
     dispatch({ type: reducerType.SET_SONG_LIST, payload: songList });
 }
 
+export function closeCreatePlaylistModal(dispatch: React.Dispatch<Action>){
+    dispatch({ type: reducerType.SET_CREATE_PLAYLIST_MODAL, payload: false });
+    closeContextMenu(dispatch);
+}
+
+export function closeEditPlaylistModal(dispatch: React.Dispatch<Action>){
+    dispatch({ type: reducerType.SET_EDIT_PLAYLIST_MODAL, payload: false });
+    closeContextMenu(dispatch);
+}
+
+export function closeDeletePlaylistModal(dispatch: React.Dispatch<Action>){
+    dispatch({ type: reducerType.SET_DELETE_MODAL, payload: false });
+    closeContextMenu(dispatch);
+}
+
 export function closePlaylistModal(dispatch: React.Dispatch<Action>){
     dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: false });
-    dispatch({ type: reducerType.SET_SONG_MENU, payload: null});
-    dispatch({ type: reducerType.SET_ALBUM_MENU, payload: null});
-    dispatch({ type: reducerType.SET_GENRE_MENU, payload: null});
-    dispatch({ type: reducerType.SET_ARTIST_MENU, payload: null});
-    dispatch({ type: reducerType.SET_PLAYLIST_MENU, payload: null});
+    closeContextMenu(dispatch);
 }
 
 export function closePropertiesModal(dispatch: React.Dispatch<Action>){
     dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: false });
-    dispatch({ type: reducerType.SET_SONG_MENU, payload: null});
-    dispatch({ type: reducerType.SET_PLAYLIST_MENU, payload: null});
+    closeContextMenu(dispatch);
 }
 
 export function closeContextMenu( dispatch: React.Dispatch<Action>, e?: React.MouseEvent<HTMLDivElement, MouseEvent>,){
