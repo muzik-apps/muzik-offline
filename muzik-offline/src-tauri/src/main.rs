@@ -17,7 +17,7 @@ use std::sync::Mutex;
 
 use crate::app::controller::{toggle_app_pin, toggle_miniplayer_view, drag_app_window};
 
-use crate::commands::metadata_retriever::get_all_songs;
+use crate::commands::{metadata_retriever::get_all_songs, metadata_edit::edit_song_metadata};
 
 use crate::commands::general_commands::{open_in_file_manager, resize_frontend_image_to_fixed_height, get_audio_dir};
 
@@ -55,6 +55,7 @@ fn main() {
                             open_in_file_manager,
                             set_volume,
                             get_audio_dir,
+                            edit_song_metadata,
 
                             //MUSIC PLAYER
                             load_and_play_song_from_path,
