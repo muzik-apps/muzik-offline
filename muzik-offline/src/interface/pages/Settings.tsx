@@ -24,11 +24,11 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
     const {local_store,} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
 
     function convertToEnum(arg: string){
-        if(arg == "General")return selectedSettingENUM.General;
-        else if(arg == "Appearance")return selectedSettingENUM.Appearance;
-        else if(arg == "Security")return selectedSettingENUM.Security;
-        else if(arg == "Advanced")return selectedSettingENUM.Advanced;
-        else if(arg == "About")return selectedSettingENUM.About;
+        if(arg === selectedSettingENUM.General)return selectedSettingENUM.General;
+        else if(arg === selectedSettingENUM.Appearance)return selectedSettingENUM.Appearance;
+        else if(arg === selectedSettingENUM.Security)return selectedSettingENUM.Security;
+        else if(arg === selectedSettingENUM.Advanced)return selectedSettingENUM.Advanced;
+        else if(arg === selectedSettingENUM.About)return selectedSettingENUM.About;
         else return selectedSettingENUM.General;
     }
 
@@ -36,10 +36,8 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
     
     useEffect(() => {
         if(!props.openSettings)setSelectedSetting(selectedSettingENUM.General);
-
     }, [props.openSettings])
     
-
     return (
         <>
             <motion.div className="settings_section"

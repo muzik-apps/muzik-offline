@@ -43,7 +43,7 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
             })
             .catch(async(_error) => {
                 console.log(_error);
-                setToast({title: "Loading songs...", message: "Failed to load all the songs in the paths specified", type: toastType.error, timeout: 5000});
+                setToast({title: "Loading songs...", message: "Please note that this process can take several minutes to complete depending on how many songs you have but you will be notified when it is done", type: toastType.info, timeout: 10000});
                 const permissionGranted = await isPermissionGranted();
                 if (permissionGranted) {
                     sendNotification({ title: 'Loading songs...', body: 'Failed to load all the songs in the paths specified' });
