@@ -3,6 +3,7 @@ import { Song, playlist } from "@muziktypes/index";
 import "@styles/components/modals/PropertiesModal.scss";
 import { invoke } from "@tauri-apps/api";
 import { modal_variants } from "@content/index";
+import { FunctionComponent } from "react";
 
 type PropertiesModalProps = {
     song?: Song;
@@ -11,7 +12,7 @@ type PropertiesModalProps = {
     closeModal: () => void;
 }
 
-const PropertiesModal = (props: PropertiesModalProps) => {
+const PropertiesModal: FunctionComponent<PropertiesModalProps> = (props: PropertiesModalProps) => {
 
     function formatBytes(bytes: number, decimals: number = 0) {
         if (!+bytes) return '0 Bytes';
