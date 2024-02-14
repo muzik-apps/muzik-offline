@@ -13,8 +13,10 @@ use kira::manager::{AudioManager,AudioManagerSettings,backend::DefaultBackend};
 use components::audio_manager::SharedAudioManager;
 use utils::music_list_organizer::MLO;
 use socials::discord_rpc::DiscordRpc;
-use music::media_control_api::MCA;
 use std::sync::Mutex;
+
+use tauri::Manager;
+use std::sync::mpsc;
 
 use crate::app::controller::{toggle_app_pin, toggle_miniplayer_view, drag_app_window};
 
@@ -42,10 +44,10 @@ fn main() {
             manager: AudioManager::<DefaultBackend>::new(AudioManagerSettings::default()).expect("failed to initialize audio manager"),
             instance_handle: None,
             volume: 0.0,
+            controls: None,
         }))
         .manage(Mutex::new(MLO::new()))
         .manage(Mutex::new(DiscordRpc::new().expect("failed to initialize discord rpc")))
-        .manage(Mutex::new(MCA::new().expect("failed to initialize media control api")))
         .invoke_handler(tauri::generate_handler![
                             //WINDOW CONTROL
                             toggle_app_pin,
