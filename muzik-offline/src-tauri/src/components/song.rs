@@ -8,7 +8,7 @@ pub struct Song {
     pub artist: String,
     pub album: String,
     pub genre: String,
-    pub year: i32,
+    pub year: u32,
     pub duration: String,
     pub duration_seconds: u64,
     pub path: String,

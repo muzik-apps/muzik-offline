@@ -1,19 +1,22 @@
-use id3::{frame::Picture, Content, Frame, Tag, TagLike, Timestamp};
+use id3::{Content, Frame, TagLike, Timestamp};
+use lofty::TaggedFileExt;
+use lofty::Accessor;
 
 use crate::{components::song::Song, utils::general_utils::decode_image_in_parallel};
 
 #[tauri::command]
 pub fn edit_song_metadata(song_path: String, song_metadata: String) -> Result<String, String>{
     //convert song_metadata to Song using serde_json
-    match serde_json::from_str(&song_metadata){
+    match serde_json::from_str::<Song>(&song_metadata){
         Ok(song) => {
-            match edit_metadata(song_path, song){
-                Ok(_) => {
-                    Ok(format!("Metadata edited successfully"))
-                }
-                Err(err) => {
-                    Err(format!("Error editing metadata: {}", err))
-                }
+            if let Ok(()) = edit_metadata_id3(&song_path, &song){
+                Ok(format!("Metadata edited successfully"))
+            }
+            else if let Ok(()) = edit_metadata_lofty(&song_path, &song){
+                Ok(format!("Metadata edited successfully"))
+            }
+            else{
+                Err(format!("Error editing metadata"))
             }
         }
         Err(err) => {
@@ -22,20 +25,45 @@ pub fn edit_song_metadata(song_path: String, song_metadata: String) -> Result<St
     }
 }
 
-fn edit_metadata(song_path: String, song: Song) -> Result<(), Box<dyn std::error::Error>>{
-    let mut tag = Tag::read_from_path(song_path)?;
-    tag.set_title(song.title.clone());
-    tag.set_artist(song.artist.clone());
-    tag.set_album(song.album.clone());
-    tag.set_genre(song.genre.clone());
-    tag.set_year(song.year);
+fn edit_metadata_lofty(song_path: &String, song: &Song) -> Result<(), Box<dyn std::error::Error>>{
+    let mut tagged_file = lofty::read_from_path(song_path)?;
+
+    match tagged_file.first_tag_mut(){
+        Some(tag) => {
+            set_title_lofty(tag, &song);
+            set_artist_lofty(tag, &song);
+            set_album_lofty(tag, &song);
+            set_genre_lofty(tag, &song);
+            set_year_lofty(tag, &song);
+        }
+        None => {
+            return Err("Error opening file".into());
+        }
+    }
+
+    Ok(())
+}
+
+fn edit_metadata_id3(song_path: &String, song: &Song) -> Result<(), Box<dyn std::error::Error>>{
+    let mut tag = id3::Tag::read_from_path(song_path)?;
+    set_title_id3(&mut tag, song);
+    set_artist_id3(&mut tag, song);
+    set_album_id3(&mut tag, song);
+    set_cover_id3(&mut tag, song);
+    set_genre_id3(&mut tag, song);
+    set_year_id3(&mut tag, song);
     tag.set_date_recorded(create_timestamp(&song.date_recorded));
     tag.set_date_released(create_timestamp(&song.date_released));
-    tag.add_frame(create_frame(&song));
     Ok(())
 }
 
 fn create_timestamp(date_a: &String) -> Timestamp{
+    //account for the fct that we might have "Unknown date recorded" or "Unknown date released"
+    if date_a == "Unknown date recorded" || date_a == "Unknown date released"{
+        return Timestamp{ 
+            year: 0, month: Some(0), day: Some(0), hour: Some(0), minute: Some(0), second: Some(0) 
+        }
+    }
     let date: Vec<&str> = date_a.split("-").collect();
     let year = get_year(&date);
     let month = get_month(&date);
@@ -157,34 +185,115 @@ fn get_second(date: &Vec<&str>) -> Option<u8>{
     } 
 }
 
-fn create_frame(song: &Song) -> Frame{
-    let frame = Frame::with_content(
-        "TXXX", 
-        Content::Picture(
-            Picture{
-                mime_type: "image/jpeg".to_string(),
-                picture_type: id3::frame::PictureType::CoverFront,
-                description: "Cover".to_string(),
-                data: get_cover_as_vec(&song.cover)
-            }
-        ));
-    frame
+
+
+// check if values have changed then if they have, edit and save the changes
+fn set_title_id3(tag: &mut id3::Tag, song_meta_data: &Song){
+    //TITLE
+    if let Some(title) = tag.title(){
+        if song_meta_data.title != title {
+            tag.set_title(song_meta_data.title.clone())
+        }
+    }
 }
 
-fn get_cover_as_vec(cover: &Option<String>) -> Vec<u8>{
-    match cover{
-        Some(cover_as_str) => {
-            match decode_image_in_parallel(cover_as_str){
-                Ok(cover_as_vec) => {
-                    cover_as_vec
-                }
-                Err(_) => {
-                    Vec::new()
-                }
-            }
+fn set_title_lofty(tag: &mut lofty::Tag , song_meta_data: &Song){
+    //TITLE
+    if let Some(title) = tag.title() {
+        if song_meta_data.title != title {
+            tag.set_title(song_meta_data.title.clone())
         }
-        None => {
-            Vec::new()
+    }
+}
+
+fn set_artist_id3(tag: &mut id3::Tag, song_meta_data: &Song){
+    //ARTIST
+    if let Some(artist) = tag.artist() {
+        if song_meta_data.artist != artist{
+            tag.set_artist(song_meta_data.artist.clone());
+        }
+    }
+}
+
+fn set_artist_lofty(tag: &mut lofty::Tag, song_meta_data: &Song){
+    //ARTIST
+    if let Some(artist) = tag.artist() {
+        if song_meta_data.artist != artist{
+            tag.set_artist(song_meta_data.artist.clone());
+        }
+    }
+}
+
+fn set_album_id3(tag: &mut id3::Tag, song_meta_data: &Song){
+    //ALBUM
+    if let Some(album) = tag.album() {
+        if song_meta_data.album != album{
+            tag.set_album(song_meta_data.album.clone());
+        }
+    }
+}
+
+fn set_album_lofty(tag: &mut lofty::Tag, song_meta_data: &Song){
+    //ALBUM
+    if let Some(album) = tag.album() {
+        if song_meta_data.album != album{
+            tag.set_album(song_meta_data.album.clone());
+        }
+    }
+}
+
+fn set_genre_id3(tag: &mut id3::Tag, song_meta_data: &Song){
+    //GENRE
+    if let Some(genre) = tag.genre() {
+        if song_meta_data.genre != genre{
+            tag.set_genre(song_meta_data.genre.clone());
+        }
+    }
+}
+
+fn set_genre_lofty(tag: &mut lofty::Tag, song_meta_data: &Song){
+    //GENRE
+    if let Some(genre) = tag.genre() {
+        if song_meta_data.genre != genre{
+            tag.set_genre(song_meta_data.genre.clone());
+        }
+    }
+}
+
+fn set_year_id3(tag: &mut id3::Tag, song_meta_data: &Song){
+    //YEAR
+    if let Some(year) = tag.year() {
+        if song_meta_data.year as i32 != year{
+            tag.set_year(song_meta_data.year as i32);
+        }
+    }
+}
+
+fn set_year_lofty(tag: &mut lofty::Tag, song_meta_data: &Song){
+    //YEAR
+    if let Some(year) = tag.year() {
+        if song_meta_data.year != year{
+            tag.set_year(song_meta_data.year);
+        }
+    }
+}
+
+fn set_cover_id3(tag: &mut id3::Tag, song_meta_data: &Song){
+    //COVER
+    if let Some(cover) = &song_meta_data.cover{
+        match decode_image_in_parallel(cover){
+            Ok(cover_as_vec) => {
+                tag.add_frame(Frame::with_content("APIC", Content::Picture(
+                    id3::frame::Picture{
+                        mime_type: "image/jpeg".to_string(),
+                        picture_type: id3::frame::PictureType::CoverFront,
+                        description: "Cover".to_string(),
+                        data: cover_as_vec
+                })));
+            }
+            Err(_) => {
+                //do nothing
+            }
         }
     }
 }
