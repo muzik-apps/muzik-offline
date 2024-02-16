@@ -42,6 +42,11 @@ impl DiscordRpc {
     }
 
     pub fn set_activity(&mut self, song_name: String, state: String, large_image_key: String) -> Result<(), Box<dyn std::error::Error>> {
+        //if not connected, attempt to connect
+        if !self.is_connected {
+            self.connect()?;
+        }
+        
         if self.allowed_to_connect && self.is_connected {
             let activity = activity::Activity::new()
                 .state(&state)
@@ -60,6 +65,11 @@ impl DiscordRpc {
     }
 
     pub fn clear_activity(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        //if not connected, attempt to connect
+        if !self.is_connected {
+            self.connect()?;
+        }
+        
         if self.allowed_to_connect && self.is_connected {
             self.client.clear_activity()?;
             Ok(())
@@ -76,7 +86,7 @@ impl DiscordRpc {
             Ok(())
         }
         else{
-            Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "not connected to discord rpc")))
+            Ok(())
         }
     }
 }

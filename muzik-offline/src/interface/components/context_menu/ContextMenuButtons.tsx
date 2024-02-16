@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 import { contextMenuButtons } from 'types';
-import { ArrowCurveLeftRight, ArrowCurveRightUp, Disk, InformationCircleContained, LayersThree, Menu, Microphone, Play } from '@assets/icons';
+import { ArrowCurveLeftRight, ArrowCurveRightUp, Disk, InformationCircleContained, LayersThree, Menu, Microphone, Play, Trash } from '@assets/icons';
 import { motion } from 'framer-motion';
 
 type ContextMenuButtonsProps = {
@@ -86,6 +86,15 @@ export const ShowInfoButton: FunctionComponent<ContextMenuButtonsProps> = (props
         <motion.div className="ShowInfo" whileTap={{scale: 0.98}} onMouseDown={() => props.chooseOption(contextMenuButtons.ShowInfo)}>
             <InformationCircleContained />
             <p>Properties</p>
+        </motion.div>
+    )
+}
+
+export const DeleteButton: FunctionComponent<ContextMenuButtonsProps> = (props: ContextMenuButtonsProps) => {
+    return (
+        <motion.div className="DeleteButton" whileTap={{scale: 0.98}} onMouseDown={() => props.chooseOption(contextMenuButtons.Delete)}>
+            <Trash />
+            <p>Delete "{props.title}"</p>
         </motion.div>
     )
 }

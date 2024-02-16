@@ -28,7 +28,8 @@ export enum contextMenuEnum{
     GenreCM = "GenreCM",
     PlaylistCM = "PlaylistCM",
     SongCM = "SongCM",
-    AlbumCM = "AlbumCM"
+    AlbumCM = "AlbumCM",
+    PlaylistSongsCM = "PlaylistSongsCM"
 }
 
 export enum contextMenuButtons{
@@ -41,6 +42,7 @@ export enum contextMenuButtons{
     ShowPlaylist = "ShowPlaylist",
     ShowAlbum = "ShowAlbum",
     ShowInfo = "ShowInfo",
+    Delete = "Delete",
 }
 
 export enum toastType{
@@ -137,9 +139,7 @@ export interface GenreMD {
 }
 
 export interface PlaylistMD {
-    key: number;
-    cover: string | null;
-    playlistName: string;
+    playlist_data: playlist | null,
     song_count: number;
     length: string;
 }

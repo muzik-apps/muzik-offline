@@ -50,43 +50,43 @@ const GeneralSettings: FunctionComponent<GeneralSettingsProps> = (props: General
     }
 
     function setStoreValue(arg: string, type: string){
-        const res = handleDiscordConnectionChanges(arg, type, local_store.AppActivityDiscord);
-        if(res === false && type === "AppActivityDiscord")return;
-        let temp: SavedObject = local_store;
-        temp[type as keyof SavedObject] = arg as never;
-        setStore(temp);
-        setselectedGeneralSetting(selectedGeneralSettingEnum.Nothing);
-    }
-
-    function handleDiscordConnectionChanges(arg: string, type: string, oldarg: string){
         if(type === "AppActivityDiscord"){
-            if(arg === "Yes" && oldarg === "No"){//connect
-                let res: boolean = false;
-                invoke("allow_connection_and_connect_to_discord_rpc").then(() => res = true).catch((_) => {
+            if(arg === "Yes" && local_store.AppActivityDiscord === "No"){//connect
+                handleDiscordConnectionChanges("Yes");
+                invoke("allow_connection_and_connect_to_discord_rpc").then().catch(() => {
                     setToast({
                         title: "Discord connection...", 
                         message: "Failed to establish connection with discord", 
                         type: toastType.error, timeout: 5000
                     });
-                    res = false;
+                    handleDiscordConnectionChanges("No");
                 });
-                return res;
             }
-            else if(arg === "No" && oldarg === "Yes"){//disconnect
-                let res: boolean = false;
-                invoke("disallow_connection_and_close_discord_rpc").then(() => res = true).catch((_) => {
+            else if(arg === "No" && local_store.AppActivityDiscord === "Yes"){//disconnect
+                handleDiscordConnectionChanges("No");
+                invoke("disallow_connection_and_close_discord_rpc").then().catch(() => {
                     setToast({
                         title: "Discord connection...", 
                         message: "Failed to disconnect from discord", 
                         type: toastType.error, timeout: 5000
                     });
-                    res = false;
+                    handleDiscordConnectionChanges("Yes");
                 });
-                return res;
             }
-            else return false;
         }
-        else return true;
+        else{
+            let temp: SavedObject = local_store;
+            temp[type as keyof SavedObject] = arg as never;
+            setStore(temp);
+            setselectedGeneralSetting(selectedGeneralSettingEnum.Nothing);
+        }
+    }
+
+    function handleDiscordConnectionChanges(arg: string){
+        let temp: SavedObject = local_store;
+        temp.AppActivityDiscord = arg;
+        setStore(temp);
+        setselectedGeneralSetting(selectedGeneralSettingEnum.Nothing);
     }
 
     function setViewableEl(value: boolean, type: string){
