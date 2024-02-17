@@ -12,6 +12,7 @@ export enum reducerType {
     SET_EDIT_PLAYLIST_MODAL = "SET_EDIT_PLAYLIST_MODAL",
     SET_CREATE_PLAYLIST_MODAL = "SET_CREATE_PLAYLIST_MODAL",
     SET_PROPERTIES_MODAL = "SET_PROPERTIES_MODAL",
+    SET_EDIT_SONG_MODAL = "SET_EDIT_SONG_MODAL",
     SET_DELETE_MODAL = "SET_DELETE_MODAL",
     SET_RESIZE_HEADER = "SET_RESIZE_HEADER",
     SET_SONG_LIST = "SET_SONG_LIST",
@@ -44,6 +45,7 @@ export type Action =
     | { type: reducerType.SET_EDIT_PLAYLIST_MODAL; payload: boolean }
     | { type: reducerType.SET_CREATE_PLAYLIST_MODAL; payload: boolean }
     | { type: reducerType.SET_PROPERTIES_MODAL; payload: boolean }
+    | { type: reducerType.SET_EDIT_SONG_MODAL; payload: boolean }
     | { type: reducerType.SET_DELETE_MODAL; payload: boolean }
     | { type: reducerType.SET_RESIZE_HEADER; payload: boolean }
     | { type: reducerType.SET_SONG_LIST; payload: Song[] }
@@ -82,6 +84,7 @@ export interface AllTracksStateInterface{
     songMenuToOpen: Song | null,
     isPlaylistModalOpen: boolean,
     isPropertiesModalOpen: boolean,
+    isEditingSongModalOpen: boolean,
 }
 
 export interface SearchSongInterface{

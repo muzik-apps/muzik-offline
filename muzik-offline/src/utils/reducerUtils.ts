@@ -48,6 +48,11 @@ export function closePropertiesModal(dispatch: React.Dispatch<Action>){
     closeContextMenu(dispatch);
 }
 
+export function closeEditPropertiesModal(dispatch: React.Dispatch<Action>){
+    dispatch({ type: reducerType.SET_EDIT_SONG_MODAL, payload: false });
+    closeContextMenu(dispatch);
+}
+
 export function closeContextMenu( dispatch: React.Dispatch<Action>, e?: React.MouseEvent<HTMLDivElement, MouseEvent>,){
     if(e){
         if(e.target !== e.currentTarget)return;

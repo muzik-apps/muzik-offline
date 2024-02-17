@@ -1,23 +1,42 @@
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Song } from "@muziktypes/index";
-import "@styles/components/modals/PropertiesModal.scss";
+import "@styles/components/modals/EditPropertiesModal.scss";
 import { invoke } from "@tauri-apps/api";
 import { modal_variants } from "@content/index";
 import { getRandomCover } from "@utils/index";
 
 type EditPropertiesModalProps = {
-    song: Song;
+    song: Song | null;
     isOpen: boolean;
     closeModal: () => void;
 }
 
 const EditPropertiesModal: FunctionComponent<EditPropertiesModalProps> = (props: EditPropertiesModalProps) => {
 
-    const [song, setSong] = useState<Song>(props.song);
-    const [isid3Supported,] = useState<boolean>(
-        props.song.file_type === "mp3" || props.song.file_type === "wav" ||
-        props.song.file_type === "aiff" ? true : false);
+    const [song, setSong] = useState<Song>({
+            id: 0,
+            title: "",
+            name: "",
+            artist: "",
+            album: "",
+            genre: "",
+            year: 0,
+            duration: "",
+            duration_seconds: 0,
+            path: "",
+            cover: null,
+            date_recorded: "",
+            date_released: "",
+            file_size: 0,
+            file_type: "",
+            overall_bit_rate: 0,
+            audio_bit_rate: 0,
+            sample_rate: 0,
+            bit_depth: 0,
+            channels: 0
+        });
+    const [isid3Supported, setISid3Supported] = useState<boolean>(false);
 
     function uploadImg(e: any){
         const image = e.target.files[0];
@@ -40,12 +59,40 @@ const EditPropertiesModal: FunctionComponent<EditPropertiesModalProps> = (props:
     }
 
     function saveChanges(){
-        invoke("saveSongProperties", {song});
+        //invoke("saveSongProperties", {song});
         props.closeModal();
     }
 
+    useEffect(() => {
+        setISid3Supported(props.song !== null && (props.song.file_type === "mp3" || props.song.file_type === "wav" || props.song.file_type === "aiff") ? true : false);
+        setSong(props.song === null ? 
+            {
+                id: 0,
+                title: "",
+                name: "",
+                artist: "",
+                album: "",
+                genre: "",
+                year: 0,
+                duration: "",
+                duration_seconds: 0,
+                path: "",
+                cover: null,
+                date_recorded: "",
+                date_released: "",
+                file_size: 0,
+                file_type: "",
+                overall_bit_rate: 0,
+                audio_bit_rate: 0,
+                sample_rate: 0,
+                bit_depth: 0,
+                channels: 0
+            }
+            : props.song)
+    }, [props.song])
+
     return (
-        <div className={"PropertiesModal" + (props.isOpen ? " PropertiesModal-visible" : "")} onClick={
+        <div className={"EditPropertiesModal" + (props.isOpen ? " EditPropertiesModal-visible" : "")} onClick={
             (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {if(e.target === e.currentTarget)saveChanges()}}>
             <motion.div 
             animate={props.isOpen ? "open" : "closed"}
@@ -64,7 +111,7 @@ const EditPropertiesModal: FunctionComponent<EditPropertiesModalProps> = (props:
                                             song.cover :`data:image/png;base64,${song.cover}`} alt="img" />
                                     }
                                 </div>
-                                <motion.label className="button_select add_wallpaper" whileHover={{scale: 1.03}} whileTap={{scale: 0.98}}>
+                                <motion.label className="button_select" whileHover={{scale: 1.03}} whileTap={{scale: 0.98}}>
                                     <input name="background-img" type="file" accept="image/png, image/jpeg" onChange={uploadImg}/>
                                     upload
                                 </motion.label>

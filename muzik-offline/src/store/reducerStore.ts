@@ -17,6 +17,7 @@ export const AllTracksState: AllTracksStateInterface = {
     songMenuToOpen: null,
     isPlaylistModalOpen: false,
     isPropertiesModalOpen: false,
+    isEditingSongModalOpen: false,
 };
 
 export const alltracksReducer = (state: AllTracksStateInterface, action: Action) => {
@@ -30,6 +31,7 @@ export const alltracksReducer = (state: AllTracksStateInterface, action: Action)
         case reducerType.SET_SONG_MENU: return { ...state, songMenuToOpen: action.payload };
         case reducerType.SET_PLAYLIST_MODAL: return { ...state, isPlaylistModalOpen: action.payload };
         case reducerType.SET_PROPERTIES_MODAL: return { ...state, isPropertiesModalOpen: action.payload };
+        case reducerType.SET_EDIT_SONG_MODAL: return { ...state, isEditingSongModalOpen: action.payload };
         default: return state;
     }
 };

@@ -37,6 +37,7 @@ import RectangleSongBoxDraggable from './lists/RectangleSongBoxDraggable';
 import DeletePlaylistModal from './modals/DeletePlaylistModal';
 import DeleteSongFromPlaylistModal from './modals/DeleteSongFromPlaylistModal';
 import EditPropertiesModal from './modals/EditPropertiesModal';
+import { EditSongButton } from './context_menu/ContextMenuButtons';
 
 export {
     HeaderWindows, HeaderMacOS, HeaderLinuxOS, AppNavigator, LeftSidebar, AppMusicPlayer, FSMusicPlayer,
@@ -51,5 +52,5 @@ export {
     AirplayCastModal, AddSongsToPlaylistModal, MusicPopOver, SongCardResizableDraggable,
     RectangleSongBoxDraggable, DeletePlaylistModal,
     DeleteButton, DeleteSongFromPlaylistModal,
-    EditPropertiesModal
+    EditPropertiesModal, EditSongButton
 }

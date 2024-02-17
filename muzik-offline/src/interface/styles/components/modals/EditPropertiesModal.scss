@@ -1,0 +1,119 @@
+@import "../../constants/constants";
+
+.EditPropertiesModal{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background: $blur-element;
+    flex-direction: column;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: $z-index-9999;
+
+    /* Track */
+    ::-webkit-scrollbar-track { margin-top: 0px; margin-bottom: 0px; }
+
+    .modal{
+        width: 500px;
+        height: 354px;
+        padding: 20px;
+        border: 1px solid $songs-container-border-col;
+        background: var(--var-songs-container-bg-col);
+        backdrop-filter: var(--var-bg-blur-150);
+        -webkit-backdrop-filter: var(--var-bg-blur-150);
+        border-radius: 20px;
+        padding-right: 0px;
+        box-shadow: $box-shadow-10-10-25;
+
+        h2{
+            font-size: 20px;
+            margin-top: 0px;
+            margin-bottom: 20px;
+        }
+
+        .properties_grid{
+            width: calc(100% - 20px);
+            overflow-x: hidden;
+            height: 312px;
+            overflow-y: auto; /* This will make a vertical scrollbar appear when content overflows */
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px; /* Adjust the gap between columns if needed */
+            padding-right: 20px;
+
+            .properties_grid_item{
+                width: 220px;
+                h3{
+                    width: 220px;
+                    font-size: 16px;
+                    text-wrap: wrap;
+                    word-wrap: break-word;
+                }
+
+                .img-container-and-upload{
+                    display: flex;
+                    height: 40px;
+                    align-items: center;
+
+                    .img-container{
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 10px;
+                        overflow: hidden;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+        
+                        img{
+                            display: inline;
+                            min-width: 100%;
+                            margin: 0 auto;
+                            height: 100%;
+                            object-fit: cover;
+                        }
+
+                        svg{
+                            width: 40px;
+                            height: 40px;
+                    }
+                    }
+
+                    .button_select{
+                        width: 100px;
+                        height: 30px;
+                        border-radius: 13px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin-left: 10px;
+                        cursor: pointer;
+                        background: $app-theme-col;
+                        input[type="file"]{display: none;} 
+                        outline: thick solid $btn-clickable;
+                    }
+                }
+
+                input[type="text"]{
+                    width: 220px;
+                    height: 27px;
+                    margin-top: 6.5px;
+                    border: none;
+                    padding: 4px;
+                    outline: none;
+                    background: $btn-clickable;
+                    border-radius: 13px;
+                    font-size: 16px;
+                    color: $white-900;
+                    margin-top: 2px;
+                }
+            }
+        }
+    }
+}
+
+.EditPropertiesModal-visible{
+    display: flex;
+}
