@@ -3,24 +3,39 @@ use lofty::TaggedFileExt;
 use lofty::Accessor;
 
 use crate::{components::song::Song, utils::general_utils::decode_image_in_parallel};
+use crate::database::db_api::insert_song_into_tree;
 
 #[tauri::command]
-pub fn edit_song_metadata(song_path: String, song_metadata: String) -> Result<String, String>{
+pub fn edit_song_metadata(song_path: String, song_metadata: String, has_changed_cover: bool) -> Result<String, String>{
     //convert song_metadata to Song using serde_json
     match serde_json::from_str::<Song>(&song_metadata){
         Ok(song) => {
-            if let Ok(()) = edit_metadata_id3(&song_path, &song){
-                Ok(format!("Metadata edited successfully"))
+            if let Ok(()) = edit_metadata_id3(&song_path, &song, &has_changed_cover){
+                match insert_song_into_tree(song) {
+                    Ok(_) => {
+                        Ok(format!("Metadata edited successfully"))
+                    }
+                    Err(_) => {
+                        Err(format!("Error saving song edits"))
+                    }
+                }
             }
             else if let Ok(()) = edit_metadata_lofty(&song_path, &song){
-                Ok(format!("Metadata edited successfully"))
+                match insert_song_into_tree(song) {
+                    Ok(_) => {
+                        Ok(format!("Metadata edited successfully"))
+                    }
+                    Err(_) => {
+                        Err(format!("Error saving song edits"))
+                    }
+                }
             }
             else{
                 Err(format!("Error editing metadata"))
             }
         }
-        Err(err) => {
-            Err(format!("Error parsing song metadata: {}", err))
+        Err(_) => {
+            Err(format!("Error parsing song metadata"))
         }
     }
 }
@@ -44,12 +59,14 @@ fn edit_metadata_lofty(song_path: &String, song: &Song) -> Result<(), Box<dyn st
     Ok(())
 }
 
-fn edit_metadata_id3(song_path: &String, song: &Song) -> Result<(), Box<dyn std::error::Error>>{
+fn edit_metadata_id3(song_path: &String, song: &Song, has_changed_cover: &bool) -> Result<(), Box<dyn std::error::Error>>{
     let mut tag = id3::Tag::read_from_path(song_path)?;
     set_title_id3(&mut tag, song);
     set_artist_id3(&mut tag, song);
     set_album_id3(&mut tag, song);
-    set_cover_id3(&mut tag, song);
+    if *has_changed_cover == true {
+        set_cover_id3(&mut tag, song);
+    }
     set_genre_id3(&mut tag, song);
     set_year_id3(&mut tag, song);
     tag.set_date_recorded(create_timestamp(&song.date_recorded));

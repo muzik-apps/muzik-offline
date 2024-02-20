@@ -1,10 +1,12 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Song } from "@muziktypes/index";
+import { Song, toastType } from "@muziktypes/index";
 import "@styles/components/modals/EditPropertiesModal.scss";
 import { invoke } from "@tauri-apps/api";
 import { modal_variants } from "@content/index";
 import { getRandomCover } from "@utils/index";
+import { useToastStore } from "@store/index";
+import { local_songs_db } from "@database/database";
 
 type EditPropertiesModalProps = {
     song: Song | null;
@@ -37,6 +39,8 @@ const EditPropertiesModal: FunctionComponent<EditPropertiesModalProps> = (props:
             channels: 0
         });
     const [isid3Supported, setISid3Supported] = useState<boolean>(false);
+    const [hasChangedCover, setHasChangedCover] = useState<boolean>(false);
+    const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
 
     function uploadImg(e: any){
         const image = e.target.files[0];
@@ -55,12 +59,20 @@ const EditPropertiesModal: FunctionComponent<EditPropertiesModalProps> = (props:
                 }
             }
             setSong({...song, cover});
+            setHasChangedCover(true);
         });
     }
 
     function saveChanges(){
-        //invoke("saveSongProperties", {song});
+        const song_v = song;
         props.closeModal();
+
+        invoke("edit_song_metadata", {songPath: song_v.path, songMetadata: JSON.stringify(song_v), hasChangedCover: hasChangedCover}).
+        then(async() => { 
+            await local_songs_db.songs.update(song_v.id, song_v);
+            setToast({ title: "Editing song...", message: "Successfully updated metadata", type: toastType.success, timeout: 3000 });
+        }).
+        catch((e) => { setToast({ title: "Editing song...", message: e, type: toastType.error, timeout: 5000 }); });
     }
 
     useEffect(() => {

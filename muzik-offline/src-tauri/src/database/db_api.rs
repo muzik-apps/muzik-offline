@@ -412,6 +412,31 @@ fn insert_songs_into_tree(dbm: &DbManager, songs: &Vec<Song>){
     }
 }
 
+pub fn insert_song_into_tree(song: Song) -> Result<(), String> {
+    match DbManager::new(){
+        Ok(dbm) => {
+            match serde_json::to_string(&song){
+                Ok(song_as_json) => {
+                    match dbm.song_tree.insert(song.id.to_ne_bytes(), song_as_json.as_bytes()){
+                        Ok(_) => {
+                            Ok(())
+                        },
+                        Err(_) => {
+                            Err(format!(""))
+                        },
+                    }
+                },
+                Err(_) => {
+                    Err(format!(""))
+                },
+            }
+        },
+        Err(_) => {
+            Err(format!(""))
+        },
+    }
+}
+
 fn insert_map_values_into_respective_tree(dbm: &DbManager, hash_map: &HashMap<String, HMapType>, tree_name: &String){
     match tree_name.as_str(){
         "albums" => {
