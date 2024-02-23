@@ -37,7 +37,7 @@
             height: 14px;
             width: 14px;
             border-radius: 50%;
-            cursor: pointer;
+            cursor: default;
             box-shadow: 0 0 2px 0 #555;
             transition: transform 0.2s ease-in-out;
             background: $app-theme-col;
@@ -49,7 +49,7 @@
             height: 14px;
             width: 14px;
             border-radius: 50%;
-            cursor: pointer;
+            cursor: default;
             box-shadow: 0 0 2px 0 #555;
             transition: transform 0.2s ease-in-out;
             background: $app-theme-col;
@@ -57,12 +57,12 @@
     
         input[type="range"]:hover::-webkit-slider-thumb {
             background: $app-theme-col;
-            transform: scale(2);
+            transform: scale(1.2);
         }
     
         input[type="range"]:hover::-moz-range-thumb  {
             background: $app-theme-col;
-            transform: scale(2);
+            transform: scale(1.2);
         }
     
         input[type="range"]::-webkit-slider-runnable-track  {
@@ -86,7 +86,7 @@
         margin-top: 10px;
         margin-bottom: 0px;
         height: 24px;
-        font-size: 13px;
+        font-size: 12px;
         width: 45px;
         text-align: center;
     }

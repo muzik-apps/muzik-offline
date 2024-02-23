@@ -100,7 +100,7 @@
 
         .equalizer_container{
             height: calc(100% - 170px);
-            width: 100%;
+            width: calc(100% - 24px);
             display: flex;
 
             .decibel_labels{
@@ -121,7 +121,7 @@
 
             .equalizer_border{
                 height: 100%;
-                width: calc(100% - 176px);
+                width: calc(100% - 156px);
                 border-radius: 10px;
                 background: $on-hover-song;
                 margin-left: 20px;
