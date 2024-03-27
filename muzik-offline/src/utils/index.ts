@@ -227,17 +227,11 @@ export function onDragEnd(result: DropResult, queueType: "SongHistory" | "SongQu
     else useHistorySongs.getState().setQueue(songs_queue);
 }
 
-export async function onDragEndInPlaylistView(result: DropResult, SongList: Song[], playlistKey: number): Promise<Song[]>{
-    if(!result.destination)return SongList;
-    if(result.destination.index === result.source.index)return SongList;
+export async function onDragEndInPlaylistView(SongList: Song[], playlistKey: number): Promise<void>{
     const playlistobj = await local_playlists_db.playlists.where("key").equals(playlistKey).first();
-    if(playlistobj === undefined)return SongList;
-    const reordered_list: Song[] = reorderArray(SongList, result.source.index, result.destination.index);
-
+    if(playlistobj === undefined)return;
     //extract track paths
-    playlistobj.tracksPaths = reordered_list.map((song) => song.path);
+    playlistobj.tracksPaths = SongList.map((song) => song.path);
 
     await local_playlists_db.playlists.update(playlistKey, playlistobj);
-
-    return reordered_list;
 }

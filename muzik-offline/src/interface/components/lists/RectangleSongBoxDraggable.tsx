@@ -9,7 +9,7 @@ type RectangleSongBoxDraggableProps = {
     listRef: React.MutableRefObject<any>;
     itemsHeightRef: React.MutableRefObject<HTMLDivElement | null>;
     SongList: Song[];
-    onDragEnd: (result: DropResult) => void;
+    onDragEnd: (reordered: Song[]) => void;
     selectThisSong: (index: number) => void;
     setMenuOpenData: (key: number, co_ords: {xPos: number;yPos: number;}) => void;
     navigateTo: (key: number, type: "artist" | "song") => void;
@@ -20,7 +20,7 @@ const RectangleSongBoxDraggable = (props: RectangleSongBoxDraggableProps) => {
     return (
         <Reorder.Group 
             values={props.SongList} 
-            onReorder={(reordered_songs) => console.log(reordered_songs)}
+            onReorder={props.onDragEnd}
             axis="y"
             layoutScroll
             style={{ overflowY: "scroll" }}>

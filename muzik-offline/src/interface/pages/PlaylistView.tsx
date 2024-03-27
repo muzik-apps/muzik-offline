@@ -1,7 +1,7 @@
 import { Edit, Play, Shuffle } from "@assets/icons";
 import { LargeResizableCover, GeneralContextMenu, EditPlaylistModal, PropertiesModal, AddSongToPlaylistModal, RectangleSongBoxDraggable, DeleteSongFromPlaylistModal } from "@components/index";
 import { local_albums_db, local_playlists_db } from "@database/database";
-import { contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
+import { Song, contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { motion } from "framer-motion";
 import { useReducer, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -121,12 +121,12 @@ const PlaylistView = () => {
         }
     }
 
-    async function onDragEnd(result: DropResult){
+    async function onDragEnd(reordered: Song[]){
         if(state.playlist_metadata.playlist_data === null)return;
-        const reordered_songs = await onDragEndInPlaylistView(result, state.SongList, state.playlist_metadata.playlist_data.key);
-        setSongList(reordered_songs, dispatch);
+        setSongList(reordered, dispatch);
+        await onDragEndInPlaylistView(reordered, state.playlist_metadata.playlist_data.key);
     }
-  
+
     async function shouldDeleteSong(deleteSong: boolean){
         if(deleteSong && state.songMenuToOpen !== null){
             //remove song from playlist path
