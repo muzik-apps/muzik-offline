@@ -12,11 +12,17 @@ pub fn duration_to_string(duration: &u64) -> String {
     let seconds = seconds % 60;
     let hours = minutes / 60;
     let minutes = minutes % 60;
+    let hours = hours % 24;
+    let days = hours / 24;
 
-    if hours > 0 {
+    if days > 0 {
+        format!("{}:{}:{:02}:{:02}", days, hours, minutes, seconds)
+    } else if hours > 0 {
         format!("{}:{:02}:{:02}", hours, minutes, seconds)
-    } else {
+    } else if minutes > 0 {
         format!("{}:{:02}", minutes, seconds)
+    } else {
+        format!("00:{:02}", seconds)
     }
 }
 
