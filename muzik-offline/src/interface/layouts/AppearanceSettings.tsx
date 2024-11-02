@@ -74,8 +74,14 @@ const AppearanceSettings = () => {
         setStore(temp);
     }
 
-    async function isTranslucencySupported(){
-        return true;
+    function isTranslucencySupported(){
+        const windows11VersionRegex = /^10\.0\.(2[2-9]\d{3}|[3-9]\d{4}|\d{5})$/;
+        const macOSVersionRegex = /^10\.(1[0-9]|[2-9][0-9])(\.\d+)?$/;
+        if((local_store.OStype === OSTYPEenum.Windows && 
+            windows11VersionRegex.test(local_store.OSversion)) || 
+            (local_store.OStype === OSTYPEenum.macOS &&
+            macOSVersionRegex.test(local_store.OSversion)))return true;
+        else return false;
     }
 
     return (
@@ -96,8 +102,7 @@ const AppearanceSettings = () => {
                             <h4>dark background</h4>
                     </motion.div>
                     {
-                        (local_store.OStype === OSTYPEenum.Windows && local_store.OSversion.startsWith("11") 
-                        || local_store.OStype === OSTYPEenum.macOS) ?
+                        isTranslucencySupported() ?
                             <motion.div 
                                 className={"button_select translucency " + (local_store.BGColour === "translucency_background" ? "button_selected" : "")}
                                 whileHover={{scale: 1.03}} 

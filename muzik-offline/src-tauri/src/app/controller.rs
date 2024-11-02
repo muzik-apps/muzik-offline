@@ -66,7 +66,22 @@ pub fn turn_off_translucency<R: Runtime>(window: tauri::Window<R>, os_version: S
 
 #[cfg(target_os = "windows")]
 fn apply_translucency<R: Runtime>(window: &tauri::Window<R>, os_version: String){
-    if os_version.starts_with("11"){
+    use regex::Regex;
+
+    let is_match = match Regex::new(r"^10\.0\.(2[2-9]\d{3}|[3-9]\d{4}|\d{5})$"){
+        Ok(reg) => {
+            if reg.is_match(&os_version) {
+                true
+            } else{
+                false
+            }
+        },
+        Err(_) => {
+            false
+        }
+    };
+
+    if is_match == true{
         match apply_mica(&window, None){
             Ok(_) => {
 
@@ -82,21 +97,52 @@ fn apply_translucency<R: Runtime>(window: &tauri::Window<R>, os_version: String)
 }
 
 #[cfg(target_os = "macos")]
-fn apply_translucency<R: Runtime>(window: &tauri::Window<R>, _os_version: String){
-    #[cfg(target_os = "macos")]
-    match apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None){
-        Ok(_) => {
+fn apply_translucency<R: Runtime>(window: &tauri::Window<R>, os_version: String){
+    use regex::Regex;
 
+    let is_match = match Regex::new(r"^10\.(1[0-9]|[2-9][0-9])(\.\d+)?$"){
+        Ok(reg) => {
+            if reg.is_match(&os_version) {
+                true
+            } else{
+                false
+            }
+        },
+        Err(_) => {
+            false
         }
-        Err(e) => {
-            println!("Unsupported platform! 'apply_vibrancy' is only supported on macOS > 10.10");
+    };
+
+    if is_match == true{
+        match apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None){
+            Ok(_) => {
+
+            }
+            Err(e) => {
+                println!("Unsupported platform! 'apply_vibrancy' is only supported on macOS > 10.10");
+            }
         }
     }
 }
 
 #[cfg(target_os = "windows")]
 fn unapply_translucency<R: Runtime>(window: &tauri::Window<R>, os_version: String){
-    if os_version.starts_with("11"){
+    use regex::Regex;
+
+    let is_match = match Regex::new(r"^10\.0\.(2[2-9]\d{3}|[3-9]\d{4}|\d{5})$"){
+        Ok(reg) => {
+            if reg.is_match(&os_version) {
+                true
+            } else{
+                false
+            }
+        },
+        Err(_) => {
+            false
+        }
+    };
+
+    if is_match == true{
         match clear_mica(&window){
             Ok(_) => {
 
