@@ -6,6 +6,7 @@ import { useSavedObjectStore, useWallpaperStore } from "@store/index";
 import { OSTYPEenum } from "@muziktypes/index";
 import { FunctionComponent } from "react";
 import { getThumbnailURL } from "@utils/index";
+import { invoke } from "@tauri-apps/api/core";
 
 const accentColurs: string[] = ["saucy", "salmon", "violet","gloss", "lipstick", "lime", "grass",
     "sunny", "ubuntu", "blueberry", "sky", "midnight", "blinding"]
@@ -22,6 +23,13 @@ const AppearanceSettings: FunctionComponent<AppearanceSettingsProps> = (props: A
 
     function changeToBgCCOL(obj: string){
         let temp: SavedObject = local_store;
+        if(obj === temp.BGColour)return;
+        if(temp.BGColour === "translucency_background"){
+            invoke("turn_off_translucency", {osVersion: local_store.OSversion});
+        }
+        else if(obj === "translucency_background"){
+            invoke("turn_on_translucency", {osVersion: local_store.OSversion});
+        }
         temp.BGColour = obj;
         setStore(temp);
         unsetWallpaper();
@@ -57,6 +65,16 @@ const AppearanceSettings: FunctionComponent<AppearanceSettingsProps> = (props: A
         setStore(temp);
     }
 
+    function isTranslucencySupported(){
+        const windows11VersionRegex = /^10\.0\.(2[2-9]\d{3}|[3-9]\d{4}|\d{5})$/;
+        const macOSVersionRegex = /^10\.(1[0-9]|[2-9][0-9])(\.\d+)?$/;
+        if((local_store.OStype === OSTYPEenum.Windows && 
+            windows11VersionRegex.test(local_store.OSversion)) || 
+            (local_store.OStype === OSTYPEenum.macOS &&
+            macOSVersionRegex.test(local_store.OSversion)))return true;
+        else return false;
+    }
+
     return (
         <div className="AppearanceSettings">
             <h2>Appearance Settings</h2>
@@ -76,6 +94,16 @@ const AppearanceSettings: FunctionComponent<AppearanceSettingsProps> = (props: A
                         onClick={() => {changeToBgCCOL("black_linear")}}>
                             <h4>dark background</h4>
                     </motion.div>
+                    {
+                        isTranslucencySupported() &&
+                            <motion.div 
+                                className={"button_select translucency " + (local_store.BGColour === "translucency_background" ? "button_selected" : "")}
+                                whileHover={{scale: 1.03}} 
+                                whileTap={{scale: 0.98}} 
+                                onClick={() => {changeToBgCCOL("translucency_background")}}>
+                                    <h4>translucency</h4>
+                            </motion.div>
+                    }
                     <motion.div 
                         className={"button_select pink_blue_gradient " + (local_store.BGColour === "pink_blue_gradient" ? "button_selected" : "")}
                         whileHover={{scale: 1.03}} 

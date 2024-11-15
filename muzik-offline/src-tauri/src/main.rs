@@ -30,7 +30,7 @@ use tauri::async_runtime::{self, spawn};
 use tauri::{AppHandle, Emitter, Manager};
 use tokio::sync::mpsc;
 
-use crate::app::controller::{drag_app_window, toggle_app_pin, toggle_miniplayer_view};
+use crate::app::controller::{drag_app_window, toggle_app_pin, toggle_miniplayer_view, turn_on_translucency, turn_off_translucency};
 use crate::commands::{metadata_edit::edit_song_metadata, metadata_retriever::get_all_songs};
 
 use crate::commands::general_commands::{
@@ -74,6 +74,8 @@ fn main() {
             toggle_app_pin,
             toggle_miniplayer_view,
             drag_app_window,
+            turn_on_translucency,
+            turn_off_translucency,
             update_metadata,
             set_player_state,
             // GENERAL COMMANDS

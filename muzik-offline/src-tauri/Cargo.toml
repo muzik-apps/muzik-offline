@@ -35,6 +35,8 @@ tauri-plugin-notification = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-http = "2"
 tauri-plugin-os = "2"
+window-vibrancy = "0.5.2"
+regex = "1.11.1"
 
 [dependencies.uuid]
 version = "1.11.0"

@@ -7,6 +7,7 @@ html{
     min-height: 623px;
     overflow-x: hidden;
     overflow: overlay;
+    background: transparent;
 }
 
 body {
@@ -23,6 +24,7 @@ body {
     -moz-user-select: none;     /* Firefox all */
     -ms-user-select: none;      /* IE 10+ */
     user-select: none;          /* Likely future */ 
+    background: transparent;
 }
 
 .app_container{
@@ -37,7 +39,6 @@ body {
     min-height: 623px;
     overflow: hidden;
     position: relative;
-    background-color: #252525;/*background*/
 
     .background_img{
         width: 100vw;
@@ -69,6 +70,10 @@ body {
         background: $blue_purple_gradient;
     }
 
+    .translucency_background{
+        background: transparent;
+    }
+
     .app_darkness_layer{
         width: 100vw;
         height: 100vh;
@@ -89,9 +94,17 @@ body {
     .color_layer{
         background: $bg-dark-overlay;
     }
+
+    .translucent_layer{
+        background: transparent;
+    }
 }
 
 .windows-app-config{
     border: 1.5px solid $songs-container-border-col;
     border-radius: 8px;
+}
+
+.no-background{
+    background: transparent;
 }

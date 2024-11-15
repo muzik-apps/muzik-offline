@@ -3,7 +3,7 @@ import { AppMusicPlayer, LeftSidebar, FSMusicPlayer, HeaderLinuxOS, HeaderMacOS,
 import { AllGenres, AllPlaylists, AllTracks, Settings, AlbumDetails, 
   AllAlbums, AllArtists, SearchPage, ArtistCatalogue, GenreView, PlaylistView } from "@pages/index";
 import { useEffect, useState } from "react";
-import { type } from '@tauri-apps/plugin-os';
+import { type, version } from '@tauri-apps/plugin-os';
 import { invoke } from "@tauri-apps/api/core";
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { HistoryNextFloating } from "@layouts/index";
@@ -44,10 +44,13 @@ const App = () => {
   function toggleFloatingHNState(){setFloatingHNState(!FloatingHNState);}
 
   async function checkOSType(){
-    const osType = type();
     let temp: SavedObject = local_store;
-    temp.OStype = osType.toString();
-    if(osType === OSTYPEenum.Linux)temp.AppThemeBlur = false;
+    temp.OStype = type().toString();
+    temp.OSversion = version();
+    if(temp.OStype === OSTYPEenum.Linux)temp.AppThemeBlur = false;
+    if(local_store.BGColour === "translucency_background"){
+      invoke("turn_on_translucency", {osVersion: temp.OSversion});
+    }
     setStore(temp);
   }
 
@@ -155,8 +158,8 @@ const App = () => {
           className={
             "app_container " + 
             (local_store.OStype === OSTYPEenum.Windows && ((!appFS && !isMaximised) || local_store.AlwaysRoundedCornersWindows === "Yes") ? " windows-app-config " : "") +
-            (local_store.OStype === OSTYPEenum.Linux || !local_store.AppThemeBlur ? " linux-config " : "")
-            
+            (local_store.OStype === OSTYPEenum.Linux || !local_store.AppThemeBlur ? " linux-config " : "") +
+            (local_store.BGColour === "translucency_background" ? " no-background" : "")
           } 
           data-theme={local_store.ThemeColour} 
           wallpaper-opacity={local_store.WallpaperOpacityAmount}
@@ -164,7 +167,8 @@ const App = () => {
             <div className={"background_img " + (wallpaperUUID ? "" : local_store.BGColour)}>
               {wallpaperUUID && (<img src={getWallpaperURL(wallpaperUUID)} alt="wallpaper"/>)}
             </div>
-            <div className={"app_darkness_layer " + (wallpaperUUID ? "image_layer" : "color_layer")}>
+            <div className={"app_darkness_layer " + (wallpaperUUID ? "image_layer" : 
+              local_store.BGColour === "translucency_background" ? "translucent_layer" : "color_layer")}>
               {
                 local_store.OStype ===  OSTYPEenum.Windows ? 
                   <HeaderWindows toggleSettings={toggleSettings}/>

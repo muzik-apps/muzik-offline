@@ -30,6 +30,7 @@
         .background_select{
             display: flex;
             margin-bottom: 10px;
+            flex-wrap: wrap;
 
             .button_select{
                 width: 150px;
@@ -73,6 +74,10 @@
 
             .blue_purple_gradient{
                 background: $blue_purple_gradient;
+            }
+
+            .translucency{ 
+                background: $btn-clickable; 
             }
         }
 
