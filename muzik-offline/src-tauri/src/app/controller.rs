@@ -1,6 +1,5 @@
 use tauri::LogicalSize;
 use tauri::Runtime;
-use window_vibrancy::{ apply_mica, clear_mica, apply_vibrancy, NSVisualEffectMaterial};
 
 #[tauri::command]
 pub fn toggle_miniplayer_view<R: Runtime>(window: tauri::Window<R>, open_mini_player: bool) {
@@ -61,6 +60,7 @@ pub fn turn_off_translucency<R: Runtime>(window: tauri::Window<R>, os_version: S
 #[cfg(target_os = "windows")]
 fn apply_translucency<R: Runtime>(window: &tauri::Window<R>, os_version: String){
     use regex::Regex;
+    use window_vibrancy::apply_mica;
 
     let is_match = match Regex::new(r"^10\.0\.(2[2-9]\d{3}|[3-9]\d{4}|\d{5})$"){
         Ok(reg) => {
@@ -93,6 +93,7 @@ fn apply_translucency<R: Runtime>(window: &tauri::Window<R>, os_version: String)
 #[cfg(target_os = "macos")]
 fn apply_translucency<R: Runtime>(window: &tauri::Window<R>, os_version: String){
     use regex::Regex;
+    use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
     let is_match = match Regex::new(r"^10\.(1[0-9]|[2-9][0-9])(\.\d+)?$"){
         Ok(reg) => {
@@ -122,6 +123,7 @@ fn apply_translucency<R: Runtime>(window: &tauri::Window<R>, os_version: String)
 #[cfg(target_os = "windows")]
 fn unapply_translucency<R: Runtime>(window: &tauri::Window<R>, os_version: String){
     use regex::Regex;
+    use window_vibrancy::clear_mica;
 
     let is_match = match Regex::new(r"^10\.0\.(2[2-9]\d{3}|[3-9]\d{4}|\d{5})$"){
         Ok(reg) => {
