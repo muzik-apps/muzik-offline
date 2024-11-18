@@ -9,7 +9,7 @@ import { local_wallpapers_db } from "@database/database";
 import { getThumbnailURL } from "@utils/index";
 import { invoke } from "@tauri-apps/api/core";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import 'react-loading-skeleton/dist/skeleton.css'
+import 'react-loading-skeleton/dist/skeleton.css';
 
 type WallpapersSelectionModalProps = {
     isOpen: boolean;

@@ -43,6 +43,7 @@ import DeleteDiretoryModal from './modals/DeleteDiretoryModal';
 import WallpapersSelectionModal from './modals/WallpapersSelectionModal';
 import RectangleSongBoxView from './cards/RectangleSongBoxView';
 import CheckboxComponent from './input/CheckboxComponent';
+import AirplayPinModal from './modals/AirplayPinModal';
 
 export {
     HeaderWindows, HeaderMacOS, HeaderLinuxOS, AppNavigator, LeftSidebar, AppMusicPlayer, FSMusicPlayer,
@@ -59,5 +60,5 @@ export {
     DeleteButton, DeleteSongFromPlaylistModal,
     EditPropertiesModal, EditSongButton,
     DateInput, DeleteDiretoryModal, WallpapersSelectionModal,
-    RectangleSongBoxView, CheckboxComponent
+    RectangleSongBoxView, CheckboxComponent, AirplayPinModal
 }

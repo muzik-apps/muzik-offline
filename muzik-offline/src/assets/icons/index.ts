@@ -53,6 +53,12 @@ import Trash from './General/Trash';
 import FolderSearch from './General/FolderSearch';
 import File from './General/File';
 import Check from './General/Check';
+import Computer from './Media/Computer';
+import Headphones from './Media/Headphones';
+import Laptop from './Media/Laptop';
+import Speaker from './Media/Speaker';
+import TV from './Media/TV';
+import WifiLoader from './Loaders/WifiLoader';
 
 export {
     Next_page, Prev_page, Search, 
@@ -68,5 +74,6 @@ export {
     NullArtistCoverOne, NullArtistCoverTwo, NullArtistCoverThree, NullArtistCoverFour,
     CheckGreen, CrossRed, InformationCircleContainedOrange, InformationCircleContainedBlue,
     EditImage, Edit, Overlap, Minimize,
-    ListIcon, AlertTriangle, Trash, FolderSearch, File , Check
+    ListIcon, AlertTriangle, Trash, FolderSearch, File , Check,
+    Computer, Headphones, Laptop, Speaker, TV, WifiLoader
 }
