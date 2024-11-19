@@ -3,6 +3,7 @@ import { local_albums_db, local_artists_db, local_genres_db, local_playlists_db,
 import { Song, album, artist, genre, playlist } from "@muziktypes/index";
 import { useHistorySongs, usePortStore, useUpcomingSongs } from "@store/index";
 import { invoke } from "@tauri-apps/api/core";
+import { Child, Command } from "@tauri-apps/plugin-shell";
 
 export const fetch_library = async(fresh_library: boolean): Promise<{status: string, message: string}> => {
     const res_songs = await fetch_songs_metadata(fresh_library);
@@ -242,4 +243,16 @@ export function areArraysDifferent(array1: string[], array2: string[]) {
 
     // Check if any item is not present in both arrays
     return array1.some(item => !array2.includes(item));
+}
+
+export async function getCommandProgram(shell: Command<string> | null, programName: string): Promise<Command<string>> {
+    if(shell !== null)return shell;
+    const cmd = Command.sidecar(programName);
+    return cmd;
+}
+
+export async function getChildProcess(shell: Command<string>, child: Child | null): Promise<Child> {
+    if(child !== null)return child;
+    const childProcess = shell.spawn();
+    return childProcess;
 }

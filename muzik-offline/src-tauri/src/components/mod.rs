@@ -4,4 +4,3 @@ pub mod audio_manager;
 pub mod event_payload;
 pub mod genre;
 pub mod song;
-pub mod airplay;

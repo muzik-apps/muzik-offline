@@ -3,6 +3,7 @@ import { Player } from "@database/player";
 import { SavedObject } from "@database/saved_object";
 import { viewableSideEl } from "@database/side_elements";
 import { toast } from "@muziktypes/index";
+import { Child, Command } from "@tauri-apps/plugin-shell";
 
 export interface MaximisedState {
     isMaximised: boolean;
@@ -79,4 +80,18 @@ export interface QueueInterface{
     push_front: (song: number) => void;
     pop_back: () => void;
     setQueue: (setTo: number[]) => void;
+}
+
+export interface AirplayManagerInterface{
+    airplay_child: Child | null;
+    airplay_shell: Command<string> | null;
+    setMembers: (child: Child, shell: Command<string>) => void;
+    unsetMembers: () => void;
+}
+
+export interface ChromeCastManagerInterface{
+    cast_child: Child | null;
+    cast_shell: Command<string> | null;
+    setMembers: (child: Child, shell: Command<string>) => void;
+    unsetMembers: () => void;
 }

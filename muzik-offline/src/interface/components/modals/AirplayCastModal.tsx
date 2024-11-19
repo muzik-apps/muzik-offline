@@ -6,8 +6,10 @@ import AirplayPinModal from "./AirplayPinModal";
 import { Check, Computer, Headphones, Laptop, Speaker, TV, WifiLoader } from "@assets/icons";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css';
-import { useToastStore } from "@store/index";
+import { useAirplayManager, useToastStore, useChromeCastManager } from "@store/index";
 import { toastType } from "@muziktypes/index";
+import { Child, ChildProcess, Command } from '@tauri-apps/plugin-shell';
+import { getChildProcess, getCommandProgram } from "@utils/index";
 
 type AirplayCastModalProps = {
     isOpen: boolean;
@@ -15,6 +17,7 @@ type AirplayCastModalProps = {
 }
 
 type Device = {
+    id: string;
     name: string;
     model: string;
     address: string;
@@ -29,99 +32,95 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
     const [selectedChromecastDevice, setSelectedChromecastDevice] = useState<Device | null>(null);
     const [isScanning, setIsScanning] = useState(false);
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
+    const { airplay_child, airplay_shell, setAirplayMembers, } = useAirplayManager((state) => { return { 
+        airplay_child: state.airplay_child, 
+        airplay_shell: state.airplay_shell, 
+        setAirplayMembers: state.setMembers,
+    }; });
+    const { cast_child, cast_shell, setChromecastMembers } = useChromeCastManager((state) => { return { 
+        cast_child: state.cast_child, 
+        cast_shell: state.cast_shell, 
+        setChromecastMembers: state.setMembers,
+    }; });
 
-    function scan(){
-        setIsScanning(true);
-        //scan for airplay devices
-        //simulate fetching devices
-        setTimeout(() => {
-            setIsScanning(false);
-            setAirplayDevices(new Map([
-                [ "10.0.0.1", {
-                        name: "Living Room TV",
-                        model: "TV",
-                        address: "10.0.0.1",
+    async function getShellAndChild(type: "Airplay" | "Chromecast"){
+        if(type === "Airplay"){
+            if(airplay_shell !== null && airplay_child !== null) return {shell: airplay_shell, child: airplay_child};
+            const airplaySHL = await getCommandProgram(airplay_shell, "airplay");
+            const child = await getChildProcess(airplaySHL, airplay_child);
+            setAirplayMembers(child, airplaySHL);
+            return {shell: airplaySHL, child: child};
+        }
+        else{
+            if(cast_shell !== null && cast_child !== null) return {shell: cast_shell, child: cast_child};
+            const chromecastSHL = await getCommandProgram(cast_shell, "chromecast");
+            const child = await getChildProcess(chromecastSHL, cast_child);
+            setChromecastMembers(child, chromecastSHL);
+            return {shell: chromecastSHL, child: child};
+        }
+    }
+
+    async function scan(){
+        try{
+            setIsScanning(true);
+            const airplay_processes = await getShellAndChild("Airplay");
+            //scan for airplay devices
+            airplay_processes.child.write("scan\n");
+            airplay_processes.shell.execute().then((output: ChildProcess<string>) => {
+                const devices = output.stdout;
+                // incoming format is {"status": "success", "message": "any message", "data": [{"id", "name", "address", "model"}]}
+                const res = JSON.parse(devices);
+                if(res.status === "success"){
+                    setAirplayDevices(new Map(res.data.map((device: {
+                        id: string;
+                        name: string;
+                        address: string;
+                        model: string;
+                    }) => [device.address, {
+                        id: device.id,
+                        name: device.name,
+                        model: device.model,
+                        address: device.address,
                         loading: false,
                         connected: false
-                    }
-                ],
-                [ "10.0.0.2", {
-                        name: "HomePod",
-                        model: "Speaker",
-                        address: "10.0.0.2",
-                        loading: false,
-                        connected: false
-                    }
-                ],
-                [ "10.0.0.3", {
-                        name: "Bedroom Speaker",
-                        model: "Speaker",
-                        address: "10.0.0.3",
-                        loading: false,
-                        connected: false
-                    }
-                ],
-                [ "10.0.0.4", {
-                        name: "Office Computer",
-                        model: "Computer",
-                        address: "10.0.0.4",
-                        loading: false,
-                        connected: false
-                    }
-                ],
-                [ "10.0.0.5", {
-                    name: "John Doe's Airpods Pro",
-                    model: "Airpod Pro 2",
-                    address: "10.0.0.5",
-                    loading: false,
-                    connected: false
+                    }])));
                 }
-            ],
-            ]));
-            setChromecastDevices(new Map([
-                [ "10.0.0.1", {
-                        name: "Living Room TV",
-                        model: "TV",
-                        address: "10.0.0.1",
+                else{
+                    setToast({title: "Error", message: res.message, type: toastType.error, timeout: 3000});
+                }
+            });
+            /*
+            //scan for chromecast devices
+            const chromecast_processes = await getShellAndChild("Chromecast");
+            chromecast_processes.child.write("scan\n");
+            chromecast_processes.shell.execute().then((output: ChildProcess<string>) => {
+                const devices = output.stdout;
+                // incoming format is {"status": "success", "message": "any message", "data": [{"id", "name", "address", "model"}]}
+                const res = JSON.parse(devices);
+                if(res.status === "success"){
+                    setChromecastDevices(new Map(res.data.map((device: {
+                        id: string;
+                        name: string;
+                        address: string;
+                        model: string;
+                    }) => [device.address, {
+                        id: device.id,
+                        name: device.name,
+                        model: device.model,
+                        address: device.address,
                         loading: false,
                         connected: false
-                    }
-                ],
-                [ "10.0.0.2", {
-                        name: "HomePod",
-                        model: "Speaker",
-                        address: "10.0.0.2",
-                        loading: false,
-                        connected: false
-                    }
-                ],
-                [ "10.0.0.3", {
-                        name: "Bedroom Speaker",
-                        model: "Speaker",
-                        address: "10.0.0.3",
-                        loading: false,
-                        connected: false
-                    }
-                ],
-                [ "10.0.0.4", {
-                        name: "Office Computer",
-                        model: "Computer",
-                        address: "10.0.0.4",
-                        loading: false,
-                        connected: false
-                    }
-                ],
-                [ "10.0.0.5", {
-                        name: "John Doe's Airpods Pro",
-                        model: "Airpod Pro 2",
-                        address: "10.0.0.5",
-                        loading: false,
-                        connected: false
-                    }
-                ],
-            ]));
-        }, 2000);
-        //scan for chromecast devices
+                    }])));
+                }
+                else{
+                    setToast({title: "Error", message: res.message, type: toastType.error, timeout: 3000});
+                }
+            });*/
+            setIsScanning(false);
+        }catch(e: any){
+            setToast({title: "Error", message: e, type: toastType.error, timeout: 3000});
+            return {shell: null, child: null};
+        }
     }
 
     function connectAirplay(device: Device){
@@ -236,6 +235,7 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
                 title={selectedAirplayDevice?.name ?? ""}
                 isOpen={selectedAirplayDevice !== null}
                 Icon={() => GetIcon(selectedAirplayDevice ?? {
+                    id: "",
                     name: "",
                     model: "",
                     address: "",
@@ -243,6 +243,7 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
                     connected: false
                 })} 
                 onAirPlayPin={(pin) => connectPinAirplay(selectedAirplayDevice ?? {
+                    id: "",
                     name: "",
                     model: "",
                     address: "",

@@ -12,7 +12,6 @@ mod utils;
 
 use commands::general_commands::get_server_port;
 use commands::refresh_paths_at_start::{detect_deleted_songs, refresh_paths};
-use components::airplay::Airplay;
 use components::audio_manager::BackendStateManager;
 use constants::null_cover_null::NULL_COVER_NULL;
 use database::db_api::{
@@ -35,12 +34,7 @@ use tauri::{AppHandle, Emitter, Manager};
 use tokio::sync::mpsc;
 
 use crate::app::controller::{drag_app_window, toggle_app_pin, toggle_miniplayer_view};
-use crate::commands::{
-    metadata_edit::edit_song_metadata, metadata_retriever::get_all_songs,
-    airplay::{scan_airplay, connect_airplay, pair_airplay, enter_pin_airplay,
-        disconnect_airplay, stream_file_airplay, resume_airplay, pause_airplay,
-        stop_airplay, ctrlc_airplay}
-};
+use crate::commands::{metadata_edit::edit_song_metadata, metadata_retriever::get_all_songs};
 
 use crate::commands::general_commands::{
     get_audio_dir, open_in_file_manager, resize_frontend_image_to_fixed_height,
@@ -82,10 +76,6 @@ fn main() {
         .manage(Mutex::new(
             DiscordRpc::new().expect("failed to initialize discord rpc"),
         ))
-        .manage(Arc::new(Mutex::new(Airplay{
-            reviever: None,
-            child: None,
-        })))
         .setup(setup_app)
         .invoke_handler(tauri::generate_handler![
             // WINDOW CONTROL
@@ -95,10 +85,6 @@ fn main() {
             get_all_songs, open_in_file_manager, set_volume,
             get_audio_dir, edit_song_metadata, get_server_port,
             refresh_paths, detect_deleted_songs,
-            // AIRPLAY
-            scan_airplay, connect_airplay, pair_airplay, enter_pin_airplay,
-            disconnect_airplay, stream_file_airplay, resume_airplay, 
-            pause_airplay, stop_airplay, ctrlc_airplay,
             // MUSIC PLAYER
             load_and_play_song_from_path, load_a_song_from_path, pause_song,
             resume_playing, stop_song, seek_to, seek_by, get_song_position,
