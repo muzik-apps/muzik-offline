@@ -5,58 +5,58 @@ import sys
 from airplay_manager import AirplayManager
 from response import createResponse
 
-async def handle_command(command, manager: AirplayManager):
+async def handle_command(command: str, manager: AirplayManager):
     """Handle commands by interacting with the ConnectionManager."""
     if command == "scan":
         devices = await manager.scan_devices()
         return createResponse("success", "devices found", devices)
-    elif command == "connect":
-        device_identifier = await manager.async_input("Enter device identifier: ")
+    elif command.startswith("connect"):
+        """command = "connect <device_identifier>"."""
+        device_identifier = command[8:].strip()
         try:
-            await manager.connect(device_identifier.strip())
+            await manager.connect(device_identifier)
             return createResponse("success", "connected", [])
         except Exception as ex:
             return createResponse("error", str(ex), [])
-    elif command == "connect-pair":
-        device_identifier = await manager.async_input("Enter device identifier: ")
+    elif command.startswith("pair"):
+        """command = "pair <device_identifier>"."""
+        device_identifier = command[5:].strip()
         try:
-            await manager.pair_and_connect(device_identifier.strip())
+            await manager.pair_and_connect(device_identifier)
             return createResponse("success", "connected", [])
         except Exception as ex:
             return createResponse("error", str(ex), [])
-    elif command == "disconnect":
-        device_identifier = await manager.async_input("Enter device identifier: ")
+    elif command.startswith("disconnect"):
+        """command = "disconnect <device_identifier>"."""
+        device_identifier = command[11:].strip()
         try:
-            await manager.disconnect(device_identifier.strip())
+            await manager.disconnect(device_identifier)
             return createResponse("success", "disconnected", [])
         except Exception as ex:
             return createResponse("error", str(ex), [])
-    elif command == "stream":
-        device_identifier = await manager.async_input("Enter device identifier: ")
-        file_path = await manager.async_input("Enter file path: ")
+    elif command.startswith("stream"):
+        """command = "stream <file_path>"."""
+        file_path = command[6:].strip()
         try:
-            await manager.stream(device_identifier.strip(), file_path.strip())
+            await manager.stream(file_path)
             return createResponse("success", "streaming", [])
         except Exception as ex:
             return createResponse("error", str(ex), [])
     elif command == "resume":
-        device_identifier = await manager.async_input("Enter device identifier: ")
         try:
-            await manager.resume(device_identifier.strip())
+            await manager.resume()
             return createResponse("success", "resumed", [])
         except Exception as ex:
             return createResponse("error", str(ex), [])
     elif command == "pause":
-        device_identifier = await manager.async_input("Enter device identifier: ")
         try:
-            await manager.pause(device_identifier.strip())
+            await manager.pause()
             return createResponse("success", "paused", [])
         except Exception as ex:
             return createResponse("error", str(ex), [])
     elif command == "stop":
-        device_identifier = await manager.async_input("Enter device identifier: ")
         try:
-            await manager.stop(device_identifier.strip())
+            await manager.stop()
             return createResponse("success", "stopped", [])
         except Exception as ex:
             return createResponse("error", str(ex), [])

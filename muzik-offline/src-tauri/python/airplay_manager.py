@@ -66,37 +66,25 @@ class AirplayManager:
         else:
             raise ValueError("Device not connected")
 
-    async def stream(self, device_identifier: str, file_path: str):
-        """Stream a file to a device."""
-        if device_identifier not in self.connections:
-            raise ValueError("Device not connected")
+    async def stream(self, file_path: str):
+        """Stream a file to all connected devices."""
+        for atv in self.connections.values():
+            await atv.stream.play_url(file_path)
 
-        atv = self.connections[device_identifier]
-        await atv.stream.stream_file(file_path)
+    async def resume(self):
+        """Resume playback on all connected devices."""
+        for atv in self.connections.values():
+            await atv.remote_control.play()
 
-    async def resume(self, device_identifier: str):
-        """Resume playback on a device."""
-        if device_identifier not in self.connections:
-            raise ValueError("Device not connected")
+    async def pause(self):
+        """Pause playback on all connected devices."""
+        for atv in self.connections.values():
+            await atv.remote_control.pause()
 
-        atv = self.connections[device_identifier]
-        await atv.remote_control.play()
-
-    async def pause(self, device_identifier: str):
-        """Pause playback on a device."""
-        if device_identifier not in self.connections:
-            raise ValueError("Device not connected")
-
-        atv = self.connections[device_identifier]
-        await atv.remote_control.pause()
-
-    async def stop(self, device_identifier: str):
-        """Stop playback on a device."""
-        if device_identifier not in self.connections:
-            raise ValueError("Device not connected")
-
-        atv = self.connections[device_identifier]
-        await atv.remote_control.stop()
+    async def stop(self):
+        """Stop playback on all connected devices."""
+        for atv in self.connections.values():
+            await atv.remote_control.stop()
 
     def cleanup(self):
         """Close all connections."""

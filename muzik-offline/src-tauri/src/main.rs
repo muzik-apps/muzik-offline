@@ -12,6 +12,7 @@ mod utils;
 
 use commands::general_commands::get_server_port;
 use commands::refresh_paths_at_start::{detect_deleted_songs, refresh_paths};
+use components::airplay::Airplay;
 use components::audio_manager::BackendStateManager;
 use constants::null_cover_null::NULL_COVER_NULL;
 use database::db_api::{
@@ -34,7 +35,12 @@ use tauri::{AppHandle, Emitter, Manager};
 use tokio::sync::mpsc;
 
 use crate::app::controller::{drag_app_window, toggle_app_pin, toggle_miniplayer_view};
-use crate::commands::{metadata_edit::edit_song_metadata, metadata_retriever::get_all_songs};
+use crate::commands::{
+    metadata_edit::edit_song_metadata, metadata_retriever::get_all_songs,
+    airplay::{scan_airplay, connect_airplay, pair_airplay, enter_pin_airplay,
+        disconnect_airplay, stream_file_airplay, resume_airplay, pause_airplay,
+        stop_airplay, ctrlc_airplay}
+};
 
 use crate::commands::general_commands::{
     get_audio_dir, open_in_file_manager, resize_frontend_image_to_fixed_height,
@@ -76,52 +82,38 @@ fn main() {
         .manage(Mutex::new(
             DiscordRpc::new().expect("failed to initialize discord rpc"),
         ))
+        .manage(Arc::new(Mutex::new(Airplay{
+            reviever: None,
+            child: None,
+        })))
         .setup(setup_app)
         .invoke_handler(tauri::generate_handler![
             // WINDOW CONTROL
-            toggle_app_pin,
-            toggle_miniplayer_view,
-            drag_app_window,
-            update_metadata,
-            set_player_state,
+            toggle_app_pin, toggle_miniplayer_view, drag_app_window,
+            update_metadata, set_player_state,
             // GENERAL COMMANDS
-            get_all_songs,
-            open_in_file_manager,
-            set_volume,
-            get_audio_dir,
-            edit_song_metadata,
-            get_server_port,
-            refresh_paths,
-            detect_deleted_songs,
+            get_all_songs, open_in_file_manager, set_volume,
+            get_audio_dir, edit_song_metadata, get_server_port,
+            refresh_paths, detect_deleted_songs,
+            // AIRPLAY
+            scan_airplay, connect_airplay, pair_airplay, enter_pin_airplay,
+            disconnect_airplay, stream_file_airplay, resume_airplay, 
+            pause_airplay, stop_airplay, ctrlc_airplay,
             // MUSIC PLAYER
-            load_and_play_song_from_path,
-            load_a_song_from_path,
-            pause_song,
-            resume_playing,
-            stop_song,
-            seek_to,
-            seek_by,
-            get_song_position,
+            load_and_play_song_from_path, load_a_song_from_path, pause_song,
+            resume_playing, stop_song, seek_to, seek_by, get_song_position,
             // UTILS
             resize_frontend_image_to_fixed_height,
             // MUSIC LIST ORGANIZER
-            mlo_set_shuffle_list,
-            mlo_set_repeat_list,
-            mlo_reset_and_set_remaining_keys,
-            mlo_get_next_batch_as_size,
+            mlo_set_shuffle_list, mlo_set_repeat_list,
+            mlo_reset_and_set_remaining_keys, mlo_get_next_batch_as_size,
             // DATABASE API
-            get_all_songs_in_db,
-            get_songs_not_in_vec,
-            get_all_albums,
-            get_albums_not_in_vec,
-            get_all_artists,
-            get_artists_not_in_vec,
-            get_all_genres,
-            get_genres_not_in_vec,
-            add_new_wallpaper_to_db,
-            create_playlist_cover,
-            delete_playlist_cover,
-            delete_thumbnail_and_wallpaper,
+            get_all_songs_in_db, get_songs_not_in_vec,
+            get_all_albums, get_albums_not_in_vec,
+            get_all_artists, get_artists_not_in_vec,
+            get_all_genres, get_genres_not_in_vec,
+            add_new_wallpaper_to_db, create_playlist_cover,
+            delete_playlist_cover, delete_thumbnail_and_wallpaper,
             // DISCORD RPC
             allow_connection_and_connect_to_discord_rpc,
             attempt_to_connect_if_possible,
@@ -160,7 +152,6 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let shared_audio_manager = Arc::clone(&app.state::<Arc<Mutex<BackendStateManager>>>());
     let shared_db_manager = Arc::clone(&app.state::<Arc<Mutex<DbManager>>>());
     let window = app.handle().clone();
-
     // Set up the image route
     let cover_image_route = create_image_route(shared_audio_manager.clone());
     let image_route_with_uuid = create_image_route_with_uuid(shared_db_manager.clone());
