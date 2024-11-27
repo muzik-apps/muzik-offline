@@ -6,3 +6,6 @@
 /db/
 .env
 OUTDIR/
+audio-cast/build/
+audio-cast/dist/
+audio-cast/__pycache__/

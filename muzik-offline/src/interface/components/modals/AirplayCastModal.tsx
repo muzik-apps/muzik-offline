@@ -46,14 +46,19 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
     async function getShellAndChild(type: "Airplay" | "Chromecast"){
         if(type === "Airplay"){
             if(airplay_shell !== null && airplay_child !== null) return {shell: airplay_shell, child: airplay_child};
+            console.log("Creating airplay shell and child");
             const airplaySHL = await getCommandProgram(airplay_shell, "airplay");
+            const output = await airplaySHL.execute();
+            console.log(output);
+            console.log(airplaySHL);
             const child = await getChildProcess(airplaySHL, airplay_child);
+            console.log(child);
             setAirplayMembers(child, airplaySHL);
             return {shell: airplaySHL, child: child};
         }
         else{
             if(cast_shell !== null && cast_child !== null) return {shell: cast_shell, child: cast_child};
-            const chromecastSHL = await getCommandProgram(cast_shell, "chromecast");
+            const chromecastSHL = await getCommandProgram(cast_shell, "audio-cast/dist/chromecast/chromecast");
             const child = await getChildProcess(chromecastSHL, cast_child);
             setChromecastMembers(child, chromecastSHL);
             return {shell: chromecastSHL, child: child};
@@ -63,7 +68,9 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
     async function scan(){
         try{
             setIsScanning(true);
+            console.log("Scanning for devices");
             const airplay_processes = await getShellAndChild("Airplay");
+            console.log(airplay_processes);
             //scan for airplay devices
             airplay_processes.child.write("scan\n");
             airplay_processes.shell.execute().then((output: ChildProcess<string>) => {
@@ -119,7 +126,8 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
             setIsScanning(false);
         }catch(e: any){
             setToast({title: "Error", message: e, type: toastType.error, timeout: 3000});
-            return {shell: null, child: null};
+            console.log(e);
+            setIsScanning(false);
         }
     }
 

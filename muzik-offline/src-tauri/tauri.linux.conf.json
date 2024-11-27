@@ -39,7 +39,10 @@
           "libasound2-dev"
         ]
       }
-    }
+    },
+    "externalBin": [
+      "audio-cast/dist/airplay/airplay"
+    ]
   },
   "productName": "muzik-offline",
   "mainBinaryName": "muzik-offline",

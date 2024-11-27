@@ -260,7 +260,7 @@ export async function getCommandProgram(shell: Command<string> | null, programNa
 
 export async function getChildProcess(shell: Command<string>, child: Child | null): Promise<Child> {
     if(child !== null)return child;
-    const childProcess = shell.spawn();
+    const childProcess = await shell.spawn();
     return childProcess;
 }
 

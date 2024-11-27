@@ -83,7 +83,7 @@ export {
     CheckGreen, CrossRed, InformationCircleContainedOrange, InformationCircleContainedBlue,
     EditImage, Edit, Overlap, Minimize,
     ListIcon, AlertTriangle, Trash, FolderSearch, File , Check,
-    Computer, Headphones, Laptop, Speaker, TV, WifiLoader
+    Computer, Headphones, Laptop, Speaker, TV, WifiLoader,
     WindowsCloseIcon, WindowsMaximizeIcon, WindowsMinimizeIcon, WindowsRestoreIcon,
     LinuxClose, LinuxMaximize, LinuxMinimize, FolderPlus
 }

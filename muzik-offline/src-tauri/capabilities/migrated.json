@@ -19,7 +19,9 @@
     "core:window:allow-set-fullscreen",
     "core:window:allow-start-dragging",
     "core:window:allow-toggle-maximize",
+    "shell:allow-execute",
     "shell:allow-open",
+    "shell:allow-spawn",
     "dialog:allow-open",
     {
       "identifier": "http:default",
