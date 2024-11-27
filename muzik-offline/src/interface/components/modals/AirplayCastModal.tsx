@@ -8,7 +8,7 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css';
 import { useAirplayManager, useToastStore, useChromeCastManager } from "@store/index";
 import { toastType } from "@muziktypes/index";
-import { Child, ChildProcess, Command } from '@tauri-apps/plugin-shell';
+import { ChildProcess } from '@tauri-apps/plugin-shell';
 import { getChildProcess, getCommandProgram } from "@utils/index";
 
 type AirplayCastModalProps = {
