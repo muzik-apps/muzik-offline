@@ -4,7 +4,7 @@ import { Song, toastType } from "@muziktypes/index";
 import "@styles/components/modals/EditPropertiesModal.scss";
 import { invoke } from "@tauri-apps/api/core";
 import { modal_variants } from "@content/index";
-import { getCoverURL, getRandomCover } from "@utils/index";
+import { getCoverURL, getNullRandomCover } from "@utils/index";
 import { useToastStore } from "@store/index";
 import { local_songs_db } from "@database/database";
 import {DateInput} from "@components/index";
@@ -128,7 +128,7 @@ const EditPropertiesModal: FunctionComponent<EditPropertiesModalProps> = (props:
                                 <div className="img-container">
                                     {
                                         cover !== null ? <img src={cover} alt="img" /> :
-                                        song.cover_uuid === null ? (getRandomCover(song.id))() :
+                                        song.cover_uuid === null ? <img src={getCoverURL(getNullRandomCover(song.id))} alt="song-cover" /> :
                                         <img src={getCoverURL(song.cover_uuid)} alt="img" />
                                     }
                                 </div>

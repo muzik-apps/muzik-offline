@@ -9,7 +9,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { HistoryNextFloating } from "@layouts/index";
 import { OSTYPEenum, Payload, toastType } from "@muziktypes/index";
 import { AnimatePresence } from "framer-motion";
-import { useWallpaperStore, useSavedObjectStore, useIsMaximisedStore, useIsFSStore, usePortStore, useFisrstRunStore, useDirStore, useToastStore } from "@store/index";
+import { useWallpaperStore, useSavedObjectStore, useIsMaximisedStore, useIsFSStore, usePortStore, useDirStore, useToastStore } from "@store/index";
 import { SavedObject } from "@database/saved_object";
 import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/plugin-notification';
 import { MiniPlayer } from "@App/index";
@@ -29,8 +29,8 @@ const App = () => {
   const { wallpaperUUID } = useWallpaperStore((state) => { return { wallpaperUUID: state.wallpaperUUID,}; });
   const { appFS } = useIsFSStore((state) => { return { appFS: state.isFS}; });
   const { setPort } = usePortStore((state) => { return { port: state.port, setPort: state.setPort}; });
-  const { firstRun, setFirstRun } = useFisrstRunStore((state) => { return { firstRun: state.firstRun, setFirstRun: state.setFirstRun}; });
-  const { dir, setDir } = useDirStore((state) => { return { dir: state.dir, setDir: state.setDir}; });
+  //const { firstRun, setFirstRun } = useFisrstRunStore((state) => { return { firstRun: state.firstRun, setFirstRun: state.setFirstRun}; });
+  const { dir } = useDirStore((state) => { return { dir: state.dir}; });
   const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
 
   function closeSetting(){if(openSettings === true)setOpenSettings(false);}
@@ -95,6 +95,8 @@ const App = () => {
 
   async function check_paths_for_new_music(){
     let paths = dir.Dir;
+    /*
+    // going to decide a better way to handle this
     if(firstRun){
       const audio_dir: any = await invoke("get_audio_dir");
       // append the audio directory to the directories array
@@ -103,8 +105,12 @@ const App = () => {
         paths.push(audio_dir);
       }
       setFirstRun(false);
-    }
-    invoke("refresh_paths", { pathsAsJsonArray: JSON.stringify(paths), compressImageOption: local_store.CompressImage === "Yes" ? true : false })
+    }*/
+    invoke("refresh_paths", { 
+      athsAsJsonArray: JSON.stringify(paths), 
+      compressImageOption: local_store.CompressImage === "Yes" ? true : false,
+      maxDepth: local_store.DirectoryScanningDepth
+    })
     .then(async(response: any) => {
       if(response === "No new songs detected")return;
       const res = await fetch_library(false);
@@ -154,7 +160,8 @@ const App = () => {
         <div 
           className={
             "app_container " + 
-            (local_store.OStype === OSTYPEenum.Windows && ((!appFS && !isMaximised) || local_store.AlwaysRoundedCornersWindows === "Yes") ? " windows-app-config " : "") +
+            ((local_store.OStype === OSTYPEenum.Windows || local_store.OStype === OSTYPEenum.Linux) && 
+              ((!appFS && !isMaximised) || local_store.AlwaysRoundedCornersWindows === "Yes") ? " windows-app-config " : "") +
             (local_store.OStype === OSTYPEenum.Linux || !local_store.AppThemeBlur ? " linux-config " : "")
             
           } 

@@ -119,21 +119,36 @@ const AdvancedSettings = () => {
                     </div>)
                 }
                 <div className="setting">
-                    <h3>Create a backup of your library(may take some time)</h3>
-                    <div className="setting_dropdown">
-                        <motion.div className="setting_dropdown" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() => {}}>
-                            <h4>Create backup</h4>
-                        </motion.div>
-                    </div>
+                    <h3>Max folder depth to scan between 1 and 50(Note larger values will take longer)</h3>
+                    <input type="number" value={local_store.DirectoryScanningDepth} onChange={(e) => {
+                        // clamp the value to 1-50
+                        if(e.target.value === "") e.target.value = "0";
+                        else if(parseInt(e.target.value) < 1) e.target.value = "1";
+                        else if(parseInt(e.target.value) > 50) e.target.value = "50";
+                        else if(e.target.value.startsWith("0")) e.target.value = e.target.value.slice(1);
+                        let temp: SavedObject = local_store;
+                        temp.DirectoryScanningDepth = parseInt(e.target.value);
+                        setStore(temp);
+                    }}/>
                 </div>
-                <div className="setting">
-                    <h3>Import library backup(may take some time)</h3>
-                    <div className="setting_dropdown">
-                        <motion.div className="setting_dropdown" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() => {}}>
-                            <h4>Import backup</h4>
-                        </motion.div>
+                {/*
+                    <div className="setting">
+                        <h3>Create a backup of your library(may take some time)</h3>
+                        <div className="setting_dropdown">
+                            <motion.div className="setting_dropdown" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() => {}}>
+                                <h4>Create backup</h4>
+                            </motion.div>
+                        </div>
                     </div>
-                </div>
+                    <div className="setting">
+                        <h3>Import library backup(may take some time)</h3>
+                        <div className="setting_dropdown">
+                            <motion.div className="setting_dropdown" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={() => {}}>
+                                <h4>Import backup</h4>
+                            </motion.div>
+                        </div>
+                    </div>
+                */}
             </div>
         </div>
     )

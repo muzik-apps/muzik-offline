@@ -1,9 +1,9 @@
 import {FunctionComponent, useEffect, useRef, useState} from "react";
 import "@styles/components/music/AppMusicPlayer.scss";
-import {ChromeCast, ListIcon, NullCoverNull, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
+import {ChromeCast, ListIcon, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
 import { motion } from "framer-motion";
 import { useIsFSStore, useIsMaximisedStore, usePlayerStore, usePlayingPosition, usePlayingPositionSec, useSavedObjectStore } from "store";
-import { getCoverURL, getRandomCover, secondsToTimeFormat } from "@utils/index";
+import { getCoverURL, getNullRandomCover, secondsToTimeFormat } from "@utils/index";
 import { invoke } from "@tauri-apps/api/core";
 import { changeVolumeLevel, changeSeekerPosition, changeVolumeLevelBtnPress, dragSeeker, pauseSong, playSong, repeatToggle, shuffleToggle, setVolumeLevel, reconfigurePlayer_AtEndOfSong, playPreviousSong, playNextSong, changeSeekerPositionBtnPress } from "@utils/playerControl";
 import { AirplayCastModal, MusicPopOver } from "@components/index";
@@ -24,7 +24,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
     const {playingPosition, setplayingPosition} = usePlayingPosition((state) => { return {playingPosition: state.position, setplayingPosition: state.setPosition}; });
     const { isMaximised } = useIsMaximisedStore((state) => { return { isMaximised: state.isMaximised}; });
     const { appFS } = useIsFSStore((state) => { return { appFS: state.isFS}; });
-    const intervalIdRef = useRef<number | NodeJS.Timeout>();
+    const intervalIdRef = useRef<ReturnType<typeof setInterval>>();
     
     function changeVolume(event : any){changeVolumeLevel(event.target.value);}
 
@@ -85,18 +85,20 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                 (local_store.OStype === OSTYPEenum.Windows && ((!appFS && !isMaximised) || local_store.AlwaysRoundedCornersWindows === "Yes") ? " app-music-player-windows-config" : "")}>
                 <div className="music_cover_art">
                     {!local_store.PlayerBar && !Player.playingSongMetadata
-                        && <NullCoverNull />}{/**no song is loaded onto the player */}
+                        && <img src={getCoverURL("NULL_COVER_NULL")} alt="song-art" loading="lazy"/>}{/**no song is loaded onto the player */}
                     {!local_store.PlayerBar && Player.playingSongMetadata && Player.playingSongMetadata.cover_uuid
                         && (<img src={getCoverURL(Player.playingSongMetadata.cover_uuid)} alt="cover-art" />)}{/**there is cover art */}
                     {!local_store.PlayerBar && Player.playingSongMetadata && !Player.playingSongMetadata.cover_uuid
-                        && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
+                        && <img src={getCoverURL(getNullRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))} alt="song-cover" />}
+                        {/**the cover art is null */}
                 </div>
                 <div className="music_art_bg_layer">
                     <div className="art_and_song_details">
                         <motion.div className="mini_art_container" whileTap={{scale: 0.98}} onMouseEnter={() => setOpenMusicPopOver(true)}>
-                                {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
+                                {!Player.playingSongMetadata && <img src={getCoverURL("NULL_COVER_NULL")} alt="song-art" loading="lazy"/>}{/**no song is loaded onto the player */}
                                 {Player.playingSongMetadata && Player.playingSongMetadata.cover_uuid && (<img src={getCoverURL(Player.playingSongMetadata.cover_uuid)} alt="song-art" />)}{/**there is cover art */}
-                                {Player.playingSongMetadata && !Player.playingSongMetadata.cover_uuid && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
+                                {Player.playingSongMetadata && !Player.playingSongMetadata.cover_uuid && <img src={getCoverURL(getNullRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))} alt="song-cover" />}
+                                {/**the cover art is null */}
                         </motion.div>
                         <div className="song_details">
                             <h2>{Player.playingSongMetadata ? Player.playingSongMetadata.name : "No song is playing"}</h2>

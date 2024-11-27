@@ -2,11 +2,15 @@ import { CheckboxComponent, RectangleSongBoxView } from "@components/index";
 import { local_songs_db } from "@database/database";
 import { Song } from "@muziktypes/index";
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { FunctionComponent, useEffect, useRef, useState } from "react";
 import { ViewportList } from "react-viewport-list";
 import "@styles/layouts/ExportSettings.scss";
 
-const ExportSettings = () => {
+type ExportSettingsProps = {
+    openModal: (uuids: string[]) => void;
+}
+
+const ExportSettings: FunctionComponent<ExportSettingsProps> = (props: ExportSettingsProps) => {
     const [search, setSearch] = useState<string>("");
     const [songs, setSongs] = useState<Song[]>([]);
     const [selected, setSelected] = useState<Set<number>>(new Set());
@@ -18,13 +22,14 @@ const ExportSettings = () => {
         local_songs_db.songs.where("title").startsWithIgnoreCase(e.target.value).toArray().then((value) => setSongs(value));
     }
 
-    function clearSearch(){
+    /*function clearSearch(){
         setSearch("");
         local_songs_db.songs.toArray().then((value) => setSongs(value));
-    }
+    }*/
 
-    function exportSongs(fileType: string){
+    function exportSongs(){
         const uuids = songs.filter((value) => selected.has(value.id)).map((value) => value.uuid);
+        props.openModal(uuids);
     }
 
     function configureSelectedState(){
@@ -44,17 +49,12 @@ const ExportSettings = () => {
             <h2>Export Settings</h2>
             <div className="header">
                 <input type="text" placeholder="Search for a song" value={search} onChange={captureSearch}/>
-                <div className="buttons">
-                    <motion.div className="export_button" whileTap={{scale: 0.98}} onClick={() => exportSongs("JSON")}>
-                        <h3>Export as JSON</h3>
-                    </motion.div>
-                    <motion.div className="export_button" whileTap={{scale: 0.98}} onClick={() => exportSongs("CSV")}>
-                        <h3>Export as CSV</h3>
-                    </motion.div>
-                </div>
+                <motion.div className="export_button" whileTap={{scale: 0.98}} onClick={exportSongs}>
+                    <h3>Export</h3>
+                </motion.div>
             </div>
             <div className="sub_heading">
-                <CheckboxComponent isChecked={songs.length === selected.size} CheckToggle={configureSelectedState} />
+                <CheckboxComponent isChecked={songs.length === 0 ? false: (songs.length === selected.size)} CheckToggle={configureSelectedState} />
                 <h3>{selected.size} {selected.size === 1 ? "song is" : "songs are"} selected</h3>
             </div>
             <div className="ExportSettings_container" ref={allSongsRef}>

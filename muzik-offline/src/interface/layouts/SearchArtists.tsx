@@ -1,4 +1,4 @@
-import { SquareTitleBox, GeneralContextMenu, LoaderAnimated, AddSongsToPlaylistModal } from "@components/index";
+import { SquareTitleBox, GeneralContextMenu, AddSongsToPlaylistModal } from "@components/index";
 import { mouse_coOrds, contextMenuEnum, contextMenuButtons, artist } from "@muziktypes/index";
 import { useEffect, useState } from "react";
 import "@styles/layouts/SearchArtists.scss";
@@ -6,6 +6,7 @@ import { local_artists_db } from "@database/database";
 import { useSearchStore } from "@store/index";
 import { useNavigate } from "react-router-dom";
 import { addTheseSongsToPlayNext, addTheseSongsToPlayLater, playTheseSongs } from "@utils/playerControl";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
 const SearchArtists = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
@@ -71,7 +72,21 @@ const SearchArtists = () => {
             {artists.length === 0 && loading === false && (
                 <h6>no artists found that match "{query}"</h6>
             )}
-            { loading && <LoaderAnimated /> }
+            { loading &&
+                <div className="skeleton-loading">
+                    <SkeletonTheme baseColor="#b6b6b633" highlightColor="#00000005" duration={2}>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                    </SkeletonTheme>
+                </div>}
             <div className="SearchArtists-container">
                     {artists.map((artist) => 
                         <SquareTitleBox 
@@ -82,6 +97,7 @@ const SearchArtists = () => {
                         navigateTo={navigateTo}
                         setMenuOpenData={setMenuOpenData}/>
                     )}
+                    <div className="bottom_margin"/>
             </div>
             {
                 artistMenuToOpen && co_ords.xPos !== 0 && co_ords.yPos !== 0 && (

@@ -2,10 +2,12 @@ import { modal_variants } from "@content/index";
 import { local_playlists_db } from "@database/database";
 import { toastType } from "@muziktypes/index";
 import { useToastStore } from "@store/index";
-import { getCoverURL, getRandomCover, getSongPaths } from "@utils/index";
+import { getCoverURL, getNullRandomCover, getSongPaths } from "@utils/index";
 import { useLiveQuery } from "dexie-react-hooks";
 import { motion } from "framer-motion";
 import "@styles/components/modals/AddSongToPlaylistModal.scss";
+import { useState } from "react";
+import CreatePlaylistModal from "./CreatePlaylistModal";
 
 type AddSongsToPlaylistModalProps = {
     isOpen: boolean;
@@ -18,6 +20,7 @@ const AddSongsToPlaylistModal = (props: AddSongsToPlaylistModalProps) => {
 
     const playlists = useLiveQuery(() => local_playlists_db.playlists.toArray()) ?? [];
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
+    const [createPlaylistModal, setCreatePlaylistModal] = useState<boolean>(false);
 
     async function chooseThisPlaylist(key: number){
         //check if track path is already in the playlist
@@ -40,7 +43,7 @@ const AddSongsToPlaylistModal = (props: AddSongsToPlaylistModalProps) => {
             <motion.div 
             animate={props.isOpen ? "open" : "closed"}
             variants={modal_variants}
-            className="modal">
+            className="AddSongToPlaylistModal-modal">
                 <h1>Add to playlist</h1>
                 <div className="playlists">
                     {playlists.length === 0 && (<h2>You have no playlists</h2>)}
@@ -48,14 +51,16 @@ const AddSongsToPlaylistModal = (props: AddSongsToPlaylistModalProps) => {
                         playlists.map(playlist => 
                             <motion.div className="playlist" key={playlist.key} onClick={() => chooseThisPlaylist(playlist.key)} whileTap={{scale: 0.98}}>
                                 <div className="playlist_img">
-                                    {  !playlist.cover ? (getRandomCover(playlist.key))() : <img src={getCoverURL(playlist.cover)} alt="square-image" /> }
+                                    {  !playlist.cover ? <img src={getCoverURL(getNullRandomCover(playlist.key))} alt="song-cover" /> : <img src={getCoverURL(playlist.cover)} alt="square-image" /> }
                                 </div>
                                 <h2>{playlist.title}</h2>
                             </motion.div>
                         )
                     }
                 </div>
+                <motion.div className="create_playlist" whileTap={{scale: 0.98}} onClick={() => {setCreatePlaylistModal(true)}}>Create a playlist</motion.div>
             </motion.div>
+            <CreatePlaylistModal isOpen={createPlaylistModal} closeModal={() => {setCreatePlaylistModal(false)}}  />  
         </div>
     )
 }

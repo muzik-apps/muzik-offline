@@ -59,6 +59,14 @@ import Laptop from './Media/Laptop';
 import Speaker from './Media/Speaker';
 import TV from './Media/TV';
 import WifiLoader from './Loaders/WifiLoader';
+import WindowsCloseIcon from './Windows/WindowsCloseIcon';
+import WindowsMaximizeIcon from './Windows/WindowsMaximizeIcon';
+import WindowsMinimizeIcon from './Windows/WindowsMinimizeIcon';
+import WindowsRestoreIcon from './Windows/WindowsRestoreIcon';
+import LinuxClose from './Windows/LinuxClose';
+import LinuxMaximize from './Windows/LinuxMaximize';
+import LinuxMinimize from './Windows/LinuxMinimize';
+import FolderPlus from './General/FolderPlus';
 
 export {
     Next_page, Prev_page, Search, 
@@ -76,4 +84,6 @@ export {
     EditImage, Edit, Overlap, Minimize,
     ListIcon, AlertTriangle, Trash, FolderSearch, File , Check,
     Computer, Headphones, Laptop, Speaker, TV, WifiLoader
+    WindowsCloseIcon, WindowsMaximizeIcon, WindowsMinimizeIcon, WindowsRestoreIcon,
+    LinuxClose, LinuxMaximize, LinuxMinimize, FolderPlus
 }

@@ -1,11 +1,19 @@
 use discord_rich_presence::{activity, DiscordIpc, DiscordIpcClient};
-use dotenv::dotenv;
-use std::env;
 use std::sync::Mutex;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use tauri::State;
 
 use crate::utils::general_utils::get_cover_url_for_discord;
+
+#[cfg(debug_assertions)] // Use dotenv in development mode
+use dotenv::dotenv;
+
+#[cfg(debug_assertions)]
+use std::env;
+
+#[cfg(not(debug_assertions))] // Use embedded variables in release mode
+include!(concat!(env!("OUT_DIR"), "/env_vars.rs"));
+
 pub struct DiscordRpc {
     client: DiscordIpcClient,
     allowed_to_connect: bool,
@@ -14,17 +22,28 @@ pub struct DiscordRpc {
 
 impl DiscordRpc {
     pub fn new() -> Result<Self, Box<dyn std::error::Error>> {
-        //get client id from env variables
-        dotenv().ok();
-        let client_id =
-            env::var("DISCORD_CLIENT_ID").expect("DISCORD_CLIENT_ID env variable not set");
-        let client: DiscordIpcClient = DiscordIpcClient::new(&client_id)?;
+        #[cfg(debug_assertions)]
+        {
+            dotenv().ok();
+            let client_id = env::var("DISCORD_CLIENT_ID").expect("DISCORD_CLIENT_ID env variable not set");
+            let client: DiscordIpcClient = DiscordIpcClient::new(&client_id)?;
+            return Ok(Self {
+                client,
+                allowed_to_connect: false,
+                is_connected: false,
+            });
+        }
 
-        Ok(Self {
-            client,
-            allowed_to_connect: false,
-            is_connected: false,
-        })
+        #[cfg(not(debug_assertions))]
+        {
+            let client_id = DISCORD_CLIENT_ID; // Use embedded variable
+            let client: DiscordIpcClient = DiscordIpcClient::new(client_id)?;
+            return Ok(Self {
+                client,
+                allowed_to_connect: false,
+                is_connected: false,
+            });
+        }
     }
 
     pub fn set_allowed_to_connect(&mut self, allowed_to_connect: bool) {

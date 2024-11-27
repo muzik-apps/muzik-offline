@@ -4,10 +4,8 @@ use std::{
 };
 
 use crate::{
-    app::window,
     components::{audio_manager::BackendStateManager, event_payload::Payload},
-    database::{db_api::get_song_from_tree, db_manager::DbManager},
-    utils::general_utils::get_song_cover_as_bytes,
+    database::{db_api::get_song_from_tree, db_manager::DbManager}
 };
 
 use souvlaki::{MediaControlEvent, MediaControls, MediaMetadata, MediaPlayback, PlatformConfig};
@@ -16,11 +14,12 @@ use tauri::{AppHandle, Emitter, State};
 
 pub fn config_mca() -> Option<MediaControls> {
     #[cfg(not(target_os = "windows"))]
-    let hwnd: Option<*mut c_void> = None;
+    let hwnd: Option<*mut std::ffi::c_void> = None;
 
     // map(|handle| handle as *mut std::os::raw::c_void)
     #[cfg(target_os = "windows")]
     let hwnd = {
+        use crate::windows::window;
         let window = match window::windows::Window::new() {
             Ok(window) => window,
             Err(err) => {
@@ -216,19 +215,15 @@ pub fn update_metadata(
     audio_manager: State<'_, Arc<Mutex<BackendStateManager>>>,
     db_manager: State<'_, Arc<Mutex<DbManager>>>,
     uuid: String,
-    key: i32,
 ) {
     let song = match get_song_from_tree(db_manager.clone(), &uuid) {
         Some(song) => song,
         None => return,
     };
 
-    let image_data: Vec<u8> = get_song_cover_as_bytes(db_manager, &song, key);
-
     match audio_manager.lock() {
         Ok(mut manager) => {
-            let cover_url = manager.cover_url.clone();
-            manager.cover = image_data;
+            let port = manager.port.clone();
             match &mut manager.controls {
                 Some(controller) => {
                     match controller.set_metadata(MediaMetadata {
@@ -236,7 +231,7 @@ pub fn update_metadata(
                         artist: Some(&song.artist),
                         album: Some(&song.album),
                         duration: Some(Duration::from_secs(song.duration_seconds)),
-                        cover_url: Some(&cover_url),
+                        cover_url: Some(&format!("http://localhost:{}/covers/{}", port, uuid)),
                     }) {
                         Ok(_) => {}
                         Err(_) => {}

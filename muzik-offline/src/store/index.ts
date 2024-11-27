@@ -97,7 +97,36 @@ export const useDirStore = create<SavedDirectoriesInterface>()(
                 dir: emptyDirectories,
                 setDir: (setTo) => set((_state) => ({ dir: setTo })),
             }),
-        {name: 'directories',}
+            {
+                name: 'directories', // Key for localStorage
+                storage: {
+                    getItem: (name) => {
+                        const data = localStorage.getItem(name);
+                        if (data) {
+                            const parsed = JSON.parse(data);
+                            return {
+                                ...parsed,
+                                dir: {
+                                    Dir: new Set(parsed.dir.Dir), // Convert Array back to Set
+                                },
+                            };
+                        }
+                        return null;
+                    },
+                    setItem: (name, value) => {
+                        const serialized = JSON.stringify({
+                            ...value,
+                            dir: {
+                                Dir: [...value.state.dir.Dir], // Convert Set to Array
+                            },
+                        });
+                        localStorage.setItem(name, serialized);
+                    },
+                    removeItem: (name) => {
+                        localStorage.removeItem(name);
+                    }
+                }
+            }
         )
     )
 )

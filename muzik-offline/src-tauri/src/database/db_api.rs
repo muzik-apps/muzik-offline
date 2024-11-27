@@ -545,10 +545,11 @@ pub async fn create_playlist_cover(
         }
     };
 
+    let dbm = Arc::clone(&db_manager);
     if compress_image {
         match resize_and_compress_image(&image_as_bytes, &250) {
             Some(thumbnail) => {
-                match insert_into_covers_tree(db_manager.clone(), thumbnail, &playlist_name) {
+                match insert_into_covers_tree(dbm, thumbnail, &playlist_name) {
                     uuid => {
                         return Ok(uuid.to_string());
                     }
@@ -559,7 +560,7 @@ pub async fn create_playlist_cover(
             }
         }
     } else {
-        match insert_into_covers_tree(db_manager.clone(), image_as_bytes, &playlist_name) {
+        match insert_into_covers_tree(dbm, image_as_bytes, &playlist_name) {
             uuid => {
                 return Ok(uuid.to_string());
             }
@@ -766,6 +767,27 @@ pub fn get_image_from_tree(dbm: MutexGuard<'_, DbManager>, uuid: &str) -> Vec<u8
     }
 }
 
+pub fn get_null_cover_from_tree(dbm: MutexGuard<'_, DbManager>, uuid: &str) -> Vec<u8> {
+    let covers_tree = match dbm.null_covers_tree.read() {
+        Ok(tree) => tree,
+        Err(_) => {
+            return Vec::new();
+        }
+    };
+
+    match covers_tree.get(uuid) {
+        Ok(Some(cover)) => {
+            return cover.to_vec();
+        }
+        Ok(None) => {
+            return Vec::new();
+        }
+        Err(_) => {
+            return Vec::new();
+        }
+    }
+}
+
 pub fn get_song_from_tree(
     db_manager: State<'_, Arc<Mutex<DbManager>>>,
     uuid: &str,
@@ -848,7 +870,7 @@ pub fn get_song_paths(db_manager: State<'_, Arc<Mutex<DbManager>>>) -> HashMap<S
 // new refactored insertion functions
 
 // this function can also overwrite the previous song with the same id
-pub fn insert_song_into_tree(db_manager: State<'_, Arc<Mutex<DbManager>>>, song: &Song) {
+pub fn insert_song_into_tree(db_manager: Arc<Mutex<DbManager>>, song: &Song) {
     match db_manager.lock() {
         Ok(dbm) => {
             let song_tree = match dbm.song_tree.write() {
@@ -872,7 +894,7 @@ pub fn insert_song_into_tree(db_manager: State<'_, Arc<Mutex<DbManager>>>, song:
     }
 }
 
-pub fn song_exists_in_tree(db_manager: State<'_, Arc<Mutex<DbManager>>>, path: &str) -> bool {
+pub fn song_exists_in_tree(db_manager: Arc<Mutex<DbManager>>, path: &str) -> bool {
     match db_manager.lock() {
         Ok(dbm) => {
             let song_tree = match dbm.song_tree.read() {
@@ -902,6 +924,48 @@ pub fn song_exists_in_tree(db_manager: State<'_, Arc<Mutex<DbManager>>>, path: &
     }
 }
 
+pub fn get_songs_in_tree(db_manager: State<'_, Arc<Mutex<DbManager>>>, uuids: Vec<String>) -> Vec<Song>{
+    match db_manager.lock() {
+        Ok(dbm) => {
+            let song_tree = match dbm.song_tree.read() {
+                Ok(tree) => tree,
+                Err(_) => {
+                    return Vec::new();
+                }
+            };
+            let mut songs: Vec<Song> = Vec::new();
+
+            for uuid in uuids {
+                match song_tree.get(uuid) {
+                    Ok(Some(song_as_ivec)) => {
+                        let song_as_bytes = song_as_ivec.as_ref();
+                        let song_as_str = String::from_utf8_lossy(song_as_bytes);
+                        match serde_json::from_str::<Song>(&song_as_str.to_string()) {
+                            Ok(song) => {
+                                songs.push(song);
+                            }
+                            Err(_) => {
+                                println!("error converting song from json to struct");
+                            }
+                        }
+                    }
+                    Ok(None) => {
+                        println!("song with this uuid does not exist in the song tree");
+                    }
+                    Err(_) => {
+                        println!("error getting this key from the song tree");
+                    }
+                }
+            }
+
+            return songs;
+        }
+        Err(_) => {
+            return Vec::new();
+        }
+    }
+}
+
 pub fn delete_song_from_tree(db_manager: State<'_, Arc<Mutex<DbManager>>>, path: &str) {
     match db_manager.lock() {
         Ok(dbm) => {
@@ -923,7 +987,7 @@ pub fn delete_song_from_tree(db_manager: State<'_, Arc<Mutex<DbManager>>>, path:
     }
 }
 
-pub fn insert_into_album_tree(db_manager: State<'_, Arc<Mutex<DbManager>>>, song: &Song) {
+pub fn insert_into_album_tree(db_manager: Arc<Mutex<DbManager>>, song: &Song) {
     match db_manager.lock() {
         Ok(dbm) => {
             let album_tree = match dbm.album_tree.write() {
@@ -1002,7 +1066,7 @@ pub fn insert_into_album_tree(db_manager: State<'_, Arc<Mutex<DbManager>>>, song
     }
 }
 
-pub fn insert_into_artist_tree(db_manager: State<'_, Arc<Mutex<DbManager>>>, song: &Song) {
+pub fn insert_into_artist_tree(db_manager: Arc<Mutex<DbManager>>, song: &Song) {
     match db_manager.lock() {
         Ok(dbm) => {
             let artist_tree = match dbm.artist_tree.write() {
@@ -1084,7 +1148,7 @@ pub fn insert_into_artist_tree(db_manager: State<'_, Arc<Mutex<DbManager>>>, son
     }
 }
 
-pub fn insert_into_genre_tree(db_manager: State<'_, Arc<Mutex<DbManager>>>, song: &Song) {
+pub fn insert_into_genre_tree(db_manager: Arc<Mutex<DbManager>>, song: &Song) {
     match db_manager.lock() {
         Ok(dbm) => {
             let genre_tree = match dbm.genre_tree.write() {
@@ -1164,7 +1228,7 @@ pub fn insert_into_genre_tree(db_manager: State<'_, Arc<Mutex<DbManager>>>, song
 }
 
 pub fn insert_into_covers_tree(
-    db_manager: State<'_, Arc<Mutex<DbManager>>>,
+    db_manager: Arc<Mutex<DbManager>>,
     cover: Vec<u8>,
     song_path: &String,
 ) -> uuid::Uuid {
@@ -1234,6 +1298,20 @@ pub fn clear_all_trees(db_manager: State<'_, Arc<Mutex<DbManager>>>) {
             clear_tree(&covers_tree);
         }
         Err(_) => {}
+    }
+}
+
+pub fn key_exists_in_tree(tree: &Tree, key: String) -> bool {
+    match tree.get(key) {
+        Ok(Some(_)) => {
+            return true;
+        }
+        Ok(None) => {
+            return false;
+        }
+        Err(_) => {
+            return false;
+        }
     }
 }
 

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useReducer } from "react";
-import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, CreatePlaylistModal, PropertiesModal, LoaderAnimated, AddSongsToPlaylistModal, DeletePlaylistModal } from "@components/index";
+import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, CreatePlaylistModal, PropertiesModal, AddSongsToPlaylistModal, DeletePlaylistModal, EditPlaylistModal } from "@components/index";
 import { ChevronDown, Menu } from "@assets/icons";
 import "@styles/pages/AllPlaylists.scss";
 import { contextMenuButtons, contextMenuEnum } from '@muziktypes/index';
@@ -8,9 +8,11 @@ import { local_playlists_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
 import { AllPlaylistsState, allPlaylistsReducer } from "@store/reducerStore";
 import { reducerType } from "@store/index";
-import { closeContextMenu, closeCreatePlaylistModal, closeDeletePlaylistModal, closePlaylistModal, closePropertiesModal, setOpenedDDM } from "@utils/reducerUtils";
+import { closeContextMenu, closeCreatePlaylistModal, closeDeletePlaylistModal, closeEditPlaylistModal, closePlaylistModal, closePropertiesModal, setOpenedDDM } from "@utils/reducerUtils";
 import { addTheseSongsToPlayNext, addTheseSongsToPlayLater, playTheseSongs } from "@utils/playerControl";
 import { invoke } from "@tauri-apps/api/core";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const AllPlaylists = () => {
     const [state , dispatch] = useReducer(allPlaylistsReducer, AllPlaylistsState);
@@ -32,6 +34,7 @@ const AllPlaylists = () => {
         else if(arg == contextMenuButtons.ShowPlaylist && state.playlistMenuToOpen)navigateTo(state.playlistMenuToOpen.key);
         else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.Delete){ dispatch({ type: reducerType.SET_DELETE_MODAL, payload: true}); }
+        else if(arg === contextMenuButtons.EditSong){ dispatch({ type: reducerType.SET_EDIT_PLAYLIST_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.PlayNext && state.playlistMenuToOpen){ 
             addTheseSongsToPlayNext({playlist: state.playlistMenuToOpen.title});
             closeContextMenu(dispatch); 
@@ -77,6 +80,17 @@ const AllPlaylists = () => {
         closeCreatePlaylistModal(dispatch);
     }
 
+    function replacePlaylistInList(key: number | undefined){
+        if(key){
+            local_playlists_db.playlists.where("key").equals(key).first().then((playlist) => {
+                if(playlist){
+                    dispatch({ type: reducerType.REPLACE_PLAYLIST, payload: playlist });
+                }
+            }).catch(() => dispatch({ type: reducerType.REMOVE_PLAYLIST, payload: key }));
+        }
+        closeEditPlaylistModal(dispatch);
+    }
+
     useEffect(() => { setList(); }, [state.sort])
     
     return (
@@ -116,7 +130,26 @@ const AllPlaylists = () => {
                     you have no playlists
                 </h6>
             )}
-            { state.isloading && <LoaderAnimated /> }
+            { state.isloading && 
+                <div className="skeleton-loading">
+                    <SkeletonTheme baseColor="#b6b6b633" highlightColor="#00000005" duration={2}>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                    </SkeletonTheme> 
+                </div>}
             <div className="AllPlaylists_container">
                     {state.playlistList.map((playlist) =>
                         <SquareTitleBox 
@@ -127,6 +160,7 @@ const AllPlaylists = () => {
                         navigateTo={navigateTo}
                         setMenuOpenData={setMenuOpenData}/>
                     )}
+                    <div className="bottom_margin"/>
             </div>
             {
                 state.playlistMenuToOpen && state.co_ords.xPos != 0 && state.co_ords.yPos != 0 && (
@@ -141,7 +175,6 @@ const AllPlaylists = () => {
                     </div>
                 )
             }
-            <div className="bottom_margin"/>
             <CreatePlaylistModal isOpen={state.isCreatePlaylistModalOpen} closeModal={addPlaylistToList}/>
             <PropertiesModal isOpen={state.isPropertiesModalOpen} playlist={state.playlistMenuToOpen ? state.playlistMenuToOpen : undefined} 
                 closeModal={() => closePropertiesModal(dispatch)}/>
@@ -154,6 +187,19 @@ const AllPlaylists = () => {
                 isOpen={state.isDeletePlayListModalOpen} 
                 title={state.playlistMenuToOpen? state.playlistMenuToOpen.title : ""} 
                 closeModal={shouldDeletePlaylist} />
+            <EditPlaylistModal
+                dontNavigate={true}
+                isOpen={state.isEditingPlayListModalOpen}
+                playlistobj={state.playlistMenuToOpen ?? {
+                    key: 0,
+                    title: "",
+                    cover: "",
+                    dateCreated: new Date().toISOString(),
+                    dateEdited: new Date().toISOString(),
+                    tracksPaths: [],
+                    uuid: ""
+                }}
+                closeModal={replacePlaylistInList} />
         </motion.div>
     )
 }

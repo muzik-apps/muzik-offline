@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import "@styles/components/modals/EditPlaylistModal.scss";
 import { local_playlists_db } from '@database/database';
 import { invoke } from "@tauri-apps/api/core";
-import { getCoverURL, getRandomCover } from 'utils';
+import { getCoverURL, getNullRandomCover } from 'utils';
 import { modal_variants } from '@content/index';
 import { DeletePlaylistModal } from '@components/index';
 import { useNavigate } from "react-router-dom";
@@ -15,7 +15,8 @@ import { toastType } from '../../../types/index';
 type EditPlaylistModalProps = {
     playlistobj: playlist;
     isOpen: boolean;
-    closeModal: () => void;
+    dontNavigate?: boolean;
+    closeModal: (key: number | undefined) => void;
 }
 
 const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: EditPlaylistModalProps) => {
@@ -52,7 +53,7 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
         playlistObj.dateEdited = new Date().toLocaleDateString();
         //save changes of this playlist
         await local_playlists_db.playlists.update(props.playlistobj.key, playlistObj);
-        props.closeModal();
+        props.closeModal(playlistObj.key);
         if(cover === null)return;
 
         let toSend = "";
@@ -87,6 +88,10 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
             await local_playlists_db.playlists.delete(props.playlistobj.key);
             await invoke("delete_playlist_cover", {playlistName: playlistTitle}).then(() => {
                 //navigate to playlist page
+                if(props.dontNavigate !== undefined && props.dontNavigate === true){
+                    props.closeModal(props.playlistobj.key);
+                    return;
+                }
                 navigate("/AllPlaylists");
             });
         }
@@ -103,7 +108,7 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
 
     return (
         <div className={"EditPlaylistModal" + (props.isOpen ? " EditPlaylistModal-visible" : "")} onClick={
-            (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {if(e.target === e.currentTarget)props.closeModal()}}>
+            (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {if(e.target === e.currentTarget)props.closeModal(undefined)}}>
             <motion.div 
             animate={props.isOpen ? "open" : "closed"}
             variants={modal_variants}
@@ -114,7 +119,7 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
                         {
                             cover !== null ? <img src={cover} alt="playlist_img"/> :
                                 props.playlistobj.cover !== null ? <img src={getCoverURL(props.playlistobj.cover)} alt="square-image" /> :
-                                (getRandomCover(props.playlistobj.key))()
+                                <img src={getCoverURL(getNullRandomCover(props.playlistobj.key))} alt="song-cover" />
                         }
                     </div>
                     <motion.label className="EditImageicon" whileHover={{scale: 1.03}} whileTap={{scale: 0.97}}>

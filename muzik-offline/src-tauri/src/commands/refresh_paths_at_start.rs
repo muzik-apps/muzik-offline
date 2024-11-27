@@ -17,18 +17,20 @@ pub async fn refresh_paths(
     db_manager: State<'_, Arc<Mutex<DbManager>>>,
     paths_as_json_array: String,
     compress_image_option: bool,
+    max_depth: usize,
 ) -> Result<String, String> {
     let paths_as_vec = decode_directories(&paths_as_json_array);
 
-    let mut song_id: i32 = 0;
+    let song_id = Arc::new(Mutex::new(0));
     let mut new_songs_detected = 0;
     for path in &paths_as_vec {
         new_songs_detected += get_songs_in_path(
             db_manager.clone(),
             &path,
-            &mut song_id,
-            &compress_image_option,
+            song_id.clone(),
+            compress_image_option,
             true,
+            max_depth
         )
         .await;
     }

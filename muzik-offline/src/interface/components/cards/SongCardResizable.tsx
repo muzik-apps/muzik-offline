@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { FunctionComponent } from 'react';
 import { DotHorizontal, Play } from "@icons/index";
 import "@styles/components/cards/SongCardResizable.scss";
-import { getCoverURL, getRandomCover } from '@utils/index';
+import { getCoverURL, getNullRandomCover } from '@utils/index';
 
 type SongCardResizableProps = {
     cover: string | null;
@@ -19,7 +19,7 @@ const SongCardResizable: FunctionComponent<SongCardResizableProps> = (props: Son
     return (
         <div className="SongCardResizable">
             <motion.div className="song_cover" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}}>
-                { !props.cover ? (getRandomCover(props.keyV))() : <img src={getCoverURL(props.cover)} alt="song-card" /> }
+                { !props.cover ? <img src={getCoverURL(getNullRandomCover(props.keyV))} alt="song-cover" /> : <img src={getCoverURL(props.cover)} alt="song-card" /> }
             </motion.div>
             <div className="song_name">
                 <motion.h3 whileTap={{scale: 0.98}} onClick={() => props.navigateTo(props.keyV, "song")}>{props.songName}</motion.h3>

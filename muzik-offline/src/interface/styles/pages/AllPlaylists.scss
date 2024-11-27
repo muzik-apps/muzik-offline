@@ -5,18 +5,18 @@
     min-width: 859px;
     width: calc(100vw - var(--var-right-side-bar-width-expanded));
     height: calc(100vh - 55px);
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
     scroll-behavior: auto;
 
     .AllPlaylists_title{
         display: flex;
-        justify-content: space-around;
+        justify-content: space-between;
         margin-bottom: 10px;
 
         h1{
             font-size: 16px;
             margin-top: 0px;
+            margin-left: 10px;
         }
 
         .sort_selector{
@@ -107,17 +107,40 @@
         font-size: 20px;
     }
 
+    .skeleton-loading{
+        width: calc(100vw - 227px);
+        max-height: calc(100% - 40px);
+        height: fit-content;
+        overflow-x: hidden;
+        overflow-y: auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 150px);
+        grid-auto-rows: repeat(auto-fill, 205px);
+        justify-content: space-between;
+
+        .skeleton-object{
+            width: 125px;
+            height: 125px;
+            border-radius: 25px;
+            margin-left: 5px;
+            margin-right: 5px;
+            margin-bottom: 50px;
+        }
+    }
+
     .AllPlaylists_container{
         min-width: 859px;
         width: calc(100vw - var(--var-right-side-bar-width-expanded));
+        max-height: calc(100% - 40px);
+        height: fit-content;
         display: grid;
         grid-template-columns: repeat(auto-fill, 150px);
         grid-template-rows: repeat(auto-fill, 205px);
         justify-content: space-between;
-    }
+        overflow-x: hidden;
+        overflow-y: auto;
 
-    .bottom_margin{
-        height: 85px;
+        .bottom_margin{ height: 220px; }
     }
 }
 
@@ -126,7 +149,7 @@
         min-width: 759px;
         width: calc(100vw - var(--var-right-side-bar-width-expanded));
 
-        .AllPlaylists_container{
+        .AllPlaylists_container, .skeleton-loading{
             min-width: 759px;
             width: calc(100vw - var(--var-right-side-bar-width-expanded));
         }
@@ -147,7 +170,7 @@
         min-width: 759px;
         width: calc(100vw - var(--var-right-side-bar-width-minimized));
 
-        .AllPlaylists_container{
+        .AllPlaylists_container, .skeleton-loading{
             min-width: 759px;
             width: calc(100vw - var(--var-right-side-bar-width-minimized));
         }
@@ -159,7 +182,7 @@
         min-width: 759px;
         width: calc(100vw - var(--var-right-side-bar-width-smallest));
 
-        .AllPlaylists_container{
+        .AllPlaylists_container, .skeleton-loading{
             min-width: 759px;
             width: calc(100vw - var(--var-right-side-bar-width-smallest));
         }

@@ -14,6 +14,8 @@ use lofty::TaggedFileExt;
 use lofty::{AudioFile, Probe};
 use serde_json::Value;
 use std::path::Path;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use walkdir::WalkDir;
 
 use std::sync::{Arc, Mutex};
 use tauri::State;
@@ -23,24 +25,31 @@ pub async fn get_all_songs(
     db_manager: State<'_, Arc<Mutex<DbManager>>>,
     paths_as_json_array: String,
     compress_image_option: bool,
+    max_depth: usize,
 ) -> Result<String, String> {
     clear_all_trees(db_manager.clone());
 
     let paths_as_vec = decode_directories(&paths_as_json_array);
+    let mut new_songs_detected = 0;
 
-    let mut song_id: i32 = 0;
+    let song_id = Arc::new(Mutex::new(0));
     for path in &paths_as_vec {
-        get_songs_in_path(
+        new_songs_detected += get_songs_in_path(
             db_manager.clone(),
             &path,
-            &mut song_id,
-            &compress_image_option,
+            song_id.clone(),
+            compress_image_option,
             false,
+            max_depth,
         )
         .await;
     }
 
-    return Ok("{\"status\":\"success\"}".into());
+    if new_songs_detected > 0 {
+        Ok(String::from("New songs detected and added to the library"))
+    } else {
+        Err(String::from("No new songs detected"))
+    }
 }
 
 pub fn decode_directories(paths_as_json: &str) -> Vec<String> {
@@ -68,79 +77,109 @@ pub fn decode_directories(paths_as_json: &str) -> Vec<String> {
 pub async fn get_songs_in_path(
     db_manager: State<'_, Arc<Mutex<DbManager>>>,
     dir_path: &str,
-    song_id: &mut i32,
-    compress_image_option: &bool,
+    song_id: Arc<Mutex<i32>>,
+    compress_image_option: bool,
     check_if_exists: bool,
+    max_depth: usize,
 ) -> i32 {
-    let mut new_songs_detected = 0;
-    match tokio::fs::read_dir(dir_path).await {
-        Ok(mut paths) => {
-            while let Ok(Some(entry)) = paths.next_entry().await {
-                match entry.path().to_str() {
-                    Some(full_path) => {
-                        match is_media_file(full_path) {
-                            Ok(true) => {}
-                            Ok(false) => {
-                                continue;
-                            }
-                            Err(_) => {
-                                continue;
-                            }
-                        }
+    let new_songs_detected = Arc::new(AtomicUsize::new(0));
+    let mut tasks = vec![];
 
-                        if check_if_exists {
-                            // check if song is already in the library
-                            if song_exists_in_tree(db_manager.clone(), full_path) {
-                                continue;
-                            }
-                        }
+    for entry in WalkDir::new(dir_path).max_depth(max_depth).into_iter().filter_map(Result::ok) {
+        let db_manager = Arc::clone(&db_manager);
+        let song_id_one = song_id.clone();
+        let song_id_two = song_id.clone();
+        let compress_image_option = compress_image_option.clone();
+        let new_songs_detected = new_songs_detected.clone();
+        let check_if_exists = check_if_exists.clone();
 
-                        if let Ok(song_data) = id3_read_from_path(
-                            db_manager.clone(),
-                            full_path,
-                            song_id,
-                            compress_image_option,
-                        ) {
-                            insert_song_into_tree(db_manager.clone(), &song_data);
-                            insert_into_album_tree(db_manager.clone(), &song_data);
-                            insert_into_artist_tree(db_manager.clone(), &song_data);
-                            insert_into_genre_tree(db_manager.clone(), &song_data);
-                            new_songs_detected += 1;
-                        } else if let Ok(song_data) = lofty_read_from_path(
-                            db_manager.clone(),
-                            full_path,
-                            song_id,
-                            compress_image_option,
-                        ) {
-                            insert_song_into_tree(db_manager.clone(), &song_data);
-                            insert_into_album_tree(db_manager.clone(), &song_data);
-                            insert_into_artist_tree(db_manager.clone(), &song_data);
-                            insert_into_genre_tree(db_manager.clone(), &song_data);
-                            new_songs_detected += 1;
-                        } else {
-                        }
+        let task =  tauri::async_runtime::spawn(async move{
+            let path = entry.path();
+            if path.is_file(){
+                let full_path = match entry.path().to_str(){
+                    Some(path) => path,
+                    None => {
+                        return;
                     }
-                    None => {}
+                };
+                match is_media_file(full_path) {
+                    Ok(true) => {}
+                    Ok(false) => {
+                        return;
+                    }
+                    Err(_) => {
+                        return;
+                    }
+                }
+
+                if check_if_exists {
+                    // check if song is already in the library
+                    if song_exists_in_tree(db_manager.clone(), full_path) {
+                        return;
+                    }
+                }
+
+                if let Ok(song_data) = id3_read_from_path(
+                    db_manager.clone(),
+                    full_path,
+                    song_id_one,
+                    compress_image_option,
+                ) {
+                    insert_song_into_tree(db_manager.clone(), &song_data);
+                    insert_into_album_tree(db_manager.clone(), &song_data);
+                    insert_into_artist_tree(db_manager.clone(), &song_data);
+                    insert_into_genre_tree(db_manager.clone(), &song_data);
+                    new_songs_detected.fetch_add(1, Ordering::SeqCst);
+                } else if let Ok(song_data) = lofty_read_from_path(
+                    db_manager.clone(),
+                    full_path,
+                    song_id_two,
+                    compress_image_option,
+                ) {
+                    insert_song_into_tree(db_manager.clone(), &song_data);
+                    insert_into_album_tree(db_manager.clone(), &song_data);
+                    insert_into_artist_tree(db_manager.clone(), &song_data);
+                    insert_into_genre_tree(db_manager.clone(), &song_data);
+                    new_songs_detected.fetch_add(1, Ordering::SeqCst);
+                } else {
                 }
             }
-        }
-        Err(_) => {}
+        });
+
+        tasks.push(task);
     }
 
-    new_songs_detected
+    let result = futures::future::join_all(tasks).await;
+
+    // ensure all tasks have completed
+    for res in result {
+        if let Err(_) = res {
+            return 0;
+        }
+    }
+
+    new_songs_detected.load(Ordering::SeqCst) as i32
 }
 
 fn lofty_read_from_path(
-    db_manager: State<'_, Arc<Mutex<DbManager>>>,
+    db_manager: Arc<Mutex<DbManager>>,
     path: &str,
-    song_id: &mut i32,
-    compress_image_option: &bool,
+    song_id: Arc<Mutex<i32>>,
+    compress_image_option: bool,
 ) -> Result<Song, Box<dyn std::error::Error>> {
     let tagged_file = lofty::read_from_path(path)?;
-    *song_id += 1;
+    let song_id_val = match song_id.lock(){
+        Ok(mut song_id) => {
+            *song_id += 1;
+            *song_id
+        },
+        Err(_) => {
+            return Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "Error getting song id")));
+        },
+    };
 
     let mut song_meta_data = Song {
-        id: *song_id,
+        id: song_id_val,
         uuid: uuid::Uuid::new_v5(&uuid::Uuid::NAMESPACE_URL, path.as_bytes()),
         title: String::from(""),
         name: String::from(""),
@@ -206,10 +245,10 @@ fn lofty_read_from_path(
 }
 
 fn id3_read_from_path(
-    db_manager: State<'_, Arc<Mutex<DbManager>>>,
+    db_manager: Arc<Mutex<DbManager>>,
     path: &str,
-    song_id: &mut i32,
-    compress_image_option: &bool,
+    song_id: Arc<Mutex<i32>>,
+    compress_image_option: bool,
 ) -> Result<Song, Box<dyn std::error::Error>> {
     let tag = match id3::Tag::read_from_path(path) {
         Ok(tag) => tag,
@@ -220,10 +259,18 @@ fn id3_read_from_path(
         Err(err) => return Err(Box::new(err)),
     };
 
-    *song_id += 1;
+    let song_id_val = match song_id.lock(){
+        Ok(mut song_id) => {
+            *song_id += 1;
+            *song_id
+        },
+        Err(_) => {
+            return Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "Error getting song id")));
+        },
+    };
 
     let mut song_meta_data = Song {
-        id: *song_id,
+        id: song_id_val,
         uuid: uuid::Uuid::new_v5(&uuid::Uuid::NAMESPACE_URL, path.as_bytes()),
         title: String::from(""),
         name: String::from(""),
@@ -408,10 +455,10 @@ fn set_path(path: &str, song_meta_data: &mut Song) {
 }
 
 fn set_cover_id3(
-    db_manager: State<'_, Arc<Mutex<DbManager>>>,
+    db_manager: Arc<Mutex<DbManager>>,
     tag: &id3::Tag,
     song_meta_data: &mut Song,
-    compress_image_option: &bool,
+    compress_image_option: bool,
     path: &str,
 ) {
     //COVER
@@ -462,10 +509,10 @@ fn set_cover_id3(
 }
 
 fn set_cover_lofty(
-    db_manager: State<'_, Arc<Mutex<DbManager>>>,
+    db_manager: Arc<Mutex<DbManager>>,
     tag: &lofty::Tag,
     song_meta_data: &mut Song,
-    compress_image_option: &bool,
+    compress_image_option: bool,
     path: &str,
 ) {
     //COVER

@@ -1,2 +1,2 @@
-pub mod controller;
-pub mod window;
+pub mod setup;
+pub mod setup_macos;

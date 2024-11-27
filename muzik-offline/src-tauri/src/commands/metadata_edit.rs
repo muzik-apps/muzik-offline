@@ -25,6 +25,7 @@ pub fn edit_song_metadata(
     //convert song_metadata to Song using serde_json
     match serde_json::from_str::<Song>(&song_metadata) {
         Ok(mut song) => {
+            let db_manager = Arc::clone(&db_manager);
             if let Ok(cov_as_vec) = edit_metadata_id3(&song_path, &song, &has_changed_cover, &cover)
             {
                 if has_changed_cover == true {

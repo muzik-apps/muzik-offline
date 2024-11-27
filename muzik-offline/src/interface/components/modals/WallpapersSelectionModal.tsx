@@ -9,7 +9,8 @@ import { local_wallpapers_db } from "@database/database";
 import { getThumbnailURL } from "@utils/index";
 import { invoke } from "@tauri-apps/api/core";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import 'react-loading-skeleton/dist/skeleton.css';
+import 'react-loading-skeleton/dist/skeleton.css'
+import { Trash } from "@assets/icons";
 
 type WallpapersSelectionModalProps = {
     isOpen: boolean;
@@ -22,6 +23,7 @@ const WallpapersSelectionModal: FunctionComponent<WallpapersSelectionModalProps>
     const [wallpapers, setWallpapers] = useState<wallpaper[]>([]);
     const [isloading, setIsLoading] = useState<boolean>(false);
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
+    const [hoveringWallpaper, setHoveringWallpaper] = useState<string | null>(null);
 
     function uploadImg(e: React.ChangeEvent<HTMLInputElement>){
         if(e.target.files === null || e.target.files.length === 0)return;
@@ -80,6 +82,12 @@ const WallpapersSelectionModal: FunctionComponent<WallpapersSelectionModalProps>
         }); 
     }
 
+    async function deleteWallpaper(uuid: string){
+        await invoke("delete_thumbnail_and_wallpaper", {uuid});
+        local_wallpapers_db.wallpapers.delete(uuid);
+        setWallpapers(wallpapers.filter((wallpaper) => wallpaper.uuid !== uuid));
+    }
+
     useEffect(() => { fecthAllWallpapers() }, []);
 
     return (
@@ -102,8 +110,21 @@ const WallpapersSelectionModal: FunctionComponent<WallpapersSelectionModalProps>
                             className={"wallpaper" + (wallpaperUUID === wallpaper.uuid ? " wallpaper_selected" : "")}
                             whileHover={{scale: 1.03}} 
                             whileTap={{scale: 0.98}} 
-                            onClick={() => {setWallpaper(wallpaper.uuid)}} key={index}>
-                                <img src={getThumbnailURL(wallpaper.uuid)} alt="thumbnail-image" />
+                            onHoverStart={() => {setHoveringWallpaper(wallpaper.uuid)}}
+                            onHoverEnd={() => {setHoveringWallpaper(null)}}
+                            key={index}>
+                                <img src={getThumbnailURL(wallpaper.uuid)} alt="thumbnail-image" onClick={() => {
+                                    setWallpaper(wallpaper.uuid);
+                                    let temp: SavedObject = local_store;
+                                    temp.BGColour = "";
+                                    setStore(temp);
+                                }} />
+                                {
+                                    hoveringWallpaper === wallpaper.uuid && wallpaperUUID !== wallpaper.uuid &&
+                                    <motion.div className="delete-icon" onClick={() => deleteWallpaper(wallpaper.uuid)} whileTap={{scale: 0.98}} >
+                                        <Trash />
+                                    </motion.div>
+                                }
                             </motion.div>
                         )
                     })}

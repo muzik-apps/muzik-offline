@@ -4,9 +4,9 @@ import { FunctionComponent, Suspense, useState, useEffect } from "react";
 import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
 import { HistoryUpcoming, MainMusicPlayer } from "@components/index";
 import { OSTYPEenum } from "@muziktypes/index";
-import { Minimize, NullCoverNull, Overlap } from "@icons/index";
+import { Minimize, Overlap } from "@icons/index";
 import { useSavedObjectStore, usePlayerStore, useIsFSStore } from "store";
-import { getCoverURL, getRandomCover } from "utils";
+import { getCoverURL, getNullRandomCover } from "utils";
 const appWindow = getCurrentWebviewWindow()
 
 type FSMusicPlayerProps = {
@@ -73,11 +73,11 @@ const FSMusicPlayer: FunctionComponent<FSMusicPlayerProps> = (props: FSMusicPlay
                             <motion.div className={"image-container" + (local_store.Animations ? " rotate" : "")}
                                 animate={props.openPlayer && isDoneOpening ? "open" : "closed"}
                                 variants={variants_list_appearance}>
-                                    {!Player.playingSongMetadata && <NullCoverNull />}
+                                    {!Player.playingSongMetadata && <img src={getCoverURL("NULL_COVER_NULL")} alt="song-art" loading="lazy"/>}
                                     {/**no song is loaded onto the player */}
                                     {Player.playingSongMetadata && Player.playingSongMetadata.cover_uuid && (<img src={getCoverURL(Player.playingSongMetadata.cover_uuid)} alt="song-art" loading="lazy"/>)}
                                     {/**there is cover art */}
-                                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover_uuid && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}
+                                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover_uuid && <img src={getCoverURL(getNullRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))} alt="song-cover" loading="lazy"/>}
                                     {/**the cover art is null */}
                             </motion.div>}
                     </div>

@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { FunctionComponent } from "react";
 import { Play } from "@icons/index";
 import "@styles/components/cards/RectangleSongBox.scss";
-import { getCoverURL, getRandomCover } from "utils";
+import { getCoverURL, getNullRandomCover } from "utils";
 
 type RectangleSongBoxProps = {
     index: number;
@@ -33,7 +33,9 @@ const RectangleSongBox: FunctionComponent<RectangleSongBoxProps> = (props: Recta
             }}>
                 <p className="index">{props.index}</p>
                 <motion.div className="song_cover" whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} onClick={() => props.navigateTo(props.keyV, "song")}>
-                    {  !props.cover ? (getRandomCover(props.keyV))() : <img src={getCoverURL(props.cover)} alt="song-cover" /> }
+                    {  !props.cover ? 
+                        <img src={getCoverURL(getNullRandomCover(props.keyV))} alt="song-cover" />
+                        : <img src={getCoverURL(props.cover)} alt="song-cover" /> }
                 </motion.div>
                 <div className="song_name">
                     <motion.h3 whileTap={{scale: 0.98}} onClick={() => props.navigateTo(props.keyV, "song")}>{props.songName}</motion.h3>

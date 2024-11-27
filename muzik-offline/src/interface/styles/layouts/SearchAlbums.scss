@@ -9,14 +9,27 @@
         font-size: 20px;
     }
     
-    .SearchAlbums-container{
-        height: calc(100vh - 125px);
+    .SearchAlbums-container, .skeleton-loading{
+        max-height: calc(100vh - 150px);
+        height: fit-content;
         width: 100%;
-        overflow-y: scroll;
+        overflow-y: auto;
         display: grid;
         grid-template-columns: repeat(auto-fill, 150px);
-        grid-template-rows: repeat(auto-fill, 205px);
+        grid-auto-rows: repeat(auto-fill, 205px);
         justify-content: space-between;
+        padding-top: 3px;
+
+        .skeleton-object{
+            width: 125px;
+            height: 125px;
+            border-radius: 25px;
+            margin-left: 5px;
+            margin-right: 5px;
+            margin-bottom: 50px;
+        }
+
+        .bottom_margin{ height: 220px; }
     }
 
     .SearchAlbums-ContextMenu-container{

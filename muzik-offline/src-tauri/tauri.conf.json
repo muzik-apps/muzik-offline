@@ -1,4 +1,5 @@
 {
+  "$schema": "https://schema.tauri.app/config/2",
   "build": {
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",
@@ -31,18 +32,11 @@
       }
     ],
     "longDescription": "A desktop music player for listening to music offline that is downloaded onto your computer in the form of mp3, wav, ogg, flac files etc.",
-    "shortDescription": "A desktop music player for listening to music offline.",
-    "linux": {
-      "deb": {
-        "depends": [
-          "libasound2-dev"
-        ]
-      }
-    }
+    "shortDescription": "A desktop music player for listening to music offline."
   },
   "productName": "muzik-offline",
   "mainBinaryName": "muzik-offline",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "identifier": "com.muzik-offline.dev",
   "plugins": {},
   "app": {
@@ -59,7 +53,8 @@
         "decorations": false,
         "transparent": true,
         "shadow": false,
-        "center": true
+        "center": true,
+        "dragDropEnabled": true
       }
     ],
     "security": {

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
+  },
+  "bundle": {
+    "active": true,
+    "category": "Music",
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "fileAssociations": [
+      {
+        "ext": [
+          "mp3",
+          "wav",
+          "ogg",
+          "flac"
+        ],
+        "name": "Music File",
+        "description": "Music file",
+        "mimeType": "audio/*",
+        "role": "Editor"
+      }
+    ],
+    "longDescription": "A desktop music player for listening to music offline that is downloaded onto your computer in the form of mp3, wav, ogg, flac files etc.",
+    "shortDescription": "A desktop music player for listening to music offline.",
+    "linux": {
+      "deb": {
+        "depends": [
+          "libasound2-dev"
+        ]
+      }
+    }
+  },
+  "productName": "muzik-offline",
+  "mainBinaryName": "muzik-offline",
+  "version": "0.7.0",
+  "identifier": "com.muzik-offline.dev",
+  "plugins": {},
+  "app": {
+    "windows": [
+      {
+        "fullscreen": false,
+        "resizable": true,
+        "title": "muzik-offline",
+        "width": 980,
+        "height": 623,
+        "minWidth": 980,
+        "minHeight": 623,
+        "titleBarStyle": "Transparent",
+        "decorations": false,
+        "transparent": true,
+        "shadow": false,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  }
+}

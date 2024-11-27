@@ -1,15 +1,17 @@
 import { motion } from "framer-motion";
 import { useEffect, useReducer } from "react";
-import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, LoaderAnimated, AddSongsToPlaylistModal } from "@components/index";
-import { ChevronDown } from "@assets/icons";
+import { DropDownMenuSmall, SquareTitleBox, GeneralContextMenu, AddSongsToPlaylistModal } from "@components/index";
+import { ChevronDown, FolderPlus } from "@assets/icons";
 import "@styles/pages/AllGenres.scss";
 import { contextMenuEnum, contextMenuButtons } from "@muziktypes/index";
 import { local_genres_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
 import { AllGenresState, allGenreReducer } from '@store/reducerStore';
 import { reducerType } from "@store/index";
-import { closeContextMenu, closePlaylistModal, setOpenedDDM } from "@utils/reducerUtils";
+import { closeContextMenu, closePlaylistModal, openFileDialogDND, processDragEvents, setOpenedDDM } from "@utils/reducerUtils";
 import { addTheseSongsToPlayLater, addTheseSongsToPlayNext, playTheseSongs } from "@utils/playerControl";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const AllGenres = () => {
     const [state , dispatch] = useReducer(allGenreReducer, AllGenresState);
@@ -54,6 +56,8 @@ const AllGenres = () => {
         });
     }
 
+    useEffect(() => { processDragEvents(dispatch); }, [state]);
+
     useEffect(() => { setList(); }, [state.sort])
     
     return (
@@ -84,24 +88,49 @@ const AllGenres = () => {
                 </div>
             </div>
             {state.genreList.length === 0 && state.isloading === false && (
-                <h6>
-                    it seems like you may not have added any songs yet.<br/>
-                    To add songs, click on the settings button above, scroll down <br/>
-                    and click on "click here to change directories". <br/>
-                </h6>
+                <div className={"drag-drop-border" + (state.inDragDropRegion ? " drag-drop-border-hover" : "")}>
+                    <FolderPlus />
+                    { state.inDragDropRegion ? <h1>Drop it here!</h1> : <h1>Drag and drop your music folder here</h1> }
+                    <p>or</p>
+                    <motion.div className="add-folder-btn" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={openFileDialogDND}>
+                        <h2>Browse folders</h2>
+                    </motion.div>
+                </div>
             )}
-            { state.isloading && <LoaderAnimated /> }
-            <div className="AllGenres_container">
-                    {state.genreList.map((genre) =>
-                        <SquareTitleBox 
-                        key={genre.key}
-                        cover={genre.cover} 
-                        title={genre.title}
-                        keyV={genre.key}
-                        navigateTo={navigateTo}
-                        setMenuOpenData={setMenuOpenData}/>
-                    )}
-            </div>
+            { state.isloading && 
+                <div className="skeleton-loading">
+                    <SkeletonTheme baseColor="#b6b6b633" highlightColor="#00000005" duration={2}>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                    </SkeletonTheme> 
+                </div>}
+            { state.genreList.length !== 0 && 
+                <div className="AllGenres_container">
+                        {state.genreList.map((genre) =>
+                            <SquareTitleBox 
+                            key={genre.key}
+                            cover={genre.cover} 
+                            title={genre.title}
+                            keyV={genre.key}
+                            navigateTo={navigateTo}
+                            setMenuOpenData={setMenuOpenData}/>
+                        )}
+                        <div className="bottom_margin"/>
+                </div>
+            }
             {
                 state.genreMenuToOpen && state.co_ords.xPos != 0 && state.co_ords.yPos != 0 && (
                     <div className="AllGenres-ContextMenu-container" 
@@ -115,7 +144,7 @@ const AllGenres = () => {
                     </div>
                 )
             }
-            <div className="bottom_margin"/>
+            {state.genreList.length !== 0 && <div className="bottom_margin"/>}
             <AddSongsToPlaylistModal 
                 isOpen={state.isPlaylistModalOpen} 
                 title={state.genreMenuToOpen? state.genreMenuToOpen.title : ""} 

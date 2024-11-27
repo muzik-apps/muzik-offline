@@ -8,15 +8,16 @@
     height: 80vh;
 
     .scrollbar-container{
+        height: 85%;
+        margin-bottom: 20px;
         ::-webkit-scrollbar{
             display: none;
         }
         .Upcoming_view, .History_view{
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
-            height: 85%;
+            height: 100%;
             width: calc(350px + 4vw);
-            margin-bottom: 20px;
             overflow-y: auto;
             // fade out top 10% and bottom 10% and only focus on the middle
             mask-image: linear-gradient(
@@ -29,9 +30,8 @@
         }
     
         .top_view{
-            height: 85%;
+            height: 100%;
             width: calc(350px + 4vw);
-            margin-bottom: 20px;
             overflow-y: auto;
             mask-image: linear-gradient(
                 180deg,
@@ -43,9 +43,8 @@
         }
     
         .bottom_view{
-            height: 85%;
+            height: 100%;
             width: calc(350px + 4vw);
-            margin-bottom: 20px;
             overflow-y: auto;
             mask-image: linear-gradient(
                 180deg,

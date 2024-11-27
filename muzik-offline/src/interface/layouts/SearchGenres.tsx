@@ -1,4 +1,4 @@
-import { SquareTitleBox, GeneralContextMenu, LoaderAnimated, AddSongsToPlaylistModal } from "@components/index";
+import { SquareTitleBox, GeneralContextMenu, AddSongsToPlaylistModal } from "@components/index";
 import { mouse_coOrds, contextMenuEnum, contextMenuButtons, genre } from "@muziktypes/index";
 import { useEffect, useState } from "react";
 import "@styles/layouts/SearchGenres.scss";
@@ -6,6 +6,7 @@ import { local_genres_db } from "@database/database";
 import { useSearchStore } from "@store/index";
 import { useNavigate } from "react-router-dom";
 import { addTheseSongsToPlayNext, addTheseSongsToPlayLater, playTheseSongs } from "@utils/playerControl";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
 const SearchGenres = () => {
     const [co_ords, setCoords] = useState<mouse_coOrds>({xPos: 0, yPos: 0});
@@ -69,7 +70,21 @@ const SearchGenres = () => {
             {genres.length === 0 && loading === false && (
                 <h6>no genres found that match "{query}"</h6>
             )}
-            { loading && <LoaderAnimated /> }
+            { loading &&
+                <div className="skeleton-loading">
+                    <SkeletonTheme baseColor="#b6b6b633" highlightColor="#00000005" duration={2}>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                        <Skeleton count={1} className="skeleton-object"/>
+                    </SkeletonTheme> 
+                </div>}
             <div className="SearchGenres-container">
                     {genres.map((genre) =>
                         <SquareTitleBox 
@@ -80,6 +95,7 @@ const SearchGenres = () => {
                         navigateTo={navigateTo}
                         setMenuOpenData={setMenuOpenData}/>
                     )}
+                    <div className="bottom_margin"/>
             </div>
             {
                 genreMenuToOpen && co_ords.xPos !== 0 && co_ords.yPos !== 0 && (

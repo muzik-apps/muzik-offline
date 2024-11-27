@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { FunctionComponent, useState, useEffect } from 'react';
 import "@styles/pages/Settings.scss";
 import { ChevronDown, ComponentIcon, InformationCircleContained, Layout, SettingsIcon, FolderSearch, File } from "@icons/index";
-import { DeleteDiretoryModal, SettingsNavigator, WallpapersSelectionModal } from '@components/index';
+import { DeleteDiretoryModal, ExportModal, SettingsNavigator, WallpapersSelectionModal } from '@components/index';
 import { selectedSettingENUM } from 'types';
 import { AppearanceSettings, GeneralSettings, AdvancedSettings, AboutSettings, MusicFoldersSettings, ExportSettings } from '@layouts/index';
 import { useSavedObjectStore } from 'store';
@@ -23,6 +23,7 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
     const {local_store,} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
     const [currentPath, setCurrentPath] = useState<string | null>(null);
     const [wallpapersModal, setWallpapersModal] = useState<boolean>(false);
+    const [uuids, setUuids] = useState<string[] | null>(null);
 
     function convertToEnum(arg: string){
         if(arg === selectedSettingENUM.General)return selectedSettingENUM.General;
@@ -76,7 +77,7 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
                                             //case selectedSettingENUM.Security:
                                             //    return <SecuritySettings />
                                             case selectedSettingENUM.ExportSongs:
-                                                return <ExportSettings />
+                                                return <ExportSettings openModal={(uuids: string[]) => setUuids(uuids)}/>
                                             case selectedSettingENUM.Advanced:
                                                 return <AdvancedSettings />
                                             case selectedSettingENUM.About:
@@ -90,6 +91,7 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
             </motion.div>
             <DeleteDiretoryModal path={currentPath ?? ""} isOpen={currentPath !== null} closeModal={() => setCurrentPath(null)}/>
             <WallpapersSelectionModal isOpen={wallpapersModal} closeModal={() => setWallpapersModal(false)}/>
+            <ExportModal isOpen={uuids !== null} song_uuids={uuids ?? []} closeModal={() => setUuids(null)}/>
         </>
     )
 }

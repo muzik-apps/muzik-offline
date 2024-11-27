@@ -66,28 +66,19 @@ DISCORD_CLIENT_ID=<Your client id goes here>
 ```
 npm run tauri dev
 ```
+11. You can encrypt your env file with:
+```
+openssl enc -aes-256-cbc -salt -pbkdf2 -in src-tauri/.env -out src-tauri/.env.enc -pass pass:{pass-key}
+```
 
 ## Building
 1. Clone the <a href="https://github.com/muzik-apps/muzik-offline/tree/releases">releases</a> branch. It is the most stable and ready to go branch
 2. Before you create a build, you will have to embed any env variables into the rust code otherwise the application will panic if you try to run it. The env variables are only meant to be used in the development cycle.
-3. To embed the env variables, copy your ```DISCORD_CLIENT_ID``` from the ```.env``` file.
-4. Go to <a href="https://github.com/muzik-apps/muzik-offline/blob/main-app-dev/muzik-offline/src-tauri/src/socials/discord_rpc.rs">discord_rpc.rs</a> and comment out these snippets of code:
-```
-3 -> use dotenv::dotenv;
-4 -> use std::env;
-
-15 -> //get client id from env variables
-16 -> dotenv().ok();
-17 -> let client_id = env::var("DISCORD_CLIENT_ID").expect("DISCORD_CLIENT_ID env variable not set");
-```
-5. In this snippet of code ```let client: DiscordIpcClient = DiscordIpcClient::new(&client_id)?;```, replace ```&client_id``` with ```"<Your client id goes here>"```
-6. You can also remove the <a href="https://github.com/muzik-apps/muzik-offline/blob/main-app-dev/muzik-offline/src-tauri/Cargo.toml#L30">dotnev crate</a> by just removing that line of code.
-7. If you want to go back to dev, you will have to undo all the steps above.
-8. If you want to create a production build, run
+4. If you want to create a production build, run
 ```
 npm run tauri build
 ```
-9. If you want to create a <a href="https://tauri.app/v1/guides/debugging/application#using-the-inspector-in-production">debug production build</a>(one where you have access to devtools), run
+5. If you want to create a <a href="https://tauri.app/v1/guides/debugging/application#using-the-inspector-in-production">debug production build</a>(one where you have access to devtools), run
 ```
 npm run tauri build -- --debug
 ```

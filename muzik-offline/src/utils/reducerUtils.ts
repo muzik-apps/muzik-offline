@@ -1,5 +1,9 @@
 import { Song } from "@muziktypes/index";
 import { Action, reducerType } from "@store/reducerTypes";
+import { getCurrentWebview } from "@tauri-apps/api/webview";
+import { open } from '@tauri-apps/plugin-dialog';
+import { appConfigDir } from '@tauri-apps/api/path';
+import { reloadLibrary } from ".";
 
 export function selectThisSong(index: number, dispatch: React.Dispatch<Action>){ 
     dispatch({ type: reducerType.SET_SELECTED, payload: index }); 
@@ -80,4 +84,26 @@ export function processArrowKeysInput(
     }
     else if(ev.key === "ArrowUp")selectThisSong(--selected, dispatch);
     else if(ev.key === "ArrowDown")selectThisSong(++selected, dispatch);
+}
+
+export async function processDragEvents(dispatch: React.Dispatch<Action>){
+    const unlisten = await getCurrentWebview().onDragDropEvent(async(event) => {
+        if(event.payload.type === 'enter')dispatch({ type: reducerType.SET_IN_DRAG_DROP_REGION, payload: true});
+        else if(event.payload.type === 'leave')dispatch({ type: reducerType.SET_IN_DRAG_DROP_REGION, payload: false});
+        else if (event.payload.type === 'drop') {
+            dispatch({ type: reducerType.SET_IN_DRAG_DROP_REGION, payload: false});
+            await reloadLibrary(event.payload.paths);
+        }
+    });
+
+    return unlisten;
+}
+
+export async function openFileDialogDND(){
+    const selected = await open({
+        directory: true,
+        multiple: false,
+        defaultPath: await appConfigDir(),
+    });
+    if(selected) await reloadLibrary([...selected]);
 }

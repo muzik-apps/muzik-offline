@@ -1,10 +1,13 @@
 import "@styles/components/navbar/Header.scss";
-import { Prev_page, Next_page, Search, Cross, Empty_user } from "@icons/index";
+import { Prev_page, Next_page, Search, Cross, Empty_user, LinuxClose, LinuxMaximize, LinuxMinimize } from "@icons/index";
 import { motion } from "framer-motion";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { App_logo } from "@logos/index";
-import { useSearchStore } from "store";
+import { useIsMaximisedStore, useSearchStore } from "store";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { restore_w_10, restore_w_12, restore_w_15, restore_w_20, restore_w_24, restore_w_30 } from "@assets/icons/windows_icons";
+const appWindow = getCurrentWebviewWindow();
 
 type HeaderLinuxOSProps = {
     toggleSettings: () => void;
@@ -15,6 +18,8 @@ const HeaderLinuxOS: FunctionComponent<HeaderLinuxOSProps> = (props: HeaderLinux
     const navigate = useNavigate();
     const [searchText, setSearchText] = useState<string>("");
     const { setSearch } = useSearchStore((state) => { return { setSearch: state.setSearch}; });
+    const [isFS, setIsFS] = useState<boolean>(false);
+    const { setMaximised } = useIsMaximisedStore((state) => { return { setMaximised: state.setMaximised}; });
 
     function captureSearch(e: React.ChangeEvent<HTMLInputElement>){
         if(e.target.value === "Enter")searchFor();
@@ -42,12 +47,55 @@ const HeaderLinuxOS: FunctionComponent<HeaderLinuxOSProps> = (props: HeaderLinux
     }
 
     useEffect(() => {
+        const minimizeID: HTMLElement | null = document.getElementById('minimize');
+        const maximizeID: HTMLElement | null = document.getElementById('maximize');
+        const restoreID: HTMLElement | null = document.getElementById('restore');
+        const closeID: HTMLElement | null = document.getElementById('close');
+    
+        const handleScreenResize = async() => {
+            const isMaximized: boolean = await appWindow.isMaximized();
+            if(isMaximized === true){
+                const maximizebtn: HTMLElement | null = document.getElementById("maximize");
+                const restorebtn: HTMLElement | null = document.getElementById("restore");
+        
+                if(maximizebtn)maximizebtn.style.visibility = "hidden";
+                if(restorebtn)restorebtn.style.visibility = "visible";
+                setMaximised(true);
+            }
+            else{
+                const maximizebtn: HTMLElement | null = document.getElementById("maximize");
+                const restorebtn: HTMLElement | null = document.getElementById("restore");
+        
+                if(maximizebtn)maximizebtn.style.visibility = "visible";
+                if(restorebtn)restorebtn.style.visibility = "hidden";
+                setMaximised(false);
+            }
+            const fs_conf: boolean = await appWindow.isFullscreen();
+            setIsFS(fs_conf);
+        }
+    
+        window.addEventListener("resize", handleScreenResize);
+        if(minimizeID)minimizeID.addEventListener('click', () => appWindow.minimize());
+        if(maximizeID)maximizeID.addEventListener('click', () => appWindow.toggleMaximize());
+        if(restoreID)restoreID.addEventListener('click', () => appWindow.toggleMaximize());
+        if(closeID)closeID.addEventListener('click', () => appWindow.close());
+        
+        return () => {
+            window.removeEventListener("resize", handleScreenResize);
+            if(minimizeID)minimizeID.removeEventListener('click', () => appWindow.minimize());
+            if(maximizeID)maximizeID.removeEventListener('click', () => appWindow.toggleMaximize());
+            if(restoreID)restoreID.removeEventListener('click', () => appWindow.toggleMaximize());
+            if(closeID)closeID.removeEventListener('click', () => appWindow.close());
+        };
+    }, [])
+
+    useEffect(() => {
         document.addEventListener("keypress", detectKey);
         return () => document.removeEventListener("keypress", detectKey);
     }, [searchText, props.toggleSettings])
     
     return (
-        <div className="Header">
+        <div data-tauri-drag-region className="Header">
             <div className="app_logo"><App_logo /></div>
             <div className="app_navigation">
                 <motion.div className="navigators" whileTap={{scale: 0.97}} onClick={() => navigate(-1)}><Prev_page /></motion.div>
@@ -76,6 +124,25 @@ const HeaderLinuxOS: FunctionComponent<HeaderLinuxOSProps> = (props: HeaderLinux
                     <Empty_user />
                     <h2>settings</h2>
                 </motion.div>
+                <div className={"window_controls_section linux " + (isFS === true ? "window_controls_section-hidden" : "")}>
+                    <div className="button_area" id="minimize">
+                        <LinuxMinimize />
+                    </div>
+                    <div className="inter_changeable_btn">
+                        <div className="button_area" id="maximize">
+                            <LinuxMaximize />
+                        </div>
+                        <div className="button_area" id="restore">
+                            <div className="restore_sub_area">
+                                <img className="icon" srcSet={`${restore_w_10} 1x, ${restore_w_12} 1.25x, ${restore_w_15} 1.5x, ${restore_w_15} 1.75x,
+                                        ${restore_w_20} 2x, ${restore_w_20} 2.25x, ${restore_w_24} 2.5x, ${restore_w_30} 3x, ${restore_w_30} 3.5x`}/>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="button_area" id="close">
+                        <LinuxClose />
+                    </div>
+                </div>
             </div>
         </div>
     )

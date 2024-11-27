@@ -4,14 +4,14 @@ use tauri::Runtime;
 #[tauri::command]
 pub fn toggle_miniplayer_view<R: Runtime>(window: tauri::Window<R>, open_mini_player: bool) {
     if open_mini_player == true {
-        if is_os_windows() == false {
+        if is_os_macos() == true {
             let _ = window.set_decorations(false);
         }
         let _ = window.set_min_size(Some(LogicalSize::new(218.0, 376.0)));
         let _ = window.set_size(LogicalSize::new(218.0, 376.0));
         let _ = window.set_resizable(false);
     } else {
-        if is_os_windows() == false {
+        if is_os_macos() == true {
             let _ = window.set_decorations(true);
         }
         let _ = window.set_resizable(true);
@@ -39,8 +39,8 @@ pub fn drag_app_window<R: Runtime>(window: tauri::Window<R>) {
     }
 }
 
-fn is_os_windows() -> bool {
-    if cfg!(target_os = "windows") {
+fn is_os_macos() -> bool {
+    if cfg!(target_os = "macos") {
         return true;
     } else {
         return false;

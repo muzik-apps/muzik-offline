@@ -1,9 +1,10 @@
 import { NullCoverOne, NullCoverTwo, NullCoverThree, NullCoverFour } from "@assets/index";
 import { local_albums_db, local_artists_db, local_genres_db, local_playlists_db, local_songs_db } from "@database/database";
 import { Song, album, artist, genre, playlist } from "@muziktypes/index";
-import { useHistorySongs, usePortStore, useUpcomingSongs } from "@store/index";
+import { useDirStore, useHistorySongs, usePortStore, useSavedObjectStore, useToastStore, useUpcomingSongs } from "@store/index";
 import { invoke } from "@tauri-apps/api/core";
 import { Child, Command } from "@tauri-apps/plugin-shell";
+import { toastType } from '../types/index';
 
 export const fetch_library = async(fresh_library: boolean): Promise<{status: string, message: string}> => {
     const res_songs = await fetch_songs_metadata(fresh_library);
@@ -33,8 +34,6 @@ export const fetch_songs_metadata = async(fresh_library: boolean): Promise<{stat
     }
 
     const responseobject: {status: string, message: string, data: []} = JSON.parse(res);
-    console.log(res);
-    console.log(responseobject);
     if(responseobject.status === "success"){
         const songs: Song[] = responseobject.data;
         await local_songs_db.songs.bulkAdd(songs);
@@ -179,6 +178,14 @@ export const getRandomCover = (value: number): () => JSX.Element => {
     else return NullCoverFour;
 }
 
+export const getNullRandomCover = (value: number): string => {
+    const modv: number = value % 4;
+    if(modv === 0)return "NULL_COVER_ONE";
+    else if(modv === 1)return "NULL_COVER_TWO";
+    else if(modv === 2)return "NULL_COVER_THREE";
+    else return "NULL_COVER_FOUR";
+}
+
 export const getCoverURL = (uuid: string): string => {
     const port = usePortStore.getState().port;
     return `http://localhost:${port}/image/${uuid}`;
@@ -255,4 +262,72 @@ export async function getChildProcess(shell: Command<string>, child: Child | nul
     if(child !== null)return child;
     const childProcess = shell.spawn();
     return childProcess;
+}
+
+export function getSongFieldsArray(selectedFields: Set<string>): string[] {
+    const fields: string[] = [];
+    if(selectedFields.has("title"))fields.push("title");
+    if(selectedFields.has("artist"))fields.push("artist");
+    if(selectedFields.has("album"))fields.push("album");
+    if(selectedFields.has("genre"))fields.push("genre");
+    if(selectedFields.has("year"))fields.push("year");
+    if(selectedFields.has("duration"))fields.push("duration");
+    if(selectedFields.has("path"))fields.push("path");
+    if(selectedFields.has("date_recorded"))fields.push("date_recorded");
+    if(selectedFields.has("date_released"))fields.push("date_released");
+    if(selectedFields.has("file_size"))fields.push("file_size");
+    if(selectedFields.has("file_type"))fields.push("file_type");
+    if(selectedFields.has("overall_bit_rate"))fields.push("overall_bit_rate");
+    if(selectedFields.has("audio_bit_rate"))fields.push("audio_bit_rate");
+    if(selectedFields.has("sample_rate"))fields.push("sample_rate");
+    if(selectedFields.has("bit_depth"))fields.push("bit_depth");
+    if(selectedFields.has("channels"))fields.push("channels");
+    return fields;
+}
+
+export function isInArray(check: string[], container: string[]): boolean {
+    return check.every((item) => container.includes(item));
+}
+
+export async function reloadLibrary(paths: string[]){
+    //check paths only contain directories
+    let dirs = useDirStore.getState().dir.Dir;
+
+    if(isInArray(paths, Array.from(dirs))){
+        useToastStore.getState().setToast({title: "Cannot load songs...", message: "You are trying to reload a path that is already loaded", type: toastType.error, timeout: 5000});
+        return;
+    }
+
+    useToastStore.getState().setToast({title: "Loading songs...", message: "We are searching for new songs", type: toastType.info, timeout: 5000});
+
+    // add new paths to the existing paths
+    paths.forEach((path) => {
+        if(!dirs.has(path))dirs.add(path);
+    });
+    const local_store = useSavedObjectStore.getState().local_store;
+
+    invoke("get_all_songs", { 
+        pathsAsJsonArray: JSON.stringify(Array.from(dirs)), 
+        compressImageOption: local_store.CompressImage === "Yes" ? true : false,
+        maxDepth: local_store.DirectoryScanningDepth
+    })
+    .then(async() => {
+        useDirStore.getState().setDir({Dir: dirs});
+        await local_songs_db.songs.clear();
+        await local_albums_db.albums.clear();
+        await local_artists_db.artists.clear();
+        await local_genres_db.genres.clear();
+
+        const res = await fetch_library(true);
+        let message = "";
+
+        if(res.status === "error")message = res.message;
+        else message = "Successfully loaded all the songs in the paths specified. You may need to reload the page you are on to see your new songs";
+
+        useToastStore.getState().setToast({title: "Loading songs...", message: message, type: toastType.success, timeout: 5000});
+    })
+    .catch((_error) => {
+        console.log(_error);
+        useToastStore.getState().setToast({title: "Loading songs...", message: "No new songs detected in given folders or you dropped a file", type: toastType.error, timeout: 5000});
+    });
 }

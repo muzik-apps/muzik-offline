@@ -3,7 +3,7 @@ import { FunctionComponent } from 'react';
 import "@styles/components/input/RadioComponent.scss";
 
 type RadioComponentProps = {
-    icon: () => JSX.Element | null;
+    icon?: () => JSX.Element;
     value: boolean;
     type: string;
     text: string;
@@ -13,9 +13,9 @@ type RadioComponentProps = {
 const RadioComponent: FunctionComponent<RadioComponentProps> = (props: RadioComponentProps) => {
     return (
         <motion.div 
-            className={"radio_component " + (props.icon !== null ? "" : "radio_component_small")} whileHover={{scale: 1.03}} whileTap={{scale: 0.97}} 
+            className="radio_component" whileTap={{scale: 0.97}} 
             onClick={() => props.setviewableEl(!props.value, props.type)}>
-                {props.icon !== null && <props.icon />}
+                {props.icon !== undefined && <props.icon />}
                 <h4>{props.text}</h4>
                 <div className={"radio-display " + (props.value ? "selected" : "")}/>
         </motion.div>

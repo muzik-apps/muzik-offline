@@ -1,4 +1,4 @@
-import { getCoverURL, getRandomCover } from '@utils/index';
+import { getCoverURL, getNullRandomCover } from '@utils/index';
 import "@styles/components/cards/RectangleSongBox.scss";
 import CheckboxComponent from '@components/input/CheckboxComponent';
 
@@ -20,7 +20,7 @@ const RectangleSongBoxView = (props: Props) => {
                     <CheckboxComponent isChecked={props.isChecked} CheckToggle={props.CheckToggle} />
                 </div>
                 <div className="song_cover">
-                    {  !props.cover ? (getRandomCover(props.keyV))() : <img src={getCoverURL(props.cover)} alt="song-cover" /> }
+                    {  !props.cover ? <img src={getCoverURL(getNullRandomCover(props.keyV))} alt="song-cover" /> : <img src={getCoverURL(props.cover)} alt="song-cover" /> }
                 </div>
                 <div className="song_name">
                     <h3>{props.songName}</h3>

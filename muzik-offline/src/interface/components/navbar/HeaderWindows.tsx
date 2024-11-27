@@ -1,16 +1,12 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
-import {min_w_10,min_w_12,min_w_15,min_w_20,min_w_24,min_w_30,max_w_10,max_w_12,max_w_15,max_w_20,max_w_24,max_w_30,
-    restore_w_10,restore_w_12,restore_w_15,restore_w_20,restore_w_24,restore_w_30,
-    close_w_10,close_w_12,close_w_15,close_w_20,close_w_24,close_w_30
-} from "@icons/windows_icons";
 import "@styles/components/navbar/Header.scss";
-import { Prev_page, Next_page, Search, Cross, Empty_user } from "@icons/index";
+import { Prev_page, Next_page, Search, Cross, Empty_user, WindowsCloseIcon, WindowsMaximizeIcon, WindowsMinimizeIcon, WindowsRestoreIcon } from "@icons/index";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { App_logo } from "@logos/index";
 import { useIsMaximisedStore, useSearchStore } from "store";
-const appWindow = getCurrentWebviewWindow()
+const appWindow = getCurrentWebviewWindow();
 
 type HeaderWindowsProps = {
     toggleSettings: () => void;
@@ -126,24 +122,20 @@ const HeaderWindows: FunctionComponent<HeaderWindowsProps> = (props: HeaderWindo
                 </motion.div>
                 <div className={"window_controls_section " + (isFS === true ? "window_controls_section-hidden" : "")}>
                     <div className="button_area" id="minimize">
-                        <img className="icon" srcSet={`${min_w_10} 1x, ${min_w_12} 1.25x, ${min_w_15} 1.5x, ${min_w_15} 1.75x,
-                            ${min_w_20} 2x, ${min_w_20} 2.25x, ${min_w_24} 2.5x, ${min_w_30} 3x, ${min_w_30} 3.5x`}/>
+                        <WindowsMinimizeIcon />
                     </div>
                     <div className="inter_changeable_btn">
                         <div className="button_area" id="maximize">
-                            <img className="icon" srcSet={`${max_w_10} 1x, ${max_w_12} 1.25x, ${max_w_15} 1.5x, ${max_w_15} 1.75x,
-                                ${max_w_20} 2x, ${max_w_20} 2.25x, ${max_w_24} 2.5x, ${max_w_30} 3x, ${max_w_30} 3.5x`}/>
+                            <WindowsMaximizeIcon />
                         </div>
                         <div className="button_area" id="restore">
                             <div className="restore_sub_area">
-                                <img className="icon" srcSet={`${restore_w_10} 1x, ${restore_w_12} 1.25x, ${restore_w_15} 1.5x, ${restore_w_15} 1.75x,
-                                    ${restore_w_20} 2x, ${restore_w_20} 2.25x, ${restore_w_24} 2.5x, ${restore_w_30} 3x, ${restore_w_30} 3.5x`}/>
+                                <WindowsRestoreIcon />
                             </div>
                         </div>
                     </div>
                     <div className="button_area" id="close">
-                        <img className="icon" srcSet={`${close_w_10} 1x, ${close_w_12} 1.25x, ${close_w_15} 1.5x, ${close_w_15} 1.75x,
-                            ${close_w_20} 2x, ${close_w_20} 2.25x, ${close_w_24} 2.5x, ${close_w_30} 3x, ${close_w_30} 3.5x`}/>
+                        <WindowsCloseIcon />
                     </div>
                 </div>
             </div>

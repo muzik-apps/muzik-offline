@@ -10,6 +10,10 @@
     z-index: $z-index-9000;
     user-select: none;
     justify-content: space-between;
+
+    .macos_windows_controls{
+        width: 0px;
+    }
     
     .app_logo{
         display: flex;
@@ -102,7 +106,7 @@
             width: 120px;
             height: 32px;
             z-index: $z-index-9999;
-            margin-right: 1.5px;
+            margin-right: 2.0px;
     
             .button_area, #maximize{
                 display: flex;
@@ -132,17 +136,14 @@
                         align-items: center;
                         border-radius: 15px;
                     }
-                    .restore_sub_area:hover{
-                        background: #bdbdbd26;
-                    }
                 }
             }
             
-            #minimize:hover, #maximize:hover {
+            #minimize:hover, #maximize:hover, #restore:hover {
                 background: #92929226;
             }
             
-            #minimize:active, #maximize:active{
+            #minimize:active, #maximize:active, #restore:active{
                 background: #bdbdbd26;
             }
     
@@ -150,6 +151,30 @@
     
             #close:active{background: #F1707A;}
             
+        }
+
+        .linux{
+            width: 120px;
+            .button_area, #maximize{
+                border-radius: 50%;
+                width: 32px;
+                background: $flags-blur;
+            }
+
+            .inter_changeable_btn{
+                width: 32px;
+                margin-left: 12px;
+                margin-right: 11px;
+
+                #restore{
+                    margin-right: 45px;
+
+                    .restore_sub_area{
+                        border-radius: 50%;
+                        width: 32px;
+                    }
+                }
+            }
         }
 
         .window_controls_section-hidden{

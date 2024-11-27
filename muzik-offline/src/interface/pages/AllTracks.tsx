@@ -1,15 +1,17 @@
 import { contextMenuButtons, contextMenuEnum } from "@muziktypes/index";
 import { motion } from "framer-motion";
 import { useRef, useEffect, useReducer } from "react";
-import { ChevronDown, Shuffle } from "@assets/icons";
-import { AddSongToPlaylistModal, DropDownMenuSmall, EditPropertiesModal, GeneralContextMenu, LoaderAnimated, PropertiesModal, RectangleSongBox } from "@components/index";
+import { ChevronDown, FolderPlus, Shuffle } from "@assets/icons";
+import { AddSongToPlaylistModal, DropDownMenuSmall, EditPropertiesModal, GeneralContextMenu, PropertiesModal, RectangleSongBox } from "@components/index";
 import { ViewportList } from 'react-viewport-list';
 import { local_albums_db, local_songs_db } from "@database/database";
 import { useNavigate } from "react-router-dom";
 import { AllTracksState, alltracksReducer, reducerType } from "store";
 import { addThisSongToPlayLater, addThisSongToPlayNext, playThisListNow, startPlayingNewSong } from "utils/playerControl";
 import "@styles/pages/AllTracks.scss";
-import { closeContextMenu, closeEditPropertiesModal, closePlaylistModal, closePropertiesModal, processArrowKeysInput, selectSortOption, selectThisSong, setOpenedDDM, setSongList } from "utils/reducerUtils";
+import { closeContextMenu, closeEditPropertiesModal, closePlaylistModal, closePropertiesModal, openFileDialogDND, processArrowKeysInput, processDragEvents, selectSortOption, selectThisSong, setOpenedDDM, setSongList } from "utils/reducerUtils";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const AllTracks = () => {
     const [state , dispatch] = useReducer(alltracksReducer, AllTracksState);
@@ -88,8 +90,9 @@ const AllTracks = () => {
     }
 
     useEffect(() => {
+        processDragEvents(dispatch);
         document.addEventListener("keydown", keyBoardShortCuts);
-        return () => document.removeEventListener("keydown", keyBoardShortCuts);  
+        return () => document.removeEventListener("keydown", keyBoardShortCuts);
     }, [state])
 
     useEffect(() => { setList(); }, [state.sort])
@@ -144,13 +147,26 @@ const AllTracks = () => {
             </div>
             <div className="AllTracks_container" ref={alltracksRef}>
                 {state.SongList.length === 0 && state.isloading === false && (
-                    <h1>
-                        it seems like you may not have added any songs yet.<br/>
-                        To add songs, click on the settings button above, scroll down <br/>
-                        and click on "click here to change directories". <br/>
-                    </h1>
+                    <div className={"drag-drop-border" + (state.inDragDropRegion ? " drag-drop-border-hover" : "")}>
+                        <FolderPlus />
+                        { state.inDragDropRegion ? <h1>Drop it here!</h1> : <h1>Drag and drop your music folder here</h1> }
+                        <p>or</p>
+                        <motion.div className="add-folder-btn" whileTap={{scale: 0.98}} whileHover={{scale: 1.03}} onClick={openFileDialogDND}>
+                            <h2>Browse folders</h2>
+                        </motion.div>
+                    </div>
                 )}
-                { state.isloading && <LoaderAnimated /> }
+                { state.isloading && 
+                    <SkeletonTheme baseColor="#b6b6b633" highlightColor="#00000005" width={"calc(100% - 5px)"} height={50} borderRadius={20} duration={2}>
+                        <Skeleton count={1} style={{marginBottom: "6px"}}/>
+                        <Skeleton count={1} style={{marginBottom: "6px"}}/>
+                        <Skeleton count={1} style={{marginBottom: "6px"}}/>
+                        <Skeleton count={1} style={{marginBottom: "6px"}}/>
+                        <Skeleton count={1} style={{marginBottom: "6px"}}/>
+                        <Skeleton count={1} style={{marginBottom: "6px"}}/>
+                        <Skeleton count={1} style={{marginBottom: "6px"}}/>
+                        <Skeleton count={1}/>
+                    </SkeletonTheme> }
                 <ViewportList viewportRef={alltracksRef} items={state.SongList} ref={listRef}>
                     {(song, index) => (
                         <RectangleSongBox 

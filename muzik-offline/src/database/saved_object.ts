@@ -19,6 +19,7 @@ export interface SavedObject{
     SongLengthORremaining: string,
     AlwaysRoundedCornersWindows: string,
     AutoStartApp: string,
+    DirectoryScanningDepth: number
 }
 
 export const emptySavedObject: SavedObject = {
@@ -39,5 +40,6 @@ export const emptySavedObject: SavedObject = {
     SeekStepAmount: "10",
     SongLengthORremaining: "song length",
     AlwaysRoundedCornersWindows: "No",
-    AutoStartApp: "No"
+    AutoStartApp: "No",
+    DirectoryScanningDepth: 1
 }

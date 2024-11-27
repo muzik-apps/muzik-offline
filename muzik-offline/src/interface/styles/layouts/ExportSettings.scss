@@ -21,7 +21,7 @@
         align-items: center;
 
         input[type="text"]{
-            width: calc(100% - 400px);
+            width: calc(100% - 200px);
             height: 40px;
             border-radius: 10px;
             background: $gray-stroke-20;
@@ -37,27 +37,22 @@
             margin-right: 5px;
         }
 
-        .buttons{
+        .export_button{
             display: flex;
-            justify-content: space-between;
-            width: 350px;
-            .export_button{
-                display: flex;
-                width: 157px;
-                height: 34px;
-                padding-left: 4px;
-                padding-right: 4px;
-                border-radius: 15px;
-                align-items: center;
-                transition: all 0.1s ease-in-out;
-                background: $app-theme-col;
-        
-                h3{
-                    color: $root-app-navigator-hover-col;
-                    font-size: 13px;
-                    text-align: center;
-                    width: 100%;
-                }
+            width: 157px;
+            height: 34px;
+            padding-left: 4px;
+            padding-right: 4px;
+            border-radius: 15px;
+            align-items: center;
+            transition: all 0.1s ease-in-out;
+            background: $app-theme-col;
+    
+            h3{
+                color: $root-app-navigator-hover-col;
+                font-size: 13px;
+                text-align: center;
+                width: 100%;
             }
         }
     }

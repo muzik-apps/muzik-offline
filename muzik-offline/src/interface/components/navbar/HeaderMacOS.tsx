@@ -46,7 +46,8 @@ const HeaderMacOS: FunctionComponent<HeaderMacOSProps>  = (props: HeaderMacOSPro
     }, [searchText, props.toggleSettings])
     
     return (
-        <div className="Header">
+        <div data-tauri-drag-region className="Header">
+            <div className='macos_windows_controls'/>
             <div className="app_logo"><App_logo /></div>
             <div className="app_navigation">
                 <motion.div className="navigators" whileTap={{scale: 0.97}} onClick={() => navigate(-1)}><Prev_page /></motion.div>

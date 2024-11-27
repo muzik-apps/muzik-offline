@@ -23,7 +23,7 @@ type DirectoriesModalProps = {
  */
 const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: DirectoriesModalProps) => {
     const { dir, setDir } = useDirStore((state) => { return { dir: state.dir, setDir: state.setDir}; });
-    const [directories, setDirectories] = useState<string[]>(dir.Dir);
+    const [directories, setDirectories] = useState<Set<string>>(dir.Dir);
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
     const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
 
@@ -61,7 +61,7 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
             return item.replace(/\n$/, ''); // Removes trailing newline character
         });
         //remove duplicates from array
-        const unique = [...new Set(val)];
+        const unique = new Set(val);
         setDirectories(unique);
     }
 
@@ -74,7 +74,7 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
     }
 
     function closeModal(){
-        if(areArraysDifferent(directories, dir.Dir)){
+        if(areArraysDifferent(Array.from(directories), Array.from(dir.Dir))){
             setToast({title: "Loading songs...", message: "Please note that this process can take several minutes to complete depending on how many songs you have but you will be notified when it is done", type: toastType.warning, timeout: 10000});
             setDir({Dir: directories});
             reloadSongs();
@@ -96,7 +96,7 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
         } 
         else{
             //if directory is not contained already add the selected directory to setDirectories array
-            if(!directories.includes(selected))setDirectories([...directories, selected]);
+            if(!directories.has(selected))setDirectories(new Set(directories).add(selected));
         }
     };
 
@@ -119,7 +119,7 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
         if(permissionGranted)sendNotification({ title: 'Refresh library...', body: message });
     }
 
-    function clearDirectories(){ setDirectories([]); }
+    function clearDirectories(){ setDirectories(new Set()); }
     
     return (
         <div className={"DirectoriesModal" + (props.isOpen ? " DirectoriesModal-visible" : "")} onClick={
@@ -130,7 +130,7 @@ const DirectoriesModal: FunctionComponent<DirectoriesModalProps> = (props: Direc
                 animate={props.isOpen ? "open" : "closed"}
                 variants={modal_variants}
                 className="modal"
-                value={directories.join(",")}
+                value={directories.size > 0 ? Array.from(directories).join(", ") : ""}
                 onChange={setDirectoriesVal}
                 placeholder="directory 1, directory 2, etc">
             </motion.textarea>

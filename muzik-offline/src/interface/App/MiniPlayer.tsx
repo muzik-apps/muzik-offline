@@ -1,7 +1,7 @@
 import { NullCoverNull, Pause, Play, SkipBack, SkipFwd, VolumeMax, VolumeMin } from "@assets/icons";
 import { usePlayerStore, useSavedObjectStore, usePlayingPositionSec, usePlayingPosition } from "@store/index";
 import { invoke } from "@tauri-apps/api/core";
-import { getCoverURL, getRandomCover, secondsToTimeFormat } from "@utils/index";
+import { getCoverURL, getNullRandomCover, secondsToTimeFormat } from "@utils/index";
 import { changeVolumeLevel, changeSeekerPosition, changeVolumeLevelBtnPress, dragSeeker, reconfigurePlayer_AtEndOfSong, pauseSong, playSong, changeSeekerPositionBtnPress, playNextSong, playPreviousSong, setVolumeLevel } from "@utils/playerControl";
 import { motion } from "framer-motion";
 import { FunctionComponent, useRef, useEffect, useState } from "react";
@@ -19,7 +19,7 @@ const MiniPlayer: FunctionComponent<MiniPlayerProps> = (props: MiniPlayerProps) 
     const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
     const {playingPosInSec, setplayingPosInSec} = usePlayingPositionSec((state) => { return {playingPosInSec: state.position, setplayingPosInSec: state.setPosition}; });
     const {playingPosition, setplayingPosition} = usePlayingPosition((state) => { return {playingPosition: state.position, setplayingPosition: state.setPosition}; });
-    const intervalIdRef = useRef<number | NodeJS.Timeout>();
+    const intervalIdRef = useRef<ReturnType<typeof setInterval>>();
 
     function changeVolume(event : any){changeVolumeLevel(event.target.value);}
 
@@ -84,14 +84,16 @@ const MiniPlayer: FunctionComponent<MiniPlayerProps> = (props: MiniPlayerProps) 
                 <div className="music_cover_art">
                     {!Player.playingSongMetadata && <NullCoverNull />}{/**no song is loaded onto the player */}
                     {Player.playingSongMetadata && Player.playingSongMetadata.cover_uuid && (<img src={getCoverURL(Player.playingSongMetadata.cover_uuid)} alt="cover-art" />)}{/**there is cover art */}
-                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover_uuid && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
+                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover_uuid && (<img src={getCoverURL(getNullRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))} alt="cover-art" />)}
+                    {/**the cover art is null */}
                 </div>
             </div>
             <div data-tauri-drag-region className={"player" + (local_store.OStype ===  OSTYPEenum.Windows ? " windows-miniplayer-config " : "")}>
                 <div className="art_container" onMouseDown={dragWindow}>
                     {!Player.playingSongMetadata && <NullCoverNull/>}{/**no song is loaded onto the player */}
                     {Player.playingSongMetadata && Player.playingSongMetadata.cover_uuid && (<img src={getCoverURL(Player.playingSongMetadata.cover_uuid)} alt="song-art" />)}{/**there is cover art */}
-                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover_uuid && (getRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))()}{/**the cover art is null */}
+                    {Player.playingSongMetadata && !Player.playingSongMetadata.cover_uuid && (<img src={getCoverURL(getNullRandomCover(Player.playingSongMetadata ? Player.playingSongMetadata.id : 0))} alt="cover-art" />)}
+                    {/**the cover art is null */}
                 </div>
                 <div className="song_details">
                     <h2>{Player.playingSongMetadata ? Player.playingSongMetadata.name : "No song is playing"}</h2>

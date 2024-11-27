@@ -1,6 +1,6 @@
 [package]
 name = "muzik-offline"
-version = "0.6.0"
+version = "0.7.0"
 description = "A desktop music player for listening to music offline."
 authors = ["Michael"]
 license = "MIT"
@@ -11,12 +11,13 @@ edition = "2021"
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
+dotenv = "0.15.0"
 
 [dependencies]
 tauri = { version = "2.1.1", features = []  }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-id3 = "1.10.0"
+id3 = "1.12.0"
 tokio = { version = "1.35.0", features = ["full"] }
 base64 = "0.21.5"
 image = "0.24.7"
@@ -31,10 +32,14 @@ dotenv = "0.15.0"
 souvlaki = "0.7.3"
 warp = "0.3.7"
 tauri-plugin-shell = "2"
-tauri-plugin-notification = "2"
+tauri-plugin-notification = "2.0.1"
 tauri-plugin-dialog = "2"
 tauri-plugin-http = "2"
 tauri-plugin-os = "2"
+printpdf = "0.7.0"
+tabled = "0.16.0"
+walkdir = "2.5.0"
+futures = "0.3.31"
 
 [dependencies.uuid]
 version = "1.11.0"
@@ -60,6 +65,9 @@ features = [
 
 [target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
 tauri-plugin-autostart = "2"
+
+[target."cfg(target_os = \"macos\")".dependencies]
+cocoa = "0.26.0"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

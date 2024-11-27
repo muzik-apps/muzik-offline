@@ -2,18 +2,7 @@ use base64::{engine::general_purpose, Engine as _};
 use image::imageops::FilterType;
 use rayon::prelude::*;
 use std::net::TcpListener;
-use std::sync::{Arc, Mutex};
 use std::{io::Cursor, path::Path};
-use tauri::State;
-
-use crate::components::song::Song;
-use crate::constants::null_cover_four::NULL_COVER_FOUR;
-use crate::constants::null_cover_null::NULL_COVER_NULL;
-use crate::constants::null_cover_one::NULL_COVER_ONE;
-use crate::constants::null_cover_three::NULL_COVER_THREE;
-use crate::constants::null_cover_two::NULL_COVER_TWO;
-use crate::database::db_api::get_image_from_tree;
-use crate::database::db_manager::DbManager;
 
 pub fn duration_to_string(duration: &u64) -> String {
     let seconds = duration;
@@ -166,61 +155,6 @@ pub fn check_with_lofty(path: &Path) -> Result<bool, Box<dyn std::error::Error>>
     Ok(false)
 }
 
-pub fn get_song_cover_as_bytes(
-    db_manager: State<'_, Arc<Mutex<DbManager>>>,
-    song: &Song,
-    key: i32,
-) -> Vec<u8> {
-    match &song.cover_uuid {
-        Some(cover_uuid) => match db_manager.lock() {
-            Ok(db_manager) => return get_image_from_tree(db_manager, cover_uuid.as_str()),
-            Err(_) => return Vec::new(),
-        },
-        None => match key {
-            key if key % 4 == 0 => match decode_image_in_parallel(&NULL_COVER_ONE.to_owned()) {
-                Ok(cover) => {
-                    return cover;
-                }
-                Err(_) => {
-                    return Vec::new();
-                }
-            },
-            key if key % 4 == 1 => match decode_image_in_parallel(&NULL_COVER_TWO.to_owned()) {
-                Ok(cover) => {
-                    return cover;
-                }
-                Err(_) => {
-                    return Vec::new();
-                }
-            },
-            key if key % 4 == 2 => match decode_image_in_parallel(&NULL_COVER_THREE.to_owned()) {
-                Ok(cover) => {
-                    return cover;
-                }
-                Err(_) => {
-                    return Vec::new();
-                }
-            },
-            key if key % 4 == 3 => match decode_image_in_parallel(&NULL_COVER_FOUR.to_owned()) {
-                Ok(cover) => {
-                    return cover;
-                }
-                Err(_) => {
-                    return Vec::new();
-                }
-            },
-            i32::MIN..=i32::MAX => match decode_image_in_parallel(&NULL_COVER_NULL.to_owned()) {
-                Ok(cover) => {
-                    return cover;
-                }
-                Err(_) => {
-                    return Vec::new();
-                }
-            },
-        },
-    }
-}
-
 pub fn get_random_port() -> u16 {
     match TcpListener::bind("127.0.0.1:0") {
         Ok(listener) => match listener.local_addr() {
@@ -260,4 +194,12 @@ pub fn get_cover_url_for_discord(
         // use musicbrainz api to get a close enough matching url for the cover using the name and artist
         // future impl
     }
+}
+
+pub fn convert_single_to_double_backward_slash_on_path(path: &String) -> String {
+    #[cfg(target_os = "windows")]
+    return path.replace("\\", "\\\\");
+
+    #[cfg(not(target_os = "windows"))]
+    return path.to_string();
 }

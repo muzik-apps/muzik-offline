@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { getCoverURL, getRandomCover } from "utils";
+import { getCoverURL, getNullRandomCover } from "utils";
 import { OSTYPEenum } from "@muziktypes/index";
 import "@styles/components/cards/LargeResizableCover.scss";
 import { useSavedObjectStore } from "store";
@@ -31,7 +31,8 @@ const LargeResizableCover = (props: LargeResizableCoverProps) => {
                     animate={props.resizeHeader ? "small" : "large"}
                     variants={variants_cover_hidden}
                     transition={!local_store.Animations ? {} : { type: "spring", stiffness: 100, damping: 14 }}>
-                    {props.cover ? <img src={getCoverURL(props.cover)} alt="large-image" /> : getRandomCover(props.id ? Number.parseInt(props.id) : 0)()}
+                    {props.cover ? <img src={getCoverURL(props.cover)} alt="large-image" /> : 
+                        <img src={getCoverURL(getNullRandomCover(props.id ? Number.parseInt(props.id) : 0))} alt="cover-art" />}
                 </motion.div>
                 : <motion.div className="first_cover" 
                     animate={props.resizeHeader ? "small" : "large"} 
@@ -42,7 +43,8 @@ const LargeResizableCover = (props: LargeResizableCoverProps) => {
                 animate={props.resizeHeader ? "small" : "large"}
                 variants={variants_cover_users_viewable}
                 transition={!local_store.Animations ? {} : { type: "spring", stiffness: 100, damping: 14 }}>
-                {props.cover ? <img src={getCoverURL(props.cover)} alt="large-image" /> : getRandomCover(props.id ? Number.parseInt(props.id) : 0)()}
+                {props.cover ? <img src={getCoverURL(props.cover)} alt="large-image" /> : 
+                        <img src={getCoverURL(getNullRandomCover(props.id ? Number.parseInt(props.id) : 0))} alt="cover-art" />}
             </motion.div>
         </motion.div>
     )

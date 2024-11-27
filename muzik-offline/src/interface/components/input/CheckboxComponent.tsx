@@ -10,7 +10,7 @@ type CheckboxComponentProps = {
 
 const CheckboxComponent: FunctionComponent<CheckboxComponentProps> = (props: CheckboxComponentProps) => {
     return (
-        <motion.div className={props.isChecked ? "checked" : "not-checked"} whileTap={{scale: 0.99}} onClick={props.CheckToggle}>
+        <motion.div className={props.isChecked ? "checked" : "not-checked"} whileTap={{scale: 0.90}} onClick={props.CheckToggle}>
             {props.isChecked && <Check />}
         </motion.div>
     )

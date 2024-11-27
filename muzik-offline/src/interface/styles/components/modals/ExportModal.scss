@@ -1,0 +1,113 @@
+@import "../../constants/constants";
+
+.ExportModal{
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background: $blur-element;
+    flex-direction: column;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: $z-index-9999;
+
+    /* Track */
+    ::-webkit-scrollbar-track { margin-top: 0px; margin-bottom: 20px; }
+
+    .modal{
+        width: 70%;
+        height: 454px;
+        padding: 20px;
+        border: 1px solid $songs-container-border-col;
+        background: var(--var-songs-container-bg-col);
+        backdrop-filter: var(--var-bg-blur-150);
+        -webkit-backdrop-filter: var(--var-bg-blur-150);
+        border-radius: 20px;
+        padding-right: 0px;
+        box-shadow: $box-shadow-10-10-25;
+
+        h2{
+            font-size: 20px;
+            margin-top: 0px;
+            margin-bottom: 20px;
+        }
+
+        .fields{
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 150px);
+            grid-template-rows: repeat(auto-fill, 70px);
+            justify-content: space-between;
+            width: calc(100% - 25px);
+            margin-bottom: 20px;
+        }
+
+        .export{
+            display: flex;
+            margin-bottom: 20px;
+            align-items: center;
+
+            h2{ 
+                margin-bottom: 0px; 
+                margin-right: 20px;
+            }
+
+            .export_option{
+                display: flex;
+                height: 37px;
+                align-items: center;
+                justify-content: center;
+                margin-right: 20px;
+                border-radius: 13px;
+                background: $btn-clickable;
+                width: 70px;
+                border: 3px solid transparent;
+            }
+
+            .selected{
+                border: 3px solid $app-theme-col;
+            }
+        }
+
+        .buttons{
+            display: flex;
+            justify-content: flex-end;
+            margin-right: 25px;
+
+            .save_button, .cancel_button{
+                display: flex;
+                width: 220px;
+                height: 34px;
+                margin-top: 10px;
+                border-radius: 14px;
+                align-items: center;
+                background: $app-theme-col;
+                margin-left: 10px;
+        
+                h3{
+                    color: $root-app-navigator-hover-col;
+                    font-size: 13px;
+                    text-align: center;
+                    width: 100%;
+                }
+            }
+    
+            .save_button:hover, .cancel_button:hover{
+                opacity: 0.8;
+            }
+    
+            .cancel_button{
+                background: $on-hover-song;
+                h3{
+                    color: $white-900;
+                }
+            }
+        }
+
+    }
+}
+
+.ExportModal-visible{
+    display: flex;
+}
