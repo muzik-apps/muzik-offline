@@ -56,5 +56,6 @@ class ChromecastManager:
 
     def cleanup(self):
         """Cleanup resources."""
-        self.browser.stop_discovery()
+        if self.browser is not None:
+            self.browser.stop_discovery()
         self.chromecasts.clear()

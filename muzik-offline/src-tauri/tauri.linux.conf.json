@@ -41,7 +41,7 @@
       }
     },
     "externalBin": [
-      "audio-cast/dist/airplay/airplay"
+      "../src-airplay-cast/airplay_cast"
     ]
   },
   "productName": "muzik-offline",

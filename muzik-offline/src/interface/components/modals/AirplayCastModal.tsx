@@ -6,10 +6,9 @@ import AirplayPinModal from "./AirplayPinModal";
 import { Check, Computer, Headphones, Laptop, Speaker, TV, WifiLoader } from "@assets/icons";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css';
-import { useAirplayManager, useToastStore, useChromeCastManager } from "@store/index";
+import { useToastStore } from "@store/index";
 import { toastType } from "@muziktypes/index";
-import { ChildProcess } from '@tauri-apps/plugin-shell';
-import { getChildProcess, getCommandProgram } from "@utils/index";
+import { invoke } from "@tauri-apps/api/core";
 
 type AirplayCastModalProps = {
     isOpen: boolean;
@@ -25,6 +24,12 @@ type Device = {
     connected: boolean;
 }
 
+type Response = {
+    status: string;
+    message: string;
+    data: Device[];
+}
+
 const AirplayCastModal = (props: AirplayCastModalProps) => {
     const [chromecast_devices, setChromecastDevices] = useState<Map<string, Device>>(new Map());
     const [airplay_devices, setAirplayDevices] = useState<Map<string, Device>>(new Map());
@@ -32,51 +37,12 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
     const [selectedChromecastDevice, setSelectedChromecastDevice] = useState<Device | null>(null);
     const [isScanning, setIsScanning] = useState(false);
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
-    const { airplay_child, airplay_shell, setAirplayMembers, } = useAirplayManager((state) => { return { 
-        airplay_child: state.airplay_child, 
-        airplay_shell: state.airplay_shell, 
-        setAirplayMembers: state.setMembers,
-    }; });
-    const { cast_child, cast_shell, setChromecastMembers } = useChromeCastManager((state) => { return { 
-        cast_child: state.cast_child, 
-        cast_shell: state.cast_shell, 
-        setChromecastMembers: state.setMembers,
-    }; });
-
-    async function getShellAndChild(type: "Airplay" | "Chromecast"){
-        if(type === "Airplay"){
-            if(airplay_shell !== null && airplay_child !== null) return {shell: airplay_shell, child: airplay_child};
-            console.log("Creating airplay shell and child");
-            const airplaySHL = await getCommandProgram(airplay_shell, "airplay");
-            const output = await airplaySHL.execute();
-            console.log(output);
-            console.log(airplaySHL);
-            const child = await getChildProcess(airplaySHL, airplay_child);
-            console.log(child);
-            setAirplayMembers(child, airplaySHL);
-            return {shell: airplaySHL, child: child};
-        }
-        else{
-            if(cast_shell !== null && cast_child !== null) return {shell: cast_shell, child: cast_child};
-            const chromecastSHL = await getCommandProgram(cast_shell, "audio-cast/dist/chromecast/chromecast");
-            const child = await getChildProcess(chromecastSHL, cast_child);
-            setChromecastMembers(child, chromecastSHL);
-            return {shell: chromecastSHL, child: child};
-        }
-    }
 
     async function scan(){
         try{
             setIsScanning(true);
-            console.log("Scanning for devices");
-            const airplay_processes = await getShellAndChild("Airplay");
-            console.log(airplay_processes);
-            //scan for airplay devices
-            airplay_processes.child.write("scan\n");
-            airplay_processes.shell.execute().then((output: ChildProcess<string>) => {
-                const devices = output.stdout;
+            invoke<Response>("").then((res) => {
                 // incoming format is {"status": "success", "message": "any message", "data": [{"id", "name", "address", "model"}]}
-                const res = JSON.parse(devices);
                 if(res.status === "success"){
                     setAirplayDevices(new Map(res.data.map((device: {
                         id: string;
@@ -98,12 +64,8 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
             });
             /*
             //scan for chromecast devices
-            const chromecast_processes = await getShellAndChild("Chromecast");
-            chromecast_processes.child.write("scan\n");
-            chromecast_processes.shell.execute().then((output: ChildProcess<string>) => {
-                const devices = output.stdout;
+            invoke<Response>("").then((res) => {
                 // incoming format is {"status": "success", "message": "any message", "data": [{"id", "name", "address", "model"}]}
-                const res = JSON.parse(devices);
                 if(res.status === "success"){
                     setChromecastDevices(new Map(res.data.map((device: {
                         id: string;

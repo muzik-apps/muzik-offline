@@ -34,7 +34,7 @@
     "longDescription": "A desktop music player for listening to music offline that is downloaded onto your computer in the form of mp3, wav, ogg, flac files etc.",
     "shortDescription": "A desktop music player for listening to music offline.",
     "externalBin": [
-      "audio-cast/dist/airplay/airplay"
+      "../src-airplay-cast/airplay_cast"
     ]
   },
   "productName": "muzik-offline",

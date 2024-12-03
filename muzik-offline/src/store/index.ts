@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { AirplayManagerInterface, ChromeCastManagerInterface, firstRunState, FSState, MaximisedState, PlayerInterface, PlayingPositionInterface, portState, QueueInterface, SavedDirectoriesInterface, SavedObjectInterface, searchInterface, toastInterface, viewableSideElInterface, wallpaperInterface } from './storeTypes';
+import { firstRunState, FSState, MaximisedState, PlayerInterface, PlayingPositionInterface, portState, QueueInterface, SavedDirectoriesInterface, SavedObjectInterface, searchInterface, toastInterface, viewableSideElInterface, wallpaperInterface } from './storeTypes';
 import { emptyDirectories } from '@database/directories';
 import { emptyPlayer } from '@database/player';
 import { emptySavedObject } from '@database/saved_object';
@@ -185,23 +185,5 @@ export const useHistorySongs = create<QueueInterface>()(
         push_front: (song) => set((state) => ({ queue: [song, ...state.queue] })),
         pop_back: () => set((state) => ({ queue: state.queue.slice(0, state.queue.length - 1) })),
         setQueue: (setTo) => set((_state) => ({ queue: setTo })),
-    }),
-)
-
-export const useAirplayManager = create<AirplayManagerInterface>()(
-    (set) => ({
-        airplay_child: null,
-        airplay_shell: null,
-        setMembers: (child, shell) => set((_state) => ({ airplay_child: child, airplay_shell: shell })),
-        unsetMembers: () => set((_state) => ({ airplay_child: null, airplay_shell: null })),
-    }),
-)
-
-export const useChromeCastManager = create<ChromeCastManagerInterface>()(
-    (set) => ({
-        cast_child: null,
-        cast_shell: null,
-        setMembers: (child, shell) => set((_state) => ({ cast_child: child, cast_shell: shell })),
-        unsetMembers: () => set((_state) => ({ cast_child: null, cast_shell: null })),
     }),
 )

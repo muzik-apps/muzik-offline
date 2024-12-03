@@ -12,7 +12,9 @@ mod utils;
 mod windows;
 mod export;
 mod import;
+mod cast;
 
+use cast::airplay_cast::airplay_scan;
 use commands::general_commands::get_server_port;
 use commands::refresh_paths_at_start::{detect_deleted_songs, refresh_paths};
 use database::db_api::{
@@ -53,8 +55,7 @@ use crate::utils::music_list_organizer::{
     mlo_set_shuffle_list,
 };
 use app::setup::{
-    setup_app,
-    initialize_audio_manager,
+    initialize_airplay_cast, initialize_audio_manager, setup_app
 };
 
 fn main() {
@@ -73,6 +74,7 @@ fn main() {
             DiscordRpc::new().expect("failed to initialize discord rpc"),
         ))
         .manage(initialize_audio_manager())
+        .manage(initialize_airplay_cast())
         .setup(setup_app)
         .invoke_handler(tauri::generate_handler![
             // WINDOW CONTROL
@@ -82,6 +84,8 @@ fn main() {
             get_all_songs, open_in_file_manager, set_volume,
             get_audio_dir, edit_song_metadata, get_server_port,
             refresh_paths, detect_deleted_songs,
+            // AIRPLAY CAST
+            airplay_scan,
             // MUSIC PLAYER
             load_and_play_song_from_path, load_a_song_from_path, pause_song,
             resume_playing, stop_song, seek_to, seek_by, get_song_position,

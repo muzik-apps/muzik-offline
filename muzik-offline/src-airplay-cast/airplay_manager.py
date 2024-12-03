@@ -58,7 +58,7 @@ class AirplayManager:
             await pairing.close()
             raise RuntimeError(f"Pairing error: {str(ex)}")
 
-    async def disconnect(self, device_identifier: str):
+    def disconnect(self, device_identifier: str):
         """Disconnect a device by its identifier."""
         if device_identifier in self.connections:
             self.connections[device_identifier].close()
