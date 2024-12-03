@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "test": "vitest",
+    "coverage": "vitest --coverage --coverage-provider=c8 --coverage-reporters=lcov"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^16.5.0",
@@ -39,6 +41,7 @@
     "@vitejs/plugin-react": "^4.0.3",
     "typescript": "^5.0.2",
     "vite": "^4.4.4",
-    "vite-tsconfig-paths": "^4.2.1"
+    "vite-tsconfig-paths": "^4.2.1",
+    "vitest": "^2.1.8"
   }
 }
