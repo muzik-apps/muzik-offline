@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+src-airplay-cast/__pycache__
+src-airplay-cast/*.exe
