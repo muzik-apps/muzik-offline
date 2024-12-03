@@ -1,4 +1,4 @@
-use crate::components::{audio_manager::BackendStateManager, airplay_cast::Process};
+use crate::components::{audio_manager::BackendStateManager, airplay_cast};
 use crate::database::db_api::{get_image_from_tree, get_null_cover_from_tree, get_thumbnail, get_wallpaper};
 use crate::database::db_manager::DbManager;
 use kira::manager::{backend::DefaultBackend, AudioManager, AudioManagerSettings};
@@ -32,8 +32,8 @@ pub fn initialize_audio_manager() -> Arc<Mutex<BackendStateManager>> {
 }
 
 /// Initializes airplay cast process.
-pub fn initialize_airplay_cast() -> Arc<Mutex<AirplayCast>> {
-    Arc::new(Mutex::new(Process {
+pub fn initialize_airplay_cast() -> Arc<tokio::sync::Mutex<airplay_cast::Process>> {
+    Arc::new(tokio::sync::Mutex::new(airplay_cast::Process {
         child: None,
         receiver: None,
     }))

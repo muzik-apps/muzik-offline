@@ -39,58 +39,55 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
 
     async function scan(){
-        try{
-            setIsScanning(true);
-            invoke<Response>("").then((res) => {
-                // incoming format is {"status": "success", "message": "any message", "data": [{"id", "name", "address", "model"}]}
-                if(res.status === "success"){
-                    setAirplayDevices(new Map(res.data.map((device: {
-                        id: string;
-                        name: string;
-                        address: string;
-                        model: string;
-                    }) => [device.address, {
-                        id: device.id,
-                        name: device.name,
-                        model: device.model,
-                        address: device.address,
-                        loading: false,
-                        connected: false
-                    }])));
-                }
-                else{
-                    setToast({title: "Error", message: res.message, type: toastType.error, timeout: 3000});
-                }
-            });
-            /*
-            //scan for chromecast devices
-            invoke<Response>("").then((res) => {
-                // incoming format is {"status": "success", "message": "any message", "data": [{"id", "name", "address", "model"}]}
-                if(res.status === "success"){
-                    setChromecastDevices(new Map(res.data.map((device: {
-                        id: string;
-                        name: string;
-                        address: string;
-                        model: string;
-                    }) => [device.address, {
-                        id: device.id,
-                        name: device.name,
-                        model: device.model,
-                        address: device.address,
-                        loading: false,
-                        connected: false
-                    }])));
-                }
-                else{
-                    setToast({title: "Error", message: res.message, type: toastType.error, timeout: 3000});
-                }
-            });*/
-            setIsScanning(false);
-        }catch(e: any){
-            setToast({title: "Error", message: e, type: toastType.error, timeout: 3000});
-            console.log(e);
-            setIsScanning(false);
-        }
+        setIsScanning(true);
+        invoke("airplay_scan").then((res: any) => {
+            // incoming format is {"status": "success", "message": "any message", "data": [{"id", "name", "address", "model"}]}
+            if(res.status === "success"){
+                setAirplayDevices(new Map(res.data.map((device: {
+                    id: string;
+                    name: string;
+                    address: string;
+                    model: string;
+                }) => [device.address, {
+                    id: device.id,
+                    name: device.name,
+                    model: device.model,
+                    address: device.address,
+                    loading: false,
+                    connected: false
+                }])));
+            }
+            else{
+                setToast({title: "Error", message: res.message, type: toastType.error, timeout: 3000});
+            }
+        }).catch((err) => {
+            console.log(err);
+            setToast({title: "Error", message: err, type: toastType.error, timeout: 3000});
+        });
+        /*
+        //scan for chromecast devices
+        invoke<Response>("chromecast_scan").then((res) => {
+            // incoming format is {"status": "success", "message": "any message", "data": [{"id", "name", "address", "model"}]}
+            if(res.status === "success"){
+                setChromecastDevices(new Map(res.data.map((device: {
+                    id: string;
+                    name: string;
+                    address: string;
+                    model: string;
+                }) => [device.address, {
+                    id: device.id,
+                    name: device.name,
+                    model: device.model,
+                    address: device.address,
+                    loading: false,
+                    connected: false
+                }])));
+            }
+            else{
+                setToast({title: "Error", message: res.message, type: toastType.error, timeout: 3000});
+            }
+        });*/
+        setIsScanning(false);
     }
 
     function connectAirplay(device: Device){
