@@ -1,0 +1,3 @@
+PyChromecast==14.0.5
+pyatv==0.16.0
+Nuitka==2.5.4

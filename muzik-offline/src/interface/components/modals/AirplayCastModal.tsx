@@ -40,7 +40,9 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
 
     async function scan(){
         setIsScanning(true);
-        invoke("airplay_scan").then((res: any) => {
+        invoke<Response>("airplay_scan").then((res) => {
+            setIsScanning(false);
+            console.log(res);
             // incoming format is {"status": "success", "message": "any message", "data": [{"id", "name", "address", "model"}]}
             if(res.status === "success"){
                 setAirplayDevices(new Map(res.data.map((device: {
@@ -61,6 +63,7 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
                 setToast({title: "Error", message: res.message, type: toastType.error, timeout: 3000});
             }
         }).catch((err) => {
+            setIsScanning(false);
             console.log(err);
             setToast({title: "Error", message: err, type: toastType.error, timeout: 3000});
         });
@@ -87,7 +90,6 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
                 setToast({title: "Error", message: res.message, type: toastType.error, timeout: 3000});
             }
         });*/
-        setIsScanning(false);
     }
 
     function connectAirplay(device: Device){

@@ -21,15 +21,23 @@ jobs:
                     - platform: 'macos-latest' # for Arm based macs (M1 and above).
                       args: '--target aarch64-apple-darwin'
                       rust-version: "1.77.2"
+                      target-triple: 'aarch64-apple-darwin'
+                      extention: ""
                     - platform: 'macos-latest' # for Intel based macs.
                       args: '--target x86_64-apple-darwin'
                       rust-version: "1.77.2"
+                      target-triple: 'x86_64-apple-darwin'
+                      extention: ""
                     - platform: 'ubuntu-22.04'
                       args: ''
                       rust-version: "stable"
+                      target-triple: 'x86_64-unknown-linux-gnu'
+                      extention: ""
                     - platform: 'windows-latest'
                       args: ''
                       rust-version: "stable"
+                      target-triple: 'x86_64-pc-windows-msvc'
+                      extention: ".exe"
     
         runs-on: ${{ matrix.platform }}
         steps:
@@ -63,6 +71,14 @@ jobs:
         - name: install frontend dependencies
             # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
           run: npm ci # change this to npm or pnpm depending on which one you use.
+
+        - name: setup python
+          uses: actions/setup-python@v5
+          with:
+            python-version: '3.10.2'
+            cache: 'pip' # caching pip dependencies
+        - run: pip install -r src-airplay-cast/requirements.txt
+        - run: nuikta --standalone --onefile --lto --remove-output --output-filename=airplay_cast-${{ matrix.target-triple }}${{ matrix.extention }} src-airplay-cast/airplay_cast.py
 
         - name: Install OpenSSL on macOS
           if: matrix.platform == 'macos-latest'

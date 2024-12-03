@@ -21,23 +21,6 @@ async fn assign_process_values(process: State<'_, Arc<tokio::sync::Mutex<Process
   }
 
   Ok(())
-  /*match process.lock().await {
-    Some(mut process) => {
-      if process.child.is_none() && process.receiver.is_none() {
-        let sidecar_command = app.shell().sidecar("airplay_cast").map_err(|e| e.to_string())?;
-        let (rx, child) = sidecar_command
-          .spawn()
-          .map_err(|e| e.to_string())?;
-
-        process.child = Some(child);
-        process.receiver = Some(rx);
-      }
-    }
-    None => {
-      eprintln!("Error assigning process values: {:?}", e);
-    }
-  }
-  Ok(())*/
 }
 
 async fn send_command_to_process(process: State<'_, Arc<tokio::sync::Mutex<Process>>>, command: AirplayCastCommands) -> Result<(), String> {
@@ -48,20 +31,8 @@ async fn send_command_to_process(process: State<'_, Arc<tokio::sync::Mutex<Proce
   } else {
     return Err("Child process is None".to_string());
   }
+
   Ok(())
-  /*match process.lock() {
-    Ok(mut process) => {
-      let child = match process.child.as_mut() {
-        Some(child) => child,
-        None => return Err("Child process is None".to_string())
-      };
-      child.write(format!("{}\n", airplay_cast_commands_as_string(command)).as_bytes()).map_err(|e| e.to_string())?;
-    }
-    Err(e) => {
-      eprintln!("Error sending command to process: {:?}", e);
-    }
-  }
-  Ok(())*/
 }
 
 async fn send_command_to_process_with_args(process: State<'_, Arc<tokio::sync::Mutex<Process>>>, command: AirplayCastCommands, args: &str) -> Result<(), String> {
@@ -72,20 +43,8 @@ async fn send_command_to_process_with_args(process: State<'_, Arc<tokio::sync::M
   } else {
     return Err("Child process is None".to_string());
   }
+
   Ok(())
-  /*match process.lock() {
-    Ok(mut process) => {
-      let child = match process.child.as_mut() {
-        Some(child) => child,
-        None => return Err("Child process is None".to_string())
-      };
-      child.write(format!("{} {}\n", airplay_cast_commands_as_string(command), args).as_bytes()).map_err(|e| e.to_string())?;
-    }
-    Err(e) => {
-      eprintln!("Error sending command to process with args: {:?}", e);
-    }
-  }
-  Ok(())*/
 }
 
 async fn expect_response_from_process(process: State<'_, Arc<tokio::sync::Mutex<Process>>>) -> Result<String, String> {
@@ -95,10 +54,14 @@ async fn expect_response_from_process(process: State<'_, Arc<tokio::sync::Mutex<
     if let Some(event) = receiver.recv().await {
       match event {
         CommandEvent::Stdout(data) => {
-          return Ok(String::from_utf8_lossy(&data).to_string());
+          let res = String::from_utf8_lossy(&data).to_string();
+          // remove "Enter command: " from the response
+          return Ok(res.replace("Enter command: ", ""));
         }
         CommandEvent::Stderr(data) => {
-          return Err(String::from_utf8_lossy(&data).to_string());
+          let res = String::from_utf8_lossy(&data).to_string();
+          // remove "Enter command: " from the response
+          return Err(res.replace("Enter command: ", ""));
         }
         _ => {
           return Err("Unknown event".to_string());
@@ -110,36 +73,6 @@ async fn expect_response_from_process(process: State<'_, Arc<tokio::sync::Mutex<
   } else {
     return Err("Receiver is None".to_string());
   }
-  /*match process.lock() {
-    Ok(mut process) => {
-      let receiver = match process.receiver.as_mut() {
-        Some(receiver) => receiver,
-        None => return Err("Receiver is None".to_string())
-      };
-
-      match receiver.recv().await {
-        Some(event) => {
-          match event {
-            CommandEvent::Stdout(data) => {
-              return Ok(String::from_utf8_lossy(&data).to_string());
-            }
-            CommandEvent::Stderr(data) => {
-              return Err(String::from_utf8_lossy(&data).to_string());
-            }
-            _ => {
-              return Err("Unknown event".to_string());
-            }
-          }
-        }
-        None => {
-          return Err("No event received".to_string());
-        }
-      }
-    }
-    Err(e) => {
-      return Err(format!("Error locking process: {:?}", e));
-    }
-  }*/
 }
 
 #[tauri::command]
