@@ -8,7 +8,7 @@ use warp::{http::Uri, reply::Response, Filter, Reply};
 
 use std::sync::{Arc, Mutex};
 use tauri::async_runtime::{self, spawn};
-use tauri::{AppHandle, Emitter, Manager};
+use tauri::Manager;
 use tokio::sync::mpsc;
 
 use crate::music::media_control_api::{config_mca, event_handler};
@@ -48,7 +48,6 @@ pub fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>>
     setup_macos::setup_macos(app)?;
     let shared_audio_manager = Arc::clone(&app.state::<Arc<Mutex<BackendStateManager>>>());
     let shared_db_manager = Arc::clone(&app.state::<Arc<Mutex<DbManager>>>());
-    let window = app.handle().clone();
 
     // Set up the image route
     let cover_image_route = create_image_route_for_covers(shared_db_manager.clone());
@@ -91,14 +90,13 @@ pub fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>>
         .controls = Some(controls);
 
     // Handle media control events
+    let window = app.handle().clone();
     spawn(async move {
         while let Some(event) = rx.recv().await {
             event_handler(&window, &event);
         }
     });
 
-    // Collect args from the command line
-    collect_args(app.handle());
     Ok(())
 }
 
@@ -237,14 +235,4 @@ pub fn setup_media_controls(
         controls,
         &format!("http://localhost:{}/covers/NULL_COVER_NULL", port).to_owned(),
     );
-}
-
-/// Collect args from the command line and return them as a vector of strings.
-pub fn collect_args(app: &AppHandle) {
-    let args: Vec<String> = std::env::args().collect();
-    if args.len() > 1 {
-        let audio_file_path = &args[1];
-        app.emit("loadSong", audio_file_path)
-            .expect("failed to emit loadSong");
-    }
 }

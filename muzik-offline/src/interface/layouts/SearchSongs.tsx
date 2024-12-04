@@ -75,7 +75,7 @@ const SearchSongs = () => {
         else if(ev.target.id !== "gsearch" && state.selected >= 1 && state.selected <= state.SongList.length){
             dispatch({type: reducerType.SET_SONG_MENU, payload: state.SongList[state.selected - 1]});
             if(((ev.ctrlKey || ev.metaKey) && (ev.key === "p" || ev.key === "P" )) || ev.key === "Enter")chooseOption(contextMenuButtons.Play);
-            else if((ev.ctrlKey || ev.metaKey) && (ev.key === "i" || ev.key === "I"))chooseOption(contextMenuButtons.ShowInfo);
+            else if((ev.ctrlKey || ev.metaKey) && !ev.shiftKey && (ev.key === "i" || ev.key === "I"))chooseOption(contextMenuButtons.ShowInfo);
             else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "a" || ev.key === "A"))chooseOption(contextMenuButtons.AddToPlaylist);
             else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "n" || ev.key === "N"))chooseOption(contextMenuButtons.PlayNext);
             else if((ev.ctrlKey || ev.metaKey) && ev.shiftKey && (ev.key === "l" || ev.key === "L"))chooseOption(contextMenuButtons.PlayLater);

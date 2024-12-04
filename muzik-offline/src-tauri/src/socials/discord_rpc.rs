@@ -5,13 +5,13 @@ use tauri::State;
 
 use crate::utils::general_utils::get_cover_url_for_discord;
 
-#[cfg(debug_assertions)] // Use dotenv in development mode
+#[cfg(dev)] // Use dotenv in development mode
 use dotenv::dotenv;
 
-#[cfg(debug_assertions)]
+#[cfg(dev)]
 use std::env;
 
-#[cfg(not(debug_assertions))] // Use embedded variables in release mode
+#[cfg(not(dev))] // Use embedded variables in release mode
 include!(concat!(env!("OUT_DIR"), "/env_vars.rs"));
 
 pub struct DiscordRpc {
@@ -22,7 +22,7 @@ pub struct DiscordRpc {
 
 impl DiscordRpc {
     pub fn new() -> Result<Self, Box<dyn std::error::Error>> {
-        #[cfg(debug_assertions)]
+        #[cfg(dev)]
         {
             dotenv().ok();
             let client_id = env::var("DISCORD_CLIENT_ID").expect("DISCORD_CLIENT_ID env variable not set");
@@ -34,7 +34,7 @@ impl DiscordRpc {
             });
         }
 
-        #[cfg(not(debug_assertions))]
+        #[cfg(not(dev))]
         {
             let client_id = DISCORD_CLIENT_ID; // Use embedded variable
             let client: DiscordIpcClient = DiscordIpcClient::new(client_id)?;

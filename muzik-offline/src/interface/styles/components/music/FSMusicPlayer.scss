@@ -1,35 +1,32 @@
 @import "../../constants/constants";
 
-.FSMusicPlayer{
-    min-width: 980px;
+.FSMusicPlayer-hold{
     width: 100%;
-    height: 110vh;
+    height: 100vh;
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    z-index: $z-index-9000;
-    user-select: none;
-    justify-content: center;
     position: absolute;
-    background: $gray-1000;
+    display: none;
+    top: 0;
+    z-index: $z-index-9000;
 
-    .FSMusicPlayer-container{
-        position: relative;
+    .FSMusicPlayer{
         min-width: 980px;
         width: 100%;
         height: 110vh;
-
-        .background-img{
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        user-select: none;
+        justify-content: center;
+        background: $gray-1000;
+    
+        .FSMusicPlayer-container{
+            position: relative;
             min-width: 980px;
             width: 100%;
             height: 110vh;
-            display: flex;
-            overflow: hidden;
-            justify-content: center;
-            align-items: center;
-            transform: scale(1.8);
-
-            .image-container{
+    
+            .background-img{
                 min-width: 980px;
                 width: 100%;
                 height: 110vh;
@@ -37,84 +34,103 @@
                 overflow: hidden;
                 justify-content: center;
                 align-items: center;
-                filter: blur(30px);
-                -webkit-filter: blur(30px);
-
-                img{
-                    display: inline;
-                    min-width: 100%;
-                    margin: 0 auto;
-                    height: 100%;
-                    object-fit: cover;
-                    opacity: 0.7;
-                }
-
-                svg{
+                transform: scale(1.8);
+    
+                .image-container{
+                    min-width: 980px;
                     width: 100%;
-                    height: 100%;
-                    opacity: 0.5;
-                }
-            }
-
-            .rotate { animation: rotate 40s linear infinite normal; }
-
-            @keyframes rotate { to { transform: rotate(360deg); } }
-        }
-
-        .frontward_facing_player{
-            min-width: 980px;
-            width: 100%;
-            height: 110vh;
-            margin-top: -110vh;
-            background: $blur-element;
-            position: absolute;
-
-            .navbar_container{
-                width: 100%;
-            }
-            
-            .navbar_buttons{
-                margin-top: 10px;
-                display: flex;
-                justify-content: space-between;
-                background: $on-hover-song;
-                width: fit-content;
-                margin-left: auto;
-                margin-right: auto;
-                height: fit-content;
-                padding: 9px;
-                border-radius: 24px;
-
-                .close_full_screen_player_btn, .toggle_full_screen_player_btn{
-                    width: 34px;
-                    height: 34px;
+                    height: 110vh;
                     display: flex;
+                    overflow: hidden;
                     justify-content: center;
                     align-items: center;
-                    border-radius: 15px;
-                    background: $white-900;
-                    width: 157px;
-                    transition: all 0.1s ease-in-out;
-
-                    h3{
-                        font-size: 13px;
-                        margin-left: 9px;
-                        color: $gray-1000;
-                        transition: all 0.1s ease-in-out;
+                    filter: blur(30px);
+                    -webkit-filter: blur(30px);
+    
+                    img{
+                        display: inline;
+                        min-width: 100%;
+                        margin: 0 auto;
+                        height: 100%;
+                        object-fit: cover;
+                        opacity: 0.7;
+                    }
+    
+                    svg{
+                        width: 100%;
+                        height: 100%;
+                        opacity: 0.5;
                     }
                 }
-
-                .give-margin{
-                    margin-right: 9px;
-                }
+    
+                .rotate { animation: rotate 40s linear infinite normal; }
+    
+                @keyframes rotate { to { transform: rotate(360deg); } }
             }
-
-            .main_visible_content{
-                display: flex;
-                justify-content: space-around;
-                height: calc(100vh - 74px);
-                align-items: center;
+    
+            .frontward_facing_player{
+                min-width: 980px;
+                width: 100%;
+                height: 110vh;
+                margin-top: -110vh;
+                background: $blur-element;
+                position: absolute;
+    
+                .navbar_container{
+                    width: 100%;
+                }
+                
+                .navbar_buttons{
+                    margin-top: 10px;
+                    display: flex;
+                    justify-content: space-between;
+                    background: $on-hover-song;
+                    width: fit-content;
+                    margin-left: auto;
+                    margin-right: auto;
+                    height: fit-content;
+                    padding: 9px;
+                    border-radius: 24px;
+    
+                    .close_full_screen_player_btn, .toggle_full_screen_player_btn{
+                        width: 34px;
+                        height: 34px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        border-radius: 15px;
+                        background: $white-900;
+                        width: 157px;
+                        transition: all 0.1s ease-in-out;
+    
+                        h3{
+                            font-size: 13px;
+                            margin-left: 9px;
+                            color: $gray-1000;
+                            transition: all 0.1s ease-in-out;
+                        }
+                    }
+    
+                    .give-margin{
+                        margin-right: 9px;
+                    }
+                }
+    
+                .main_visible_content{
+                    display: flex;
+                    justify-content: space-around;
+                    height: calc(100vh - 74px);
+                    align-items: center;
+                }
             }
         }
     }
+}
+
+.FSMusicPlayer-hold-visible{
+    display: block;
+}
+
+.FSMusicPlayer-border{
+    border-radius: 8px;
 }

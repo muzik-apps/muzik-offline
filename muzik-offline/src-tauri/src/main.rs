@@ -15,7 +15,7 @@ mod import;
 mod cast;
 
 use cast::airplay_cast::airplay_scan;
-use commands::general_commands::get_server_port;
+use commands::general_commands::{collect_env_args, get_server_port};
 use commands::refresh_paths_at_start::{detect_deleted_songs, refresh_paths};
 use database::db_api::{
     add_new_wallpaper_to_db, create_playlist_cover, delete_playlist_cover,

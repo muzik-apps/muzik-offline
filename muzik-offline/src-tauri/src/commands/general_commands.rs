@@ -18,6 +18,21 @@ use tauri::State;
 //    //this serves as an example template whenever new commands are to be created
 //    //so don't delete this
 //}
+#[tauri::command]
+pub fn collect_env_args() -> String {
+    let args: Vec<String> = std::env::args().collect();
+
+    // get first arg that ends with .ogg, .mp3, .flac, .wav
+    let mut audio_path = String::new();
+    for arg in args {
+        if arg.ends_with(".ogg") || arg.ends_with(".mp3") || arg.ends_with(".flac") || arg.ends_with(".wav") {
+            audio_path = arg;
+            break;
+        }
+    }
+
+    audio_path
+}
 
 #[tauri::command]
 pub fn open_in_file_manager(file_path: &str) {

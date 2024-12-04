@@ -107,7 +107,7 @@ const App = () => {
       setFirstRun(false);
     }*/
     invoke("refresh_paths", { 
-      athsAsJsonArray: JSON.stringify(paths), 
+      pathsAsJsonArray: JSON.stringify(paths), 
       compressImageOption: local_store.CompressImage === "Yes" ? true : false,
       maxDepth: local_store.DirectoryScanningDepth
     })
@@ -134,8 +134,9 @@ const App = () => {
   }
 
   function request_song(){
-    listen<String>("loadSong", async(path) => {
-      const song = await local_songs_db.songs.where("path").equals(path.payload.toString()).first();
+    invoke<String>("collect_env_args").then(async(path) => {
+      if(path === "")return;
+      const song = await local_songs_db.songs.where("path").equals(path.toString()).first();
       if(song)await startPlayingNewSong(song);
     });
   }
