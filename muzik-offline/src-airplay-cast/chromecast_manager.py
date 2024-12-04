@@ -12,6 +12,7 @@ class ChromecastManager:
         """Scan for devices on the network."""
         (chromecasts, browser) = pychromecast.get_chromecasts()
         devices = []
+        self.browser = browser
         if chromecasts is not list:
             return devices
         for chromecast in chromecasts:
@@ -25,28 +26,29 @@ class ChromecastManager:
             })
         return devices
     
-    def stream(self, device_uuid: list[str], file_path: str):
+    def stream(self, file_path: str, device_uuids: list[str]):
         """Stream a file to a devices."""
-        for device in device_uuid:
+        for device in device_uuids:
             chromecast = self.chromecasts[device]
+            chromecast.cast_info.friendly_name
             chromecast.play_media(file_path, "audio/mp3")
             chromecast.block_until_active()
 
-    def resume(self, device_uuid: list[str]):
+    def resume(self, device_uuids: list[str]):
         """Resume playback on a devices."""
-        for device in device_uuid:
+        for device in device_uuids:
             chromecast = self.chromecasts[device]
             chromecast.play()
 
-    def pause(self, device_uuid: list[str]):
+    def pause(self, device_uuids: list[str]):
         """Pause playback on devices."""
-        for device in device_uuid:
+        for device in device_uuids:
             chromecast = self.chromecasts[device]
             chromecast.pause()
 
-    def stop(self, device_uuid: list[str]):
+    def stop(self, device_uuids: list[str]):
         """Stop playback on a devices."""
-        for device in device_uuid:
+        for device in device_uuids:
             chromecast = self.chromecasts[device]
             chromecast.stop()
     

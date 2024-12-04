@@ -2,10 +2,14 @@ import asyncio
 import pyatv
 from pyatv.const import Protocol
 from pyatv.interface import AppleTV
+from pyatv.interface import PairingHandler
+from pyatv.interface import BaseConfig
 
 class AirplayManager:
     def __init__(self):
         self.connections: dict[str, AppleTV] = {}
+        self.pairing: PairingHandler = None
+        self.device: BaseConfig = None
 
     async def scan_devices(self):
         """Scan for devices on the network."""
@@ -31,7 +35,32 @@ class AirplayManager:
             self.connections[device_identifier] = atv
         except Exception as ex:
             raise RuntimeError(f"Failed to connect: {str(ex)}")
+        
+    async def pair(self, device_identifier: str):
+        """Pair with a device by its identifier."""
+        loop = asyncio.get_event_loop()
+        results = await pyatv.scan(identifier=device_identifier, loop=loop)
+        if not results:
+            raise ValueError("Device not found")
 
+        self.device = results[0]
+        self.pairing = await pyatv.pair(results[0], Protocol.MRP, loop=loop)
+        await self.pairing.begin()
+
+    async def finish_pairing(self, pin: int):
+        """Finish pairing with a device by its identifier."""
+        if not self.pairing:
+            raise ValueError("No pairing in progress")
+
+        self.pairing.pin(pin)
+        await self.pairing.finish()
+
+        if self.pairing.has_paired:
+            atv = await pyatv.connect(self.device, loop=asyncio.get_event_loop())
+            self.connections[self.device.identifier] = atv
+        else:
+            raise RuntimeError("Failed to pair")
+        
     async def pair_and_connect(self, device_identifier: str):
         """Pair with a device and connect to it."""
         loop = asyncio.get_event_loop()

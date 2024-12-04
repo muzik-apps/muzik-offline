@@ -2,7 +2,7 @@ import { SavedDirectories } from "@database/directories";
 import { Player } from "@database/player";
 import { SavedObject } from "@database/saved_object";
 import { viewableSideEl } from "@database/side_elements";
-import { toast } from "@muziktypes/index";
+import { AirplayCastDevice, toast } from "@muziktypes/index";
 
 export interface MaximisedState {
     isMaximised: boolean;
@@ -79,4 +79,14 @@ export interface QueueInterface{
     push_front: (song: number) => void;
     pop_back: () => void;
     setQueue: (setTo: number[]) => void;
+}
+
+export interface AirplayDevicesMapInterface{
+    devices: Map<string, AirplayCastDevice>;
+    setDevices: (setTo: Map<string, AirplayCastDevice>) => void;
+}
+
+export interface ChromecastDevicesMapInterface{
+    devices: Map<string, AirplayCastDevice>;
+    setDevices: (setTo: Map<string, AirplayCastDevice>) => void;
 }

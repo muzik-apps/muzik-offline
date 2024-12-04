@@ -174,3 +174,39 @@ export interface wallpaper{
     key: number | undefined;
     uuid: string;
 }
+
+export enum AirplayCastResponseType {
+    DevicesFound = "DevicesFound",
+    Connected = "Connected",
+    EnterPin = "EnterPin",
+    Disconnected = "Disconnected",
+    StreamingStarted = "StreamingStarted",
+    Resumed = "Resumed",
+    Paused = "Paused",
+    Stopped = "Stopped",
+    ConnectionFailed = "ConnectionFailed",
+    PairingFailed = "PairingFailed",
+    DisconnectionFailed = "DisconnectionFailed",
+    StreamingFailed = "StreamingFailed",
+    ResumingFailed = "ResumingFailed",
+    PausingFailed = "PausingFailed",
+    StoppingFailed = "StoppingFailed",
+    UnknownCommand = "UnknownCommand",
+    DiscoveryStoppingFailed = "DiscoveryStoppingFailed",
+}
+
+export type AirplayCastDevice = {
+    id: string;
+    name: string;
+    model: string;
+    address: string;
+    loading: boolean;
+    connected: boolean;
+}
+
+export type AirplayCastResponse = {
+    status: "success" | "error";
+    type: AirplayCastResponseType;
+    message: string;
+    data: AirplayCastDevice[];
+}

@@ -14,7 +14,10 @@ mod export;
 mod import;
 mod cast;
 
-use cast::airplay_cast::airplay_scan;
+use cast::{
+    airplay::{airplay_scan, airplay_pair, airplay_pin, airplay_disconnect},
+    chromecast::chromecast_scan,
+};
 use commands::general_commands::{collect_env_args, get_server_port};
 use commands::refresh_paths_at_start::{detect_deleted_songs, refresh_paths};
 use database::db_api::{
@@ -83,9 +86,10 @@ fn main() {
             // GENERAL COMMANDS
             get_all_songs, open_in_file_manager, set_volume,
             get_audio_dir, edit_song_metadata, get_server_port,
-            refresh_paths, detect_deleted_songs,
+            refresh_paths, detect_deleted_songs, collect_env_args,
             // AIRPLAY CAST
-            airplay_scan,
+            airplay_scan, airplay_pair, airplay_pin, airplay_disconnect,
+            chromecast_scan,
             // MUSIC PLAYER
             load_and_play_song_from_path, load_a_song_from_path, pause_song,
             resume_playing, stop_song, seek_to, seek_by, get_song_position,

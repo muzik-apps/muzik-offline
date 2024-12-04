@@ -3,8 +3,10 @@ use tauri_plugin_shell::process::{CommandEvent, CommandChild};
 
 pub enum AirplayCastCommands{
     AirplayScan,
-    AirplayConnect,
+    //AirplayConnect,
     AirplayPair,
+    AirplayPin,
+    //AirplayPairConnect,
     AirplayDisconnect,
     AirplayStream,
     AirplayResume,
@@ -21,8 +23,10 @@ pub enum AirplayCastCommands{
 pub fn airplay_cast_commands_as_string(command: AirplayCastCommands) -> String{
     match command{
         AirplayCastCommands::AirplayScan => "airplay-scan".to_string(),
-        AirplayCastCommands::AirplayConnect => "airplay-connect".to_string(),
+        //AirplayCastCommands::AirplayConnect => "airplay-connect".to_string(),
         AirplayCastCommands::AirplayPair => "airplay-pair".to_string(),
+        AirplayCastCommands::AirplayPin => "airplay-pin".to_string(),
+        //AirplayCastCommands::AirplayPairConnect => "airplay-pair-connect".to_string(),
         AirplayCastCommands::AirplayDisconnect => "airplay-disconnect".to_string(),
         AirplayCastCommands::AirplayStream => "airplay-stream".to_string(),
         AirplayCastCommands::AirplayResume => "airplay-resume".to_string(),

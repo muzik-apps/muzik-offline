@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { firstRunState, FSState, MaximisedState, PlayerInterface, PlayingPositionInterface, portState, QueueInterface, SavedDirectoriesInterface, SavedObjectInterface, searchInterface, toastInterface, viewableSideElInterface, wallpaperInterface } from './storeTypes';
+import { firstRunState, FSState, MaximisedState, PlayerInterface, PlayingPositionInterface, portState, 
+    QueueInterface, SavedDirectoriesInterface, SavedObjectInterface, searchInterface, 
+    toastInterface, viewableSideElInterface, wallpaperInterface, AirplayDevicesMapInterface,
+    ChromecastDevicesMapInterface } from './storeTypes';
 import { emptyDirectories } from '@database/directories';
 import { emptyPlayer } from '@database/player';
 import { emptySavedObject } from '@database/saved_object';
@@ -185,5 +188,19 @@ export const useHistorySongs = create<QueueInterface>()(
         push_front: (song) => set((state) => ({ queue: [song, ...state.queue] })),
         pop_back: () => set((state) => ({ queue: state.queue.slice(0, state.queue.length - 1) })),
         setQueue: (setTo) => set((_state) => ({ queue: setTo })),
+    }),
+)
+
+export const useAirplayDevicesMap = create<AirplayDevicesMapInterface>()(
+    (set) => ({
+        devices: new Map(),
+        setDevices: (setTo) => set((_state) => ({ devices: setTo })),
+    }),
+)
+
+export const useChromecastDevicesMap = create<ChromecastDevicesMapInterface>()(
+    (set) => ({
+        devices: new Map(),
+        setDevices: (setTo) => set((_state) => ({ devices: setTo })),
     }),
 )

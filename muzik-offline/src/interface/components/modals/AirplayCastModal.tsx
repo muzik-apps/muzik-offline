@@ -1,13 +1,13 @@
 import { modal_variants } from "@content/index";
 import "@styles/components/modals/AirplayCastModal.scss";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AirplayPinModal from "./AirplayPinModal";
 import { Check, Computer, Headphones, Laptop, Speaker, TV, WifiLoader } from "@assets/icons";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css';
-import { useToastStore } from "@store/index";
-import { toastType } from "@muziktypes/index";
+import { useAirplayDevicesMap, useChromecastDevicesMap, useToastStore } from "@store/index";
+import { toastType, AirplayCastDevice, AirplayCastResponse } from "@muziktypes/index";
 import { invoke } from "@tauri-apps/api/core";
 
 type AirplayCastModalProps = {
@@ -15,26 +15,10 @@ type AirplayCastModalProps = {
     closeModal: () => void;
 }
 
-type Device = {
-    id: string;
-    name: string;
-    model: string;
-    address: string;
-    loading: boolean;
-    connected: boolean;
-}
-
-type Response = {
-    status: string;
-    message: string;
-    data: Device[];
-}
-
 const AirplayCastModal = (props: AirplayCastModalProps) => {
-    const [chromecast_devices, setChromecastDevices] = useState<Map<string, Device>>(new Map());
-    const [airplay_devices, setAirplayDevices] = useState<Map<string, Device>>(new Map());
-    const [selectedAirplayDevice, setSelectedAirplayDevice] = useState<Device | null>(null);
-    const [selectedChromecastDevice, setSelectedChromecastDevice] = useState<Device | null>(null);
+    const {chromecast_devices, setChromecastDevices} = useAirplayDevicesMap((state) => { return {chromecast_devices: state.devices, setChromecastDevices: state.setDevices}; });
+    const {airplay_devices, setAirplayDevices} = useChromecastDevicesMap((state) => { return {airplay_devices: state.devices, setAirplayDevices: state.setDevices}; });
+    const [selectedAirplayDevice, setSelectedAirplayDevice] = useState<AirplayCastDevice | null>(null);
     const [isScanning, setIsScanning] = useState(false);
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
 
@@ -42,7 +26,7 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
         setIsScanning(true);
         invoke("airplay_scan").then((api_res: any) => {
             setIsScanning(false);
-            const res: Response = JSON.parse(api_res);
+            const res: AirplayCastResponse = JSON.parse(api_res);
             // incoming format is {"status": "success", "message": "any message", "data": [{"id", "name", "address", "model"}]}
             if(res.status === "success"){
                 setAirplayDevices(new Map(res.data.map((device: {
@@ -67,9 +51,10 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
             console.log(err);
             setToast({title: "Error", message: err, type: toastType.error, timeout: 3000});
         });
-        /*
+        
         //scan for chromecast devices
-        invoke<Response>("chromecast_scan").then((res) => {
+        invoke("chromecast_scan").then((api_res: any) => {
+            const res: AirplayCastResponse = JSON.parse(api_res);
             // incoming format is {"status": "success", "message": "any message", "data": [{"id", "name", "address", "model"}]}
             if(res.status === "success"){
                 setChromecastDevices(new Map(res.data.map((device: {
@@ -77,7 +62,7 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
                     name: string;
                     address: string;
                     model: string;
-                }) => [device.address, {
+                }) => [device.id, {
                     id: device.id,
                     name: device.name,
                     model: device.model,
@@ -89,59 +74,67 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
             else{
                 setToast({title: "Error", message: res.message, type: toastType.error, timeout: 3000});
             }
-        });*/
+        });
     }
 
-    function connectAirplay(device: Device){
-        if(device.connected){
-            device.connected = false;
-            setAirplayDevices(new Map(airplay_devices.set(device.address, device)));
-            return;
-        }
-        //simulate connect to airplay device
+    function connectAirplay(device: AirplayCastDevice){
         device.loading = true;
         setAirplayDevices(new Map(airplay_devices.set(device.address, device)));
-        setTimeout(() => {
-            device.loading = false;
-            setAirplayDevices(new Map(airplay_devices.set(device.address, device)));
-            setSelectedAirplayDevice(device);
-        }, 2000);
+
+        if(device.connected){
+            invoke("airplay_disconnect", {deviceIdentifier: device.id}).then(() => {
+                device.connected = false;
+                setAirplayDevices(new Map(airplay_devices.set(device.address, device)));
+            }).catch((err) => {
+                device.loading = false;
+                setAirplayDevices(new Map(airplay_devices.set(device.address, device)));
+                setToast({title: "Error", message: err, type: toastType.error, timeout: 3000});
+            });
+        } else{
+            invoke("airplay_pair", {deviceIdentifier: device.id}).then(() => {
+                device.loading = false;
+                setAirplayDevices(new Map(airplay_devices.set(device.address, device)));
+                setSelectedAirplayDevice(device);
+            }).catch((err) => {
+                device.loading = false;
+                setAirplayDevices(new Map(airplay_devices.set(device.address, device)));
+                setToast({title: "Error", message: err, type: toastType.error, timeout: 3000});
+            });
+        }
     }
 
-    function connectChromecast(device: Device){
+    function connectChromecast(device: AirplayCastDevice){
         if(device.connected){
             device.connected = false;
             setChromecastDevices(new Map(chromecast_devices.set(device.address, device)));
             return;
         }
-        //simulate connect to chromecast device
-        device.loading = true;
-        setChromecastDevices(new Map(chromecast_devices.set(device.address, device)));
-        setTimeout(() => {
-            device.loading = false;
+        else{
             device.connected = true;
             setChromecastDevices(new Map(chromecast_devices.set(device.address, device)));
-            setSelectedChromecastDevice(device);
-            setToast({title: "Connected", message: `Connected to ${device.name}`, type: toastType.info, timeout: 3000});
-        }, 2000);
+        }
     }
 
-    function connectPinAirplay(device: Device, pin: string){
+    function connectPinAirplay(device: AirplayCastDevice, pin: string){
         setSelectedAirplayDevice(null);
         if(pin === ""){
             return;
         }
         device.loading = true;
         setAirplayDevices(new Map(airplay_devices.set(device.address, device)));
-        setTimeout(() => {
+        invoke("airplay_pin", {pin: pin}).then(() => {
             device.connected = true;
             device.loading = false;
             setAirplayDevices(new Map(airplay_devices.set(device.address, device)));
             setToast({title: "Connected", message: `Connected to ${device.name}`, type: toastType.info, timeout: 3000});
-        }, 2000);
+        }).catch((err) => {
+            device.loading = false;
+            setAirplayDevices(new Map(airplay_devices.set(device.address, device)));
+            setToast({title: "Error", message: err, type: toastType.error, timeout: 3000});
+        });
     }
 
-    function GetIcon(device: Device){
+    function GetIcon(device: AirplayCastDevice){
         if(device.name.toLowerCase().includes("tv") || device.model.toLowerCase().includes("tv")) return <TV />;
         else if(device.name.toLowerCase().includes("speaker") || (device.name.toLowerCase().includes("homepod")) 
             || device.model.toLowerCase().includes("speaker") || (device.model.toLowerCase().includes("homepod"))) return <Speaker />;
@@ -150,6 +143,12 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
         else if(device.name.toLowerCase().includes("laptop") || device.model.toLowerCase().includes("laptop")) return <Laptop />;
         else return <Computer />;
     }
+
+    useEffect(() => {
+        if(props.isOpen){
+            scan();
+        }
+    }, [props.isOpen]);
 
     return (
         <div className={"AirplayCastModal" + (props.isOpen ? " AirplayCastModal-visible" : "")} onClick={
