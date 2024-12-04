@@ -40,9 +40,9 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
 
     async function scan(){
         setIsScanning(true);
-        invoke<Response>("airplay_scan").then((res) => {
+        invoke("airplay_scan").then((api_res: any) => {
             setIsScanning(false);
-            console.log(res);
+            const res: Response = JSON.parse(api_res);
             // incoming format is {"status": "success", "message": "any message", "data": [{"id", "name", "address", "model"}]}
             if(res.status === "success"){
                 setAirplayDevices(new Map(res.data.map((device: {
