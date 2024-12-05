@@ -28,6 +28,7 @@ use database::db_api::{
 use database::db_manager::DbManager;
 use export::{export_csv::export_songs_as_csv, export_html::export_songs_as_html, 
     export_json::export_songs_as_json,export_txt::export_songs_as_txt, export_xml::export_songs_as_xml};
+use music::player::set_playback_speed;
 //use export::export_pdf::export_songs_as_pdf;
 use socials::discord_rpc::{set_discord_rpc_activity_with_timestamps, DiscordRpc};
 use utils::music_list_organizer::MLO;
@@ -48,6 +49,7 @@ use crate::music::player::{
     get_song_position, load_a_song_from_path, load_and_play_song_from_path, pause_song,
     resume_playing, seek_by, seek_to, set_volume, stop_song,
 };
+use crate::music::rodio_player::{get_output_devices, set_output_device, get_default_output_device};
 use crate::socials::discord_rpc::{
     allow_connection_and_connect_to_discord_rpc, attempt_to_connect_if_possible,
     clear_discord_rpc_activity, disallow_connection_and_close_discord_rpc,
@@ -59,6 +61,7 @@ use crate::utils::music_list_organizer::{
 };
 use app::setup::{
     initialize_airplay_cast, initialize_audio_manager, setup_app
+    initialize_audio_manager, initialise_kira_audio_manager, initialise_rodio_audio_manager
 };
 
 fn main() {
@@ -78,6 +81,8 @@ fn main() {
         ))
         .manage(initialize_audio_manager())
         .manage(initialize_airplay_cast())
+        .manage(initialise_kira_audio_manager())
+        .manage(initialise_rodio_audio_manager())
         .setup(setup_app)
         .invoke_handler(tauri::generate_handler![
             // WINDOW CONTROL
@@ -93,6 +98,8 @@ fn main() {
             // MUSIC PLAYER
             load_and_play_song_from_path, load_a_song_from_path, pause_song,
             resume_playing, stop_song, seek_to, seek_by, get_song_position,
+            get_default_output_device, get_output_devices,
+            set_output_device, set_playback_speed,
             // UTILS
             resize_frontend_image_to_fixed_height,
             // MUSIC LIST ORGANIZER

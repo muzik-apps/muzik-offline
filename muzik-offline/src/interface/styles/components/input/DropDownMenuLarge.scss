@@ -5,17 +5,19 @@
     border-radius: 10px;
     background: $app-theme-col;
     padding: 5px;
-    z-index: $z-index-8000;
+    padding-top: 0px;
+    padding-bottom: 0px;
     height: 0px;
     opacity: 0;
+    border: 2px solid $songs-container-border-col;
+    box-shadow: $box-shadow-10-10-25;
 
     div{
+        margin-top: -5px;
+        margin-bottom: -5px;
         h4{
             font-size: 13px;
-            height: 13px;
-            margin-top: 9px;
-            margin-bottom: 9px;
-            width: 100%;
+            width: calc(100% - 5px);
             color: $root-app-navigator-hover-col;
         }
     }

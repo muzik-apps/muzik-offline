@@ -40,7 +40,6 @@ const settings_data: {
     }
 ]
 
-
 const GeneralSettings = () => {
     const [selectedGeneralSetting, setselectedGeneralSetting] = useState<selectedGeneralSettingEnum>(selectedGeneralSettingEnum.Nothing);
     const {local_store, setStore} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
@@ -101,7 +100,7 @@ const GeneralSettings = () => {
                 {
                     settings_data.map((value) => 
                         value.dropDownName !== selectedGeneralSettingEnum.AlwaysRoundedCornersWindows ||
-                        (value.dropDownName === selectedGeneralSettingEnum.AlwaysRoundedCornersWindows && local_store.OStype === OSTYPEenum.Windows) ?
+                        (value.dropDownName === selectedGeneralSettingEnum.AlwaysRoundedCornersWindows && (local_store.OStype === OSTYPEenum.Windows || local_store.OStype === OSTYPEenum.Linux)) ?
                         <div className="setting" key={value.key}>
                             <h3>{value.title}</h3>
                             <div className="setting_dropdown">

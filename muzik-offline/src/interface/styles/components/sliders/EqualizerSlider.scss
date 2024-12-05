@@ -1,0 +1,144 @@
+@import "../../constants/constants";
+
+.EqualizerSlider{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    height: calc(100% - 40px);
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 45px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+
+    .input-container{
+        height: 100%;
+        display: flex;
+        align-items: center;
+        -webkit-transform:rotate(90deg);
+        -moz-transform:rotate(90deg);
+        -o-transform:rotate(90deg);
+        transform:rotate(270deg);
+
+        input[type="range"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: calc(100vh - 371px);
+            height: 10px;
+            background: $white-900;
+            border-radius: 50px;
+            background-image: linear-gradient($app-theme-col, $app-theme-col);
+            background-size: 50% 100%;
+            background-repeat: no-repeat;
+        }
+    
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 14px;
+            width: 14px;
+            border-radius: 50%;
+            cursor: grab;
+            box-shadow: 0 0 2px 0 #555;
+            transition: transform 0.2s ease-in-out;
+            background: $app-theme-col;
+        }
+    
+        input[type="range"]::-moz-range-thumb  {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 14px;
+            width: 14px;
+            border-radius: 50%;
+            cursor: grab;
+            box-shadow: 0 0 2px 0 #555;
+            transition: transform 0.2s ease-in-out;
+            background: $app-theme-col;
+        }
+    
+        input[type="range"]:hover::-webkit-slider-thumb {
+            background: $app-theme-col;
+            transform: scale(1.2);
+        }
+    
+        input[type="range"]:hover::-moz-range-thumb  {
+            background: $app-theme-col;
+            transform: scale(1.2);
+        }
+    
+        input[type="range"]::-webkit-slider-runnable-track  {
+            -webkit-appearance: none;
+            appearance: none;
+            box-shadow: none;
+            border: none;
+            background: transparent;
+        }
+    
+        input[type="range"]::-moz-range-track  {
+            -webkit-appearance: none;
+            appearance: none;
+            box-shadow: none;
+            border: none;
+            background: transparent;
+        }
+    }
+
+    h4{
+        margin-top: 10px;
+        margin-bottom: 0px;
+        height: 24px;
+        font-size: 12px;
+        width: 45px;
+        text-align: center;
+    }
+}
+
+@media only screen and (min-height: 650px){
+    .EqualizerSlider{
+        .input-container{
+            input[type="range"] {
+                width: calc(90vh - 371px);
+            }
+        }
+    }
+}
+
+@media only screen and (min-height: 750px){
+    .EqualizerSlider{
+        .input-container{
+            input[type="range"] {
+                width: calc(80vh - 371px);
+            }
+        }
+    }
+}
+
+@media only screen and (min-height: 850px){
+    .EqualizerSlider{
+        .input-container{
+            input[type="range"] {
+                width: calc(70vh - 371px);
+            }
+        }
+    }
+}
+
+@media only screen and (min-height: 950px){
+    .EqualizerSlider{
+        .input-container{
+            input[type="range"] {
+                width: calc(60vh - 371px);
+            }
+        }
+    }
+}
+
+@media only screen and (min-height: 1050px){
+    .EqualizerSlider{
+        .input-container{
+            input[type="range"] {
+                width: calc(50vh - 371px);
+            }
+        }
+    }
+}

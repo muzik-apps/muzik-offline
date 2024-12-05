@@ -2,7 +2,7 @@ import { SavedDirectories } from "@database/directories";
 import { Player } from "@database/player";
 import { SavedObject } from "@database/saved_object";
 import { viewableSideEl } from "@database/side_elements";
-import { AirplayCastDevice, toast } from "@muziktypes/index";
+import { AirplayCastDevice, AudioLabPreset, toast } from "@muziktypes/index";
 
 export interface MaximisedState {
     isMaximised: boolean;
@@ -89,4 +89,9 @@ export interface AirplayDevicesMapInterface{
 export interface ChromecastDevicesMapInterface{
     devices: Map<string, AirplayCastDevice>;
     setDevices: (setTo: Map<string, AirplayCastDevice>) => void;
+}
+
+export interface SavedPresetsValues{
+    map: Map<string, AudioLabPreset>;
+    addValue: (key: string, value: AudioLabPreset) => void;
 }

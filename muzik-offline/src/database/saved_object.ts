@@ -17,9 +17,16 @@ export interface SavedObject{
     UpcomingHistoryLimit: string,
     SeekStepAmount: string,
     SongLengthORremaining: string,
+    AudioLabPreset: string,
+    SavedPresets: string[],
     AlwaysRoundedCornersWindows: string,
     AutoStartApp: string,
-    DirectoryScanningDepth: number
+    DirectoryScanningDepth: number,
+    player: "rodio" | "kira",
+    AudioQuality: string,
+    PlayBackSpeed: string,
+    AudioTransition: string,
+    OutputDevice: string
 }
 
 export const emptySavedObject: SavedObject = {
@@ -39,7 +46,14 @@ export const emptySavedObject: SavedObject = {
     UpcomingHistoryLimit: "10",
     SeekStepAmount: "10",
     SongLengthORremaining: "song length",
+    AudioLabPreset: "flat",
+    SavedPresets: ["flat", "hip-hop"],
     AlwaysRoundedCornersWindows: "No",
     AutoStartApp: "No",
-    DirectoryScanningDepth: 1
+    DirectoryScanningDepth: 1,
+    player: "rodio",
+    AudioQuality: "High(320kbps)",
+    PlayBackSpeed: "1",
+    AudioTransition: "No",
+    OutputDevice: ""
 }

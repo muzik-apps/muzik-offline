@@ -8,6 +8,8 @@
     z-index: $z-index-8000;
     height: 0px;
     opacity: 0;
+    border: 1px solid $songs-container-border-col;
+    box-shadow: $box-shadow-10-10-25;
 
     div{
         h4{

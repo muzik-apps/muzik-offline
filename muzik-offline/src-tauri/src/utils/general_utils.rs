@@ -2,6 +2,7 @@ use base64::{engine::general_purpose, Engine as _};
 use image::imageops::FilterType;
 use rayon::prelude::*;
 use std::net::TcpListener;
+use std::time::Duration;
 use std::{io::Cursor, path::Path};
 
 pub fn duration_to_string(duration: &u64) -> String {
@@ -202,4 +203,8 @@ pub fn convert_single_to_double_backward_slash_on_path(path: &String) -> String 
 
     #[cfg(not(target_os = "windows"))]
     return path.to_string();
+}
+
+pub fn calculate_volume(duration: Duration) -> f64{// duration will be between 0 and 6 seconds
+    1.0 - (1.0 * std::f64::consts::E.powf(-1.0 * duration.as_secs_f64() as f64))
 }

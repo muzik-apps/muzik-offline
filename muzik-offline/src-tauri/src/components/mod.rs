@@ -5,3 +5,5 @@ pub mod event_payload;
 pub mod genre;
 pub mod song;
 pub mod airplay_cast;
+pub mod kira_audio_manager;
+pub mod rodio_audio_manager;

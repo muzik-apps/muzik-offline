@@ -1,6 +1,7 @@
 export enum selectedSettingENUM {
     General = "General",
     Appearance = "Appearance", 
+    AudioLab = "AudioLab",
     MusicFolders = "Music Folders",
     Security = "Security",
     ExportSongs = "Export Songs",
@@ -17,8 +18,13 @@ export enum selectedGeneralSettingEnum{
     UpcomingHistoryLimit = "UpcomingHistoryLimit",
     SeekStepAmount = "SeekStepAmount",
     SongLengthORremaining = "SongLengthORremaining",
+    AudioLabPreset = "AudioLabPreset",
     AlwaysRoundedCornersWindows = "AlwaysRoundedCornersWindows",
     AutoStartApp = "AutoStartApp",
+    AudioQuality = "AudioQuality",
+    PlayBackSpeed = "PlayBackSpeed",
+    AudioTransition = "AudioTransition",
+    OutputDevice = "OutputDevice"
 }
 
 export enum OSTYPEenum{
@@ -160,6 +166,18 @@ export interface PlaylistMD {
     playlist_data: playlist | null,
     song_count: number;
     length: string;
+}
+
+export interface AudioLabPreset{
+    SixtyTwoHz: number;
+    OneTwentyFiveHz: number;
+    TwoFiftyHz: number;
+    FiveHundredHz: number;
+    OnekHz: number;
+    TwokHz: number;
+    FourkHz: number;
+    EightkHz: number;
+    SixteenkHz: number;
 }
 
 export interface Payload {

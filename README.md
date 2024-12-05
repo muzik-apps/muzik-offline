@@ -42,11 +42,11 @@ A cross platform, local music player that is an offline(no streaming) version of
 # I am a developer
 ## Development Cycle
 1. Download <a href="https://tauri.app/v1/guides/getting-started/prerequisites">the pre-requisites</a> for tauri only by following the pre-requisites page for your operating system.
-2. If you are on linux OS(debian/ubuntu), run
+2. If you are on a linux based OS, run
 ```
 sudo apt-get install libasound2-dev
 ```
-3. Clone this repo, specifically the <a href="https://github.com/muzik-apps/muzik-offline">main-app-dev</a> branch
+3. Clone this repo or fork it and clone it.
 4. run
 ```
 cd muzik-offline/muzik-offline
@@ -55,7 +55,7 @@ cd muzik-offline/muzik-offline
 ```
 npm install
 ```
-6. This project uses <a href="https://discord.com/developers/docs/rich-presence/how-to">discord rpc</a>, so you will need a client id, otherwise the code won't compile
+6. This application uses <a href="https://discord.com/developers/docs/rich-presence/how-to">discord rpc</a>, so you will need a client id, otherwise the application won't run
 7. To get a client id, setup a new application on <a href="https://discord.com/developers/applications">discord developer portal</a> and then place your client id in an ```.env``` file in the <a href="https://github.com/muzik-apps/muzik-offline/tree/main-app-dev/muzik-offline/src-tauri">src-tauri</a> directory
 8. The env file should look like this:
 ```
@@ -71,21 +71,21 @@ openssl enc -aes-256-cbc -salt -pbkdf2 -in src-tauri/.env -out src-tauri/.env.en
 ```
 
 ## Building
-1. Clone the <a href="https://github.com/muzik-apps/muzik-offline/tree/releases">releases</a> branch. It is the most stable and ready to go branch
-2. Before you create a build, you will have to embed any env variables into the rust code otherwise the application will panic if you try to run it. The env variables are only meant to be used in the development cycle.
-3. If you want to create a production build, run
+1. Clone the <a href="https://github.com/muzik-apps/muzik-offline/tree/releases">releases</a> branch. It is the most stable and "ready-to-go" branch
+2. If you want to create a production build, run
 ```
 npm run tauri build
 ```
-4. If you want to create a <a href="https://tauri.app/v1/guides/debugging/application#using-the-inspector-in-production">debug production build</a>(one where you have access to devtools), run
+3. If you want to create a <a href="https://tauri.app/v1/guides/debugging/application#using-the-inspector-in-production">debug production build</a>(one where you have access to devtools), run
 ```
 npm run tauri build -- --debug
 ```
 
-Please note that when you run ```npm run tauri dev```, ```npm run tauri build``` or ```npm run tauri build -- --debug``` for the first time, it may take a lengthy amount of minutes to compile everything. However this only occurs just on your first run. In subsequent runs, it will be faster.
+> [!NOTE]  
+> Please note that when you run ```npm run tauri dev```, ```npm run tauri build``` or ```npm run tauri build -- --debug``` for the first time, it may take a lengthy amount of minutes to compile everything. However this only occurs just on your first run. In subsequent runs, it will be faster.
 
 # Node modules used
-1. <a href="https://www.npmjs.com/package/@tauri-apps/cli">tauri-apps/api</a>
+1. <a href="https://www.npmjs.com/package/@tauri-apps/cli">tauri-apps</a>
 2. <a href="https://dexie.org/">dexie</a>
 3. <a href="https://www.framer.com/motion/">framer motion</a>
 4. <a href="https://react.dev/">react and react-dom</a>
@@ -93,6 +93,7 @@ Please note that when you run ```npm run tauri dev```, ```npm run tauri build```
 6. <a href="https://www.npmjs.com/package/react-viewport-list">react viewport list</a>
 7. <a href="https://sass-lang.com/">sass</a>
 8. <a href="https://docs.pmnd.rs/zustand/getting-started/introduction">zustand</a>
+9. <a href="https://www.npmjs.com/package/react-loading-skeleton">react-loading-skeleton</a>
 
 # Rust libraries used
 1. <a href="https://crates.io/crates/tauri">tauri</a>
@@ -110,3 +111,14 @@ Please note that when you run ```npm run tauri dev```, ```npm run tauri build```
 13. <a href="https://crates.io/crates/dirs">dirs</a>
 14. <a href="https://crates.io/crates/discord-rich-presence">discord-rich-presence</a>
 15. <a href="https://crates.io/crates/dotenv">dotenv</a>
+16. <a href="https://crates.io/crates/souvlaki">souvlaki</a>
+17. <a href="https://crates.io/crates/warp">warp</a>
+18. <a href="https://crates.io/crates/tauri-plugin-shell">tauri-plugin-shell</a>
+19. <a href="https://crates.io/crates/tauri-plugin-notification">tauri-plugin-notification</a>
+20. <a href="https://crates.io/crates/tauri-plugin-dialog">tauri-plugin-dialog</a>
+21. <a href="https://crates.io/crates/tauri-plugin-http">tauri-plugin-http</a>
+22. <a href="https://crates.io/crates/tauri-plugin-os">tauri-plugin-os</a>
+23. <a href="https://crates.io/crates/printpdf">printpdf</a>
+24. <a href="https://crates.io/crates/tabled">tabled</a>
+25. <a href="https://crates.io/crates/walkdir">walkdir</a>
+26. <a href="https://crates.io/crates/futures">futures</a>

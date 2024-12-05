@@ -1,0 +1,151 @@
+@import "../../constants/constants";
+
+.EqualizerModal{
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background: $blur-element;
+    flex-direction: column;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: $z-index-9999;
+
+    /* Track */
+    ::-webkit-scrollbar-track { margin-top: 0px; margin-bottom: 20px; }
+
+    .modal{
+        width: 70%;
+        height: 500px;
+        padding: 20px;
+        border: 1px solid $songs-container-border-col;
+        background: var(--var-songs-container-bg-col);
+        backdrop-filter: var(--var-bg-blur-150);
+        -webkit-backdrop-filter: var(--var-bg-blur-150);
+        border-radius: 20px;
+        box-shadow: $box-shadow-10-10-25;
+
+        h2{
+            font-size: 20px;
+            margin-top: 0px;
+            margin-bottom: 20px;
+        }
+
+        .sub-heading{
+            display: flex;
+            margin-bottom: 20px;
+            .setting_dropdown{
+                display: flex;
+                position: relative;
+                .setting_dropdown{
+                    width: 156px;
+                    height: 40px;
+                    border-radius: 10px;
+                    background: $app-theme-col;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+    
+                    h4{
+                        font-size: 13px;
+                        height: 13px;
+                        margin-left: 4px;
+                        color: $root-app-navigator-hover-col;
+                    }
+                    
+                    .chevron_icon{
+                        width: 32px;
+                        height: 32px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin-right: 4px;
+                        svg{
+                            path{
+                                stroke: $root-app-navigator-hover-col;
+                            }
+                        }
+                    }
+                }
+    
+                .DropDownMenu_container{
+                    position: absolute;
+                    top: 45px;
+                    z-index: $z-index-9250;
+                }
+            }
+            
+            input[type="text"]{
+                flex-grow: 1;
+                height: 40px;
+                border-radius: 10px;
+                background: $gray-stroke-20;
+                border: none;
+                outline: none;
+                padding: 0px 0px 0px 0px;
+                padding-left: 4px;
+                padding-right: 4px;
+                font-size: 13px;
+                color: $white-900;
+                font-family: 'inter-italic-regular', sans-serif;
+                font-style: italic;
+                margin-left: 20px;
+            }
+
+            .button-delete, .button-create{
+                width: 156px;
+                height: 40px;
+                border-radius: 10px;
+                background: $app-theme-col;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-left: 20px;
+                color: $root-app-navigator-hover-col;
+
+            }
+        }
+
+        .equalizer_container{
+            height: calc(100% - 105px);
+            display: flex;
+
+            .decibel_labels{
+                height: calc(100% - 33px);
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                .decibel_level{
+                    width: 156px;
+                    height: 40px;
+                    border-radius: 10px;
+                    background: $on-hover-song;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
+
+            .equalizer_border{
+                height: 100%;
+                width: calc(100% - 176px);
+                border-radius: 10px;
+                background: $on-hover-song;
+                margin-left: 20px;
+
+                .equalizer{
+                    display: flex;
+                    justify-content: space-evenly;
+                    height: 100%;
+                }
+            }
+        }
+
+    }
+}
+
+.EqualizerModal-visible{
+    display: flex;
+}

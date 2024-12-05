@@ -1,5 +1,5 @@
 use crate::{
-    components::audio_manager::BackendStateManager,
+    components::audio_manager::AppAudioManager,
     utils::general_utils::{
         decode_image_in_parallel, encode_image_in_parallel, resize_and_compress_image,
     },
@@ -40,7 +40,7 @@ pub fn open_in_file_manager(file_path: &str) {
 }
 
 #[tauri::command]
-pub fn get_server_port(audio_manager: State<'_, Arc<Mutex<BackendStateManager>>>) -> u16 {
+pub fn get_server_port(audio_manager: State<'_, Arc<Mutex<AppAudioManager>>>) -> u16 {
     match audio_manager.lock() {
         Ok(audio_manager) => {
             return audio_manager.port;

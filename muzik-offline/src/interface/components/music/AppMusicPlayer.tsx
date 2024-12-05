@@ -40,7 +40,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
     }
 
     async function upDateSeeker(){
-        const value: any = await invoke("get_song_position");
+        const value: any = await invoke("get_song_position", { player: useSavedObjectStore.getState().local_store.player});
         if(value === Player.lengthOfSongInSeconds && Player.playingSongMetadata){
             reconfigurePlayer_AtEndOfSong();
         }

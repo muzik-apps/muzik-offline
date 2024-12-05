@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
 import { FunctionComponent, useState, useEffect } from 'react';
 import "@styles/pages/Settings.scss";
-import { ChevronDown, ComponentIcon, InformationCircleContained, Layout, SettingsIcon, FolderSearch, File } from "@icons/index";
-import { DeleteDiretoryModal, ExportModal, SettingsNavigator, WallpapersSelectionModal } from '@components/index';
+import { ChevronDown, ComponentIcon, InformationCircleContained, Layout, SettingsIcon, WaveForm, FolderSearch, File } from "@icons/index";
+import { DeleteDiretoryModal, EqualizerModal, ExportModal, SettingsNavigator, WallpapersSelectionModal } from '@components/index';
 import { selectedSettingENUM } from 'types';
-import { AppearanceSettings, GeneralSettings, AdvancedSettings, AboutSettings, MusicFoldersSettings, ExportSettings } from '@layouts/index';
+import { AppearanceSettings, GeneralSettings, AdvancedSettings, AboutSettings, AudioLabSettings, MusicFoldersSettings, ExportSettings } from '@layouts/index';
 import { useSavedObjectStore } from 'store';
 
 type SettingsProps = {
@@ -23,11 +23,13 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
     const {local_store,} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
     const [currentPath, setCurrentPath] = useState<string | null>(null);
     const [wallpapersModal, setWallpapersModal] = useState<boolean>(false);
+    const [equaliserModal, setEqualiserModal] = useState<boolean>(false);
     const [uuids, setUuids] = useState<string[] | null>(null);
 
     function convertToEnum(arg: string){
         if(arg === selectedSettingENUM.General)return selectedSettingENUM.General;
         else if(arg === selectedSettingENUM.Appearance)return selectedSettingENUM.Appearance;
+        else if(arg === selectedSettingENUM.AudioLab)return selectedSettingENUM.AudioLab;
         else if(arg === selectedSettingENUM.MusicFolders)return selectedSettingENUM.MusicFolders;
         else if(arg === selectedSettingENUM.Security)return selectedSettingENUM.Security;
         else if(arg === selectedSettingENUM.ExportSongs)return selectedSettingENUM.ExportSongs;
@@ -58,6 +60,7 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
                         </div>
                         <SettingsNavigator icon={SettingsIcon} title={selectedSettingENUM.General} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
                         <SettingsNavigator icon={Layout} title={selectedSettingENUM.Appearance} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
+                        <SettingsNavigator icon={WaveForm} title={selectedSettingENUM.AudioLab} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
                         <SettingsNavigator icon={FolderSearch} title={selectedSettingENUM.MusicFolders} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
                         {/*<SettingsNavigator icon={Lock} title={selectedSettingENUM.Security} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>*/}
                         <SettingsNavigator icon={File} title={selectedSettingENUM.ExportSongs} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
@@ -72,6 +75,8 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
                                                 return <GeneralSettings/>
                                             case selectedSettingENUM.Appearance:
                                                 return <AppearanceSettings openModal={() => setWallpapersModal(true)}/>
+                                            case selectedSettingENUM.AudioLab:
+                                                return <AudioLabSettings openEqualiser={() => setEqualiserModal(true)}/>
                                             case selectedSettingENUM.MusicFolders:
                                                 return <MusicFoldersSettings openConfirmModal={setCurrentPath}/>
                                             //case selectedSettingENUM.Security:
@@ -92,6 +97,7 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
             <DeleteDiretoryModal path={currentPath ?? ""} isOpen={currentPath !== null} closeModal={() => setCurrentPath(null)}/>
             <WallpapersSelectionModal isOpen={wallpapersModal} closeModal={() => setWallpapersModal(false)}/>
             <ExportModal isOpen={uuids !== null} song_uuids={uuids ?? []} closeModal={() => setUuids(null)}/>
+            <EqualizerModal isOpen={equaliserModal} closeModal={() => setEqualiserModal(false)}/>
         </>
     )
 }

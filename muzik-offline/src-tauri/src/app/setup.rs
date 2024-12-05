@@ -1,4 +1,7 @@
-use crate::components::{audio_manager::BackendStateManager, airplay_cast};
+use crate::components::audio_manager::AppAudioManager;
+use crate::components::kira_audio_manager::KiraManager;
+use crate::components::rodio_audio_manager::RodioManager;
+use crate::components::airplay_cast;
 use crate::database::db_api::{get_image_from_tree, get_null_cover_from_tree, get_thumbnail, get_wallpaper};
 use crate::database::db_manager::DbManager;
 use kira::manager::{backend::DefaultBackend, AudioManager, AudioManagerSettings};
@@ -16,15 +19,28 @@ use crate::utils::general_utils::get_random_port;
 
 use super::setup_macos;
 
-/// Initializes the BackendStateManager with required settings.
-pub fn initialize_audio_manager() -> Arc<Mutex<BackendStateManager>> {
+/// Initializes the kira audio manager with required settings.
+pub fn initialise_kira_audio_manager() -> Arc<Mutex<KiraManager>> {
     let audio_manager = AudioManager::<DefaultBackend>::new(AudioManagerSettings::default())
         .expect("failed to initialize audio manager");
-
-    Arc::new(Mutex::new(BackendStateManager {
+    Arc::new(Mutex::new(KiraManager {
         manager: audio_manager,
         instance_handle: None,
         volume: 0.0,
+        crossfade: false,
+        duration: None,
+    }))
+}
+
+/// Initializes the Rodio audio manager with required settings.
+pub fn initialise_rodio_audio_manager() -> Arc<Mutex<RodioManager>> {
+    Arc::new(Mutex::new(RodioManager::new()))
+}
+
+/// Initializes the AppAudioManager with required settings.
+pub fn initialize_audio_manager() -> Arc<Mutex<AppAudioManager>> {
+    // Create a Rodio device and get the output stream handle
+    Arc::new(Mutex::new(AppAudioManager {
         controls: None,
         cover_url: String::new(),
         port: 0,
@@ -46,8 +62,10 @@ pub fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>>
         mpsc::Receiver<MediaControlEvent>,
     ) = mpsc::channel(32);
     setup_macos::setup_macos(app)?;
-    let shared_audio_manager = Arc::clone(&app.state::<Arc<Mutex<BackendStateManager>>>());
+    let shared_audio_manager = Arc::clone(&app.state::<Arc<Mutex<AppAudioManager>>>());
     let shared_db_manager = Arc::clone(&app.state::<Arc<Mutex<DbManager>>>());
+
+    // setup audio manager
 
     // Set up the image route
     let cover_image_route = create_image_route_for_covers(shared_db_manager.clone());

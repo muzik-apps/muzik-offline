@@ -4,7 +4,7 @@ use std::{
 };
 
 use crate::{
-    components::{audio_manager::BackendStateManager, event_payload::Payload},
+    components::{audio_manager::AppAudioManager, event_payload::Payload},
     database::{db_api::get_song_from_tree, db_manager::DbManager}
 };
 
@@ -212,7 +212,7 @@ pub fn event_handler(app: &AppHandle, event: &MediaControlEvent) {
 
 #[tauri::command]
 pub fn update_metadata(
-    audio_manager: State<'_, Arc<Mutex<BackendStateManager>>>,
+    audio_manager: State<'_, Arc<Mutex<AppAudioManager>>>,
     db_manager: State<'_, Arc<Mutex<DbManager>>>,
     uuid: String,
 ) {
@@ -245,7 +245,7 @@ pub fn update_metadata(
 }
 
 #[tauri::command]
-pub fn set_player_state(audio_manager: State<'_, Arc<Mutex<BackendStateManager>>>, state: &str) {
+pub fn set_player_state(audio_manager: State<'_, Arc<Mutex<AppAudioManager>>>, state: &str) {
     //,position: f64
     match audio_manager.lock() {
         Ok(mut manager) => {

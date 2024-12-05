@@ -3,13 +3,15 @@ import { devtools, persist } from 'zustand/middleware';
 import { firstRunState, FSState, MaximisedState, PlayerInterface, PlayingPositionInterface, portState, 
     QueueInterface, SavedDirectoriesInterface, SavedObjectInterface, searchInterface, 
     toastInterface, viewableSideElInterface, wallpaperInterface, AirplayDevicesMapInterface,
-    ChromecastDevicesMapInterface } from './storeTypes';
+    ChromecastDevicesMapInterface, SavedPresetsValues } from './storeTypes';
 import { emptyDirectories } from '@database/directories';
 import { emptyPlayer } from '@database/player';
 import { emptySavedObject } from '@database/saved_object';
 import { viewableSideElements } from '@database/side_elements';
 import { alltracksReducer, AllTracksState } from './reducerStore';
 import { reducerType, AllTracksStateInterface, Action } from './reducerTypes';
+import { AudioLabPreset } from '@muziktypes/index';
+import { premade_audio_labs } from '@content/index';
 
 export type{
     AllTracksStateInterface, Action
@@ -18,6 +20,18 @@ export type{
 export {
     reducerType,
     alltracksReducer, AllTracksState, 
+}
+
+export const FlatAudioLab: AudioLabPreset = {
+    SixtyTwoHz: 50,
+    OneTwentyFiveHz: 50,
+    TwoFiftyHz: 50,
+    FiveHundredHz: 50,
+    OnekHz: 50,
+    TwokHz: 50,
+    FourkHz: 50,
+    EightkHz: 50,
+    SixteenkHz: 50,
 }
 
 export const useFisrstRunStore = create<firstRunState>()(
@@ -202,5 +216,12 @@ export const useChromecastDevicesMap = create<ChromecastDevicesMapInterface>()(
     (set) => ({
         devices: new Map(),
         setDevices: (setTo) => set((_state) => ({ devices: setTo })),
+    }),
+)
+
+export const useSavedPresetsValues = create<SavedPresetsValues>()(
+    (set) => ({
+        map: premade_audio_labs,
+        addValue: (key: string, value: AudioLabPreset) => set((state) => ({ map: state.map.set(key, value) })),
     }),
 )
