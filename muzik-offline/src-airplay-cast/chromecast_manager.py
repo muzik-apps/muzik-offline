@@ -16,7 +16,7 @@ class ChromecastManager:
         if chromecasts is not list:
             return devices
         for chromecast in chromecasts:
-            cast_uuid = uuid.uuid4()
+            cast_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, chromecast.namespace)
             self.chromecasts[cast_uuid] = chromecast
             devices.append({
                 "id": cast_uuid,
@@ -30,7 +30,6 @@ class ChromecastManager:
         """Stream a file to a devices."""
         for device in device_uuids:
             chromecast = self.chromecasts[device]
-            chromecast.cast_info.friendly_name
             chromecast.play_media(file_path, "audio/mp3")
             chromecast.block_until_active()
 
