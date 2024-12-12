@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { firstRunState, FSState, MaximisedState, PlayerInterface, PlayingPositionInterface, portState, QueueInterface, SavedDirectoriesInterface, SavedObjectInterface, searchInterface, toastInterface, viewableSideElInterface, wallpaperInterface, SavedPresetsValues, VersionInterface } from './storeTypes';
+import { firstRunState, FSState, MaximisedState, PlayerInterface, PlayingPositionInterface, portState, QueueInterface, SavedDirectoriesInterface, SavedObjectInterface, searchInterface, toastInterface, viewableSideElInterface, wallpaperInterface, SavedPresetsValues, VersionInterface, LocaleInterface } from './storeTypes';
 import { emptyDirectories } from '@database/directories';
 import { emptyPlayer } from '@database/player';
 import { emptySavedObject } from '@database/saved_object';
@@ -102,7 +102,7 @@ export const useViewableSideElStore = create<viewableSideElInterface>()(
                 setviewableEl: (setTo) => set((_state) => ({ viewableEl: setTo })),
                 reset: () => set((_state) => ({ viewableEl: viewableSideElements })),
             }),
-        {name: 'viewableEl',}
+        {name: 'viewableEl-offline',}
         )
     )
 )
@@ -223,7 +223,20 @@ export const useVersionStore = create<VersionInterface>()(
                 setVersion: (nV) => set((_state) => ({ version: nV })),
                 reset: () => set((_state) => ({ version: "" })),
             }),
-        {name: 'version',}
+        {name: 'version-offline',}
+        )
+    )
+)
+
+export const useLocaleStore = create<LocaleInterface>()(
+    devtools(
+        persist(
+            (set) => ({
+                locale: "",
+                setLocale: (nL) => set((_state) => ({ locale: nL })),
+                reset: () => set((_state) => ({ locale: "" })),
+            }),
+        {name: 'locale-offline',}
         )
     )
 )

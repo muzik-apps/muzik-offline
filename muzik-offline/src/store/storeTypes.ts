@@ -95,4 +95,11 @@ export interface SavedPresetsValues{
 export interface VersionInterface{
     version: string;
     setVersion: (setTo: string) => void;
+    reset: () => void;
+}
+
+export interface LocaleInterface{
+    locale: string;
+    setLocale: (setTo: string) => void;
+    reset: () => void;
 }

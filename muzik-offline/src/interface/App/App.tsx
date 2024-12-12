@@ -9,7 +9,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { HistoryNextFloating } from "@layouts/index";
 import { OSTYPEenum, Payload, toastType } from "@muziktypes/index";
 import { AnimatePresence } from "framer-motion";
-import { useWallpaperStore, useSavedObjectStore, useIsMaximisedStore, useIsFSStore, usePortStore, useDirStore, useToastStore } from "@store/index";
+import { useWallpaperStore, useSavedObjectStore, useIsMaximisedStore, useIsFSStore, usePortStore, useDirStore, useToastStore, useLocaleStore } from "@store/index";
 import { SavedObject } from "@database/saved_object";
 import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/plugin-notification';
 import { MiniPlayer } from "@App/index";
@@ -18,6 +18,7 @@ import { processOSMediaControlsEvent } from "@utils/OSeventControl";
 import { fetch_library, getWallpaperURL, shouldClearZustandStores } from "@utils/index";
 import { local_songs_db } from "@database/database";
 import { startPlayingNewSong } from "@utils/playerControl";
+import { locale } from '@tauri-apps/plugin-os';
 
 const App = () => {
   const [openMiniPlayer, setOpenMiniPlayer] = useState<boolean>(false);
@@ -32,6 +33,7 @@ const App = () => {
   //const { firstRun, setFirstRun } = useFisrstRunStore((state) => { return { firstRun: state.firstRun, setFirstRun: state.setFirstRun}; });
   const { dir } = useDirStore((state) => { return { dir: state.dir}; });
   const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
+  const {localeV, setLocale} = useLocaleStore((state) => { return { localeV: state.locale, setLocale: state.setLocale }; });
 
   function closeSetting(){if(openSettings === true)setOpenSettings(false);}
 
@@ -93,6 +95,11 @@ const App = () => {
     setPort(port);
   }
 
+  async function detectDeviceLanguage() {
+    const local = await locale();
+    if (localeV === "" && local !== null)setLocale(local);
+  }
+
   async function check_paths_for_new_music(){
     let paths = dir.Dir;
     /*
@@ -143,6 +150,7 @@ const App = () => {
 
   useEffect(() => {
     shouldClearZustandStores().then(() => {
+      detectDeviceLanguage();
       request_song();
       checkOSType();
       checkAndRequestNotificationPermission();
