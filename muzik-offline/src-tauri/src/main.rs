@@ -15,8 +15,8 @@ mod import;
 mod cast;
 
 use cast::{
-    airplay::{airplay_scan, airplay_pair, airplay_pin, airplay_disconnect},
-    chromecast::chromecast_scan,
+    airplay::{airplay_scan, airplay_pair, airplay_pin, airplay_disconnect, airplay_stream_file, airplay_resume, airplay_pause, airplay_stop},
+    chromecast::{chromecast_scan, chromecast_stream, chromecast_resume, chromecast_pause, chromecast_stop},
 };
 use commands::general_commands::{collect_env_args, get_server_port};
 use commands::refresh_paths_at_start::{detect_deleted_songs, refresh_paths};
@@ -60,8 +60,8 @@ use crate::utils::music_list_organizer::{
     mlo_set_shuffle_list,
 };
 use app::setup::{
-    initialize_airplay_cast, initialize_audio_manager, setup_app
-    initialize_audio_manager, initialise_kira_audio_manager, initialise_rodio_audio_manager
+    initialize_airplay_cast, initialize_audio_manager, setup_app,
+    initialise_kira_audio_manager, initialise_rodio_audio_manager
 };
 
 fn main() {
@@ -94,7 +94,9 @@ fn main() {
             refresh_paths, detect_deleted_songs, collect_env_args,
             // AIRPLAY CAST
             airplay_scan, airplay_pair, airplay_pin, airplay_disconnect,
-            chromecast_scan,
+            airplay_stream_file, airplay_resume, airplay_pause, airplay_stop,
+            chromecast_scan, chromecast_stream, chromecast_resume,
+            chromecast_pause, chromecast_stop,
             // MUSIC PLAYER
             load_and_play_song_from_path, load_a_song_from_path, pause_song,
             resume_playing, stop_song, seek_to, seek_by, get_song_position,

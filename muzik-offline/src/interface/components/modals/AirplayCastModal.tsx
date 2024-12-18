@@ -24,12 +24,29 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
 
     async function scan(){
         setIsScanning(true);
-        invoke("airplay_scan").then((api_res: any) => {
-            setIsScanning(false);
-            const res: AirplayCastResponse = JSON.parse(api_res);
+        try{
             // incoming format is {"status": "success", "message": "any message", "data": [{"id", "name", "address", "model"}]}
-            if(res.status === "success"){
-                setAirplayDevices(new Map(res.data.map((device: {
+            const airplay_api_res: any = await invoke("airplay_scan");
+            const chromecast_api_res: any = await invoke("chromecast_scan");
+
+            const airplay_res: AirplayCastResponse = JSON.parse(airplay_api_res);
+            const chromecast_res: AirplayCastResponse = JSON.parse(chromecast_api_res);
+            if(airplay_res.status === "success" && chromecast_res.status === "success"){
+                setAirplayDevices(new Map(airplay_res.data.map((device: {
+                    id: string;
+                    name: string;
+                    address: string;
+                    model: string;
+                }) => [device.address, {
+                    id: device.id,
+                    name: device.name,
+                    model: device.model,
+                    address: device.address,
+                    loading: false,
+                    connected: false
+                }])));
+
+                setChromecastDevices(new Map(chromecast_res.data.map((device: {
                     id: string;
                     name: string;
                     address: string;
@@ -44,37 +61,14 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
                 }])));
             }
             else{
-                setToast({title: "Error", message: res.message, type: toastType.error, timeout: 3000});
+                setToast({title: "Error", message: airplay_res.message, type: toastType.error, timeout: 3000});
+                return
             }
-        }).catch((err) => {
             setIsScanning(false);
-            console.log(err);
+        } catch(err: any){
             setToast({title: "Error", message: err, type: toastType.error, timeout: 3000});
-        });
-        
-        //scan for chromecast devices
-        invoke("chromecast_scan").then((api_res: any) => {
-            const res: AirplayCastResponse = JSON.parse(api_res);
-            // incoming format is {"status": "success", "message": "any message", "data": [{"id", "name", "address", "model"}]}
-            if(res.status === "success"){
-                setChromecastDevices(new Map(res.data.map((device: {
-                    id: string;
-                    name: string;
-                    address: string;
-                    model: string;
-                }) => [device.id, {
-                    id: device.id,
-                    name: device.name,
-                    model: device.model,
-                    address: device.address,
-                    loading: false,
-                    connected: false
-                }])));
-            }
-            else{
-                setToast({title: "Error", message: res.message, type: toastType.error, timeout: 3000});
-            }
-        });
+            setIsScanning(false);
+        }
     }
 
     function connectAirplay(device: AirplayCastDevice){
@@ -118,6 +112,7 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
     function connectPinAirplay(device: AirplayCastDevice, pin: string){
         setSelectedAirplayDevice(null);
         if(pin === ""){
+            setToast({title: "Error", message: "Pin cannot be empty", type: toastType.error, timeout: 3000});
             return;
         }
         device.loading = true;
@@ -132,6 +127,25 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
             setAirplayDevices(new Map(airplay_devices.set(device.address, device)));
             setToast({title: "Error", message: err, type: toastType.error, timeout: 3000});
         });
+    }
+
+    function disconnectAirplay(device: AirplayCastDevice){
+        device.loading = true;
+        setAirplayDevices(new Map(airplay_devices.set(device.address, device)));
+        invoke("airplay_disconnect", {deviceIdentifier: device.id}).then(() => {
+            device.connected = false;
+            device.loading = false;
+            setAirplayDevices(new Map(airplay_devices.set(device.address, device)));
+        }).catch((err) => {
+            device.loading = false;
+            setAirplayDevices(new Map(airplay_devices.set(device.address, device)));
+            setToast({title: "Error", message: err, type: toastType.error, timeout: 3000});
+        });
+    }
+
+    function disconnectChromecast(device: AirplayCastDevice){
+        device.connected = false;
+        setChromecastDevices(new Map(chromecast_devices.set(device.address, device)));
     }
 
     function GetIcon(device: AirplayCastDevice){
@@ -169,7 +183,7 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
                         </SkeletonTheme>
                     }
                     {!isScanning && Array.from(airplay_devices.values()).map(device => 
-                        <motion.div className="device-container" whileTap={{scale: 0.98}} onClick={() => connectAirplay(device)}>
+                        <motion.div className="device-container" whileTap={{scale: 0.98}} onClick={device.connected ? () => disconnectAirplay(device) : () => connectAirplay(device)}>
                             <div className="icon">{GetIcon(device)}</div>
                             <h3>{device.name}</h3>
                             {device.loading && <div className="status"><WifiLoader/></div>}
@@ -187,7 +201,7 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
                         </SkeletonTheme>
                     }
                     {!isScanning && Array.from(chromecast_devices.values()).map(device => 
-                        <motion.div className="device-container" whileTap={{scale: 0.98}} onClick={() => connectChromecast(device)}>
+                        <motion.div className="device-container" whileTap={{scale: 0.98}} onClick={device.connected ? () => disconnectChromecast(device) : () => connectChromecast(device)}>
                             <div className="icon">{GetIcon(device)}</div>
                             <h3>{device.name}</h3>
                             {device.loading && <div className="status"><WifiLoader/></div>}
