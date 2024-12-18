@@ -154,6 +154,9 @@ async def main():
             sys.stdout.flush()
     except KeyboardInterrupt:
         graceful_shutdown(None, None)
+    except Exception as ex:
+        print(f"An error occurred: {str(ex)}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     asyncio.run(main())
