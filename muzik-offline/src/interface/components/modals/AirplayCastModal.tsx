@@ -30,7 +30,9 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
             const chromecast_api_res: any = await invoke("chromecast_scan");
 
             const airplay_res: AirplayCastResponse = JSON.parse(airplay_api_res);
+            console.log(airplay_res);
             const chromecast_res: AirplayCastResponse = JSON.parse(chromecast_api_res);
+            console.log(chromecast_res);
             if(airplay_res.status === "success" && chromecast_res.status === "success"){
                 setAirplayDevices(new Map(airplay_res.data.map((device: {
                     id: string;
