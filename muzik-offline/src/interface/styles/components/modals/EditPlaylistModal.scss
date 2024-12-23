@@ -16,7 +16,7 @@
     .modal{
         width: 300px;
         height: 350px;
-        padding: 13px;
+        padding: 10px;
         border: 1px solid $songs-container-border-col;
         background: var(--var-songs-container-bg-col);
         box-shadow: $box-shadow-10-10-25;
@@ -71,7 +71,12 @@
                 position: absolute;
                 margin-left: 113px;
                 margin-top: -31px;
+                transition: opacity 0.3s ease-in-out;
                 input[type="file"]{display: none;} 
+            }
+
+            .EditImageicon:hover{
+                opacity: 0.9;
             }
         }
 
@@ -103,12 +108,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
             color: $root-app-navigator-hover-col;
+            transition: opacity 0.3s ease-in-out;
         }
 
         .edit_playlist:hover, .delete_playlist:hover{
-            opacity: 0.8;
+            opacity: 0.9;
         }
 
         .delete_playlist{

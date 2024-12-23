@@ -16,7 +16,7 @@
     .modal{
         width: 300px;
         height: 350px;
-        padding: 13px;
+        padding: 10px;
         border: 1px solid $songs-container-border-col;
         background: var(--var-songs-container-bg-col);
         box-shadow: $box-shadow-10-10-25;
@@ -62,7 +62,12 @@
                 position: absolute;
                 margin-left: 113px;
                 margin-top: -31px;
-                input[type="file"]{display: none;} 
+                input[type="file"]{display: none;}
+                transition: opacity 0.3s ease-in-out; 
+            }
+
+            .EditImageicon:hover{
+                opacity: 0.9;
             }
         }
 
@@ -94,12 +99,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
             color: $root-app-navigator-hover-col;
+            transition: opacity 0.3s ease-in-out;
         }
 
         .create_playlist:hover, .cancel_creation:hover{
-            opacity: 0.8;
+            opacity: 0.9;
         }
 
         .cancel_creation{

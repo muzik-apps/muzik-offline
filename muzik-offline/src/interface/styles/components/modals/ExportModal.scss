@@ -27,6 +27,8 @@
         border-radius: 20px;
         padding-right: 0px;
         box-shadow: $box-shadow-10-10-25;
+        display: flex;
+        flex-direction: column;
 
         h2{
             font-size: 20px;
@@ -36,11 +38,15 @@
 
         .fields{
             display: grid;
-            grid-template-columns: repeat(auto-fill, 150px);
+            grid-template-columns: repeat(auto-fill, 155px);
             grid-template-rows: repeat(auto-fill, 70px);
             justify-content: space-between;
             width: calc(100% - 25px);
             margin-bottom: 20px;
+        }
+
+        .separator{
+            flex-grow: 1;
         }
 
         .export{
@@ -73,7 +79,7 @@
         .buttons{
             display: flex;
             justify-content: flex-end;
-            margin-right: 25px;
+            margin-right: 20px;
 
             .save_button, .cancel_button{
                 display: flex;
@@ -84,6 +90,7 @@
                 align-items: center;
                 background: $app-theme-col;
                 margin-left: 10px;
+                transition: opacity 0.3s ease-in-out;
         
                 h3{
                     color: $root-app-navigator-hover-col;
@@ -94,7 +101,7 @@
             }
     
             .save_button:hover, .cancel_button:hover{
-                opacity: 0.8;
+                opacity: 0.9;
             }
     
             .cancel_button{
@@ -104,10 +111,19 @@
                 }
             }
         }
-
     }
 }
 
 .ExportModal-visible{
     display: flex;
+}
+
+@media screen and (max-width: 1100px){
+    .ExportModal{
+        .modal{
+            .fields{
+                grid-template-columns: repeat(auto-fill, 150px);
+            }
+        }
+    }
 }

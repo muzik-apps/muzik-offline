@@ -64,7 +64,7 @@ const ExportSettings: FunctionComponent<ExportSettingsProps> = (props: ExportSet
                             <RectangleSongBoxView 
                                 key={index}
                                 keyV={song.id}
-                                songName={song.title}
+                                songName={song.name}
                                 artist={song.artist}
                                 length={song.duration}
                                 year={song.year}

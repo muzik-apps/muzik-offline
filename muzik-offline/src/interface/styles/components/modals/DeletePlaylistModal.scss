@@ -16,7 +16,7 @@
     .confirm_deletion_modal{
         width: 300px;
         height: fit-content;
-        padding: 13px;
+        padding: 10px;
         border: 1px solid $songs-container-border-col;
         background: var(--var-songs-container-bg-col);
         box-shadow: $box-shadow-10-10-25;
@@ -75,12 +75,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
             color: $white-900;
+            transition: opacity 0.3s ease-in-out;
         }
 
         .cancel_button:hover, .delete_button:hover{
-            opacity: 0.8;
+            opacity: 0.9;
         }
 
         .cancel_button{ background: $on-hover-song; }

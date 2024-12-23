@@ -71,6 +71,7 @@
             border-radius: 14px;
             align-items: center;
             background: $app-theme-col;
+            transition: opacity 0.3s ease-in-out;
     
             h3{
                 color: $root-app-navigator-hover-col;
@@ -78,6 +79,10 @@
                 text-align: center;
                 width: 100%;
             }
+        }
+
+        .scan_button:hover{
+            opacity: 0.9;
         }
     }
 }

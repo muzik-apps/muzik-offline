@@ -89,7 +89,6 @@
                         justify-content: center;
                         align-items: center;
                         margin-left: 10px;
-                        cursor: pointer;
                         background: $app-theme-col;
                         input[type="file"]{display: none;} 
                         outline: thick solid $btn-clickable;
@@ -113,12 +112,13 @@
             
             .save_button, .cancel_button{
                 display: flex;
-                width: 220px;
+                width: 228px;
                 height: 34px;
                 margin-top: 10px;
                 border-radius: 14px;
                 align-items: center;
                 background: $app-theme-col;
+                margin-bottom: 2px;
         
                 h3{
                     color: $root-app-navigator-hover-col;

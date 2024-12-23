@@ -87,6 +87,11 @@ body {
     .color_layer{
         background: $bg-dark-overlay;
     }
+
+    .blur{
+        filter: blur(var(--wallpaper-blur-value, 0px));
+        -webkit-filter: blur(var(--wallpaper-blur-value, 0px));
+    }
 }
 
 .windows-app-config{

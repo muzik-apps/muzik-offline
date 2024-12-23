@@ -1,6 +1,6 @@
 import {FunctionComponent, useEffect, useRef, useState} from "react";
 import "@styles/components/music/AppMusicPlayer.scss";
-import {ChromeCast, ListIcon, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
+import {Airplay, ChromeCast, ListIcon, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
 import { motion } from "framer-motion";
 import { useIsFSStore, useIsMaximisedStore, usePlayerStore, usePlayingPosition, usePlayingPositionSec, useSavedObjectStore } from "store";
 import { getCoverURL, getNullRandomCover, secondsToTimeFormat } from "@utils/index";
@@ -83,7 +83,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
             <div className={
                 "app_music_player " + 
                 (local_store.PlayerBar ? "app_music_player_border" : "") +
-                (local_store.OStype === OSTYPEenum.Windows && ((!appFS && !isMaximised) || local_store.AlwaysRoundedCornersWindows === "Yes") ? " app-music-player-windows-config" : "")}>
+                (local_store.OStype === OSTYPEenum.Windows || local_store.OStype === OSTYPEenum.Linux && ((!appFS && !isMaximised) || local_store.AlwaysRoundedCornersWindows === "Yes") ? " app-music-player-windows-config" : "")}>
                 <div className="music_cover_art">
                     {!local_store.PlayerBar && !Player.playingSongMetadata
                         && <img src={getCoverURL("NULL_COVER_NULL")} alt="song-art" loading="lazy"/>}{/**no song is loaded onto the player */}
@@ -159,7 +159,9 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                             <ListIcon />
                         </motion.div>
                         <motion.div className="cast_icon" whileTap={{scale: 0.98}} onClick={() => setOpenAirplayCastModal(true)}>
-                            <ChromeCast />
+                            {   local_store.OStype === OSTYPEenum.macOS ?
+                                <Airplay /> : <ChromeCast />
+                            }
                         </motion.div>
                         <div className="volume_controller">
                             <motion.div className="volume_icon" whileTap={{scale: 0.98}} onClick={() => changeVolumeBtnPress(true)}>

@@ -39,6 +39,12 @@ const AppearanceSettings: FunctionComponent<AppearanceSettingsProps> = (props: A
         setStore(temp);
     }
 
+    function setWallpaperBlurOrOpacity(arg: "blur" | "opacity"){
+        let temp: SavedObject = local_store;
+        temp.WallpaperBlurOrOpacity = arg;
+        setStore(temp);
+    }
+
     function SetPlayerBar(arg: boolean){
         let temp: SavedObject = local_store;
         temp.PlayerBar = arg;
@@ -91,7 +97,24 @@ const AppearanceSettings: FunctionComponent<AppearanceSettingsProps> = (props: A
                             <h4>blue-purple gradient</h4>
                     </motion.div>
                 </div>
-                <h3>Wallpaper opacity amount</h3>
+                <h3>Wallpaper blur or gradient</h3>
+                <div className="wallpaper_blur_or_gradient_select">
+                    <motion.div 
+                        className={"button_select glass " + (local_store.WallpaperBlurOrOpacity === "blur" ? "button_selected" : "")} 
+                        whileHover={{scale: 1.03}} 
+                        whileTap={{scale: 0.98}}
+                        onClick={() => {setWallpaperBlurOrOpacity("blur")}}>
+                        <h4>blur</h4>
+                    </motion.div>
+                    <motion.div 
+                        className={"button_select gradient " + (local_store.WallpaperBlurOrOpacity === "opacity" ? "button_selected" : "")}
+                        whileHover={{scale: 1.03}} 
+                        whileTap={{scale: 0.98}} 
+                        onClick={() => {setWallpaperBlurOrOpacity("opacity")}}>
+                            <h4>mask</h4>
+                    </motion.div>
+                </div>
+                <h3>Wallpaper {local_store.WallpaperBlurOrOpacity === "blur" ? "blur" : "opacity"} amount</h3>
                 <div className="opacity_amount">
                     {
                         opacityAmount.map((opacity, index) => 

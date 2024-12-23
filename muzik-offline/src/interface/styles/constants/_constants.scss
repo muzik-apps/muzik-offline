@@ -86,9 +86,17 @@
     --wallpaper-foreground-bottom-value-opacity: 1.0;
 }
 
+[wallpaper-blur='10']{
+    --wallpaper-blur-value: 50px;
+}
+
 [wallpaper-opacity='8']{
     --wallpaper-foreground-top-value-opacity: 0.50;
     --wallpaper-foreground-bottom-value-opacity: 0.8;
+}
+
+[wallpaper-blur='8']{
+    --wallpaper-blur-value: 40px;
 }
 
 [wallpaper-opacity='6']{
@@ -96,9 +104,17 @@
     --wallpaper-foreground-bottom-value-opacity: 0.6;
 }
 
+[wallpaper-blur='6']{
+    --wallpaper-blur-value: 30px;
+}
+
 [wallpaper-opacity='4']{
     --wallpaper-foreground-top-value-opacity: 0.25;
     --wallpaper-foreground-bottom-value-opacity: 0.4;
+}
+
+[wallpaper-blur='4']{
+    --wallpaper-blur-value: 20px;
 }
 
 [wallpaper-opacity='2']{
@@ -106,9 +122,17 @@
     --wallpaper-foreground-bottom-value-opacity: 0.2;
 }
 
+[wallpaper-blur='2']{
+    --wallpaper-blur-value: 10px;
+}
+
 [wallpaper-opacity='0']{
     --wallpaper-foreground-top-value-opacity: 0;
     --wallpaper-foreground-bottom-value-opacity: 0;
+}
+
+[wallpaper-blur='0']{
+    --wallpaper-blur-value: 0px;
 }
 
 
@@ -206,9 +230,9 @@ $z-index-7000: 7000;
     /* layer-blur/300 */
     --var-layer-blur-300: blur(0px);//on windows and macos, value is 0px
 
-    --var-right-side-bar-width-expanded: 224px;
-    --var-right-side-bar-width-minimized: 223px;
-    --var-right-side-bar-width-smallest: 94px;
+    --var-right-side-bar-width-expanded: 215px;
+    --var-right-side-bar-width-minimized: 217px;
+    --var-right-side-bar-width-smallest: 73px;
 
     h1, h2, h3, h4, h5, h6, p{ cursor:default; }
 }

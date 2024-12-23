@@ -33,6 +33,10 @@ const ExportModal: FunctionComponent<ExportModalProps> = (props: ExportModalProp
         props.closeModal();
     }
 
+    function replaceAll(str: string, find: string, replace: string): string {
+        return str.replace(new RegExp(find, 'g'), replace);
+    }
+
     return (
         <div className={"ExportModal" + (props.isOpen ? " ExportModal-visible" : "")} onClick={
             (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {if(e.target === e.currentTarget)props.closeModal();}}>
@@ -47,7 +51,7 @@ const ExportModal: FunctionComponent<ExportModalProps> = (props: ExportModalProp
                             return (
                                 <RadioComponent 
                                     key={index} 
-                                    text={field} 
+                                    text={replaceAll(field, "_", " ")}
                                     value={selectedFields.has(field)} 
                                     type="" 
                                     setviewableEl={(value, _) => 
@@ -62,6 +66,7 @@ const ExportModal: FunctionComponent<ExportModalProps> = (props: ExportModalProp
                         })
                     }
                 </div>
+                <div className="separator"/>
                 <div className="export">
                     <h2>Export as</h2>
                     {

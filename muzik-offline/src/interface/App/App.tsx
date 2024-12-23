@@ -170,9 +170,10 @@ const App = () => {
             
           } 
           data-theme={local_store.ThemeColour} 
-          wallpaper-opacity={local_store.WallpaperOpacityAmount}
+          wallpaper-opacity={local_store.WallpaperBlurOrOpacity === "blur" ? "0" : local_store.WallpaperOpacityAmount}
+          wallpaper-blur={local_store.WallpaperBlurOrOpacity === "opacity" ? "0" : local_store.WallpaperOpacityAmount}
           onContextMenu={(e) => e.preventDefault()}>
-            <div className={"background_img " + (wallpaperUUID ? "" : local_store.BGColour)}>
+            <div className={"background_img " + (wallpaperUUID ? "" : local_store.BGColour) + (local_store.WallpaperBlurOrOpacity === "blur" ? " blur " : "")}>
               {wallpaperUUID && (<img src={getWallpaperURL(wallpaperUUID)} alt="wallpaper"/>)}
             </div>
             <div className={"app_darkness_layer " + (wallpaperUUID ? "image_layer" : "color_layer")}>

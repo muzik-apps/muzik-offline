@@ -19,16 +19,21 @@ use crate::utils::general_utils::get_random_port;
 use super::setup_macos;
 
 /// Initializes the kira audio manager with required settings.
-pub fn initialise_kira_audio_manager() -> Arc<Mutex<KiraManager>> {
-    let audio_manager = AudioManager::<DefaultBackend>::new(AudioManagerSettings::default())
-        .expect("failed to initialize audio manager");
-    Arc::new(Mutex::new(KiraManager {
-        manager: audio_manager,
-        instance_handle: None,
-        volume: 0.0,
-        crossfade: false,
-        duration: None,
-    }))
+pub fn initialise_kira_audio_manager() -> Arc<Mutex<Option<KiraManager>>> {
+    match AudioManager::<DefaultBackend>::new(AudioManagerSettings::default()){
+        Ok(audio_manager) => {
+            Arc::new(Mutex::new(Some(KiraManager {
+                manager: audio_manager,
+                instance_handle: None,
+                volume: 0.0,
+                crossfade: false,
+                duration: None,
+            })))
+        }
+        Err(_) => {
+            Arc::new(Mutex::new(None))
+        }
+    }
 }
 
 /// Initializes the Rodio audio manager with required settings.

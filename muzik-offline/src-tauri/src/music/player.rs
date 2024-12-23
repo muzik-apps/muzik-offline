@@ -15,9 +15,29 @@ use super::{
     }};
 
 #[tauri::command]
+pub fn get_available_audio_backends(rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>, kira_audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>) -> Vec<String> {
+    let mut backends = vec![];
+    match rodio_audio_manager.lock(){
+        Ok(_) => {
+            backends.push("rodio".to_string());
+        }
+        Err(_) => {}
+    }
+    match kira_audio_manager.lock(){
+        Ok(kira) => {
+            if kira.is_some(){
+                backends.push("kira".to_string());
+            }
+        }
+        Err(_) => {}
+    }
+    backends
+}
+
+#[tauri::command]
 pub fn load_and_play_song_from_path(
     rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>,
-    kira_audio_manager: State<'_, Arc<Mutex<KiraManager>>>,
+    kira_audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>,
     sound_path: &str,
     player: &str,
     volume: f64,
@@ -41,7 +61,7 @@ pub fn load_and_play_song_from_path(
 #[tauri::command]
 pub fn load_a_song_from_path(
     rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>,
-    kira_audio_manager: State<'_, Arc<Mutex<KiraManager>>>,
+    kira_audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>,
     sound_path: &str,
     player: &str,
     volume: f64,
@@ -63,7 +83,7 @@ pub fn load_a_song_from_path(
 }
 
 #[tauri::command]
-pub fn pause_song(rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>, kira_audio_manager: State<'_, Arc<Mutex<KiraManager>>>, player: &str) {
+pub fn pause_song(rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>, kira_audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>, player: &str) {
     match player{
         "rodio" => {
             pause_song_rodio(rodio_audio_manager);
@@ -79,7 +99,7 @@ pub fn pause_song(rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>, kira
 }
 
 #[tauri::command]
-pub fn stop_song(rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>, kira_audio_manager: State<'_, Arc<Mutex<KiraManager>>>, player: &str) {
+pub fn stop_song(rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>, kira_audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>, player: &str) {
     match player{
         "rodio" => {
             stop_song_rodio(rodio_audio_manager);
@@ -95,7 +115,7 @@ pub fn stop_song(rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>, kira_
 }
 
 #[tauri::command]
-pub fn resume_playing(rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>, kira_audio_manager: State<'_, Arc<Mutex<KiraManager>>>, player: &str) {
+pub fn resume_playing(rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>, kira_audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>, player: &str) {
     match player{
         "rodio" => {
             resume_playing_rodio(rodio_audio_manager);
@@ -113,7 +133,7 @@ pub fn resume_playing(rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>, 
 #[tauri::command]
 pub fn seek_to(
     rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>,
-    kira_audio_manager: State<'_, Arc<Mutex<KiraManager>>>,
+    kira_audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>,
     player: &str,
     position: f64
 ) {
@@ -133,7 +153,7 @@ pub fn seek_to(
 #[tauri::command]
 pub fn seek_by(
     rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>,
-    kira_audio_manager: State<'_, Arc<Mutex<KiraManager>>>,
+    kira_audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>,
     player: &str,
     delta: f64
 ) {
@@ -153,7 +173,7 @@ pub fn seek_by(
 #[tauri::command]
 pub fn get_song_position(
     rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>,
-    kira_audio_manager: State<'_, Arc<Mutex<KiraManager>>>,
+    kira_audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>,
     player: &str
 ) -> f64 {
     match player{
@@ -173,7 +193,7 @@ pub fn get_song_position(
 #[tauri::command]
 pub fn set_volume(
     rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>,
-    kira_audio_manager: State<'_, Arc<Mutex<KiraManager>>>,
+    kira_audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>,
     player: &str,
     volume: f64
 ) {
@@ -193,7 +213,7 @@ pub fn set_volume(
 #[tauri::command]
 pub fn set_playback_speed(
     rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>,
-    kira_audio_manager: State<'_, Arc<Mutex<KiraManager>>>,
+    kira_audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>,
     player: &str,
     speed: f32
 ) {

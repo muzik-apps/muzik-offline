@@ -184,7 +184,7 @@
             }
         }
 
-        .playerbar_select, .animations_select, .Themeblur_select{
+        .playerbar_select, .animations_select, .Themeblur_select, .wallpaper_blur_or_gradient_select{
             display: flex;
             margin-bottom: 10px;
 
@@ -216,6 +216,10 @@
 
             .black_linear{
                 background: $black-linear;
+            }
+
+            .gradient{
+                background: $blur-element;
             }
 
             .not-clickable{

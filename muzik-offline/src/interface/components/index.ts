@@ -47,6 +47,7 @@ import CheckboxComponent from './input/CheckboxComponent';
 import ExportModal from './modals/ExportModal';
 import DeleteSongModal from './modals/DeleteSongModal';
 import EqualizerModal from './modals/EqualizerModal';
+import AudioBackendCard from "./cards/AudioBackendCard";
 
 export {
     HeaderWindows, HeaderMacOS, HeaderLinuxOS, AppNavigator, LeftSidebar, AppMusicPlayer, FSMusicPlayer,
@@ -64,5 +65,5 @@ export {
     EditPropertiesModal, EditSongButton,
     DateInput, DeleteDiretoryModal, WallpapersSelectionModal,
     RectangleSongBoxView, CheckboxComponent, ExportModal,
-    DeleteSongModal, EqualizerModal
+    DeleteSongModal, EqualizerModal, AudioBackendCard
 }

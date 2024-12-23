@@ -1,5 +1,5 @@
 import { ChevronDown } from "@assets/icons";
-import { DropDownMenuLarge } from "@components/index";
+import { AudioBackendCard, DropDownMenuLarge } from "@components/index";
 import { SavedObject } from "@database/saved_object";
 import { selectedGeneralSettingEnum } from "@muziktypes/index";
 import { useSavedObjectStore } from "@store/index";
@@ -45,6 +45,7 @@ const AudioLabSettings: FunctionComponent<AudioLabSettingsProps> = (_props: Audi
     const [currentOutputDevice, setOutputDevice] = useState<string>("default");
     const [outputDevices, setOutputDevices] = useState<string[]>([]);
     const [audioBackend, setAudioBackend] = useState<"rodio" | "kira">(local_store.player);
+    const [availableAudioBackends, setAvailableAudioBackends] = useState<Set<string>>(new Set());
 
     function toggleDropDown(arg: selectedGeneralSettingEnum){
         if(arg === selectedGeneralSetting)setselectedGeneralSetting(selectedGeneralSettingEnum.Nothing);
@@ -91,6 +92,10 @@ const AudioLabSettings: FunctionComponent<AudioLabSettingsProps> = (_props: Audi
             invoke<string[]>("get_output_devices").then((res) => {
                 setOutputDevices(res);
             });
+
+            invoke<string[]>("get_available_audio_backends").then((res) => {
+                setAvailableAudioBackends(new Set(res));
+            });
         }
 
         setup();
@@ -101,50 +106,22 @@ const AudioLabSettings: FunctionComponent<AudioLabSettingsProps> = (_props: Audi
             <h2>Audio Lab Settings</h2>
             <div className="AudioLabSettings_container">
                 <h5>Select your audio backend</h5>
-                <motion.div className={"audio-backend" + (audioBackend === "rodio" ? " selected" : "")}
-                    whileTap={{scale: 0.98}} onClick={() => changeAudioBackend("rodio")}>
-                    <div className="logo">
-                        <img src="https://avatars.githubusercontent.com/u/9999738?s=200&v=4" alt="Rodio logo" />
-                    </div>
-                    <h3>Rodio</h3>
-                    <div className="details">
-                        <div className="benefits">
-                            <ul>
-                                <li>More stable and faster</li>
-                                <li>More developed specifically for audio playback</li>
-                                <li>Supports output device switching</li>
-                            </ul>
-                        </div>
-                        <div className="downsides">
-                            <dl>
-                                <dd>- No equaliser support</dd>
-                                <dd>- No audio effects</dd>
-                            </dl>
-                        </div>
-                    </div>
-                </motion.div>
-                <motion.div className={"audio-backend" + (audioBackend === "kira" ? " selected" : "")}
-                    whileTap={{scale: 0.98}} onClick={() => changeAudioBackend("kira")}>
-                    <div className="logo">
-                        <img src="https://avatars.githubusercontent.com/u/2637802?v=4" alt="Kira logo" />
-                    </div>
-                    <h3>Kira</h3>
-                    <div className="details">
-                        <div className="benefits">
-                            <ul>
-                                <li>More developed specifically for game audio playback</li>
-                                <li>Supports 3D spatial audio(coming soon)</li>
-                                <li>Supports sound effects and equaliser(coming soon)</li>
-                            </ul>
-                        </div>
-                        <div className="downsides">
-                            <dl>
-                                <dd>- Can be slow and unstable for large files</dd>
-                                <dd>- No support for switching output device in app</dd>
-                            </dl>
-                        </div>
-                    </div>
-                </motion.div>
+                <AudioBackendCard
+                    isAvailable={availableAudioBackends.has("rodio")}
+                    selected={audioBackend}
+                    backendName="rodio"
+                    image="https://avatars.githubusercontent.com/u/9999738?s=200&v=4"
+                    benefits={["More stable and faster", "More developed specifically for audio playback", "Supports output device switching"]}
+                    downsides={["No equaliser support", "No audio effects"]}
+                    changeAudioBackend={changeAudioBackend} />
+                <AudioBackendCard
+                    isAvailable={availableAudioBackends.has("kira")}
+                    selected={audioBackend}
+                    backendName="kira"
+                    image="https://avatars.githubusercontent.com/u/2637802?v=4"
+                    benefits={["More developed specifically for game audio playback", "Supports 3D spatial audio(coming soon)", "Supports sound effects and equaliser(coming soon)"]}
+                    downsides={["Can be slow and unstable for large files", "No support for switching output device in app"]}
+                    changeAudioBackend={changeAudioBackend} />
                 {
                     settings_data.map((value) => 
                     <div className="setting" key={value.key}>

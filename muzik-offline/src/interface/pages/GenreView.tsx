@@ -191,7 +191,7 @@ const GenreView = () => {
             <PropertiesModal isOpen={state.isPropertiesModalOpen} song={state.songMenuToOpen!} closeModal={() => closePropertiesModal(dispatch)} />
             <EditPropertiesModal isOpen={state.isEditingSongModalOpen} songID={state.songMenuToOpen ? state.songMenuToOpen.id : -1} closeModal={() => closeEditPropertiesModal(dispatch)} />
             <AddSongToPlaylistModal isOpen={state.isPlaylistModalOpen} songPath={state.songMenuToOpen ? state.songMenuToOpen.path : ""} closeModal={() => closePlaylistModal(dispatch)} />
-            <DeleteSongModal isOpen={state.isDeleteSongModalOpen} title={state.songMenuToOpen ? state.songMenuToOpen.title : ""} closeModal={(deleteSong) => closeDeleteSongModal(dispatch, state.songMenuToOpen, deleteSong)} />
+            <DeleteSongModal isOpen={state.isDeleteSongModalOpen} title={state.songMenuToOpen ? state.songMenuToOpen.name : ""} closeModal={(deleteSong) => closeDeleteSongModal(dispatch, state.songMenuToOpen, deleteSong)} />
         </motion.div>
     )
 }

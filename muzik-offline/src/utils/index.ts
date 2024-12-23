@@ -342,3 +342,7 @@ export const shouldClearZustandStores = async() => {
 
     useToastStore.getState().setToast({title: "App updated", message: "We have updated the app to a new version, please reload the app to see the changes", type: toastType.info, timeout: 5000});
 }
+
+export const capitalizeFirstLetter = (string: string): string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}

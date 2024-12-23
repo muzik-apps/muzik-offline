@@ -92,10 +92,15 @@
             align-items: center;
             justify-content: center;
             width: calc(100% - 10px);
-            height: 40px;
-            border-radius: 15px;
+            height: 35px;
+            border-radius: 13px;
             background: $app-theme-col;
             margin-top: 10px;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .create_playlist:hover{
+            opacity: 0.9;
         }
     }
 }

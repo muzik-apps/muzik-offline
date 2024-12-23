@@ -10,7 +10,7 @@ use std::{sync::{Arc, Mutex}, time::Duration};
 use tauri::State;
 
 pub fn load_and_play_song_from_path_kira(
-    audio_manager: State<'_, Arc<Mutex<KiraManager>>>,
+    audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>,
     sound_path: &str,
     volume: f64,
     duration: f64,
@@ -19,6 +19,13 @@ pub fn load_and_play_song_from_path_kira(
 ) {
     match audio_manager.lock() {
         Ok(mut manager) => {
+            let manager = match manager.as_mut() {
+                Some(manager) => manager,
+                None => {
+                    return;
+                }
+            };
+
             //stop and clear all sounds that are playing
             match &mut manager.instance_handle {
                 Some(handle) => {
@@ -113,7 +120,7 @@ pub fn load_and_play_song_from_path_kira(
 }
 
 pub fn load_a_song_from_path_kira(
-    audio_manager: State<'_, Arc<Mutex<KiraManager>>>,
+    audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>,
     sound_path: &str,
     volume: f64,
     duration: f64,
@@ -122,6 +129,13 @@ pub fn load_a_song_from_path_kira(
 ) {
     match audio_manager.lock() {
         Ok(mut manager) => {
+            let manager = match manager.as_mut() {
+                Some(manager) => manager,
+                None => {
+                    return;
+                }
+            };
+
             //stop and clear all sounds that are playing
             match &mut manager.instance_handle {
                 Some(handle) => {
@@ -227,9 +241,16 @@ pub fn load_a_song_from_path_kira(
     }
 }
 
-pub fn pause_song_kira(audio_manager: State<'_, Arc<Mutex<KiraManager>>>) {
+pub fn pause_song_kira(audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>) {
     match audio_manager.lock() {
         Ok(mut manager) => {
+            let manager = match manager.as_mut() {
+                Some(manager) => manager,
+                None => {
+                    return;
+                }
+            };
+
             match &mut manager.instance_handle {
                 Some(handle) => {
                     match handle.pause(Tween::default()) {
@@ -252,9 +273,16 @@ pub fn pause_song_kira(audio_manager: State<'_, Arc<Mutex<KiraManager>>>) {
     }
 }
 
-pub fn stop_song_kira(audio_manager: State<'_, Arc<Mutex<KiraManager>>>) {
+pub fn stop_song_kira(audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>) {
     match audio_manager.lock() {
         Ok(mut manager) => {
+            let manager = match manager.as_mut() {
+                Some(manager) => manager,
+                None => {
+                    return;
+                }
+            };
+
             match &mut manager.instance_handle {
                 Some(handle) => {
                     match handle.stop(Tween::default()) {
@@ -277,9 +305,16 @@ pub fn stop_song_kira(audio_manager: State<'_, Arc<Mutex<KiraManager>>>) {
     }
 }
 
-pub fn resume_playing_kira(audio_manager: State<'_, Arc<Mutex<KiraManager>>>) {
+pub fn resume_playing_kira(audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>) {
     match audio_manager.lock() {
         Ok(mut manager) => {
+            let manager = match manager.as_mut() {
+                Some(manager) => manager,
+                None => {
+                    return;
+                }
+            };
+
             match &mut manager.instance_handle {
                 Some(handle) => {
                     match handle.resume(Tween::default()) {
@@ -302,9 +337,15 @@ pub fn resume_playing_kira(audio_manager: State<'_, Arc<Mutex<KiraManager>>>) {
     }
 }
 
-pub fn seek_to_kira(audio_manager: State<'_, Arc<Mutex<KiraManager>>>, position: f64) {
+pub fn seek_to_kira(audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>, position: f64) {
     match audio_manager.lock() {
         Ok(mut manager) => {
+            let manager = match manager.as_mut() {
+                Some(manager) => manager,
+                None => {
+                    return;
+                }
+            };
             //get volume
             let volume = manager.volume.clone();
             match &mut manager.instance_handle {
@@ -329,9 +370,16 @@ pub fn seek_to_kira(audio_manager: State<'_, Arc<Mutex<KiraManager>>>, position:
     }
 }
 
-pub fn seek_by_kira(audio_manager: State<'_, Arc<Mutex<KiraManager>>>, delta: f64) {
+pub fn seek_by_kira(audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>, delta: f64) {
     match audio_manager.lock() {
         Ok(mut manager) => {
+            let manager = match manager.as_mut() {
+                Some(manager) => manager,
+                None => {
+                    return;
+                }
+            };
+
             match &mut manager.instance_handle {
                 Some(handle) => {
                     match handle.seek_by(delta) {
@@ -352,9 +400,16 @@ pub fn seek_by_kira(audio_manager: State<'_, Arc<Mutex<KiraManager>>>, delta: f6
     }
 }
 
-pub fn get_song_position_kira(audio_manager: State<'_, Arc<Mutex<KiraManager>>>) -> f64 {
+pub fn get_song_position_kira(audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>) -> f64 {
     let (pos, duration, cross_fade) = match audio_manager.lock() {
         Ok(mut manager) => {
+            let manager = match manager.as_mut() {
+                Some(manager) => manager,
+                None => {
+                    return 0.0;
+                }
+            };
+
             match &mut manager.instance_handle {
                 Some(handle) => {
                     let song_position = handle.position();
@@ -378,9 +433,16 @@ pub fn get_song_position_kira(audio_manager: State<'_, Arc<Mutex<KiraManager>>>)
     return pos.as_secs_f64().floor();
 }
 
-pub fn set_volume_kira(audio_manager: State<'_, Arc<Mutex<KiraManager>>>, volume: f64) {
+pub fn set_volume_kira(audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>, volume: f64) {
     match audio_manager.lock() {
         Ok(mut manager) => {
+            let manager = match manager.as_mut() {
+                Some(manager) => manager,
+                None => {
+                    return;
+                }
+            };
+
             match &mut manager.instance_handle {
                 Some(handle) => {
                     match handle.set_volume(volume, Tween::default()) {
@@ -461,9 +523,16 @@ fn handle_true_seeking(handle: &mut StreamingSoundHandle<FromFileError>, volume:
     }
 }
 
-pub fn set_playback_speed_kira(audio_manager: State<'_, Arc<Mutex<KiraManager>>>, speed: f64) {
+pub fn set_playback_speed_kira(audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>, speed: f64) {
     match audio_manager.lock() {
         Ok(mut manager) => {
+            let manager = match manager.as_mut() {
+                Some(manager) => manager,
+                None => {
+                    return;
+                }
+            };
+
             match &mut manager.instance_handle {
                 Some(handle) => {
                     match handle.set_playback_rate(speed, Tween::default()) {
