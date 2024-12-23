@@ -154,5 +154,5 @@ export async function openFileDialogDND(){
         multiple: false,
         defaultPath: await appConfigDir(),
     });
-    if(selected) await reloadLibrary([...selected]);
+    if(selected) await reloadLibrary([selected]);
 }
