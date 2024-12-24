@@ -7,12 +7,16 @@
     padding-left: 15px;
     padding-right: 15px;
     border: 1px solid $songs-container-border-col;
-    border-left: none;
     height: calc(100vh - 136px);
     border-radius: 20px;
 
+    background: var(--var-songs-container-bg-col);
+    backdrop-filter: var(--var-bg-blur-150);
+    -webkit-backdrop-filter: var(--var-bg-blur-150);
+
     .user_library{
         h1{
+            width: 100%;
             font-size: 16px;
             margin-bottom: 6px;
             text-wrap: nowrap;
@@ -24,10 +28,14 @@
 
 @media only screen and (max-width: 1046px){
     .LeftSidebar{
-        margin-left: 0px;
+        margin-left: 16px;
         padding-left: 3px;
         padding-right: 3px;
-        border-bottom-left-radius: 0px;
-        border-top-left-radius: 0px;
+
+        .user_library{
+            h1{
+                text-align: center;
+            }
+        }
     }
 }
