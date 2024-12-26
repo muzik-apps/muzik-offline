@@ -19,7 +19,7 @@ class AirplayManager:
                 "id": result.identifier,
                 "name": result.name,
                 "address": str(result.address),
-                "model": result.device_info.model
+                "model": result.device_info.model.name
             })
         return devices
 
