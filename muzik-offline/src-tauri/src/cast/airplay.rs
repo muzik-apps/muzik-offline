@@ -9,13 +9,10 @@ use super::utils::{assign_process_values, expect_response_from_process, send_com
 #[tauri::command]
 pub async fn airplay_scan(process: State<'_, Arc<tokio::sync::Mutex<Process>>>, app: tauri::AppHandle) -> Result<String, String> {
     // this assigns the process values if they are none otherwise an error is returned
-    println!("airplay_scan");
     assign_process_values(process.clone(), app).await.map_err(|e| e.to_string())?;
     
-    println!("airplay_scan 2");
     // we can be sure at this point that the child and receiver are not None even if rust is saying they are None
     send_command_to_process(process.clone(), AirplayCastCommands::AirplayScan).await.map_err(|e| e.to_string())?;
-    println!("airplay_scan 3");
     expect_response_from_process(process.clone()).await
 }
 
