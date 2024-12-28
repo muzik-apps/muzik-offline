@@ -15,7 +15,7 @@ import { isPermissionGranted, requestPermission, sendNotification } from '@tauri
 import { MiniPlayer } from "@App/index";
 import { listen } from "@tauri-apps/api/event";
 import { processOSMediaControlsEvent } from "@utils/OSeventControl";
-import { fetch_library, getWallpaperURL, shouldClearZustandStores } from "@utils/index";
+import { fetch_library, getWallpaperURL } from "@utils/index";
 import { local_songs_db } from "@database/database";
 import { startPlayingNewSong } from "@utils/playerControl";
 
@@ -142,15 +142,13 @@ const App = () => {
   }
 
   useEffect(() => {
-    shouldClearZustandStores().then(() => {
-      request_song();
-      checkOSType();
-      checkAndRequestNotificationPermission();
-      connect_to_discord();
-      get_server_port();
-      check_paths_for_new_music();
-      check_if_paths_are_still_valid();
-    });
+    request_song();
+    checkOSType();
+    checkAndRequestNotificationPermission();
+    connect_to_discord();
+    get_server_port();
+    check_paths_for_new_music();
+    check_if_paths_are_still_valid();
     
     const listenForOSeventsfunc = listenForOSevents();
 

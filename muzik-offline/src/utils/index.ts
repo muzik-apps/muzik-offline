@@ -281,7 +281,7 @@ export function isInArray(check: string[], container: string[]): boolean {
 
 export async function reloadLibrary(paths: string[]){
     //check paths only contain directories
-    let dirs = useDirStore.getState().dir.Dir;
+    let dirs = new Set<string>(useDirStore.getState().dir.Dir);
 
     if(isInArray(paths, Array.from(dirs))){
         useToastStore.getState().setToast({title: "Cannot load songs...", message: "You are trying to reload a path that is already loaded", type: toastType.error, timeout: 5000});
@@ -302,7 +302,7 @@ export async function reloadLibrary(paths: string[]){
         maxDepth: local_store.DirectoryScanningDepth
     })
     .then(async() => {
-        useDirStore.getState().setDir({Dir: dirs});
+        useDirStore.getState().setDir({Dir: [...dirs]});
         await local_songs_db.songs.clear();
         await local_albums_db.albums.clear();
         await local_artists_db.artists.clear();
@@ -332,7 +332,7 @@ export const shouldClearZustandStores = async() => {
     useFisrstRunStore.getState().reset();
     useWallpaperStore.getState().reset();
     useViewableSideElStore.getState().setviewableEl(resetViewableElements(useViewableSideElStore.getState().viewableEl));
-    useDirStore.getState().setDir({Dir: new Set<string>()});
+    useDirStore.getState().setDir({Dir: []});
     useSavedObjectStore.getState().setStore(resetObject(useSavedObjectStore.getState().local_store));
 
     await local_songs_db.songs.clear();

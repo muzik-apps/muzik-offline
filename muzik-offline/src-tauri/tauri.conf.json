@@ -54,7 +54,8 @@
         "transparent": true,
         "shadow": false,
         "center": true,
-        "dragDropEnabled": true
+        "dragDropEnabled": true,
+        "theme":null
       }
     ],
     "security": {

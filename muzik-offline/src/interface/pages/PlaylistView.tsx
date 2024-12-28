@@ -29,7 +29,7 @@ const PlaylistView = () => {
     function chooseOption(arg: contextMenuButtons){
         if(arg === contextMenuButtons.ShowInfo){ dispatch({ type: reducerType.SET_PROPERTIES_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.AddToPlaylist){ dispatch({ type: reducerType.SET_PLAYLIST_MODAL, payload: true}); }
-        else if(arg === contextMenuButtons.Delete){ dispatch({ type: reducerType.SET_DELETE_MODAL, payload: true}); }
+        else if(arg === contextMenuButtons.Remove){ dispatch({ type: reducerType.SET_DELETE_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.EditSong){ dispatch({ type: reducerType.SET_EDIT_SONG_MODAL, payload: true}); }
         else if(arg === contextMenuButtons.PlayNext && state.songMenuToOpen){ 
             addThisSongToPlayNext([state.songMenuToOpen.id]);
@@ -222,6 +222,7 @@ const PlaylistView = () => {
                             xPos={state.co_ords.xPos} 
                             yPos={state.co_ords.yPos} 
                             title={state.songMenuToOpen.name}
+                            remove={true}
                             CMtype={contextMenuEnum.PlaylistSongsCM}
                             chooseOption={chooseOption}/>
                     </div>

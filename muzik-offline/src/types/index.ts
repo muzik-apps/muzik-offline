@@ -56,6 +56,7 @@ export enum contextMenuButtons{
     ShowInfo = "ShowInfo",
     Delete = "Delete",
     EditSong = "EditSong",
+    Remove = "Remove"
 }
 
 export enum toastType{

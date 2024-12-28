@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 import { contextMenuButtons } from 'types';
-import { ArrowCurveLeftRight, ArrowCurveRightUp, Disk, Edit, InformationCircleContained, LayersThree, Menu, Microphone, Play, Trash } from '@assets/icons';
+import { ArrowCurveLeftRight, ArrowCurveRightUp, Cross, Disk, Edit, InformationCircleContained, LayersThree, Menu, Microphone, Play, Trash } from '@assets/icons';
 import { motion } from 'framer-motion';
 
 type ContextMenuButtonsProps = {
@@ -104,6 +104,15 @@ export const EditSongButton: FunctionComponent<ContextMenuButtonsProps> = (props
         <motion.div className="EditSong" whileTap={{scale: 0.98}} onMouseDown={() => props.chooseOption(contextMenuButtons.EditSong)}>
             <Edit />
             <p>Edit "{props.title}"</p>
+        </motion.div>
+    )
+}
+
+export const RemoveButton: FunctionComponent<ContextMenuButtonsProps> = (props: ContextMenuButtonsProps) => {
+    return (
+        <motion.div className="Remove" whileTap={{scale: 0.98}} onMouseDown={() => props.chooseOption(contextMenuButtons.Remove)}>
+            <Cross />
+            <p>Remove "{props.title}"</p>
         </motion.div>
     )
 }

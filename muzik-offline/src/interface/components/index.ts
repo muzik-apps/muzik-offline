@@ -38,7 +38,7 @@ import DeletePlaylistModal from './modals/DeletePlaylistModal';
 import DeleteSongFromPlaylistModal from './modals/DeleteSongFromPlaylistModal';
 import EqualizerSlider from './sliders/EqualizerSlider';
 import EditPropertiesModal from './modals/EditPropertiesModal';
-import { EditSongButton } from './context_menu/ContextMenuButtons';
+import { EditSongButton, RemoveButton } from './context_menu/ContextMenuButtons';
 import DateInput from './input/DateInput';
 import DeleteDiretoryModal from './modals/DeleteDiretoryModal';
 import WallpapersSelectionModal from './modals/WallpapersSelectionModal';
@@ -65,5 +65,6 @@ export {
     EditPropertiesModal, EditSongButton,
     DateInput, DeleteDiretoryModal, WallpapersSelectionModal,
     RectangleSongBoxView, CheckboxComponent, ExportModal,
-    DeleteSongModal, EqualizerModal, AudioBackendCard
+    DeleteSongModal, EqualizerModal, AudioBackendCard,
+    RemoveButton
 }

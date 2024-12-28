@@ -83,9 +83,11 @@ const WallpapersSelectionModal: FunctionComponent<WallpapersSelectionModalProps>
     }
 
     async function deleteWallpaper(uuid: string){
-        await invoke("delete_thumbnail_and_wallpaper", {uuid});
-        local_wallpapers_db.wallpapers.delete(uuid);
-        setWallpapers(wallpapers.filter((wallpaper) => wallpaper.uuid !== uuid));
+        invoke("delete_thumbnail_and_wallpaper", {uuid}).then(() => {
+            setToast({title: "Wallpaper deleted", message: "The wallpaper has been deleted", type: toastType.success, timeout: 3000});
+            local_wallpapers_db.wallpapers.delete(uuid);
+            setWallpapers(wallpapers.filter((wallpaper) => wallpaper.uuid !== uuid));
+        });
     }
 
     useEffect(() => { fecthAllWallpapers() }, []);
@@ -100,10 +102,15 @@ const WallpapersSelectionModal: FunctionComponent<WallpapersSelectionModalProps>
                 <h2>Add or Choose a wallpaper</h2>
 
                 <div className="wallpapers">
+                    {isloading ?
+                    <div className="wallpaper add_wallpaper">
+                        loading wallpaper
+                    </div>
+                    :
                     <motion.label className="wallpaper add_wallpaper " whileHover={{scale: 1.03}} whileTap={{scale: 0.98}}>
                             <input name="background-img" type="file" accept="image/png, image/jpeg" onChange={uploadImg}/>
                             add wallpaper
-                    </motion.label>
+                    </motion.label>}
                     {wallpapers.map((wallpaper, index) => {
                         return (
                             <motion.div 

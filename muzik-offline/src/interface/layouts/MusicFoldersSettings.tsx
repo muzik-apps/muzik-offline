@@ -18,7 +18,7 @@ type MusicFoldersSettingsProps = {
 const MusicFoldersSettings: FunctionComponent<MusicFoldersSettingsProps> = (props: MusicFoldersSettingsProps) => {
     const { dir, setDir } = useDirStore((state) => { return { dir: state.dir, setDir: state.setDir}; });
     const oldDirRef = useRef<Set<string> | undefined>(undefined);
-    const [currentDir, setCurrentDir] = useState<Set<string>>(dir.Dir);
+    const [currentDir, setCurrentDir] = useState<Set<string>>(new Set(dir.Dir));
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
     const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
     const [directory, setDirectory] = useState<string>("");
@@ -30,7 +30,7 @@ const MusicFoldersSettings: FunctionComponent<MusicFoldersSettingsProps> = (prop
             maxDepth: local_store.DirectoryScanningDepth
         })
         .then(async() => {
-                setDir({Dir: currentDir});
+                setDir({Dir: [...currentDir]});
                 await local_songs_db.songs.clear();
                 await local_albums_db.albums.clear();
                 await local_artists_db.artists.clear();
@@ -46,7 +46,7 @@ const MusicFoldersSettings: FunctionComponent<MusicFoldersSettingsProps> = (prop
                 const permissionGranted = await isPermissionGranted();
                 if(permissionGranted)sendNotification({ title: 'Loading songs...', body: message });
             })
-            .catch(async(_error) => {
+            .catch(async(error) => {
                 if(currentDir.size === 0){
                     setToast({title: "Loading songs...", message: "No directories specified", type: toastType.info, timeout: 5000});
                     await local_songs_db.songs.clear();
@@ -54,12 +54,23 @@ const MusicFoldersSettings: FunctionComponent<MusicFoldersSettingsProps> = (prop
                     await local_artists_db.artists.clear();
                     await local_genres_db.genres.clear();
                     const permissionGranted = await isPermissionGranted();
-                if(permissionGranted)sendNotification({ title: 'Loading songs...', body: 'No directories specified' });
+                    if(permissionGranted)sendNotification({ title: 'Loading songs...', body: 'No directories specified' });
+                    return;
+                }
+                if(error === "No new songs detected"){
+                    setDir({Dir: [...currentDir]});
+                    setToast({title: "Loading songs...", message: "No new songs detected", type: toastType.info, timeout: 5000});
+                    await local_songs_db.songs.clear();
+                    await local_albums_db.albums.clear();
+                    await local_artists_db.artists.clear();
+                    await local_genres_db.genres.clear();
+                    const permissionGranted = await isPermissionGranted();
+                    if(permissionGranted)sendNotification({ title: 'Loading songs...', body: 'No new songs detected' });
                     return;
                 }
 
-                console.log(_error);
-                setDir({Dir: oldDirRef.current ?? new Set()});
+                console.log(error);
+                setDir({Dir: oldDirRef.current ? Array.from(oldDirRef.current) : []});
                 setToast({title: "Loading songs...", message: "Failed to load all the songs in the paths specified", type: toastType.error, timeout: 5000});
                 const permissionGranted = await isPermissionGranted();
                 if (permissionGranted) {
@@ -82,7 +93,10 @@ const MusicFoldersSettings: FunctionComponent<MusicFoldersSettingsProps> = (prop
     };
 
     function addNewDir(){
-        if(directory === "")return;
+        if(directory === ""){
+            setToast({title: "Error", message: "Please specify a directory", type: toastType.error, timeout: 3000});
+            return;
+        }
         const newDir = new Set(currentDir);
         newDir.add(directory);
         setCurrentDir(newDir);
@@ -91,7 +105,9 @@ const MusicFoldersSettings: FunctionComponent<MusicFoldersSettingsProps> = (prop
 
     useEffect(() => {
         // on component mount
-        if(oldDirRef.current === undefined){ oldDirRef.current = new Set(dir.Dir); }
+        if(oldDirRef.current === undefined){
+            oldDirRef.current = new Set(dir.Dir);
+        }
         // when component unmounts
         return () => {
             //console.log(Array.from(oldDirRef.current ?? new Set), Array.from(currentDir));
@@ -104,7 +120,7 @@ const MusicFoldersSettings: FunctionComponent<MusicFoldersSettingsProps> = (prop
 
     useEffect(() => {
         // listen for changes in the dir
-        setCurrentDir(dir.Dir);
+        setCurrentDir(new Set(dir.Dir));
     }, [dir.Dir]);
     
     return (
