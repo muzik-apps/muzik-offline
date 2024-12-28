@@ -21,6 +21,7 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
     const [selectedAirplayDevice, setSelectedAirplayDevice] = useState<AirplayCastDevice | null>(null);
     const [isScanning, setIsScanning] = useState(false);
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
+    const [modalFirstOpen, setModalFirstOpen] = useState(true);
 
     async function scan(){
         setIsScanning(true);
@@ -161,8 +162,9 @@ const AirplayCastModal = (props: AirplayCastModalProps) => {
     }
 
     useEffect(() => {
-        if(props.isOpen){
+        if(props.isOpen && modalFirstOpen){
             scan();
+            setModalFirstOpen(false);
         }
     }, [props.isOpen]);
 
