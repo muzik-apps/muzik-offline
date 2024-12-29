@@ -205,6 +205,7 @@ pub fn convert_single_to_double_backward_slash_on_path(path: &String) -> String 
     return path.to_string();
 }
 
-pub fn calculate_volume(duration: Duration) -> f64{// duration will be between 0 and 6 seconds
+pub fn calculate_volume(duration: Duration) -> f64 {
+    // duration will be between 0 and 6 seconds
     1.0 - (1.0 * std::f64::consts::E.powf(-1.0 * duration.as_secs_f64() as f64))
 }

@@ -5,7 +5,7 @@ use std::{
 
 use crate::{
     components::{audio_manager::AppAudioManager, event_payload::Payload},
-    database::{db_api::get_song_from_tree, db_manager::DbManager}
+    database::{db_api::get_song_from_tree, db_manager::DbManager},
 };
 
 use souvlaki::{MediaControlEvent, MediaControls, MediaMetadata, MediaPlayback, PlatformConfig};

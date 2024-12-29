@@ -30,7 +30,7 @@ pub async fn refresh_paths(
             song_id.clone(),
             compress_image_option,
             true,
-            max_depth
+            max_depth,
         )
         .await;
     }

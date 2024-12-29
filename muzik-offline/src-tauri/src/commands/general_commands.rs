@@ -1,16 +1,20 @@
-use crate::{
-    components::audio_manager::AppAudioManager, database::db_manager::DbManager, utils::general_utils::{
-        decode_image_in_parallel, encode_image_in_parallel, resize_and_compress_image,
-    }
+use crate::database::db_api::{
+    delete_album_from_tree, delete_artist_from_tree, delete_genre_from_tree, delete_song_from_tree,
 };
-use crate::database::db_api::{delete_song_from_tree, delete_album_from_tree, delete_artist_from_tree, delete_genre_from_tree};
+use crate::{
+    components::audio_manager::AppAudioManager,
+    database::db_manager::DbManager,
+    utils::general_utils::{
+        decode_image_in_parallel, encode_image_in_parallel, resize_and_compress_image,
+    },
+};
 use dirs::audio_dir;
 use std::{
     process::Command,
     sync::{Arc, Mutex},
 };
-use trash;
 use tauri::State;
+use trash;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 //#[tauri::command]
@@ -26,7 +30,11 @@ pub fn collect_env_args() -> String {
     // get first arg that ends with .ogg, .mp3, .flac, .wav
     let mut audio_path = String::new();
     for arg in args {
-        if arg.ends_with(".ogg") || arg.ends_with(".mp3") || arg.ends_with(".flac") || arg.ends_with(".wav") {
+        if arg.ends_with(".ogg")
+            || arg.ends_with(".mp3")
+            || arg.ends_with(".flac")
+            || arg.ends_with(".wav")
+        {
             audio_path = arg;
             break;
         }

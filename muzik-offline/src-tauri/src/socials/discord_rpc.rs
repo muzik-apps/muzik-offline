@@ -25,7 +25,8 @@ impl DiscordRpc {
         #[cfg(dev)]
         {
             dotenv().ok();
-            let client_id = env::var("DISCORD_CLIENT_ID").expect("DISCORD_CLIENT_ID env variable not set");
+            let client_id =
+                env::var("DISCORD_CLIENT_ID").expect("DISCORD_CLIENT_ID env variable not set");
             let client: DiscordIpcClient = DiscordIpcClient::new(&client_id)?;
             return Ok(Self {
                 client,
