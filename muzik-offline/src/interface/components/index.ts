@@ -48,6 +48,7 @@ import ExportModal from './modals/ExportModal';
 import DeleteSongModal from './modals/DeleteSongModal';
 import EqualizerModal from './modals/EqualizerModal';
 import AudioBackendCard from "./cards/AudioBackendCard";
+import WaveForm from './input/WaveForm';
 
 export {
     HeaderWindows, HeaderMacOS, HeaderLinuxOS, AppNavigator, LeftSidebar, AppMusicPlayer, FSMusicPlayer,
@@ -66,5 +67,5 @@ export {
     DateInput, DeleteDiretoryModal, WallpapersSelectionModal,
     RectangleSongBoxView, CheckboxComponent, ExportModal,
     DeleteSongModal, EqualizerModal, AudioBackendCard,
-    RemoveButton
+    RemoveButton, WaveForm
 }

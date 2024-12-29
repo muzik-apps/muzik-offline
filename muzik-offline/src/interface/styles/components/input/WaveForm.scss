@@ -1,0 +1,16 @@
+@import "../../constants/constants";
+
+.WaveForm{
+    position: fixed;
+    width: calc(100vw/4.0);
+    height: 30px;
+
+    line{
+        stroke: $app-theme-col;
+        stroke-width: 2;
+    }
+
+    line:hover{
+        stroke-width: 3;
+    }
+}

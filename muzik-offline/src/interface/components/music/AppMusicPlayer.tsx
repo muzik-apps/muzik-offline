@@ -3,10 +3,10 @@ import "@styles/components/music/AppMusicPlayer.scss";
 import {Airplay, ChromeCast, ListIcon, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
 import { motion } from "framer-motion";
 import { useIsFSStore, useIsMaximisedStore, usePlayerStore, usePlayingPosition, usePlayingPositionSec, useSavedObjectStore } from "store";
-import { getCoverURL, getNullRandomCover, secondsToTimeFormat } from "@utils/index";
+import { genRandomSongWavePoints, getCoverURL, getNullRandomCover, secondsToTimeFormat } from "@utils/index";
 import { invoke } from "@tauri-apps/api/core";
 import { changeVolumeLevel, changeSeekerPosition, changeVolumeLevelBtnPress, dragSeeker, pauseSong, playSong, repeatToggle, shuffleToggle, setVolumeLevel, reconfigurePlayer_AtEndOfSong, playPreviousSong, playNextSong, changeSeekerPositionBtnPress } from "@utils/playerControl";
-import { AirplayCastModal, MusicPopOver } from "@components/index";
+import { AirplayCastModal, MusicPopOver, WaveForm } from "@components/index";
 import { OSTYPEenum } from "@muziktypes/index";
 import { RepeatingLevel } from "@database/player";
 

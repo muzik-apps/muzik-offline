@@ -27,7 +27,8 @@ export interface SavedObject{
     AudioQuality: string,
     PlayBackSpeed: string,
     AudioTransition: string,
-    OutputDevice: string
+    OutputDevice: string,
+    PlaybackFeedback: "line" | "waverform-flat" | "waveform-elav" | "waveform-sine"
 }
 
 export const emptySavedObject: SavedObject = {
@@ -57,7 +58,8 @@ export const emptySavedObject: SavedObject = {
     AudioQuality: "High(320kbps)",
     PlayBackSpeed: "1",
     AudioTransition: "No",
-    OutputDevice: ""
+    OutputDevice: "",
+    PlaybackFeedback: "line"
 }
 
 export function resetObject(obj: SavedObject){
@@ -87,6 +89,7 @@ export function resetObject(obj: SavedObject){
     obj.PlayBackSpeed = "1";
     obj.AudioTransition = "No";
     obj.OutputDevice = "";
+    obj.PlaybackFeedback = "line";
 
     return obj;
 }

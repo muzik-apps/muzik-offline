@@ -117,7 +117,7 @@
 
         .music_controller{
             width: calc(100vw/3.1);
-            height: 44px;
+            height: fit-content;
             .Controls{
                 width: 220px;
                 display: flex;

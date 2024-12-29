@@ -346,3 +346,27 @@ export const shouldClearZustandStores = async() => {
 export const capitalizeFirstLetter = (string: string): string => {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+// Function to generate random number
+export const randomNumber = (min: number, max: number) => {
+    return Math.random() * (max - min) + min;
+}
+
+export const genRandomSongWavePoints = (): { x1: number, y1: number, x2: number, y2: number }[] => {
+    const widthInPixels = window.innerWidth / 4.0;
+    // bound is 20px height
+    // top is 0px
+    // bottom is 20px
+    // middle is 10px
+    // stroke width is 3px
+    // separation is 2px
+    const points: { x1: number, y1: number, x2: number, y2: number }[] = [];
+    for(let i = 0; i < widthInPixels / 5; i++){
+        const x1 = i * 5;
+        const y1 = randomNumber(0, 15);
+        const x2 = x1;
+        const y2 = randomNumber(15, 30);
+        points.push({x1, y1, x2, y2});
+    }
+    return points;
+}
