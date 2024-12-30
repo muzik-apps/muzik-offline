@@ -28,7 +28,7 @@ export interface SavedObject{
     PlayBackSpeed: string,
     AudioTransition: string,
     OutputDevice: string,
-    PlaybackFeedback: "line" | "waverform-flat" | "waveform-elav" | "waveform-sine"
+    PlaybackFeedback: "BarWave" | "FloatingBarWave" | "LineBar" | "RoundedWave" | "SineWave"
 }
 
 export const emptySavedObject: SavedObject = {
@@ -59,7 +59,7 @@ export const emptySavedObject: SavedObject = {
     PlayBackSpeed: "1",
     AudioTransition: "No",
     OutputDevice: "",
-    PlaybackFeedback: "line"
+    PlaybackFeedback: "LineBar"
 }
 
 export function resetObject(obj: SavedObject){
@@ -89,7 +89,7 @@ export function resetObject(obj: SavedObject){
     obj.PlayBackSpeed = "1";
     obj.AudioTransition = "No";
     obj.OutputDevice = "";
-    obj.PlaybackFeedback = "line";
+    obj.PlaybackFeedback = "LineBar";
 
     return obj;
 }

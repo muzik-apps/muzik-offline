@@ -1,7 +1,7 @@
 import { motion } from "framer-motion"
 import { SavedObject } from "@database/index";
 import "@styles/layouts/AppearanceSettings.scss"; 
-import { ArrowRefresh, CancelRight } from "@assets/icons";
+import { ArrowRefresh, BarWave, CancelRight, FloatingBarWave, LineBar, RoundedWave, SineWave } from "@assets/icons";
 import { useSavedObjectStore, useWallpaperStore } from "@store/index";
 import { OSTYPEenum } from "@muziktypes/index";
 import { FunctionComponent } from "react";
@@ -60,6 +60,12 @@ const AppearanceSettings: FunctionComponent<AppearanceSettingsProps> = (props: A
     function SetAnimations(arg: boolean){
         let temp: SavedObject = local_store;
         temp.Animations = arg;
+        setStore(temp);
+    }
+
+    function SetPlaybackFeedback(arg: "BarWave" | "FloatingBarWave" | "LineBar" | "RoundedWave" | "SineWave"){
+        let temp: SavedObject = local_store;
+        temp.PlaybackFeedback = arg;
         setStore(temp);
     }
 
@@ -162,6 +168,25 @@ const AppearanceSettings: FunctionComponent<AppearanceSettingsProps> = (props: A
                         onClick={() => {SetPlayerBar(false)}}>
                             <h4>album cover blur</h4>
                     </motion.div>
+                </div>
+                <h3>Player feedback appearance</h3>
+                <div className="player_feedback">
+                    {
+                        ["LineBar", "BarWave", "FloatingBarWave", "RoundedWave", "SineWave"].map((feedback, index) => 
+                            <motion.div key={index} className={"button_select glass " + (local_store.PlaybackFeedback === feedback ? "button_selected" : "")}
+                                whileHover={{scale: 1.03}} whileTap={{scale: 0.98}} onClick={
+                                    () => SetPlaybackFeedback(feedback as "BarWave" | "FloatingBarWave" | "LineBar" | "RoundedWave" | "SineWave")
+                                }>
+                                    {
+                                        feedback === "LineBar" ? <LineBar />
+                                        : feedback === "BarWave" ? <BarWave />
+                                        : feedback === "FloatingBarWave" ? <FloatingBarWave />
+                                        : feedback === "RoundedWave" ? <RoundedWave />
+                                        : <SineWave />
+                                    }
+                            </motion.div>
+                        )
+                    }
                 </div>
                 <h3>Allow application wide animations</h3>
                 <div className="animations_select">

@@ -5,6 +5,7 @@ type WaveFormProps = {
     currentPosition: number;
     duration: number;
     points: { x1: number, y1: number, x2: number, y2: number }[];
+    player: "BarWave" | "FloatingBarWave" | "RoundedWave" | "SineWave";
 }
 
 const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
