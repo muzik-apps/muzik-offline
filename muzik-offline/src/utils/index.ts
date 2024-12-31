@@ -352,7 +352,7 @@ export const randomNumber = (min: number, max: number) => {
     return Math.random() * (max - min) + min;
 }
 
-export const genRandomSongWavePoints = (): { x1: number, y1: number, x2: number, y2: number }[] => {
+export const genRandomBarWavePoints = (): { x1: number, y1: number, x2: number, y2: number }[] => {
     const widthInPixels = window.innerWidth / 4.0;
     const points: { x1: number, y1: number, x2: number, y2: number }[] = [];
     for(let i = 0; i < widthInPixels / 5; i++){
@@ -378,25 +378,29 @@ export const genRandomFlatWavePoints = (): { x1: number, y1: number, x2: number,
     return points;
 }
 
-export const genRandomSineWavePoints = (): { x1: number, y1: number, x2: number, y2: number }[] => {
-    const widthInPixels = window.innerWidth / 4.0;
-    const points: { x1: number, y1: number, x2: number, y2: number }[] = [];
-    for(let i = 0; i < widthInPixels / 5; i++){
-        if(Math.random() > 0.5){
-            // start from top to bottom
-            const x1 = i * 5;
-            const y1 = randomNumber(0, 15);
-            const x2 = x1;
-            const y2 = randomNumber(15, 30);
-            points.push({x1, y1, x2, y2});
-        } else{
-            // start from bottom to top
-            const x1 = i * 5;
-            const y1 = randomNumber(15, 30);
-            const x2 = x1;
-            const y2 = randomNumber(0, 15);
-            points.push({x1, y1, x2, y2});
-        }
+export const generateRandomSineWave = (): { x: number, y: number }[] => {
+    const graphWidth = window.innerWidth / 4.0;
+    const maxHeight = 30;
+    const minHeight = -15;
+    const peakSpacing = 5;
+
+    // Array to store the generated data points
+    const dataPoints: { x: number, y: number }[] = [];
+
+    // Variables for wave generation
+    let x = 0;
+    let phase = 0; // Phase offset for sine wave
+    const amplitude = (maxHeight - minHeight) / 2;
+    const offset = (maxHeight + minHeight) / 2;
+    const angularFrequency = (2 * Math.PI) / peakSpacing;
+
+    // Generate sine wave data points until the width of the graph is covered
+    while (x <= graphWidth) {
+        const y = amplitude * Math.sin(angularFrequency * x + phase) + offset;
+        const normalizedY = y - minHeight; // Normalize to shift the range to positive
+        dataPoints.push({ x, y: normalizedY });
+        x++;
     }
-    return points;
+
+    return dataPoints;
 }

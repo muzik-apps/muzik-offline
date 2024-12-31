@@ -3,7 +3,7 @@ import "@styles/components/music/AppMusicPlayer.scss";
 import {Airplay, ChromeCast, ListIcon, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
 import { motion } from "framer-motion";
 import { useIsFSStore, useIsMaximisedStore, usePlayerStore, usePlayingPosition, usePlayingPositionSec, useSavedObjectStore } from "store";
-import { genRandomSongWavePoints, getCoverURL, getNullRandomCover, secondsToTimeFormat } from "@utils/index";
+import { genRandomBarWavePoints, genRandomFlatWavePoints, getCoverURL, getNullRandomCover, secondsToTimeFormat } from "@utils/index";
 import { invoke } from "@tauri-apps/api/core";
 import { changeVolumeLevel, changeSeekerPosition, changeVolumeLevelBtnPress, dragSeeker, pauseSong, playSong, repeatToggle, shuffleToggle, setVolumeLevel, reconfigurePlayer_AtEndOfSong, playPreviousSong, playNextSong, changeSeekerPositionBtnPress } from "@utils/playerControl";
 import { AirplayCastModal, MusicPopOver, WaveForm } from "@components/index";
@@ -138,11 +138,25 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                         </div>
                         <div className="Seeker">
                             <p>{Player.playingSongMetadata ? secondsToTimeFormat(playingPosInSec) : "~"}</p>
-                            <input type="range" id="seek-slider" max="100" 
-                                value={playingPosition} 
-                                onChange={draggingSeeker} 
-                                onMouseUp={changeSeeker}
-                                style={{backgroundSize: playingPosition.toString() + "% 100%"}}/>
+                            {
+                                local_store.PlaybackFeedback === "LineBar" ?
+                                    <input type="range" id="seek-slider" max="100" 
+                                        value={playingPosition} 
+                                        onChange={draggingSeeker} 
+                                        onMouseUp={changeSeeker}
+                                        style={{backgroundSize: playingPosition.toString() + "% 100%"}}/>
+                                : local_store.PlaybackFeedback === "BarWave" ?
+                                    <WaveForm 
+                                        player="BarWave" 
+                                        currentPosition={30} 
+                                        seekTo={(position: number) => changeSeekerPosition(position)}
+                                        barPoints={genRandomFlatWavePoints()}/>
+                                :   <WaveForm 
+                                        player="FloatingBarWave" 
+                                        currentPosition={50} 
+                                        seekTo={(position: number) => changeSeekerPosition(position)}
+                                        barPoints={genRandomBarWavePoints()}/>
+                            }
                             <p>
                                 {Player.playingSongMetadata ? 
                                     secondsToTimeFormat(

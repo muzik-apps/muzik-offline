@@ -1,17 +1,21 @@
 @import "../../constants/constants";
 
 .WaveForm{
-    position: fixed;
     width: calc(100vw/4.0);
     height: 30px;
 
     line{
         stroke: $app-theme-col;
+        opacity: 0.5;
         stroke-width: 2;
         stroke-linecap: round;
     }
 
-    line:hover{
-        stroke-width: 3;
+    .line_active{
+        opacity: 1.0;
+    }
+
+    .line_current{
+        stroke: $white-900;
     }
 }
