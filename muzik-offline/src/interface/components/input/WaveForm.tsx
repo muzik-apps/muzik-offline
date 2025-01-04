@@ -20,6 +20,9 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
                         props.barPoints.map((point, index) => {
                             return (
                                 <motion.line
+                                    initial={{ scale: 1 }}
+                                    animate={props.currentPosition === index ? { scale: 1.5 } : { scale: 1 }}
+                                    exit={{ scale: 1 }}
                                     whileHover={{ scale: 1.5 }}
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => props.seekTo(index)}

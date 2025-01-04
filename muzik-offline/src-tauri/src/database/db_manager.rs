@@ -21,6 +21,10 @@ pub struct DbManager {
     pub thumbnails_tree: RwLock<Tree>,
     pub wallpapers_tree: RwLock<Tree>,
     pub null_covers_tree: RwLock<Tree>,
+    pub bar_graph_waveform_tree: RwLock<Tree>,
+    pub mirrored_bar_graph_waveform_tree: RwLock<Tree>,
+    pub sine_waveform_tree: RwLock<Tree>,
+    pub curvy_straight_sine_waveform_tree: RwLock<Tree>,
 }
 
 impl DbManager {
@@ -41,6 +45,10 @@ impl DbManager {
         let thumbnails_tree = db.open_tree(b"thumbnails").map_err(|e| e.to_string())?;
         let wallpapers_tree = db.open_tree(b"wallpapers").map_err(|e| e.to_string())?;
         let null_covers_tree = db.open_tree(b"null_covers").map_err(|e| e.to_string())?;
+        let bar_graph_waveform_tree = db.open_tree(b"bar_graph_waveform").map_err(|e| e.to_string())?;
+        let mirrored_bar_graph_waveform_tree = db.open_tree(b"mirrored_bar_graph_waveform").map_err(|e| e.to_string())?;
+        let sine_waveform_tree = db.open_tree(b"sine_waveform").map_err(|e| e.to_string())?;
+        let curvy_straight_sine_waveform_tree = db.open_tree(b"curvy_straight_sine_waveform").map_err(|e| e.to_string())?;
 
         // check if null_covers tree has all the 5 null covers
         insert_null_cover(&null_covers_tree, "NULL_COVER_NULL", NULL_COVER_NULL)?;
@@ -58,6 +66,10 @@ impl DbManager {
             thumbnails_tree: RwLock::new(thumbnails_tree),
             wallpapers_tree: RwLock::new(wallpapers_tree),
             null_covers_tree: RwLock::new(null_covers_tree),
+            bar_graph_waveform_tree: RwLock::new(bar_graph_waveform_tree),
+            mirrored_bar_graph_waveform_tree: RwLock::new(mirrored_bar_graph_waveform_tree),
+            sine_waveform_tree: RwLock::new(sine_waveform_tree),
+            curvy_straight_sine_waveform_tree: RwLock::new(curvy_straight_sine_waveform_tree),
         })
     }
 }

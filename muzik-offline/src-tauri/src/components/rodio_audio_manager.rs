@@ -11,7 +11,7 @@ pub struct RodioManager {
     sender: Sender<AudioCommand>,
     pub sink: Arc<Mutex<Option<Sink>>>,
     pub crossfade: bool,
-    pub duration: Option<Duration>,
+    pub duration: Option<Duration>
 }
 
 impl RodioManager {
@@ -77,7 +77,7 @@ impl RodioManager {
             sender,
             sink: sink.clone(),
             crossfade: false,
-            duration: None,
+            duration: None
         }
     }
 
