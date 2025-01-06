@@ -8,7 +8,8 @@ use crate::{
         decode_image_in_parallel, encode_image_in_parallel, resize_and_compress_image,
     },
 };
-use dirs::audio_dir;
+use dirs::{audio_dir, home_dir};
+use std::path::PathBuf;
 use std::{
     process::Command,
     sync::{Arc, Mutex},
@@ -16,13 +17,6 @@ use std::{
 use tauri::State;
 use trash;
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-//#[tauri::command]
-//pub fn greet(name: &str) -> String {
-//    format!("Hello, {}! You've been greeted from Rust!", name)
-//    //this serves as an example template whenever new commands are to be created
-//    //so don't delete this
-//}
 #[tauri::command]
 pub fn collect_env_args() -> String {
     let args: Vec<String> = std::env::args().collect();
@@ -92,6 +86,38 @@ pub fn get_audio_dir() -> String {
         None => {
             return String::from("");
         }
+    }
+}
+
+#[tauri::command]
+pub fn get_lib_dir() -> Result<String, String> {
+    let mut lib_path = PathBuf::new();
+    match home_dir() {
+        Some(path) => lib_path.push(path),
+        None => return Err("Could not find home directory".to_string()),
+    }
+    lib_path.push("muzik-offline-local-data");
+    lib_path.push("lib");
+
+    match lib_path.to_str() {
+        Some(path) => Ok(String::from(path)),
+        None => Err("Could not find lib directory".to_string()),
+    }
+}
+
+#[tauri::command]
+pub fn get_waveform_dir() -> Result<String, String> {
+    let mut lib_path = PathBuf::new();
+    match home_dir() {
+        Some(path) => lib_path.push(path),
+        None => return Err("Could not find home directory".to_string()),
+    }
+    lib_path.push("muzik-offline-local-data");
+    lib_path.push("waveform");
+
+    match lib_path.to_str() {
+        Some(path) => Ok(String::from(path)),
+        None => Err("Could not find lib directory".to_string()),
     }
 }
 

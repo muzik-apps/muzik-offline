@@ -42,6 +42,7 @@ walkdir = "2.5.0"
 futures = "0.3.31"
 rodio = "0.20.1"
 trash = "5.2.0"
+os_info = "3.9.2"
 
 [dependencies.uuid]
 version = "1.11.0"

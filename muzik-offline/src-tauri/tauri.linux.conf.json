@@ -38,6 +38,11 @@
         "depends": [
           "libasound2-dev"
         ]
+      },
+      "rpm": {
+        "depends": [
+          "libasound2-dev"
+        ]
       }
     }
   },

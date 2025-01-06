@@ -82,7 +82,7 @@ jobs:
         - name: Decrypt the environment variables in src-tauri/.env.enc
           run: |
             openssl enc -d -aes-256-cbc -pbkdf2 -in src-tauri/.env.enc -out src-tauri/.env -pass pass:${{ secrets.ENCRYPTION_PASSWORD }}
-    
+        
         - uses: tauri-apps/tauri-action@v0
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

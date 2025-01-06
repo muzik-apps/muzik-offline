@@ -13,6 +13,7 @@ mod socials;
 mod utils;
 mod windows;
 
+use commands::audio_waveform::{attempt_to_download_audio_waveform, check_if_audio_waveform_is_installed};
 use commands::general_commands::{collect_env_args, get_server_port};
 use commands::refresh_paths_at_start::{detect_deleted_songs, refresh_paths};
 use database::db_api::{
@@ -95,6 +96,8 @@ fn main() {
             drag_app_window,
             set_player_state,
             // GENERAL COMMANDS
+            check_if_audio_waveform_is_installed,
+            attempt_to_download_audio_waveform,
             update_metadata,
             delete_song_metadata,
             get_all_songs,
