@@ -26,6 +26,7 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
     const navigate = useNavigate();
     const [cover, setCover] = useState<string | null>(null);
     const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
+    const [loading, setLoading] = useState<boolean>(false);
 
     function uploadImg(e: React.ChangeEvent<HTMLInputElement>){
         if(e.target.files === null)return;
@@ -49,6 +50,7 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
             setToast({title: "Playlist title", message: "Playlist title cannot contain windows or unix directory format", type: toastType.warning, timeout: 3000});
             return;
         }
+        
         if(playlistTitle !== "")playlistObj.title = playlistTitle;
         playlistObj.dateEdited = new Date().toLocaleDateString();
         //save changes of this playlist

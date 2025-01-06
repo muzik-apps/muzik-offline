@@ -209,3 +209,21 @@ pub fn calculate_volume(duration: Duration) -> f64 {
     // duration will be between 0 and 6 seconds
     1.0 - (1.0 * std::f64::consts::E.powf(-1.0 * duration.as_secs_f64() as f64))
 }
+
+pub fn get_file_name_from_path(path: &str) -> String {
+    let path = Path::new(path);
+
+    match path.file_name() {
+        Some(file_name) => {
+            // remove the extension by splitting the final dot as some files may contain multiple dots
+            let file_name = file_name.to_string_lossy();
+            let file_name = match file_name.split('.').next() {
+                Some(file_name) => file_name,
+                None => return String::from("Unknown file name"),
+            };
+
+            return file_name.to_string();
+        }
+        None => String::from("Unknown file name"),
+    }
+}

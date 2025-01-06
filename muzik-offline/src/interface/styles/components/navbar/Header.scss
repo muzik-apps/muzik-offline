@@ -28,9 +28,6 @@
         align-items: center;
         width: 82px;
         justify-content: space-between;
-        .navigators{
-            cursor: pointer;
-        }
 
         .navigators:hover{
             opacity: 0.8;
@@ -76,7 +73,6 @@
             height: 32px;
             align-items: center;
             margin-right: 20px;
-            cursor: pointer;
             .user_image{
                 height: 30px;
                 width: 30px;

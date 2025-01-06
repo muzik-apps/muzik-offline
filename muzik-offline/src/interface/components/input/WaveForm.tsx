@@ -1,6 +1,7 @@
 import { FunctionComponent } from "react";
 import "@styles/components/input/WaveForm.scss";
 import { motion } from "framer-motion";
+import { readFile, BaseDirectory } from '@tauri-apps/plugin-fs';
 
 type WaveFormProps = {
     currentPosition: number;

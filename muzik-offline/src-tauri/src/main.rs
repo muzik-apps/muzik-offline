@@ -13,7 +13,9 @@ mod socials;
 mod utils;
 mod windows;
 
-use commands::audio_waveform::{attempt_to_download_audio_waveform, check_if_audio_waveform_is_installed};
+use commands::audio_waveform::{
+    attempt_to_download_audio_waveform, check_if_audio_waveform_is_installed,
+};
 use commands::general_commands::{collect_env_args, get_server_port};
 use commands::refresh_paths_at_start::{detect_deleted_songs, refresh_paths};
 use database::db_api::{
@@ -68,6 +70,7 @@ use app::setup::{
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_window_state::Builder::new().build())
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,

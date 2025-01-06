@@ -1,5 +1,5 @@
 import "@styles/App/App.scss";
-import { AppMusicPlayer, LeftSidebar, FSMusicPlayer, HeaderLinuxOS, HeaderMacOS, HeaderWindows, NotifyBottomRight } from "@components/index";
+import { AppMusicPlayer, LeftSidebar, FSMusicPlayer, HeaderLinuxOS, HeaderMacOS, HeaderWindows, NotifyBottomRight, AudioWaveformInstallConsent } from "@components/index";
 import { AllGenres, AllPlaylists, AllTracks, Settings, AlbumDetails, 
   AllAlbums, AllArtists, SearchPage, ArtistCatalogue, GenreView, PlaylistView } from "@pages/index";
 import { useEffect, useState } from "react";
@@ -210,6 +210,7 @@ const App = () => {
                 <FSMusicPlayer openPlayer={FSplayerState} closePlayer={closePlayer}/>
                 <HistoryNextFloating FloatingHNState={FloatingHNState} toggleFloatingHNState={toggleFloatingHNState}/>
                 <NotifyBottomRight/>
+                <AudioWaveformInstallConsent/>
             </div>
         </div>
       </Router>

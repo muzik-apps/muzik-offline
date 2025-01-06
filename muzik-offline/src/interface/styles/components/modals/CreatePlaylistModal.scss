@@ -90,7 +90,7 @@
             margin-top: 2px;
         }
 
-        .create_playlist, .cancel_creation{
+        .create_playlist, .cancel_creation, .loading_cancel_creation, .loading_create_playlist{
             margin-top: 7px;
             width: 100%;
             height: 35px;
@@ -107,9 +107,26 @@
             opacity: 0.9;
         }
 
-        .cancel_creation{
+        .cancel_creation, .loading_cancel_creation{
             background: $on-hover-song;
             color: $white-900;
+        }
+
+        .loading_create_playlist{
+            opacity: 0.5;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            cursor: not-allowed;
+            svg{
+                width: 28px;
+                height: 28px;
+            }
+        }
+
+        .loading_cancel_creation{ 
+            opacity: 0.5;
+            cursor: not-allowed;
         }
     }
 }

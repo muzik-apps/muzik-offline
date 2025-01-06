@@ -45,7 +45,6 @@ const LeftSidebar = () => {
     return (
         <div className="LeftSidebar">
             <div className="user_library">
-                <h1>Library</h1>
                 {viewableEl.All_tracks && 
                     <AppNavigator icon={MusicalNote} text={"All tracks"} selected_panel={selectedPanel} setSelectedPanelF={setSelectedPanelF}/>}
                 {viewableEl.All_artists && 

@@ -79,10 +79,9 @@
             margin-top: 0px;
             margin-bottom: 20px;
             width: 100%;
-            text-align: center;
         }
 
-        .cancel_button, .install_button{
+        .cancel_button, .install_button, .loading_install_button, .loading_cancel_button{
             margin-top: 7px;
             width: 100%;
             height: 35px;
@@ -98,9 +97,26 @@
             opacity: 0.9;
         }
 
-        .cancel_button{ background: $on-hover-song; }
+        .cancel_button, .loading_cancel_button{ background: $on-hover-song; }
 
-        .install_button{ background: $app-theme-col; }
+        .install_button, .loading_install_button{ background: $app-theme-col; }
+
+        .loading_install_button{
+            opacity: 0.5;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            cursor: not-allowed;
+            svg{
+                width: 28px;
+                height: 28px;
+            }
+        }
+
+        .loading_cancel_button{ 
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     }
 }
 

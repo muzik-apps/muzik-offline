@@ -1,4 +1,8 @@
-use crate::components::{kira_audio_manager::KiraManager, rodio_audio_manager::RodioManager};
+use crate::{
+    commands::audio_waveform::decode_waveform,
+    components::{kira_audio_manager::KiraManager, rodio_audio_manager::RodioManager},
+    utils::general_utils::get_file_name_from_path,
+};
 use std::sync::{Arc, Mutex};
 use tauri::State;
 
@@ -39,7 +43,7 @@ pub fn get_available_audio_backends(
 }
 
 #[tauri::command]
-pub fn load_and_play_song_from_path(
+pub async fn load_and_play_song_from_path(
     rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>,
     kira_audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>,
     sound_path: &str,
@@ -48,7 +52,7 @@ pub fn load_and_play_song_from_path(
     duration: f64,
     play_back_speed: f32,
     fade_in_out: bool,
-) {
+) -> Result<String, String> {
     match player {
         "rodio" => {
             load_and_play_song_from_path_rodio(
@@ -71,13 +75,24 @@ pub fn load_and_play_song_from_path(
             );
         }
         _ => {
-            // Handle the case where the player is not recognized
+            return Err("Player not recognized".to_string());
         }
+    }
+
+    let file_name = get_file_name_from_path(sound_path);
+
+    if file_name == "Unknown file name" {
+        return Err("Error getting file name".to_string());
+    }
+
+    match decode_waveform(sound_path).await {
+        Ok(waveform_path) => Ok(waveform_path),
+        Err(_) => Err("Error getting file name".to_string()),
     }
 }
 
 #[tauri::command]
-pub fn load_a_song_from_path(
+pub async fn load_a_song_from_path(
     rodio_audio_manager: State<'_, Arc<Mutex<RodioManager>>>,
     kira_audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>,
     sound_path: &str,
@@ -86,7 +101,7 @@ pub fn load_a_song_from_path(
     duration: f64,
     play_back_speed: f32,
     fade_in_out: bool,
-) {
+) -> Result<String, String> {
     match player {
         "rodio" => {
             load_a_song_from_path_rodio(
@@ -111,6 +126,17 @@ pub fn load_a_song_from_path(
         _ => {
             // Handle the case where the player is not recognized
         }
+    }
+
+    let file_name = get_file_name_from_path(sound_path);
+
+    if file_name == "Unknown file name" {
+        return Err("Error getting file name".to_string());
+    }
+
+    match decode_waveform(sound_path).await {
+        Ok(waveform_path) => Ok(waveform_path),
+        Err(_) => Err("Error getting file name".to_string()),
     }
 }
 

@@ -2,10 +2,10 @@
 
 .App_navigator{
     display: flex;
-    width: 157px;
+    width: 170px;
     height: 34px;
     border-radius: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     align-items: center;
     transition: all 0.1s ease-in-out;
 
@@ -56,7 +56,6 @@
         width: 34px;
         border-radius: 14px;
         justify-content: center;
-        margin-left: 10px;
 
         svg{
             margin-left: 0px;

@@ -68,6 +68,7 @@ import FloatingBarWave from './Media/FloatingBarWave';
 import RoundedWave from './Media/RoundedWave';
 import SineWave from './Media/SineWave';
 import LineBar from './Media/LineBar';
+import Spinner from './Layout/Spinner';
 
 export {
     Next_page, Prev_page, Search, 
@@ -86,5 +87,6 @@ export {
     ListIcon, AlertTriangle, Trash, FolderSearch, File , Check, WaveForm,
     WindowsCloseIcon, WindowsMaximizeIcon, WindowsMinimizeIcon, WindowsRestoreIcon,
     LinuxClose, LinuxMaximize, LinuxMinimize, FolderPlus, Airplay,
-    BarWave, FloatingBarWave, RoundedWave, SineWave, LineBar
+    BarWave, FloatingBarWave, RoundedWave, SineWave, LineBar,
+    Spinner
 }

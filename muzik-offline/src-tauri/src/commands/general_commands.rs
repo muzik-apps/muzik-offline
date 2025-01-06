@@ -99,6 +99,14 @@ pub fn get_lib_dir() -> Result<String, String> {
     lib_path.push("muzik-offline-local-data");
     lib_path.push("lib");
 
+    // ensure lib directory exists otherwise create it
+    if !lib_path.exists() {
+        match std::fs::create_dir_all(&lib_path) {
+            Ok(_) => {}
+            Err(_) => return Err("Could not create lib directory".to_string()),
+        }
+    }
+
     match lib_path.to_str() {
         Some(path) => Ok(String::from(path)),
         None => Err("Could not find lib directory".to_string()),
@@ -114,6 +122,14 @@ pub fn get_waveform_dir() -> Result<String, String> {
     }
     lib_path.push("muzik-offline-local-data");
     lib_path.push("waveform");
+
+    // ensure waveform directory exists otherwise create it
+    if !lib_path.exists() {
+        match std::fs::create_dir_all(&lib_path) {
+            Ok(_) => {}
+            Err(_) => return Err("Could not create waveform directory".to_string()),
+        }
+    }
 
     match lib_path.to_str() {
         Some(path) => Ok(String::from(path)),
