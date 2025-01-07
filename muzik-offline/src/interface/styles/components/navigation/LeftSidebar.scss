@@ -3,12 +3,13 @@
 .LeftSidebar{
     margin-top: 16px;
     margin-left: 16px;
+    margin-bottom: 16px;
     margin-right: 10px;
     padding-left: 8px;
     padding-right: 8px;
     padding-top: 8px;
     border: 1px solid $songs-container-border-col;
-    height: calc(100vh - 136px);
+    height: calc(100vh - 146px);
     border-radius: 20px;
 
     background: var(--var-songs-container-bg-col);

@@ -85,7 +85,7 @@ pub async fn load_and_play_song_from_path(
         return Err("Error getting file name".to_string());
     }
 
-    match decode_waveform(sound_path).await {
+    match decode_waveform(&sound_path, &file_name).await {
         Ok(waveform_path) => Ok(waveform_path),
         Err(_) => Err("Error getting file name".to_string()),
     }
@@ -134,7 +134,7 @@ pub async fn load_a_song_from_path(
         return Err("Error getting file name".to_string());
     }
 
-    match decode_waveform(sound_path).await {
+    match decode_waveform(&sound_path, &file_name).await {
         Ok(waveform_path) => Ok(waveform_path),
         Err(_) => Err("Error getting file name".to_string()),
     }

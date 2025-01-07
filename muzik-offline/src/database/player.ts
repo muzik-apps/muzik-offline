@@ -13,6 +13,7 @@ export interface Player{
     lengthOfSongInSeconds: number;
     isShuffling: boolean;
     repeatingLevel: RepeatingLevel;
+    WaveFormPath: string | null;
 }
 
 export const emptyPlayer: Player = {
@@ -22,4 +23,5 @@ export const emptyPlayer: Player = {
     lengthOfSongInSeconds: 0,
     isShuffling: false,
     repeatingLevel: RepeatingLevel.NO_REPEAT,
+    WaveFormPath: null,
 }

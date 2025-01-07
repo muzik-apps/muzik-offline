@@ -42,6 +42,7 @@
     "notification:default",
     "dialog:default",
     "http:default",
-    "os:default"
+    "os:default",
+    "fs:allow-home-read-recursive"
   ]
 }

@@ -174,18 +174,15 @@ pub async fn attempt_to_download_audio_waveform() -> Result<String, String> {
     }
 }
 
-pub async fn decode_waveform(audio_path: &str) -> Result<String, String> {
+pub async fn decode_waveform(audio_path: &str, audio_name: &str) -> Result<String, String> {
     let waveform_dir = match get_waveform_dir() {
         Ok(waveform_dir) => waveform_dir,
         Err(_) => return Err("Error getting waveform directory".to_string()),
     };
 
     // check if waveform file already exists and return the path
-    if std::path::Path::new(&format!("{}/{}.dat", waveform_dir, audio_path)).exists() {
-        match std::fs::read_to_string(&format!("{}/{}.dat", waveform_dir, audio_path)) {
-            Ok(waveform) => return Ok(waveform),
-            Err(_) => return Err("Error reading waveform".to_string()),
-        }
+    if std::path::Path::new(&format!("{}/{}.dat", waveform_dir, audio_name)).exists() {
+        return Ok(format!("{}/{}.dat", waveform_dir, audio_name));
     }
 
     // if windows use audiowaveform.exe
@@ -203,7 +200,7 @@ pub async fn decode_waveform(audio_path: &str) -> Result<String, String> {
                 "-i",
                 audio_path,
                 "-o",
-                &format!("{}/{}.dat", waveform_dir, ""),
+                &format!("{}/{}.dat", waveform_dir, audio_name),
                 "-b",
                 "8",
                 "--pixels-per-second",
@@ -216,13 +213,7 @@ pub async fn decode_waveform(audio_path: &str) -> Result<String, String> {
             return Err("Error decoding waveform".to_string());
         }
 
-        let waveform =
-            match std::fs::read_to_string(&format!("{}/{}.dat", waveform_dir, audio_path)) {
-                Ok(waveform) => waveform,
-                Err(_) => return Err("Error reading waveform".to_string()),
-            };
-
-        return Ok(waveform);
+        return Ok(format!("{}/{}.dat", waveform_dir, audio_name));
     }
 
     // if macos and linux use audiowaveform
@@ -233,7 +224,7 @@ pub async fn decode_waveform(audio_path: &str) -> Result<String, String> {
                 "-i",
                 audio_path,
                 "-o",
-                &format!("{}/{}.dat", waveform_dir, ""),
+                &format!("{}/{}.dat", waveform_dir, audio_name),
                 "-b",
                 "8",
                 "--pixels-per-second",
@@ -246,12 +237,6 @@ pub async fn decode_waveform(audio_path: &str) -> Result<String, String> {
             return Err("Error decoding waveform".to_string());
         }
 
-        let waveform =
-            match std::fs::read_to_string(&format!("{}/{}.dat", waveform_dir, audio_path)) {
-                Ok(waveform) => waveform,
-                Err(_) => return Err("Error reading waveform".to_string()),
-            };
-
-        return Ok(waveform);
+        return Ok(format!("{}/{}.dat", waveform_dir, audio_name));
     }
 }

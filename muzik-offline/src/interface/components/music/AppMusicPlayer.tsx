@@ -3,7 +3,7 @@ import "@styles/components/music/AppMusicPlayer.scss";
 import {Airplay, ChromeCast, ListIcon, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
 import { motion } from "framer-motion";
 import { useIsFSStore, useIsMaximisedStore, usePlayerStore, usePlayingPosition, usePlayingPositionSec, useSavedObjectStore } from "store";
-import { genRandomBarWavePoints, genRandomFlatWavePoints, getCoverURL, getNullRandomCover, secondsToTimeFormat } from "@utils/index";
+import { getCoverURL, getNullRandomCover, secondsToTimeFormat } from "@utils/index";
 import { invoke } from "@tauri-apps/api/core";
 import { changeVolumeLevel, changeSeekerPosition, changeVolumeLevelBtnPress, dragSeeker, pauseSong, playSong, repeatToggle, shuffleToggle, setVolumeLevel, reconfigurePlayer_AtEndOfSong, playPreviousSong, playNextSong, changeSeekerPositionBtnPress } from "@utils/playerControl";
 import { AirplayCastModal, MusicPopOver, WaveForm } from "@components/index";
@@ -83,7 +83,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
             <div className={
                 "app_music_player " + 
                 (local_store.PlayerBar ? "app_music_player_border" : "") +
-                (local_store.OStype === OSTYPEenum.Windows || local_store.OStype === OSTYPEenum.Linux && ((!appFS && !isMaximised) || local_store.AlwaysRoundedCornersWindows === "Yes") ? " app-music-player-windows-config" : "")}>
+                ((local_store.OStype === OSTYPEenum.Windows || local_store.OStype === OSTYPEenum.Linux) && ((!appFS && !isMaximised) || local_store.AlwaysRoundedCornersWindows === "Yes") ? " app-music-player-windows-config" : "")}>
                 <div className="music_cover_art">
                     {!local_store.PlayerBar && !Player.playingSongMetadata
                         && <img src={getCoverURL("NULL_COVER_NULL")} alt="song-art" loading="lazy"/>}{/**no song is loaded onto the player */}
@@ -145,17 +145,11 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                                         onChange={draggingSeeker} 
                                         onMouseUp={changeSeeker}
                                         style={{backgroundSize: playingPosition.toString() + "% 100%"}}/>
-                                : local_store.PlaybackFeedback === "BarWave" ?
+                                :
                                     <WaveForm 
-                                        player="BarWave" 
-                                        currentPosition={30} 
-                                        seekTo={(position: number) => changeSeekerPosition(position)}
-                                        barPoints={genRandomFlatWavePoints()}/>
-                                :   <WaveForm 
-                                        player="FloatingBarWave" 
-                                        currentPosition={50} 
-                                        seekTo={(position: number) => changeSeekerPosition(position)}
-                                        barPoints={genRandomBarWavePoints()}/>
+                                        PlaybackFeedback={local_store.PlaybackFeedback}
+                                        currentPosition={playingPosition} 
+                                        seekTo={(position: number) => changeSeekerPosition(position)}/>
                             }
                             <p>
                                 {Player.playingSongMetadata ? 

@@ -3,6 +3,8 @@
 .WaveForm{
     width: calc(100vw/4.0);
     height: 30px;
+    display: flex;
+    align-items: center;
 
     line{
         stroke: $app-theme-col;

@@ -215,14 +215,19 @@ pub fn get_file_name_from_path(path: &str) -> String {
 
     match path.file_name() {
         Some(file_name) => {
-            // remove the extension by splitting the final dot as some files may contain multiple dots
+            // Convert file name to a String
             let file_name = file_name.to_string_lossy();
-            let file_name = match file_name.split('.').next() {
-                Some(file_name) => file_name,
-                None => return String::from("Unknown file name"),
-            };
-
-            return file_name.to_string();
+            
+            // Split on dots and remove the last segment (the extension)
+            let mut parts: Vec<&str> = file_name.split('.').collect();
+            
+            // Remove the last segment if there is one
+            if parts.len() > 1 {
+                parts.pop();
+            }
+            
+            // Join the remaining parts with dots
+            return parts.join(".");
         }
         None => String::from("Unknown file name"),
     }
