@@ -63,7 +63,6 @@ pub async fn attempt_to_download_audio_waveform() -> Result<String, String> {
                 .status();
 
             if command.is_err() {
-                println!("Error downloading audiowaveform due to {:?}", command.err());
                 return Err("Error downloading audiowaveform".to_string());
             }
         }
@@ -79,13 +78,11 @@ pub async fn attempt_to_download_audio_waveform() -> Result<String, String> {
             .status();
 
         if command.is_err() {
-            println!("Error unzipping audiowaveform due to {:?}", command.err());
             return Err("Error unzipping audiowaveform".to_string());
         }
 
         // check if audiowaveform.exe exists
         if !check_if_audio_waveform_is_installed() {
-            println!("Error installing audiowaveform");
             return Err("Error installing audiowaveform".to_string());
         }
 
@@ -96,10 +93,6 @@ pub async fn attempt_to_download_audio_waveform() -> Result<String, String> {
 
         // even if the delete fails, the audiowaveform.exe is installed so return success
         if command.is_err() {
-            println!(
-                "Error deleting audiowaveform zip file due to {:?}",
-                command.err()
-            );
             // intentionally ignore error
         }
 
@@ -204,12 +197,11 @@ pub async fn decode_waveform(audio_path: &str, audio_name: &str) -> Result<Strin
                 "-b",
                 "8",
                 "--pixels-per-second",
-                "10",
+                "5",
             ])
             .status();
 
         if command.is_err() {
-            println!("Error decoding waveform due to {:?}", command.err());
             return Err("Error decoding waveform".to_string());
         }
 
@@ -233,7 +225,6 @@ pub async fn decode_waveform(audio_path: &str, audio_name: &str) -> Result<Strin
             .status();
 
         if command.is_err() {
-            println!("Error decoding waveform due to {:?}", command.err());
             return Err("Error decoding waveform".to_string());
         }
 

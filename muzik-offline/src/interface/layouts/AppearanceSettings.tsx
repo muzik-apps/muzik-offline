@@ -172,7 +172,7 @@ const AppearanceSettings: FunctionComponent<AppearanceSettingsProps> = (props: A
                 <h3>Player feedback appearance</h3>
                 <div className="player_feedback">
                     {
-                        ["LineBar", "BarWave", "FloatingBarWave", "RoundedWave", "SineWave"].map((feedback, index) => 
+                        ["LineBar", "BarWave", "FloatingBarWave"].map((feedback, index) => 
                             <motion.div key={index} className={"button_select glass " + (local_store.PlaybackFeedback === feedback ? "button_selected" : "")}
                                 whileHover={{scale: 1.03}} whileTap={{scale: 0.98}} onClick={
                                     () => SetPlaybackFeedback(feedback as "BarWave" | "FloatingBarWave" | "LineBar" | "RoundedWave" | "SineWave")

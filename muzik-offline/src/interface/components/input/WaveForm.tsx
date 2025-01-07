@@ -34,6 +34,13 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
         return ((Math.abs(value) / 128) * (height / 2)) + (height / 2);
     }
 
+    function calculateTop(max: number, min: number, height: number): number {
+        const top = scaleTop(max, height);
+        const bottom = scaleBottom(min, height);
+        const diff = bottom - top;
+        return height - 2 - diff;
+    }
+
     function calculateIndex(index: number, width: number): number {
         return index * (width / amountOfXPoints);
     }
@@ -92,7 +99,7 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
                 onMouseUp={seekTo}
                 >
                     {
-                        waveformChannel && Array.from({ length: amountOfXPoints }, (_, i) => i).map((index) => {
+                        props.PlaybackFeedback === "FloatingBarWave" && waveformChannel && Array.from({ length: amountOfXPoints }, (_, i) => i).map((index) => {
                             return (
                                 <motion.line
                                     animate={{ scale: getScale(index) }}
@@ -105,6 +112,27 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
                                     y1={scaleTop(waveformChannel.max_sample(calculateIndex(index, waveformLength)), 28)}
                                     x2={index * 5}
                                     y2={scaleBottom(waveformChannel.min_sample(calculateIndex(index, waveformLength)), 30)}
+                                />
+                            )
+                        })
+                    }
+                    {
+                        props.PlaybackFeedback === "BarWave" && waveformChannel && Array.from({ length: amountOfXPoints }, (_, i) => i).map((index) => {
+                            return (
+                                <motion.line
+                                    animate={{ scale: getScale(index) }}
+                                    className={(currentPosition >= index ? "line_active " : "")
+                                        + (currentPosition === index ? " line_current " : "")
+                                    }
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    key={index}
+                                    x1={index * 5}
+                                    y1={calculateTop(
+                                            waveformChannel.max_sample(calculateIndex(index, waveformLength)), 
+                                            waveformChannel.min_sample(calculateIndex(index, waveformLength)), 
+                                            28)}
+                                    x2={index * 5}
+                                    y2={28}
                                 />
                             )
                         })
