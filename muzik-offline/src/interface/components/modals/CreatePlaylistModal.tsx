@@ -24,7 +24,7 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
         if(e.target.files === null)return;
         const image = e.target.files[0];
         const reader = new FileReader();
-
+        
         reader.onload = async (e) => {
             if(e.target?.result){
                 const originalData = e.target.result as string;
@@ -33,7 +33,7 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
         };
         reader.readAsDataURL(image);
     }
-
+    
     async function createPlaylistAndCloseModal(){
         if(playlistTitle === ""){
             setToast({title: "Playlist title", message: "Playlist title cannot be empty", type: toastType.warning, timeout: 3000});
@@ -52,13 +52,14 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
             dateEdited: new Date().toLocaleDateString(),
             tracksPaths: []
         }
-        await local_playlists_db.playlists.add(playlistObj);
-        props.closeModal(playlistObj.key);
         if(cover === null){
+            await local_playlists_db.playlists.add(playlistObj);
+            setLoading(false);
+            props.closeModal(playlistObj.key);
             setToast({title: "Playlist cover", message: "Playlist created without cover", type: toastType.info, timeout: 3000});
             return;
         }
-
+        
         let toSend = "";
         
         if(cover.startsWith("data:image/jpeg;base64,")){
@@ -72,18 +73,22 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
         // Compress the image to a maximum size of 250x250
         if(toSend === ""){
             setToast({title: "Processing error...", message: "Could not process this image, please try another image", type: toastType.error, timeout: 3000});
+            setLoading(false);
             return;
         }
-
+        
         invoke("create_playlist_cover", {playlistName: playlistTitle, cover: toSend, compressImage: local_store.CompressImage === "Yes" ? true : false})
-            .then((cover_uuid: any) => {
+        .then(async(cover_uuid: any) => {
+                playlistObj.cover = cover_uuid;
+                playlistObj.uuid = cover_uuid;
+                await local_playlists_db.playlists.add(playlistObj);
                 setLoading(false);
-                local_playlists_db.playlists.update(playlistObj.key, {cover: cover_uuid, uuid: cover_uuid});
+                props.closeModal(playlistObj.key);
                 setToast({title: "Playlist cover", message: "Successfully created playlist", type: toastType.success, timeout: 3000});
             })
             .catch((error: any) => {
-                setLoading(false);
                 console.log(error);
+                setLoading(false);
                 setToast({title: "Playlist cover", message: "Failed to set playlist cover", type: toastType.error, timeout: 3000});
             });
     }
@@ -93,7 +98,7 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
     return (
         <div className={"CreatePlaylistModal" + (props.isOpen ? " CreatePlaylistModal-visible" : "")} onClick={
             (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => 
-                {if(e.target === e.currentTarget)props.closeModal(undefined)}}>
+                {if(e.target === e.currentTarget && !loading)props.closeModal(undefined)}}>
             <motion.div 
             animate={props.isOpen ? "open" : "closed"}
             variants={modal_variants}

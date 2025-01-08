@@ -18,31 +18,88 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
     const [waveformLength, setWaveformLength] = useState<number>(0);
     const [amountOfXPoints, setAmountOXPoints] = useState<number>(0);
     const [hoveredIndex, setHoveredIndex] = useState<number>(-1);
+    const [stepValue, setStepValue] = useState<number>(0);
 
     async function decodeWaveForm(WaveFormPath: string){
         const file_data = await readFile(WaveFormPath);
         const waveformData = WaveformData.create(file_data.buffer);
         setWaveformChannel(waveformData.channel(0));
         setWaveformLength(waveformData.duration);
-    }
-
-    function scaleTop(value: number, height: number): number {
-        return (Math.abs(value) / 128) * (height / 2) + 2;
-    }
-
-    function scaleBottom(value: number, height: number): number {
-        return ((Math.abs(value) / 128) * (height / 2)) + (height / 2);
-    }
-
-    function calculateTop(max: number, min: number, height: number): number {
-        const top = scaleTop(max, height);
-        const bottom = scaleBottom(min, height);
-        const diff = bottom - top;
-        return height - 2 - diff;
+        setStepValue(Math.round(waveformData.duration / amountOfXPoints));
     }
 
     function calculateIndex(index: number, width: number): number {
         return index * (width / amountOfXPoints);
+    }
+
+    function scaleTop(index: number, height: number): number {
+        if(!waveformChannel) return 0;
+        // get a range of max samples that +- the step and then average them into a single value
+        let totalMax = 0;
+        const halfStep = Math.floor(stepValue / 2);
+        const waveFormIndex = calculateIndex(index, waveformLength);
+        totalMax += waveformChannel.max_sample(waveFormIndex);
+        for (let i = 1; i < halfStep; i++) {
+            const forwardIndex = waveFormIndex + i;
+            const backwardIndex = waveFormIndex - i;
+            if (forwardIndex >= waveformLength || backwardIndex < 0) break;
+            totalMax += waveformChannel.max_sample(forwardIndex) + waveformChannel.max_sample(backwardIndex);
+        }
+        const max = totalMax / stepValue;
+        const result = ((Math.abs(max) / 128) * (height / 2)) + 2;
+        //console.log(max, removeFirstDigit(result, height / 2));
+        return removeFirstDigit(result, height / 2);
+    }
+
+    function scaleBottom(index: number, height: number): number {
+        if(!waveformChannel) return 0;
+        // get a range of min samples that +- the step and then average them into a single value
+        let totalMin = 0;
+        const halfStep = Math.floor(stepValue / 2);
+        const waveFormIndex = calculateIndex(index, waveformLength);
+        totalMin += waveformChannel.min_sample(waveFormIndex);
+        for (let i = 1; i < halfStep; i++) {
+            const forwardIndex = waveFormIndex + i;
+            const backwardIndex = waveFormIndex - i;
+            if (forwardIndex >= waveformLength || backwardIndex < 0) break;
+            totalMin += waveformChannel.min_sample(forwardIndex) + waveformChannel.min_sample(backwardIndex);
+        }
+        const min = totalMin / stepValue;
+        const result = ((Math.abs(min) / 128) * (height / 2)) + (height / 2);
+        //console.log((Math.abs(removeFirstDigit(result, 100) / 100) * (height / 2)) + (height / 2));
+        return ((Math.abs(removeFirstDigit(result, 100) - 50) / 50) * (height / 2)) + (height / 2);
+    }
+
+    function removeFirstDigit(value: number, max: number): number {
+        const valueStr = (value * 10).toString();
+        // remove the first digit
+        const withoutFirstDigit = valueStr.slice(1);
+        const result = parseFloat(withoutFirstDigit);
+        return result > max ? max : result;
+    }
+
+    function calculateTopForBarWave(index: number, height: number): number {
+        if(!waveformChannel) return 0;
+        // get a range of max and min samples that +- the step and then average them into a single value
+        let totalMax = 0;
+        let totalMin = 0;
+        const halfStep = Math.floor(stepValue / 2);
+        const waveFormIndex = calculateIndex(index, waveformLength);
+        totalMax += waveformChannel.max_sample(waveFormIndex);
+        totalMin += waveformChannel.min_sample(waveFormIndex);
+        for (let i = 1; i < halfStep; i++) {
+            const forwardIndex = waveFormIndex + i;
+            const backwardIndex = waveFormIndex - i;
+            if (forwardIndex >= waveformLength || backwardIndex < 0) break;
+            totalMax += waveformChannel.max_sample(forwardIndex) + waveformChannel.max_sample(backwardIndex);
+            totalMin += waveformChannel.min_sample(forwardIndex) + waveformChannel.min_sample(backwardIndex);
+        }
+        const max = totalMax / stepValue;
+        const min = totalMin / stepValue;
+        const top = (Math.abs(max) / 128) * (height / 2) + 2;
+        const bottom = ((Math.abs(min) / 128) * (height / 2)) + (height / 2);
+        const diff = bottom - top;
+        return height - 2 - removeFirstDigit(diff, 28);
     }
 
     function setHoveredIndexValue(e: React.MouseEvent<SVGSVGElement, MouseEvent>){
@@ -57,7 +114,8 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
 
     function seekTo(){
         if(hoveredIndex !== -1){
-            props.seekTo((hoveredIndex / amountOfXPoints) * 100);
+            props.seekTo(Math.round((hoveredIndex / amountOfXPoints) * 100));
+            setCurrentPosition(hoveredIndex);
         }
     }
 
@@ -88,7 +146,8 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
     }, [Player.WaveFormPath]);
 
     useEffect(() => {
-        setCurrentPosition((props.currentPosition / 100) * amountOfXPoints);
+        const index = Math.round((props.currentPosition / 100) * amountOfXPoints);
+        if(index > hoveredIndex)setCurrentPosition(index);
     }, [props.currentPosition]);
 
     return (
@@ -109,9 +168,9 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
                                     xmlns="http://www.w3.org/2000/svg"
                                     key={index}
                                     x1={index * 5}
-                                    y1={scaleTop(waveformChannel.max_sample(calculateIndex(index, waveformLength)), 28)}
+                                    y1={scaleTop(index, 28)}
                                     x2={index * 5}
-                                    y2={scaleBottom(waveformChannel.min_sample(calculateIndex(index, waveformLength)), 30)}
+                                    y2={scaleBottom(index, 30)}
                                 />
                             )
                         })
@@ -127,10 +186,7 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
                                     xmlns="http://www.w3.org/2000/svg"
                                     key={index}
                                     x1={index * 5}
-                                    y1={calculateTop(
-                                            waveformChannel.max_sample(calculateIndex(index, waveformLength)), 
-                                            waveformChannel.min_sample(calculateIndex(index, waveformLength)), 
-                                            28)}
+                                    y1={calculateTopForBarWave(index, 28)}
                                     x2={index * 5}
                                     y2={28}
                                 />

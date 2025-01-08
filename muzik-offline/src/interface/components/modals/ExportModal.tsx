@@ -5,6 +5,7 @@ import { RadioComponent} from "@components/index";
 import { getSongFieldsArray } from "@utils/index";
 import { invoke } from "@tauri-apps/api/core";
 import "@styles/components/modals/ExportModal.scss";
+import { Spinner } from "@assets/icons";
 
 type ExportModalProps = {
     isOpen: boolean;
@@ -21,8 +22,10 @@ const songFields = ["title","artist","album","genre","year","duration","path",
 const ExportModal: FunctionComponent<ExportModalProps> = (props: ExportModalProps) => {
     const [selectedExport, setSelectedExport] = useState<string>("json");
     const [selectedFields, setSelectedFields] = useState<Set<string>>(new Set(songFields));
+    const [loading, setLoading] = useState<boolean>(false);
 
     async function createExport(){
+        setLoading(true);
         const fields = getSongFieldsArray(selectedFields);
         const invoke_function = selectedExport === "json" ? "export_songs_as_json" : 
                                 selectedExport === "csv" ? "export_songs_as_csv" : 
@@ -30,6 +33,7 @@ const ExportModal: FunctionComponent<ExportModalProps> = (props: ExportModalProp
                                 selectedExport === "html" ? "export_songs_as_html" : "export_songs_as_txt";
 
         await invoke(invoke_function, {uuids: props.song_uuids, fieldsToInclude: fields});
+        setLoading(false);
         props.closeModal();
     }
 
@@ -39,7 +43,7 @@ const ExportModal: FunctionComponent<ExportModalProps> = (props: ExportModalProp
 
     return (
         <div className={"ExportModal" + (props.isOpen ? " ExportModal-visible" : "")} onClick={
-            (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {if(e.target === e.currentTarget)props.closeModal();}}>
+            (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {if(e.target === e.currentTarget && !loading)props.closeModal();}}>
             <motion.div 
             animate={props.isOpen ? "open" : "closed"}
             variants={modal_variants}
@@ -84,12 +88,25 @@ const ExportModal: FunctionComponent<ExportModalProps> = (props: ExportModalProp
                     }
                 </div>
                 <div className="buttons">
-                    <motion.div className="cancel_button" whileTap={{scale: 0.98}} onClick={props.closeModal}>
-                        <h3>Cancel</h3>
-                    </motion.div>
-                    <motion.div className="save_button" whileTap={{scale: 0.98}} onClick={createExport}>
-                        <h3>Export</h3>
-                    </motion.div>
+                    { !loading ?
+                        <motion.div className="cancel_button" whileTap={{scale: 0.98}} onClick={props.closeModal}>
+                            <h3>Cancel</h3>
+                        </motion.div>
+                        :
+                        <div className="loading_cancel_button">
+                            <h4>Cancel</h4>
+                        </div>
+                    }
+                    { !loading ?
+                        <motion.div className="save_button" whileTap={{scale: 0.98}} onClick={createExport}>
+                            <h3>Export</h3>
+                        </motion.div>
+                        :
+                        <div className="loading_save_button">
+                            <h4>Export</h4>
+                            <Spinner />
+                        </div>
+                    }
                 </div>
             </motion.div>
         </div>

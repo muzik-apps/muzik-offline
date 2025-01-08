@@ -8,6 +8,7 @@ import { getCoverURL, getNullRandomCover } from "@utils/index";
 import { useToastStore } from "@store/index";
 import { local_songs_db } from "@database/database";
 import {DateInput} from "@components/index";
+import { Spinner } from "@assets/icons";
 
 type EditPropertiesModalProps = {
     songID: number;
@@ -47,6 +48,7 @@ const EditPropertiesModal: FunctionComponent<EditPropertiesModalProps> = (props:
     const [isid3Supported, setISid3Supported] = useState<boolean>(false);
     const [hasChangedCover, setHasChangedCover] = useState<boolean>(false);
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
+    const [loading, setLoading] = useState<boolean>(false);
 
     function uploadImg(e: any){
         const image = e.target.files[0];
@@ -71,24 +73,32 @@ const EditPropertiesModal: FunctionComponent<EditPropertiesModalProps> = (props:
 
     function saveChanges(){
         const song_v = song;
-        props.closeModal();
-
-        if(props.songID === -1) return;
+        setLoading(true);
+        
+        if(props.songID === -1){
+            setToast({ title: "Editing song...", message: "Error editing song", type: toastType.error, timeout: 5000 }); 
+            return;
+        }
         
         // check if any field has changed
         if(song_v.title === oldsong.title && song_v.artist === oldsong.artist 
             && song_v.album === oldsong.album && song_v.genre === oldsong.genre 
             && song_v.year === oldsong.year && song_v.date_recorded === oldsong.date_recorded
             && song_v.date_released === oldsong.date_released && cover === null){
+                setLoading(false);
+                props.closeModal();
+                setToast({ title: "Editing song...", message: "No changes detected", type: toastType.warning, timeout: 3000 });
                 return;
         }
-
+        
         invoke("edit_song_metadata", {songPath: song_v.path, songMetadata: JSON.stringify(song_v), hasChangedCover: hasChangedCover}).
         then(async(cover_uuid: any) => { 
             if(cover_uuid !== "Error acquiring cover uuid"){
                 song_v.cover_uuid = cover_uuid;
             }
             await local_songs_db.songs.update(song_v.id, song_v);
+            setLoading(false);
+            props.closeModal();
             setToast({ title: "Editing song...", message: "Successfully updated metadata", type: toastType.success, timeout: 3000 });
         }).
         catch((e) => { setToast({ title: "Editing song...", message: e, type: toastType.error, timeout: 5000 }); });
@@ -114,7 +124,7 @@ const EditPropertiesModal: FunctionComponent<EditPropertiesModalProps> = (props:
 
     return (
         <div className={"EditPropertiesModal" + (props.isOpen ? " EditPropertiesModal-visible" : "")} onClick={
-            (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {if(e.target === e.currentTarget)props.closeModal();}}>
+            (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {if(e.target === e.currentTarget && !loading)props.closeModal();}}>
             <motion.div 
             animate={props.isOpen ? "open" : "closed"}
             variants={modal_variants}
@@ -193,12 +203,25 @@ const EditPropertiesModal: FunctionComponent<EditPropertiesModalProps> = (props:
                                 })}/>
                         </div>
                     }
-                    <motion.div className="save_button" whileTap={{scale: 0.98}} onClick={saveChanges}>
-                        <h3>Save changes</h3>
-                    </motion.div>
-                    <motion.div className="cancel_button" whileTap={{scale: 0.98}} onClick={props.closeModal}>
-                        <h3>Cancel</h3>
-                    </motion.div>
+                    { !loading ?
+                        <motion.div className="save_button" whileTap={{scale: 0.98}} onClick={saveChanges}>
+                            <h3>Save changes</h3>
+                        </motion.div>
+                        :
+                        <div className="loading_save_button">
+                            <h4>Save changes</h4>
+                            <Spinner />
+                        </div>
+                    }
+                    { !loading ?
+                        <motion.div className="cancel_button" whileTap={{scale: 0.98}} onClick={props.closeModal}>
+                            <h3>Cancel</h3>
+                        </motion.div>
+                        :
+                        <div className="loading_cancel_button">
+                            <h4>Cancel</h4>
+                        </div>
+                    }
                 </div>
             </motion.div>
         </div>

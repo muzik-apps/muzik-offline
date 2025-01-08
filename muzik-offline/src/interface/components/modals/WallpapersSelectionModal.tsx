@@ -94,7 +94,7 @@ const WallpapersSelectionModal: FunctionComponent<WallpapersSelectionModalProps>
 
     return (
         <div className={"WallpapersSelectionModal" + (props.isOpen ? " WallpapersSelectionModal-visible" : "")} onClick={
-            (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {if(e.target === e.currentTarget)props.closeModal();}}>
+            (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {if(e.target === e.currentTarget && !isloading)props.closeModal();}}>
             <motion.div 
             animate={props.isOpen ? "open" : "closed"}
             variants={modal_variants}

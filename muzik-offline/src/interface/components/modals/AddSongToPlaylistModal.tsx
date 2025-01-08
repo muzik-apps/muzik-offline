@@ -8,6 +8,7 @@ import { getCoverURL, getNullRandomCover } from "utils";
 import { motion } from "framer-motion";
 import { modal_variants } from "@content/index";
 import CreatePlaylistModal from "./CreatePlaylistModal";
+import { Spinner } from "@assets/icons";
 
 type AddSongToPlaylistModalProps = {
     isOpen: boolean;
@@ -20,18 +21,26 @@ const AddSongToPlaylistModal: FunctionComponent<AddSongToPlaylistModalProps> = (
     const playlists = useLiveQuery(() => local_playlists_db.playlists.toArray()) ?? [];
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
     const [createPlaylistModal, setCreatePlaylistModal] = useState<boolean>(false);
+    const [loading, setLoading] = useState<number | null>(null);
 
     function chooseThisPlaylist(key: number){
+        setLoading(key);
         //check if track path is already in the playlist
         const pl = playlists.find(playlist => playlist.key === key);
-        if(pl === undefined)return;
+        if(pl === undefined){
+            setToast({title: "Playlist not found", message: "Playlist not found", type: toastType.error, timeout: 5000});
+            setLoading(null);
+            return;
+        }
         if(pl.tracksPaths.includes(props.songPath)){
             //if the track path is already in the playlist, send a toast letting the user know
             setToast({title: "Already in playlist", message: "This song is already in the playlist you selected", type: toastType.warning, timeout: 2000});
+            setLoading(null);
             return;
         }
         //if the track path is not in the playlist, add it to the local db playlist
         local_playlists_db.playlists.update(key, {tracksPaths: [...pl.tracksPaths ?? [], props.songPath]});
+        setLoading(null);
         props.closeModal();
         setToast({title: "Added to playlist", message: `The song has been added to ${pl.title}`, type: toastType.info, timeout: 2000});
     }
@@ -39,7 +48,7 @@ const AddSongToPlaylistModal: FunctionComponent<AddSongToPlaylistModalProps> = (
     return (
         <div className={"AddSongToPlaylistModal" + (props.isOpen ? " AddSongToPlaylistModal-visible" : "")} onClick={
             (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => 
-                {if(e.target === e.currentTarget)props.closeModal()}}>
+                {if(e.target === e.currentTarget && !loading)props.closeModal()}}>
             <motion.div 
             animate={props.isOpen ? "open" : "closed"}
             variants={modal_variants}
@@ -54,6 +63,7 @@ const AddSongToPlaylistModal: FunctionComponent<AddSongToPlaylistModalProps> = (
                                     {  !playlist.cover ? <img src={getCoverURL(getNullRandomCover(playlist.key))} alt="song-cover" /> : <img src={getCoverURL(playlist.cover)} alt="square-image" /> }
                                 </div>
                                 <h2>{playlist.title}</h2>
+                                { loading === playlist.key && <Spinner /> }
                             </motion.div>
                         )
                     }

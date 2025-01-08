@@ -1,6 +1,6 @@
 import { playlist } from 'types';
 import { FunctionComponent, useEffect, useState } from 'react';
-import { EditImage } from '@assets/icons';
+import { EditImage, Spinner } from '@assets/icons';
 import { motion } from 'framer-motion';
 import "@styles/components/modals/EditPlaylistModal.scss";
 import { local_playlists_db } from '@database/database';
@@ -50,13 +50,15 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
             setToast({title: "Playlist title", message: "Playlist title cannot contain windows or unix directory format", type: toastType.warning, timeout: 3000});
             return;
         }
-        
+        setLoading(true);
         if(playlistTitle !== "")playlistObj.title = playlistTitle;
         playlistObj.dateEdited = new Date().toLocaleDateString();
-        //save changes of this playlist
-        await local_playlists_db.playlists.update(props.playlistobj.key, playlistObj);
-        props.closeModal(playlistObj.key);
-        if(cover === null)return;
+        if(cover === null){
+            await local_playlists_db.playlists.update(props.playlistobj.key, playlistObj);
+            setLoading(false);
+            setToast({title: "Playlist update", message: "Playlist has been updated", type: toastType.success, timeout: 3000});
+            return;
+        }
 
         let toSend = "";
         
@@ -70,13 +72,16 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
         }
         // Compress the image to a maximum size of 250x250
         if(toSend === ""){
+            setLoading(false);
             setToast({title: "Processing error...", message: "Could not process this image, please try another image", type: toastType.error, timeout: 3000});
             return;
         }
 
         invoke("create_playlist_cover", {playlistName: playlistTitle, cover: toSend, compressImage: local_store.CompressImage === "Yes" ? true : false})
-            .then((cover_uuid: any) => {
-                local_playlists_db.playlists.update(props.playlistobj.key, {cover: cover_uuid});
+            .then(async(cover_uuid: any) => {
+                await local_playlists_db.playlists.update(props.playlistobj.key, {cover: cover_uuid});
+                setLoading(false);
+                props.closeModal(playlistObj.key);
                 setToast({title: "Playlist cover", message: "Successfully updated playlist", type: toastType.success, timeout: 3000});
             })
             .catch((error: any) => {
@@ -110,7 +115,7 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
 
     return (
         <div className={"EditPlaylistModal" + (props.isOpen ? " EditPlaylistModal-visible" : "")} onClick={
-            (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {if(e.target === e.currentTarget)props.closeModal(undefined)}}>
+            (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {if(e.target === e.currentTarget && !loading)props.closeModal(undefined)}}>
             <motion.div 
             animate={props.isOpen ? "open" : "closed"}
             variants={modal_variants}
@@ -131,8 +136,25 @@ const EditPlaylistModal: FunctionComponent<EditPlaylistModalProps> = (props: Edi
                 </div>
                 <h3>Playlist name</h3>
                 <input type="text" id="input-field" value={playlistTitle} onChange={(e) => setPlaylistTitle(e.target.value)}/>
-                <motion.div className="edit_playlist" whileTap={{scale: 0.98}} onClick={savePlaylistAndCloseModal}>save changes</motion.div>
-                <motion.div className="delete_playlist" whileTap={{scale: 0.98}} onClick={() => setDeletePlaylistModal(true)}>delete playlist</motion.div>
+                { !loading ?
+                    <motion.div className="edit_playlist" whileTap={{scale: 0.98}} onClick={savePlaylistAndCloseModal}>
+                        save changes
+                    </motion.div>
+                    :
+                    <div className="loading_edit_playlist">
+                        <h4>save changes</h4>
+                        <Spinner />
+                    </div>
+                }
+                { !loading ?
+                    <motion.div className="delete_playlist" whileTap={{scale: 0.98}} onClick={() => setDeletePlaylistModal(true)}>
+                        delete playlist
+                    </motion.div>
+                    :
+                    <div className="loading_delete_playlist">
+                        <h4>delete playlist</h4>
+                    </div>
+                }
             </motion.div>
 
             <DeletePlaylistModal title={playlistTitle} isOpen={deletePlaylistModal} closeModal={shouldDeletePlaylist}/>
