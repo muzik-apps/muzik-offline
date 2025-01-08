@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useRef, useState } from "react";
 import "@styles/components/input/WaveForm.scss";
 import { motion } from "framer-motion";
 import { readFile } from '@tauri-apps/plugin-fs';
@@ -8,6 +8,7 @@ import WaveformData, { WaveformDataChannel } from 'waveform-data';
 type WaveFormProps = {
     currentPosition: number;
     PlaybackFeedback: "BarWave" | "FloatingBarWave" | "RoundedWave" | "SineWave";
+    player: "MainMusicPlayer" | "AppMusicPlayer";
     seekTo: (position: number) => void;
 }
 
@@ -15,17 +16,18 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
     const { Player } = usePlayerStore((state) => { return { Player: state.Player }; });
     const [waveformChannel, setWaveformChannel] = useState<WaveformDataChannel | null>(null);
     const [currentPosition, setCurrentPosition] = useState<number>(0);
-    const [waveformLength, setWaveformLength] = useState<number>(0);
+    const waveformLength = useRef<number>(0);
     const [amountOfXPoints, setAmountOXPoints] = useState<number>(0);
     const [hoveredIndex, setHoveredIndex] = useState<number>(-1);
-    const [stepValue, setStepValue] = useState<number>(0);
+    const stepValue = useRef<number>(0);
 
     async function decodeWaveForm(WaveFormPath: string){
+        if(amountOfXPoints === 0){return;}
         const file_data = await readFile(WaveFormPath);
         const waveformData = WaveformData.create(file_data.buffer);
+        stepValue.current = (Math.round(waveformData.duration / amountOfXPoints));
+        waveformLength.current = (waveformData.duration);
         setWaveformChannel(waveformData.channel(0));
-        setWaveformLength(waveformData.duration);
-        setStepValue(Math.round(waveformData.duration / amountOfXPoints));
     }
 
     function calculateIndex(index: number, width: number): number {
@@ -36,16 +38,16 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
         if(!waveformChannel) return 0;
         // get a range of max samples that +- the step and then average them into a single value
         let totalMax = 0;
-        const halfStep = Math.floor(stepValue / 2);
-        const waveFormIndex = calculateIndex(index, waveformLength);
+        const halfStep = Math.floor(stepValue.current / 2);
+        const waveFormIndex = calculateIndex(index, waveformLength.current);
         totalMax += waveformChannel.max_sample(waveFormIndex);
         for (let i = 1; i < halfStep; i++) {
             const forwardIndex = waveFormIndex + i;
             const backwardIndex = waveFormIndex - i;
-            if (forwardIndex >= waveformLength || backwardIndex < 0) break;
+            if (forwardIndex >= waveformLength.current || backwardIndex < 0) break;
             totalMax += waveformChannel.max_sample(forwardIndex) + waveformChannel.max_sample(backwardIndex);
         }
-        const max = totalMax / stepValue;
+        const max = totalMax / stepValue.current;
         const result = ((Math.abs(max) / 128) * (height / 2)) + 2;
         //console.log(max, removeFirstDigit(result, height / 2));
         return removeFirstDigit(result, height / 2);
@@ -55,16 +57,16 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
         if(!waveformChannel) return 0;
         // get a range of min samples that +- the step and then average them into a single value
         let totalMin = 0;
-        const halfStep = Math.floor(stepValue / 2);
-        const waveFormIndex = calculateIndex(index, waveformLength);
+        const halfStep = Math.floor(stepValue.current / 2);
+        const waveFormIndex = calculateIndex(index, waveformLength.current);
         totalMin += waveformChannel.min_sample(waveFormIndex);
         for (let i = 1; i < halfStep; i++) {
             const forwardIndex = waveFormIndex + i;
             const backwardIndex = waveFormIndex - i;
-            if (forwardIndex >= waveformLength || backwardIndex < 0) break;
+            if (forwardIndex >= waveformLength.current || backwardIndex < 0) break;
             totalMin += waveformChannel.min_sample(forwardIndex) + waveformChannel.min_sample(backwardIndex);
         }
-        const min = totalMin / stepValue;
+        const min = totalMin / stepValue.current;
         const result = ((Math.abs(min) / 128) * (height / 2)) + (height / 2);
         //console.log((Math.abs(removeFirstDigit(result, 100) / 100) * (height / 2)) + (height / 2));
         return ((Math.abs(removeFirstDigit(result, 100) - 50) / 50) * (height / 2)) + (height / 2);
@@ -79,23 +81,24 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
     }
 
     function calculateTopForBarWave(index: number, height: number): number {
-        if(!waveformChannel) return 0;
+        if(!waveformChannel){ return 26; }
         // get a range of max and min samples that +- the step and then average them into a single value
         let totalMax = 0;
         let totalMin = 0;
-        const halfStep = Math.floor(stepValue / 2);
-        const waveFormIndex = calculateIndex(index, waveformLength);
+        const halfStep = Math.floor(stepValue.current / 2);
+        const waveFormIndex = calculateIndex(index, waveformLength.current);
+        if(props.player === "MainMusicPlayer")console.log(halfStep, stepValue.current, waveFormIndex, waveformLength.current);
         totalMax += waveformChannel.max_sample(waveFormIndex);
         totalMin += waveformChannel.min_sample(waveFormIndex);
         for (let i = 1; i < halfStep; i++) {
             const forwardIndex = waveFormIndex + i;
             const backwardIndex = waveFormIndex - i;
-            if (forwardIndex >= waveformLength || backwardIndex < 0) break;
+            if (forwardIndex >= waveformLength.current || backwardIndex < 0) break;
             totalMax += waveformChannel.max_sample(forwardIndex) + waveformChannel.max_sample(backwardIndex);
             totalMin += waveformChannel.min_sample(forwardIndex) + waveformChannel.min_sample(backwardIndex);
         }
-        const max = totalMax / stepValue;
-        const min = totalMin / stepValue;
+        const max = totalMax / stepValue.current;
+        const min = totalMin / stepValue.current;
         const top = (Math.abs(max) / 128) * (height / 2) + 2;
         const bottom = ((Math.abs(min) / 128) * (height / 2)) + (height / 2);
         const diff = bottom - top;
@@ -113,8 +116,8 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
     }
 
     function seekTo(){
-        if(hoveredIndex !== -1){
-            props.seekTo(Math.round((hoveredIndex / amountOfXPoints) * 100));
+        if(hoveredIndex >= 0){
+            props.seekTo(Math.round((hoveredIndex / amountOfXPoints) * 100) + 2);
             setCurrentPosition(hoveredIndex);
         }
     }
@@ -135,15 +138,15 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
     };
 
     useEffect(() => { 
-        setAmountOXPoints((window.innerWidth / 4.0) / 5.0);
+        setAmountOXPoints((props.player === "AppMusicPlayer" ? window.innerWidth / 4.0 : 300 + (window.innerWidth / 10)) / 5.0);
 
         window.addEventListener("resize", () => {
-            setAmountOXPoints((window.innerWidth / 4.0) / 5.0); }); 
+            setAmountOXPoints((props.player === "AppMusicPlayer" ? window.innerWidth / 4.0 : 300 + (window.innerWidth / 10)) / 5.0); });
     }, []);
 
     useEffect(() => {
         if(Player.WaveFormPath)decodeWaveForm(Player.WaveFormPath); 
-    }, [Player.WaveFormPath]);
+    }, [Player.WaveFormPath, amountOfXPoints]);
 
     useEffect(() => {
         const index = Math.round((props.currentPosition / 100) * amountOfXPoints);

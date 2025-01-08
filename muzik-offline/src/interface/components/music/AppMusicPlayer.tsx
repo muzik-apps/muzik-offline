@@ -20,7 +20,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
     const [openAirplayCastModal, setOpenAirplayCastModal] = useState<boolean>(false);
     const [openMusicPopOver, setOpenMusicPopOver] = useState<boolean>(false);
     const {Player} = usePlayerStore((state) => { return { Player: state.Player}; });
-    const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
+    const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
     const {playingPosInSec, setplayingPosInSec} = usePlayingPositionSec((state) => { return {playingPosInSec: state.position, setplayingPosInSec: state.setPosition}; });
     const {playingPosition, setplayingPosition} = usePlayingPosition((state) => { return {playingPosition: state.position, setplayingPosition: state.setPosition}; });
     const { isMaximised } = useIsMaximisedStore((state) => { return { isMaximised: state.isMaximised}; });
@@ -149,6 +149,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                                     <WaveForm 
                                         PlaybackFeedback={local_store.PlaybackFeedback}
                                         currentPosition={playingPosition} 
+                                        player="AppMusicPlayer"
                                         seekTo={(position: number) => changeSeekerPosition(position)}/>
                             }
                             <p>

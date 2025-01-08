@@ -6,6 +6,7 @@ import { getCoverURL, getNullRandomCover, secondsToTimeFormat } from "utils";
 import { changeVolumeLevel, changeSeekerPosition, dragSeeker, changeVolumeLevelBtnPress, repeatToggle, pauseSong, playSong, shuffleToggle, setVolumeLevel, playPreviousSong, playNextSong } from "utils/playerControl";
 import { OSTYPEenum } from "@muziktypes/index";
 import { RepeatingLevel } from "@database/player";
+import { WaveForm } from "@components/index";
 
 const MainMusicPlayer = () => {
     const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
@@ -81,11 +82,20 @@ const MainMusicPlayer = () => {
             </div>
             <div className="Seeker">
                 <p>{Player.playingSongMetadata ? secondsToTimeFormat(playingPosInSec) : "~"}</p>
-                <input type="range" id="seek-slider" max="100" 
-                    value={playingPosition} 
-                    onChange={draggingSeeker} 
-                    onMouseUp={changeSeeker}
-                    style={{backgroundSize: playingPosition.toString() + "% 100%"}}/>
+                { 
+                    local_store.PlaybackFeedback === "LineBar" ?
+                        <input type="range" id="seek-slider" max="100" 
+                            value={playingPosition} 
+                            onChange={draggingSeeker} 
+                            onMouseUp={changeSeeker}
+                            style={{backgroundSize: playingPosition.toString() + "% 100%"}}/>
+                    :
+                        <WaveForm 
+                            PlaybackFeedback={local_store.PlaybackFeedback}
+                            currentPosition={playingPosition} 
+                            player="MainMusicPlayer"
+                            seekTo={(position: number) => changeSeekerPosition(position)}/>
+                }
                 <p>{Player.playingSongMetadata ? secondsToTimeFormat(Player.lengthOfSongInSeconds) : "~"}</p>
             </div>
             <div className="volume_controller">

@@ -187,7 +187,8 @@ pub fn seek_by_rodio(audio_manager: State<'_, Arc<Mutex<RodioManager>>>, delta: 
             match manager.sink.lock() {
                 Ok(sink_guard) => {
                     if let Some(ref sink) = *sink_guard {
-                        match sink.try_seek(std::time::Duration::from_secs_f64(delta)) {
+                        sink.play();
+                        match sink.try_seek(std::time::Duration::from_secs_f64(delta + 2.0)) {
                             Ok(_) => {}
                             Err(_) => {
                                 //failed to seek
