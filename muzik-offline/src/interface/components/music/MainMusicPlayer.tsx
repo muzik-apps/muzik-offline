@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { SkipBack, Pause, SkipFwd, Shuffle, VolumeMin, VolumeMax, Repeat, Play, RepeatOne } from "@icons/index";
 import "@styles/components/music/MainMusicPlayer.scss";
 import { usePlayerStore, usePlayingPosition, usePlayingPositionSec, useSavedObjectStore } from "store";
@@ -7,12 +7,15 @@ import { changeVolumeLevel, changeSeekerPosition, dragSeeker, changeVolumeLevelB
 import { OSTYPEenum } from "@muziktypes/index";
 import { RepeatingLevel } from "@database/player";
 import { WaveForm } from "@components/index";
+import { useState } from "react";
 
 const MainMusicPlayer = () => {
     const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
     const {Player} = usePlayerStore((state) => { return { Player: state.Player}; });
     const {playingPosInSec, setplayingPosInSec} = usePlayingPositionSec((state) => { return {playingPosInSec: state.position, setplayingPosInSec: state.setPosition}; });
     const {playingPosition, setplayingPosition} = usePlayingPosition((state) => { return {playingPosition: state.position, setplayingPosition: state.setPosition}; });
+    const [co_oords, setCoords] = useState<{ x: number, y: number } | null>(null);
+    const [time, setTime] = useState<string>("");
 
     function changeVolume(event : any){changeVolumeLevel(event.target.value);}
 
@@ -94,6 +97,7 @@ const MainMusicPlayer = () => {
                             PlaybackFeedback={local_store.PlaybackFeedback}
                             currentPosition={playingPosition} 
                             player="MainMusicPlayer"
+                            updateHoverPosition={(coords: { x: number, y: number }, time: string) => {setCoords(coords); setTime(time);}}
                             seekTo={(position: number) => changeSeekerPosition(position)}/>
                 }
                 <p>{Player.playingSongMetadata ? secondsToTimeFormat(Player.lengthOfSongInSeconds) : "~"}</p>
@@ -111,6 +115,18 @@ const MainMusicPlayer = () => {
                     <VolumeMax />
                 </motion.div>
             </div>
+            { co_oords && (
+                <AnimatePresence>
+                    <motion.div 
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        onMouseEnter={(e) => {setCoords({ x: e.clientX - 5, y: e.clientY - 30 });}}
+                        className="WaveFormHover" style={{ top: co_oords.y, left: co_oords.x }}>
+                        <p>{time}</p>
+                    </motion.div>
+                </AnimatePresence>
+            )}
         </div>
     )
 }

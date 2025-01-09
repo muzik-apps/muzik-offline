@@ -4,12 +4,14 @@ import { motion } from "framer-motion";
 import { readFile } from '@tauri-apps/plugin-fs';
 import { usePlayerStore } from "@store/index";
 import WaveformData, { WaveformDataChannel } from 'waveform-data';
+import { secondsToTimeFormat } from "@utils/index";
 
 type WaveFormProps = {
     currentPosition: number;
     PlaybackFeedback: "BarWave" | "FloatingBarWave" | "RoundedWave" | "SineWave";
     player: "MainMusicPlayer" | "AppMusicPlayer";
     seekTo: (position: number) => void;
+    updateHoverPosition(coords: { x: number, y: number } | null, time: string): void;
 }
 
 const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
@@ -87,7 +89,6 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
         let totalMin = 0;
         const halfStep = Math.floor(stepValue.current / 2);
         const waveFormIndex = calculateIndex(index, waveformLength.current);
-        if(props.player === "MainMusicPlayer")console.log(halfStep, stepValue.current, waveFormIndex, waveformLength.current);
         totalMax += waveformChannel.max_sample(waveFormIndex);
         totalMin += waveformChannel.min_sample(waveFormIndex);
         for (let i = 1; i < halfStep; i++) {
@@ -107,6 +108,12 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
 
     function setHoveredIndexValue(e: React.MouseEvent<SVGSVGElement, MouseEvent>){
         const indexEst = e.nativeEvent.offsetX / 5.0;
+        if(waveformChannel && indexEst < amountOfXPoints){
+            props.updateHoverPosition(
+                { x: e.clientX, y: e.clientY - 30 }, 
+                secondsToTimeFormat(Number.parseInt(((indexEst / amountOfXPoints) * Player.lengthOfSongInSeconds).toFixed()))
+            );
+        }
 
         if(indexEst < amountOfXPoints){
             setHoveredIndex(Math.round(indexEst));
@@ -117,7 +124,7 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
 
     function seekTo(){
         if(hoveredIndex >= 0){
-            props.seekTo(Math.round((hoveredIndex / amountOfXPoints) * 100) + 2);
+            props.seekTo((hoveredIndex / amountOfXPoints) * 100 + 2);
             setCurrentPosition(hoveredIndex);
         }
     }
@@ -157,7 +164,14 @@ const WaveForm: FunctionComponent<WaveFormProps> = (props: WaveFormProps) => {
         <>
             <svg xmlns="http://www.w3.org/2000/svg" className="WaveForm" 
                 onMouseMove={setHoveredIndexValue}
-                onMouseLeave={() => setHoveredIndex(-1)}
+                onMouseLeave={() => {
+                    if(waveformChannel){
+                        props.updateHoverPosition(
+                            null, 
+                            secondsToTimeFormat(Number.parseInt(((hoveredIndex / amountOfXPoints) * Player.lengthOfSongInSeconds).toFixed()))
+                        );}
+                    setHoveredIndex(-1);
+                }}
                 onMouseUp={seekTo}
                 >
                     {

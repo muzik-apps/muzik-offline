@@ -1,7 +1,7 @@
 import {FunctionComponent, useEffect, useRef, useState} from "react";
 import "@styles/components/music/AppMusicPlayer.scss";
 import {Airplay, ChromeCast, ListIcon, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useIsFSStore, useIsMaximisedStore, usePlayerStore, usePlayingPosition, usePlayingPositionSec, useSavedObjectStore } from "store";
 import { getCoverURL, getNullRandomCover, secondsToTimeFormat } from "@utils/index";
 import { invoke } from "@tauri-apps/api/core";
@@ -26,6 +26,8 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
     const { isMaximised } = useIsMaximisedStore((state) => { return { isMaximised: state.isMaximised}; });
     const { appFS } = useIsFSStore((state) => { return { appFS: state.isFS}; });
     const intervalIdRef = useRef<ReturnType<typeof setInterval>>();
+    const [co_oords, setCoords] = useState<{ x: number, y: number } | null>(null);
+    const [time, setTime] = useState<string>("");
     
     function changeVolume(event : any){changeVolumeLevel(event.target.value);}
 
@@ -150,6 +152,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                                         PlaybackFeedback={local_store.PlaybackFeedback}
                                         currentPosition={playingPosition} 
                                         player="AppMusicPlayer"
+                                        updateHoverPosition={(coords: { x: number, y: number }, time: string) => {setCoords(coords); setTime(time);}}
                                         seekTo={(position: number) => changeSeekerPosition(position)}/>
                             }
                             <p>
@@ -204,6 +207,18 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                     setOpenMusicPopOver(false);
                 }}
             />
+            { co_oords && (
+                <AnimatePresence>
+                    <motion.div 
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        onMouseEnter={(e) => {setCoords({ x: e.clientX - 5, y: e.clientY - 30 });}}
+                        className="WaveFormHover" style={{ top: co_oords.y, left: co_oords.x }}>
+                        <p>{time}</p>
+                    </motion.div>
+                </AnimatePresence>
+            )}
         </>
     )
 }

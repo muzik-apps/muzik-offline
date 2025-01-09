@@ -91,6 +91,8 @@ export async function startPlayingNewSong(song: Song){
     temp.playingSongMetadata = song;
     temp.lengthOfSongInSeconds = song.duration_seconds;
     temp.isPlaying = true;
+    temp.WaveFormPath = null;
+    usePlayerStore.getState().setPlayer(temp);
     const volume = (useSavedObjectStore.getState().local_store.Volume / 100);
     invoke<string>("load_and_play_song_from_path", { 
         soundPath: song.path, 
@@ -108,7 +110,6 @@ export async function startPlayingNewSong(song: Song){
     });
     await invoke("update_metadata", { uuid: (song.cover_uuid !== null ? song.uuid : getNullRandomCover(song.id)) });
     await invoke("set_player_state", { state: playerState.Playing});
-    usePlayerStore.getState().setPlayer(temp);
     setDiscordActivityWithTimestamps(song, 0);
 }
 
@@ -117,6 +118,8 @@ export async function loadNewSong(song: Song){
     temp.playingSongMetadata = song;
     temp.lengthOfSongInSeconds = song.duration_seconds;
     temp.isPlaying = false;
+    temp.WaveFormPath = null;
+    usePlayerStore.getState().setPlayer(temp);
     const volume = (useSavedObjectStore.getState().local_store.Volume / 100);
     invoke<string>("load_a_song_from_path", { 
         soundPath: song.path, 
@@ -133,7 +136,6 @@ export async function loadNewSong(song: Song){
         usePlayerStore.getState().setPlayer(temp);
     });
     await invoke("update_metadata", { uuid: (song.cover_uuid !== null ? song.uuid : getNullRandomCover(song.id)) });
-    usePlayerStore.getState().setPlayer(temp);
     setDiscordActivity(song);
 }
 
