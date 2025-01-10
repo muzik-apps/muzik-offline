@@ -30,6 +30,7 @@ const PackageInstallConsent: FunctionComponent<PackageInstallConsentProps> = (pr
             setPackages(packages);
             setToast({title: `${props.package_name} installed`, message: "You can now use this package", type: toastType.success, timeout: 3000});
             setLoading(false);
+            localStorage.removeItem("audio_waveform_install_consent");
             props.closeModal();
         }).catch((err) => {
             setToast({title: "Failed to install package", message: err, type: toastType.error, timeout: 3000});

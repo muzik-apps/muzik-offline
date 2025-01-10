@@ -61,7 +61,7 @@ const AudioWaveformInstallConsent = () => {
                             not found!
                         </h3>
                         <p>With audiowaveform you can see the waveform of the songs you play and thus 
-                            enhance your experience whilst using Muzik🎉. Would you like to thus install it📦?</p>
+                            enhance your experience whilst using Muzik🎉. Would you like to thus install it📦(you can also install it later)?</p>
                         { !loading ?
                             <motion.div whileTap={{scale: 0.95}} className="install_button" onClick={installAudioWaveform}>
                                 <h4>yes, install it!</h4>
