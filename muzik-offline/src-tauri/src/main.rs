@@ -12,8 +12,9 @@ mod music;
 mod socials;
 mod utils;
 mod windows;
+mod packages;
 
-use commands::audio_waveform::{
+use packages::audio_waveform::{
     attempt_to_download_audio_waveform, check_if_audio_waveform_is_installed,
 };
 use commands::general_commands::{collect_env_args, get_server_port};
@@ -30,6 +31,7 @@ use export::{
     export_xml::export_songs_as_xml,
 };
 use music::player::{get_available_audio_backends, set_playback_speed};
+use packages::manager::{get_packages, install_package, uninstall_package};
 //use export::export_pdf::export_songs_as_pdf;
 use socials::discord_rpc::{set_discord_rpc_activity_with_timestamps, DiscordRpc};
 use utils::music_list_organizer::MLO;
@@ -161,6 +163,10 @@ fn main() {
             export_songs_as_txt,
             //export_songs_as_pdf,
             // IMPORT
+            // PACKAGE MANAGER
+            uninstall_package,
+            install_package,
+            get_packages,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

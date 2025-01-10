@@ -6,3 +6,4 @@ pub mod genre;
 pub mod kira_audio_manager;
 pub mod rodio_audio_manager;
 pub mod song;
+pub mod package;

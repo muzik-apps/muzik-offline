@@ -7,7 +7,7 @@ pub fn check_if_audio_waveform_is_installed() -> bool {
     // if windows check audiowaveform.exe exists in embedded additional files
     #[cfg(windows)]
     {
-        use super::general_commands::get_lib_dir;
+        use crate::commands::general_commands::get_lib_dir;
 
         let lib_dir = match get_lib_dir() {
             Ok(lib_dir) => lib_dir,
@@ -44,7 +44,7 @@ pub async fn attempt_to_download_audio_waveform() -> Result<String, String> {
     // if windows download audiowaveform.exe from the internet
     #[cfg(windows)]
     {
-        use super::general_commands::get_lib_dir;
+        use crate::commands::general_commands::get_lib_dir;
 
         let lib_dir = match get_lib_dir() {
             Ok(lib_dir) => lib_dir,
@@ -87,12 +87,7 @@ pub async fn attempt_to_download_audio_waveform() -> Result<String, String> {
         }
 
         // delete the zip file
-        let command = Command::new("del")
-            .args([&format!("{}/audiowaveform-1.10.1.win64.zip", lib_dir)])
-            .status();
-
-        // even if the delete fails, the audiowaveform.exe is installed so return success
-        if command.is_err() {
+        if let Err(_) = std::fs::remove_file(format!("{}/audiowaveform-1.10.1.win64.zip", lib_dir)) {
             // intentionally ignore error
         }
 
@@ -167,7 +162,97 @@ pub async fn attempt_to_download_audio_waveform() -> Result<String, String> {
     }
 }
 
+#[tauri::command]
+pub async fn uninstall_audio_waveform() -> Result<String, String> {
+    // if windows delete audiowaveform.exe
+    #[cfg(windows)]
+    {
+        use crate::commands::general_commands::get_lib_dir;
+
+        let lib_dir = match get_lib_dir() {
+            Ok(lib_dir) => lib_dir,
+            Err(_) => return Err("Error getting lib directory".to_string()),
+        };
+
+        let command_string = format!("del /Q \"{}\\audiowaveform.exe\"", lib_dir);
+        println!("Command: {}", command_string);
+
+        if let Err(error) = std::fs::remove_file(format!("{}/audiowaveform.exe", lib_dir)) {
+            println!("Error: {}", error);
+            return Err(format!("Error deleting audiowaveform.exe: {}", error));
+        }
+
+        if !check_if_audio_waveform_is_installed() {
+            return Ok("Audiowaveform uninstalled".to_string());
+        }
+        return Err("Error uninstalling audiowaveform".to_string());
+    }
+
+    // if macos uninstall with brew
+    #[cfg(target_os = "macos")]
+    {
+        let command = Command::new("brew")
+            .args(["uninstall", "audiowaveform"])
+            .status();
+
+        if command.is_err() {
+            return Err("Error uninstalling audiowaveform".to_string());
+        }
+
+        if !check_if_audio_waveform_is_installed() {
+            return Ok("Audiowaveform uninstalled".to_string());
+        }
+        return Err("Error uninstalling audiowaveform".to_string());
+    }
+
+    // if linux uninstall
+    #[cfg(target_os = "linux")]
+    {
+        use crate::constants::constants::{
+            UBUNTU_UNINSTALL_COMMANDS, DEBIAN_UNINSTALL_COMMANDS, RPM_UNINSTALL_COMMANDS
+        };
+        use os_info;
+
+        let os_info = os_info::get();
+
+        if os_info.os_type() == os_info::Type::Ubuntu {
+            for command in UBUNTU_UNINSTALL_COMMANDS.iter() {
+                let command = Command::new(command[0]).args(&command[1..]).status();
+
+                if command.is_err() {
+                    return Err("Error uninstalling audiowaveform".to_string());
+                }
+            }
+            Ok("Audiowaveform uninstalled".to_string())
+        } else if os_info.os_type() == os_info::Type::Debian {
+            for command in DEBIAN_UNINSTALL_COMMANDS.iter() {
+                let command = Command::new(command[0]).args(&command[1..]).status();
+
+                if command.is_err() {
+                    return Err("Error uninstalling audiowaveform".to_string());
+                }
+            }
+            Ok("Audiowaveform uninstalled".to_string())
+        } else if os_info.os_type() == os_info::Type::Redhat {
+            for command in RPM_UNINSTALL_COMMANDS.iter() {
+                let command = Command::new(command[0]).args(&command[1..]).status();
+
+                if command.is_err() {
+                    return Err("Error uninstalling audio waveform".to_string());
+                }
+            }
+            Ok("Audiowaveform uninstalled".to_string())
+        } else {
+            return Err("Error uninstalling audiowaveform".to_string());
+        }
+    }
+}
+
 pub async fn decode_waveform(audio_path: &str, audio_name: &str) -> Result<String, String> {
+    if check_if_audio_waveform_is_installed() == false {
+        return Err("Audiowaveform is not installed".to_string());
+    }
+
     let waveform_dir = match get_waveform_dir() {
         Ok(waveform_dir) => waveform_dir,
         Err(_) => return Err("Error getting waveform directory".to_string()),
@@ -181,7 +266,7 @@ pub async fn decode_waveform(audio_path: &str, audio_name: &str) -> Result<Strin
     // if windows use audiowaveform.exe
     #[cfg(windows)]
     {
-        use super::general_commands::get_lib_dir;
+        use crate::commands::general_commands::get_lib_dir;
 
         let lib_dir = match get_lib_dir() {
             Ok(lib_dir) => lib_dir,

@@ -1,5 +1,5 @@
 use crate::{
-    commands::audio_waveform::decode_waveform,
+    packages::audio_waveform::decode_waveform,
     components::{kira_audio_manager::KiraManager, rodio_audio_manager::RodioManager},
     utils::general_utils::get_file_name_from_path,
 };

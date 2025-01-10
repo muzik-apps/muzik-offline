@@ -5,6 +5,7 @@ export enum selectedSettingENUM {
     MusicFolders = "Music Folders",
     Security = "Security",
     ExportSongs = "Export Songs",
+    Packages = "Packages",
     Advanced = "Advanced",
     About = "About"
 }

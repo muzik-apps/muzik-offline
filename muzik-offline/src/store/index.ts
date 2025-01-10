@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { firstRunState, FSState, MaximisedState, PlayerInterface, PlayingPositionInterface, portState, QueueInterface, SavedDirectoriesInterface, SavedObjectInterface, searchInterface, toastInterface, viewableSideElInterface, wallpaperInterface, SavedPresetsValues, VersionInterface } from './storeTypes';
+import { firstRunState, FSState, MaximisedState, PlayerInterface, PlayingPositionInterface, portState, QueueInterface, SavedDirectoriesInterface, SavedObjectInterface, searchInterface, toastInterface, viewableSideElInterface, wallpaperInterface, SavedPresetsValues, VersionInterface, PackagesInterface } from './storeTypes';
 import { emptyDirectories } from '@database/directories';
 import { emptyPlayer } from '@database/player';
 import { emptySavedObject } from '@database/saved_object';
@@ -199,4 +199,12 @@ export const useVersionStore = create<VersionInterface>()(
         {name: 'version',}
         )
     )
+)
+
+export const usePackagesStore = create<PackagesInterface>()(
+    (set) => ({
+        packages: [],
+        setPackages: (nP) => set((_state) => ({ packages: nP })),
+        reset: () => set((_state) => ({ packages: [] })),
+    })
 )

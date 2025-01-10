@@ -1,4 +1,3 @@
-pub mod audio_waveform;
 pub mod general_commands;
 pub mod metadata_edit;
 pub mod metadata_retriever;

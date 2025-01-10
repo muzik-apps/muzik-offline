@@ -50,6 +50,8 @@ import EqualizerModal from './modals/EqualizerModal';
 import AudioBackendCard from "./cards/AudioBackendCard";
 import WaveForm from './input/WaveForm';
 import AudioWaveformInstallConsent from './modals/AudioWaveformInstallConsent';
+import PackageInstallConsent from './modals/PackageInstallConsent';
+import DeletePackageModal from './modals/DeletePackageModal';
 
 export {
     HeaderWindows, HeaderMacOS, HeaderLinuxOS, AppNavigator, LeftSidebar, AppMusicPlayer, FSMusicPlayer,
@@ -68,5 +70,6 @@ export {
     DateInput, DeleteDiretoryModal, WallpapersSelectionModal,
     RectangleSongBoxView, CheckboxComponent, ExportModal,
     DeleteSongModal, EqualizerModal, AudioBackendCard,
-    RemoveButton, WaveForm, AudioWaveformInstallConsent
+    RemoveButton, WaveForm, AudioWaveformInstallConsent,
+    PackageInstallConsent, DeletePackageModal
 }

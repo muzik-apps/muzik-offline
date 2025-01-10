@@ -33,11 +33,14 @@ const AudioWaveformInstallConsent = () => {
 
 
     useEffect(() => {
+        const consent = localStorage.getItem("audio_waveform_install_consent");
+        if(consent === "false")return;
         // wait some time before checking if audio waveform is installed
         setTimeout(() => {
             checkIfAudioWaveformIsInstalled();
         }, 2000);
     }, [])
+    
     return (
         <div className={"AudioWaveformInstallConsent" + (isOpen ? " AudioWaveformInstallConsent-visible" : "")} onClick={
             (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {if(e.target === e.currentTarget && !loading)setIsOpen(false)}}>
@@ -70,7 +73,10 @@ const AudioWaveformInstallConsent = () => {
                             </div>
                         }
                         { !loading ?
-                            <motion.div whileTap={{scale: 0.95}} className="cancel_button" onClick={() => setIsOpen(false)}>
+                            <motion.div whileTap={{scale: 0.95}} className="cancel_button" onClick={() => {
+                                setIsOpen(false);
+                                localStorage.setItem("audio_waveform_install_consent", "false");
+                            }}>
                                 <h4>no, I don't want it</h4>
                             </motion.div>
                             :

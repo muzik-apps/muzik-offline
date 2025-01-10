@@ -69,6 +69,9 @@ import RoundedWave from './Media/RoundedWave';
 import SineWave from './Media/SineWave';
 import LineBar from './Media/LineBar';
 import Spinner from './Layout/Spinner';
+import Package from './General/Package';
+import PackageAdd from './General/PackageAdd';
+import PackageRemove from './General/PackageRemove';
 
 export {
     Next_page, Prev_page, Search, 
@@ -88,5 +91,5 @@ export {
     WindowsCloseIcon, WindowsMaximizeIcon, WindowsMinimizeIcon, WindowsRestoreIcon,
     LinuxClose, LinuxMaximize, LinuxMinimize, FolderPlus, Airplay,
     BarWave, FloatingBarWave, RoundedWave, SineWave, LineBar,
-    Spinner
+    Spinner, Package, PackageAdd, PackageRemove
 }
