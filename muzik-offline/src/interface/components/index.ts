@@ -17,7 +17,6 @@ import SongCardResizable from './cards/SongCardResizable';
 import AppNavigator from './buttons/AppNavigator';
 import GeneralContextMenu from './context_menu/GeneralContextMenu';
 import SearchNavigator from './buttons/SearchNavigator';
-import DirectoriesModal from "./modals/DirectoriesModal";
 import NotifyBottomRight from './toasts/NotifyBottomRight';
 import PropertiesModal from './modals/PropertiesModal';
 import LargeResizableCover from './cards/LargeResizableCover';
@@ -60,7 +59,7 @@ export {
     SongCardResizable, GeneralContextMenu,
     PlayButton, PlayNextButton, PlayLaterButton, ShowArtistButton,
     AddToPlaylistButton, ShowGenreButton, ShowPlaylistButton,
-    ShowAlbumButton, SearchNavigator, DirectoriesModal, ShowInfoButton,
+    ShowAlbumButton, SearchNavigator, ShowInfoButton,
     NotifyBottomRight, PropertiesModal, LargeResizableCover,
     CreatePlaylistModal, EditPlaylistModal, AddSongToPlaylistModal, LoaderAnimated,
     AirplayCastModal, AddSongsToPlaylistModal, MusicPopOver, SongCardResizableDraggable,
