@@ -99,7 +99,7 @@
             margin-top: 2px;
         }
 
-        .edit_playlist, .delete_playlist{
+        .edit_playlist, .delete_playlist, .loading_edit_playlist, .loading_delete_playlist{
             margin-top: 7px;
             width: 100%;
             height: 35px;
@@ -116,9 +116,26 @@
             opacity: 0.9;
         }
 
-        .delete_playlist{
+        .delete_playlist, .loading_delete_playlist{
             background: $on-hover-song;
             color: $red-900;
+        }
+        
+        .loading_edit_playlist{
+            opacity: 0.5;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            cursor: not-allowed;
+            svg{
+                width: 28px;
+                height: 28px;
+            }
+        }
+
+        .loading_delete_playlist{ 
+            opacity: 0.5;
+            cursor: not-allowed;
         }
     }
 }

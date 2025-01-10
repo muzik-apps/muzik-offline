@@ -5,6 +5,7 @@ export enum selectedSettingENUM {
     MusicFolders = "Music Folders",
     Security = "Security",
     ExportSongs = "Export Songs",
+    Packages = "Packages",
     Advanced = "Advanced",
     About = "About"
 }
@@ -56,6 +57,7 @@ export enum contextMenuButtons{
     ShowInfo = "ShowInfo",
     Delete = "Delete",
     EditSong = "EditSong",
+    Remove = "Remove"
 }
 
 export enum toastType{

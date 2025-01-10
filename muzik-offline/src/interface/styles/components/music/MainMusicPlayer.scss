@@ -248,4 +248,21 @@
             opacity: 0.8;
         }
     }
+
+    .WaveFormHover{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        border: 1px solid $songs-container-border-col;
+        background: var(--var-songs-container-bg-col);
+        box-shadow: $box-shadow-10-10-25;
+        backdrop-filter: var(--var-bg-blur-150);
+        -webkit-backdrop-filter: var(--var-bg-blur-150);
+        border-radius: 5px;
+        $z-index-8000: 8000;
+        height: 30px;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
 }

@@ -85,7 +85,11 @@ pub async fn get_songs_in_path(
     let new_songs_detected = Arc::new(AtomicUsize::new(0));
     let mut tasks = vec![];
 
-    for entry in WalkDir::new(dir_path).max_depth(max_depth).into_iter().filter_map(Result::ok) {
+    for entry in WalkDir::new(dir_path)
+        .max_depth(max_depth)
+        .into_iter()
+        .filter_map(Result::ok)
+    {
         let db_manager = Arc::clone(&db_manager);
         let song_id_one = song_id.clone();
         let song_id_two = song_id.clone();
@@ -93,10 +97,10 @@ pub async fn get_songs_in_path(
         let new_songs_detected = new_songs_detected.clone();
         let check_if_exists = check_if_exists.clone();
 
-        let task =  tauri::async_runtime::spawn(async move{
+        let task = tauri::async_runtime::spawn(async move {
             let path = entry.path();
-            if path.is_file(){
-                let full_path = match entry.path().to_str(){
+            if path.is_file() {
+                let full_path = match entry.path().to_str() {
                     Some(path) => path,
                     None => {
                         return;
@@ -168,14 +172,17 @@ fn lofty_read_from_path(
     compress_image_option: bool,
 ) -> Result<Song, Box<dyn std::error::Error>> {
     let tagged_file = lofty::read_from_path(path)?;
-    let song_id_val = match song_id.lock(){
+    let song_id_val = match song_id.lock() {
         Ok(mut song_id) => {
             *song_id += 1;
             *song_id
-        },
+        }
         Err(_) => {
-            return Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "Error getting song id")));
-        },
+            return Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                "Error getting song id",
+            )));
+        }
     };
 
     let mut song_meta_data = Song {
@@ -259,14 +266,17 @@ fn id3_read_from_path(
         Err(err) => return Err(Box::new(err)),
     };
 
-    let song_id_val = match song_id.lock(){
+    let song_id_val = match song_id.lock() {
         Ok(mut song_id) => {
             *song_id += 1;
             *song_id
-        },
+        }
         Err(_) => {
-            return Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "Error getting song id")));
-        },
+            return Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                "Error getting song id",
+            )));
+        }
     };
 
     let mut song_meta_data = Song {

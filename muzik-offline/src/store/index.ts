@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { firstRunState, FSState, MaximisedState, PlayerInterface, PlayingPositionInterface, portState, QueueInterface, SavedDirectoriesInterface, SavedObjectInterface, searchInterface, toastInterface, viewableSideElInterface, wallpaperInterface, SavedPresetsValues, VersionInterface } from './storeTypes';
+import { firstRunState, FSState, MaximisedState, PlayerInterface, PlayingPositionInterface, portState, QueueInterface, SavedDirectoriesInterface, SavedObjectInterface, searchInterface, toastInterface, viewableSideElInterface, wallpaperInterface, SavedPresetsValues, VersionInterface, PackagesInterface } from './storeTypes';
 import { emptyDirectories } from '@database/directories';
 import { emptyPlayer } from '@database/player';
 import { emptySavedObject } from '@database/saved_object';
@@ -116,34 +116,7 @@ export const useDirStore = create<SavedDirectoriesInterface>()(
                 reset: () => set((_state) => ({ dir: emptyDirectories })),
             }),
             {
-                name: 'directories', // Key for localStorage
-                storage: {
-                    getItem: (name) => {
-                        const data = localStorage.getItem(name);
-                        if (data) {
-                            const parsed = JSON.parse(data);
-                            return {
-                                ...parsed,
-                                dir: {
-                                    Dir: new Set(parsed.dir.Dir), // Convert Array back to Set
-                                },
-                            };
-                        }
-                        return null;
-                    },
-                    setItem: (name, value) => {
-                        const serialized = JSON.stringify({
-                            ...value,
-                            dir: {
-                                Dir: [...value.state.dir.Dir], // Convert Set to Array
-                            },
-                        });
-                        localStorage.setItem(name, serialized);
-                    },
-                    removeItem: (name) => {
-                        localStorage.removeItem(name);
-                    }
-                }
+                name: 'directories-offline', // Key for localStorage
             }
         )
     )
@@ -226,4 +199,12 @@ export const useVersionStore = create<VersionInterface>()(
         {name: 'version',}
         )
     )
+)
+
+export const usePackagesStore = create<PackagesInterface>()(
+    (set) => ({
+        packages: [],
+        setPackages: (nP) => set((_state) => ({ packages: nP })),
+        reset: () => set((_state) => ({ packages: [] })),
+    })
 )

@@ -1,5 +1,5 @@
-use std::{env, fs};
 use dotenv::dotenv;
+use std::{env, fs};
 
 fn main() {
     dotenv().ok();
@@ -15,9 +15,9 @@ fn main() {
         Ok(out_dir) => out_dir,
         Err(_) => panic!("OUT_DIR not found"),
     };
-    
+
     let dest_path = format!("{}/env_vars.rs", out_dir);
-    match fs::write(dest_path, config_data){
+    match fs::write(dest_path, config_data) {
         Ok(_) => println!("Successfully wrote env vars to file"),
         Err(e) => panic!("Failed to write env vars to file: {}", e),
     };

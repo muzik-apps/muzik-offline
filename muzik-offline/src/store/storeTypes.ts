@@ -96,3 +96,9 @@ export interface VersionInterface{
     version: string;
     setVersion: (setTo: string) => void;
 }
+
+export interface PackagesInterface{
+    packages: {name: string, description: string, installed: boolean, version: string}[];
+    setPackages: (setTo: {name: string, description: string, installed: boolean, version: string}[]) => void;
+    reset: () => void;
+}

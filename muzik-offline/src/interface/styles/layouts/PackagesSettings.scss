@@ -1,0 +1,74 @@
+@import "../constants/constants";
+
+.PackagesSettings{
+    height: calc(100% - 20px);
+    padding-left: 15px;
+    padding-right: 8px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    h2{
+        font-size: 24px;
+        height: 24px;
+        margin-top: 0px;
+        margin-bottom: 23px;
+    }
+
+    input[type="text"]{
+        margin-bottom: 10px;
+        width: calc(100% - 7px);
+        height: 40px;
+        border-radius: 10px;
+        background: $gray-stroke-20;
+        border: none;
+        outline: none;
+        padding: 0px 0px 0px 0px;
+        padding-left: 4px;
+        padding-right: 4px;
+        font-size: 13px;
+        color: $white-900;
+        font-family: 'inter-italic-regular', sans-serif;
+        font-style: italic;
+    }
+
+    .packages{
+        height: calc(100vh - 171px);
+        width: 100%;
+        overflow-y: auto;
+
+        .package{
+            display: flex;
+            align-items: center;
+            width: calc(100% - 20px);
+            height: 50px;
+            border-radius: 16px;
+            background: $on-hover-song;
+            justify-content: space-between;
+            padding-left: 15px;
+            padding-right: 5px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: visible;
+            h3{
+                font-size: 13px;
+                font-family: 'inter-bold';
+                margin-right: 15px;
+            }
+            
+            p{
+                flex-grow: 1;
+                font-size: 13px;
+                font-family: 'inter-light';
+            }
+
+            .icon{
+                margin-right: 5px;
+            }
+        }
+
+        h4{
+            font-size: 13px;
+            text-align: center;
+        }
+    }
+}

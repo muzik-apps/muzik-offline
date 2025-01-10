@@ -38,7 +38,7 @@ import DeletePlaylistModal from './modals/DeletePlaylistModal';
 import DeleteSongFromPlaylistModal from './modals/DeleteSongFromPlaylistModal';
 import EqualizerSlider from './sliders/EqualizerSlider';
 import EditPropertiesModal from './modals/EditPropertiesModal';
-import { EditSongButton } from './context_menu/ContextMenuButtons';
+import { EditSongButton, RemoveButton } from './context_menu/ContextMenuButtons';
 import DateInput from './input/DateInput';
 import DeleteDiretoryModal from './modals/DeleteDiretoryModal';
 import WallpapersSelectionModal from './modals/WallpapersSelectionModal';
@@ -48,6 +48,10 @@ import ExportModal from './modals/ExportModal';
 import DeleteSongModal from './modals/DeleteSongModal';
 import EqualizerModal from './modals/EqualizerModal';
 import AudioBackendCard from "./cards/AudioBackendCard";
+import WaveForm from './input/WaveForm';
+import AudioWaveformInstallConsent from './modals/AudioWaveformInstallConsent';
+import PackageInstallConsent from './modals/PackageInstallConsent';
+import DeletePackageModal from './modals/DeletePackageModal';
 
 export {
     HeaderWindows, HeaderMacOS, HeaderLinuxOS, AppNavigator, LeftSidebar, AppMusicPlayer, FSMusicPlayer,
@@ -65,5 +69,7 @@ export {
     EditPropertiesModal, EditSongButton,
     DateInput, DeleteDiretoryModal, WallpapersSelectionModal,
     RectangleSongBoxView, CheckboxComponent, ExportModal,
-    DeleteSongModal, EqualizerModal, AudioBackendCard
+    DeleteSongModal, EqualizerModal, AudioBackendCard,
+    RemoveButton, WaveForm, AudioWaveformInstallConsent,
+    PackageInstallConsent, DeletePackageModal
 }

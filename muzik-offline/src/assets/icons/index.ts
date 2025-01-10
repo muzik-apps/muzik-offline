@@ -63,6 +63,15 @@ import LinuxMaximize from './Windows/LinuxMaximize';
 import LinuxMinimize from './Windows/LinuxMinimize';
 import FolderPlus from './General/FolderPlus';
 import Airplay from './Media/Airplay';
+import BarWave from './Media/BarWave';
+import FloatingBarWave from './Media/FloatingBarWave';
+import RoundedWave from './Media/RoundedWave';
+import SineWave from './Media/SineWave';
+import LineBar from './Media/LineBar';
+import Spinner from './Layout/Spinner';
+import Package from './General/Package';
+import PackageAdd from './General/PackageAdd';
+import PackageRemove from './General/PackageRemove';
 
 export {
     Next_page, Prev_page, Search, 
@@ -80,5 +89,7 @@ export {
     EditImage, Edit, Overlap, Minimize,
     ListIcon, AlertTriangle, Trash, FolderSearch, File , Check, WaveForm,
     WindowsCloseIcon, WindowsMaximizeIcon, WindowsMinimizeIcon, WindowsRestoreIcon,
-    LinuxClose, LinuxMaximize, LinuxMinimize, FolderPlus, Airplay
+    LinuxClose, LinuxMaximize, LinuxMinimize, FolderPlus, Airplay,
+    BarWave, FloatingBarWave, RoundedWave, SineWave, LineBar,
+    Spinner, Package, PackageAdd, PackageRemove
 }

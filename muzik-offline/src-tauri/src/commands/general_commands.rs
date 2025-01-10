@@ -1,24 +1,22 @@
-use crate::{
-    components::audio_manager::AppAudioManager, database::db_manager::DbManager, utils::general_utils::{
-        decode_image_in_parallel, encode_image_in_parallel, resize_and_compress_image,
-    }
+use crate::database::db_api::{
+    delete_album_from_tree, delete_artist_from_tree, delete_genre_from_tree, delete_song_from_tree,
 };
-use crate::database::db_api::{delete_song_from_tree, delete_album_from_tree, delete_artist_from_tree, delete_genre_from_tree};
-use dirs::audio_dir;
+use crate::{
+    components::audio_manager::AppAudioManager,
+    database::db_manager::DbManager,
+    utils::general_utils::{
+        decode_image_in_parallel, encode_image_in_parallel, resize_and_compress_image,
+    },
+};
+use dirs::{audio_dir, home_dir};
+use std::path::PathBuf;
 use std::{
     process::Command,
     sync::{Arc, Mutex},
 };
-use trash;
 use tauri::State;
+use trash;
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-//#[tauri::command]
-//pub fn greet(name: &str) -> String {
-//    format!("Hello, {}! You've been greeted from Rust!", name)
-//    //this serves as an example template whenever new commands are to be created
-//    //so don't delete this
-//}
 #[tauri::command]
 pub fn collect_env_args() -> String {
     let args: Vec<String> = std::env::args().collect();
@@ -26,7 +24,11 @@ pub fn collect_env_args() -> String {
     // get first arg that ends with .ogg, .mp3, .flac, .wav
     let mut audio_path = String::new();
     for arg in args {
-        if arg.ends_with(".ogg") || arg.ends_with(".mp3") || arg.ends_with(".flac") || arg.ends_with(".wav") {
+        if arg.ends_with(".ogg")
+            || arg.ends_with(".mp3")
+            || arg.ends_with(".flac")
+            || arg.ends_with(".wav")
+        {
             audio_path = arg;
             break;
         }
@@ -84,6 +86,54 @@ pub fn get_audio_dir() -> String {
         None => {
             return String::from("");
         }
+    }
+}
+
+#[tauri::command]
+pub fn get_lib_dir() -> Result<String, String> {
+    let mut lib_path = PathBuf::new();
+    match home_dir() {
+        Some(path) => lib_path.push(path),
+        None => return Err("Could not find home directory".to_string()),
+    }
+    lib_path.push("muzik-offline-local-data");
+    lib_path.push("lib");
+
+    // ensure lib directory exists otherwise create it
+    if !lib_path.exists() {
+        match std::fs::create_dir_all(&lib_path) {
+            Ok(_) => {}
+            Err(_) => return Err("Could not create lib directory".to_string()),
+        }
+    }
+
+    match lib_path.to_str() {
+        Some(path) => Ok(String::from(path)),
+        None => Err("Could not find lib directory".to_string()),
+    }
+}
+
+#[tauri::command]
+pub fn get_waveform_dir() -> Result<String, String> {
+    let mut lib_path = PathBuf::new();
+    match home_dir() {
+        Some(path) => lib_path.push(path),
+        None => return Err("Could not find home directory".to_string()),
+    }
+    lib_path.push("muzik-offline-local-data");
+    lib_path.push("waveform");
+
+    // ensure waveform directory exists otherwise create it
+    if !lib_path.exists() {
+        match std::fs::create_dir_all(&lib_path) {
+            Ok(_) => {}
+            Err(_) => return Err("Could not create waveform directory".to_string()),
+        }
+    }
+
+    match lib_path.to_str() {
+        Some(path) => Ok(String::from(path)),
+        None => Err("Could not find lib directory".to_string()),
     }
 }
 

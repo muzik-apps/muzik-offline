@@ -1,12 +1,12 @@
 import {FunctionComponent, useEffect, useRef, useState} from "react";
 import "@styles/components/music/AppMusicPlayer.scss";
 import {Airplay, ChromeCast, ListIcon, Pause, Play, Repeat, RepeatOne, Shuffle, SkipBack, SkipFwd, VolumeMax, VolumeMin} from "@icons/index"
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useIsFSStore, useIsMaximisedStore, usePlayerStore, usePlayingPosition, usePlayingPositionSec, useSavedObjectStore } from "store";
 import { getCoverURL, getNullRandomCover, secondsToTimeFormat } from "@utils/index";
 import { invoke } from "@tauri-apps/api/core";
 import { changeVolumeLevel, changeSeekerPosition, changeVolumeLevelBtnPress, dragSeeker, pauseSong, playSong, repeatToggle, shuffleToggle, setVolumeLevel, reconfigurePlayer_AtEndOfSong, playPreviousSong, playNextSong, changeSeekerPositionBtnPress } from "@utils/playerControl";
-import { AirplayCastModal, MusicPopOver } from "@components/index";
+import { AirplayCastModal, MusicPopOver, WaveForm } from "@components/index";
 import { OSTYPEenum } from "@muziktypes/index";
 import { RepeatingLevel } from "@database/player";
 
@@ -20,12 +20,14 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
     const [openAirplayCastModal, setOpenAirplayCastModal] = useState<boolean>(false);
     const [openMusicPopOver, setOpenMusicPopOver] = useState<boolean>(false);
     const {Player} = usePlayerStore((state) => { return { Player: state.Player}; });
-    const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
+    const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
     const {playingPosInSec, setplayingPosInSec} = usePlayingPositionSec((state) => { return {playingPosInSec: state.position, setplayingPosInSec: state.setPosition}; });
     const {playingPosition, setplayingPosition} = usePlayingPosition((state) => { return {playingPosition: state.position, setplayingPosition: state.setPosition}; });
     const { isMaximised } = useIsMaximisedStore((state) => { return { isMaximised: state.isMaximised}; });
     const { appFS } = useIsFSStore((state) => { return { appFS: state.isFS}; });
     const intervalIdRef = useRef<ReturnType<typeof setInterval>>();
+    const [co_oords, setCoords] = useState<{ x: number, y: number } | null>(null);
+    const [time, setTime] = useState<string>("");
     
     function changeVolume(event : any){changeVolumeLevel(event.target.value);}
 
@@ -83,7 +85,7 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
             <div className={
                 "app_music_player " + 
                 (local_store.PlayerBar ? "app_music_player_border" : "") +
-                (local_store.OStype === OSTYPEenum.Windows || local_store.OStype === OSTYPEenum.Linux && ((!appFS && !isMaximised) || local_store.AlwaysRoundedCornersWindows === "Yes") ? " app-music-player-windows-config" : "")}>
+                ((local_store.OStype === OSTYPEenum.Windows || local_store.OStype === OSTYPEenum.Linux) && ((!appFS && !isMaximised) || local_store.AlwaysRoundedCornersWindows === "Yes") ? " app-music-player-windows-config" : "")}>
                 <div className="music_cover_art">
                     {!local_store.PlayerBar && !Player.playingSongMetadata
                         && <img src={getCoverURL("NULL_COVER_NULL")} alt="song-art" loading="lazy"/>}{/**no song is loaded onto the player */}
@@ -138,11 +140,21 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                         </div>
                         <div className="Seeker">
                             <p>{Player.playingSongMetadata ? secondsToTimeFormat(playingPosInSec) : "~"}</p>
-                            <input type="range" id="seek-slider" max="100" 
-                                value={playingPosition} 
-                                onChange={draggingSeeker} 
-                                onMouseUp={changeSeeker}
-                                style={{backgroundSize: playingPosition.toString() + "% 100%"}}/>
+                            {
+                                local_store.PlaybackFeedback === "LineBar" ?
+                                    <input type="range" id="seek-slider" max="100" 
+                                        value={playingPosition} 
+                                        onChange={draggingSeeker} 
+                                        onMouseUp={changeSeeker}
+                                        style={{backgroundSize: playingPosition.toString() + "% 100%"}}/>
+                                :
+                                    <WaveForm 
+                                        PlaybackFeedback={local_store.PlaybackFeedback}
+                                        currentPosition={playingPosition} 
+                                        player="AppMusicPlayer"
+                                        updateHoverPosition={(coords: { x: number, y: number }, time: string) => {setCoords(coords); setTime(time);}}
+                                        seekTo={(position: number) => changeSeekerPosition(position)}/>
+                            }
                             <p>
                                 {Player.playingSongMetadata ? 
                                     secondsToTimeFormat(
@@ -195,6 +207,18 @@ const AppMusicPlayer : FunctionComponent<AppMusicPlayerProps> = (props: AppMusic
                     setOpenMusicPopOver(false);
                 }}
             />
+            { co_oords && (
+                <AnimatePresence>
+                    <motion.div 
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        onMouseEnter={(e) => {setCoords({ x: e.clientX - 5, y: e.clientY - 30 });}}
+                        className="WaveFormHover" style={{ top: co_oords.y, left: co_oords.x }}>
+                        <p>{time}</p>
+                    </motion.div>
+                </AnimatePresence>
+            )}
         </>
     )
 }

@@ -117,7 +117,7 @@
 
         .music_controller{
             width: calc(100vw/3.1);
-            height: 44px;
+            height: fit-content;
             .Controls{
                 width: 220px;
                 display: flex;
@@ -148,7 +148,7 @@
                 align-items: center;
                 margin-top: 10px;
                 width: calc(100vw/3.1);
-                height: 10px;
+                height: 20px;
                 p{
                     font-size: 13px;
                     color: $white-500;
@@ -337,4 +337,21 @@
         border-bottom-left-radius: 8px;
         border-bottom-right-radius: 8px;
     }
+}
+
+.WaveFormHover{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    border: 1px solid $songs-container-border-col;
+    background: var(--var-songs-container-bg-col);
+    box-shadow: $box-shadow-10-10-25;
+    backdrop-filter: var(--var-bg-blur-150);
+    -webkit-backdrop-filter: var(--var-bg-blur-150);
+    border-radius: 5px;
+    z-index: $z-index-9999;
+    height: 30px;
+    padding-left: 8px;
+    padding-right: 8px;
 }

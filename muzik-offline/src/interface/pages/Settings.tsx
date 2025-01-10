@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
 import { FunctionComponent, useState, useEffect } from 'react';
 import "@styles/pages/Settings.scss";
-import { ChevronDown, ComponentIcon, InformationCircleContained, Layout, SettingsIcon, WaveForm, FolderSearch, File } from "@icons/index";
-import { DeleteDiretoryModal, EqualizerModal, ExportModal, SettingsNavigator, WallpapersSelectionModal } from '@components/index';
+import { ChevronDown, ComponentIcon, InformationCircleContained, Layout, SettingsIcon, WaveForm, FolderSearch, File, Package } from "@icons/index";
+import { DeleteDiretoryModal, DeletePackageModal, EqualizerModal, ExportModal, PackageInstallConsent, SettingsNavigator, WallpapersSelectionModal } from '@components/index';
 import { selectedSettingENUM } from 'types';
-import { AppearanceSettings, GeneralSettings, AdvancedSettings, AboutSettings, AudioLabSettings, MusicFoldersSettings, ExportSettings } from '@layouts/index';
+import { AppearanceSettings, GeneralSettings, AdvancedSettings, AboutSettings, AudioLabSettings, MusicFoldersSettings, ExportSettings, PackagesSettings } from '@layouts/index';
 import { useSavedObjectStore } from 'store';
 
 type SettingsProps = {
@@ -25,6 +25,10 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
     const [wallpapersModal, setWallpapersModal] = useState<boolean>(false);
     const [equaliserModal, setEqualiserModal] = useState<boolean>(false);
     const [uuids, setUuids] = useState<string[] | null>(null);
+    const [selectedPackage, setSelectedPackage] = useState<{
+        type: "install" | "uninstall",
+        package_name: string
+    } | null>(null);
 
     function convertToEnum(arg: string){
         if(arg === selectedSettingENUM.General)return selectedSettingENUM.General;
@@ -33,6 +37,7 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
         else if(arg === selectedSettingENUM.MusicFolders)return selectedSettingENUM.MusicFolders;
         else if(arg === selectedSettingENUM.Security)return selectedSettingENUM.Security;
         else if(arg === selectedSettingENUM.ExportSongs)return selectedSettingENUM.ExportSongs;
+        else if(arg === selectedSettingENUM.Packages)return selectedSettingENUM.Packages;
         else if(arg === selectedSettingENUM.Advanced)return selectedSettingENUM.Advanced;
         else if(arg === selectedSettingENUM.About)return selectedSettingENUM.About;
         else return selectedSettingENUM.General;
@@ -64,6 +69,7 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
                         <SettingsNavigator icon={FolderSearch} title={selectedSettingENUM.MusicFolders} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
                         {/*<SettingsNavigator icon={Lock} title={selectedSettingENUM.Security} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>*/}
                         <SettingsNavigator icon={File} title={selectedSettingENUM.ExportSongs} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
+                        <SettingsNavigator icon={Package} title={selectedSettingENUM.Packages} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
                         <SettingsNavigator icon={ComponentIcon} title={selectedSettingENUM.Advanced} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
                         <SettingsNavigator icon={InformationCircleContained} title={selectedSettingENUM.About} selected_setting={selectedSetting} setSelectedSettingF={setSelectedSettingF}/>
                         </div>
@@ -83,6 +89,8 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
                                             //    return <SecuritySettings />
                                             case selectedSettingENUM.ExportSongs:
                                                 return <ExportSettings openModal={(uuids: string[]) => setUuids(uuids)}/>
+                                            case selectedSettingENUM.Packages:
+                                                return <PackagesSettings openModal={(type: "install" | "uninstall", package_name: string) => setSelectedPackage({type: type, package_name: package_name})}/>
                                             case selectedSettingENUM.Advanced:
                                                 return <AdvancedSettings />
                                             case selectedSettingENUM.About:
@@ -98,6 +106,16 @@ const Settings: FunctionComponent<SettingsProps> = (props: SettingsProps) => {
             <WallpapersSelectionModal isOpen={wallpapersModal} closeModal={() => setWallpapersModal(false)}/>
             <ExportModal isOpen={uuids !== null} song_uuids={uuids ?? []} closeModal={() => setUuids(null)}/>
             <EqualizerModal isOpen={equaliserModal} closeModal={() => setEqualiserModal(false)}/>
+            <PackageInstallConsent 
+                isOpen={selectedPackage !== null && selectedPackage.type === "install"}
+                package_name={selectedPackage?.package_name ?? ""}
+                closeModal={() => setSelectedPackage(null)}
+            />
+            <DeletePackageModal
+                isOpen={selectedPackage !== null && selectedPackage.type === "uninstall"}
+                package_name={selectedPackage?.package_name ?? ""}
+                closeModal={() => setSelectedPackage(null)}
+            />
         </>
     )
 }

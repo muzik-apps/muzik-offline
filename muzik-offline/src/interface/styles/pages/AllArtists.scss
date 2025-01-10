@@ -87,6 +87,7 @@
 
         h1{
             margin-top: 10px;
+            font-size: 20px;
             margin-bottom: 10px;
         }
 
@@ -206,7 +207,7 @@
 
         .drag-drop-border{
             min-width: 759px;
-            width: calc(100vw - 105px);
+            width: calc(100vw - 100px);
         }
 
         .AllArtists_container, .skeleton-loading{

@@ -4,7 +4,7 @@ import { AddToPlaylistButton, PlayButton,
     PlayLaterButton, PlayNextButton, ShowArtistButton, 
     ShowGenreButton, ShowPlaylistButton, 
     ShowAlbumButton, ShowInfoButton,
-    DeleteButton, EditSongButton} from "@components/index";
+    DeleteButton, EditSongButton, RemoveButton} from "@components/index";
 import "@styles/components/context_menu/GeneralContextMenu.scss";
 import { motion } from "framer-motion";
 
@@ -15,6 +15,7 @@ type GeneralContextMenuProps = {
     yPos: number;
     title: string;
     CMtype: contextMenuEnum;
+    remove?: boolean;
     chooseOption: (option: contextMenuButtons) => void;
 }
 
@@ -68,7 +69,10 @@ const GeneralContextMenu: FunctionComponent<GeneralContextMenuProps> = (props: G
             {(props.CMtype === contextMenuEnum.PlaylistCM || props.CMtype === contextMenuEnum.SongCM || props.CMtype === contextMenuEnum.PlaylistSongsCM) 
                 && <ShowInfoButton chooseOption={props.chooseOption}/>}
             {(props.CMtype === contextMenuEnum.PlaylistCM || props.CMtype === contextMenuEnum.PlaylistSongsCM
-                || props.CMtype === contextMenuEnum.SongCM) && <DeleteButton title={props.title} chooseOption={props.chooseOption}/>}
+                || props.CMtype === contextMenuEnum.SongCM) && !props.remove
+                    && <DeleteButton title={props.title} chooseOption={props.chooseOption}/>}
+            {(props.CMtype === contextMenuEnum.PlaylistSongsCM || props.CMtype === contextMenuEnum.SongCM) && props.remove
+                    && <RemoveButton title={props.title} chooseOption={props.chooseOption}/>}
         </motion.div >
     )
 }

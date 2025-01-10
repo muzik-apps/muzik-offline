@@ -124,6 +124,7 @@
             align-items: center;
             border: 1px dashed $root-app-navigator-hover-col;
             border-radius: 10px;
+            width: calc(100% - 12px);
 
             h1{
                 margin-top: 10px;
@@ -198,6 +199,10 @@
         .AllTracks_container{
             min-width: 759px;
             width: calc(100vw - var(--var-right-side-bar-width-minimized));
+
+            .drag-drop-border{
+                width: calc(100% - 10px);
+            }
         }
     }
 }
@@ -210,10 +215,6 @@
         .AllTracks_container{
             min-width: 759px;
             width: calc(100vw - var(--var-right-side-bar-width-smallest));
-
-            .drag-drop-border{
-                width: calc(100% - 5px);
-            }
         }
     }
 }

@@ -1,7 +1,7 @@
 {
   "name": "muzik-offline",
   "private": true,
-  "version": "0.7.1",
+  "version": "0.8.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,10 +14,14 @@
     "@tauri-apps/api": "2.1.1",
     "@tauri-apps/plugin-autostart": "^2.0.0",
     "@tauri-apps/plugin-dialog": "^2.0.1",
+    "@tauri-apps/plugin-fs": "^2.2.0",
     "@tauri-apps/plugin-http": "^2.0.1",
     "@tauri-apps/plugin-notification": "^2.0.0",
     "@tauri-apps/plugin-os": "^2.0.0",
     "@tauri-apps/plugin-shell": "^2.0.1",
+    "@tauri-apps/plugin-window-state": "^2.2.0",
+    "@types/d3": "^7.4.3",
+    "d3": "^7.9.0",
     "dexie": "^3.2.4",
     "dexie-react-hooks": "^1.1.7",
     "framer-motion": "^10.16.1",
@@ -28,6 +32,7 @@
     "react-router-dom": "^6.19.0",
     "react-viewport-list": "^7.1.2",
     "sass": "^1.66.1",
+    "waveform-data": "^4.5.0",
     "zustand": "^4.4.7"
   },
   "devDependencies": {

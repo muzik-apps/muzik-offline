@@ -34,7 +34,7 @@ pub async fn export_songs_as_pdf(app: tauri::AppHandle, db_manager: State<'_, Ar
     let smallest_file = songs.iter().min_by_key(|song| song.file_size).map(|song| song.name.clone());
 
     let file_types: HashSet<_> = songs.iter().map(|song| &song.file_type).collect();
-    
+
     // convert song to appriopriate json format and add to json array
     let export_songs: Vec<ExportSong> = songs.iter().map(|song| {
         ExportSong {

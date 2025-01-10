@@ -205,6 +205,30 @@ pub fn convert_single_to_double_backward_slash_on_path(path: &String) -> String 
     return path.to_string();
 }
 
-pub fn calculate_volume(duration: Duration) -> f64{// duration will be between 0 and 6 seconds
+pub fn calculate_volume(duration: Duration) -> f64 {
+    // duration will be between 0 and 6 seconds
     1.0 - (1.0 * std::f64::consts::E.powf(-1.0 * duration.as_secs_f64() as f64))
+}
+
+pub fn get_file_name_from_path(path: &str) -> String {
+    let path = Path::new(path);
+
+    match path.file_name() {
+        Some(file_name) => {
+            // Convert file name to a String
+            let file_name = file_name.to_string_lossy();
+            
+            // Split on dots and remove the last segment (the extension)
+            let mut parts: Vec<&str> = file_name.split('.').collect();
+            
+            // Remove the last segment if there is one
+            if parts.len() > 1 {
+                parts.pop();
+            }
+            
+            // Join the remaining parts with dots
+            return parts.join(".");
+        }
+        None => String::from("Unknown file name"),
+    }
 }

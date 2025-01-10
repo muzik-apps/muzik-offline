@@ -1,10 +1,12 @@
 use crate::components::audio_manager::AppAudioManager;
 use crate::components::kira_audio_manager::KiraManager;
 use crate::components::rodio_audio_manager::RodioManager;
-use crate::database::db_api::{get_image_from_tree, get_null_cover_from_tree, get_thumbnail, get_wallpaper};
+use crate::database::db_api::{
+    get_image_from_tree, get_null_cover_from_tree, get_thumbnail, get_wallpaper,
+};
 use crate::database::db_manager::DbManager;
-use kira::manager::{backend::DefaultBackend, AudioManager, AudioManagerSettings};
 use crate::music::media_control_api::configure_media_controls;
+use kira::manager::{backend::DefaultBackend, AudioManager, AudioManagerSettings};
 use souvlaki::{MediaControlEvent, MediaControls};
 use warp::{http::Uri, reply::Response, Filter, Reply};
 
@@ -20,19 +22,15 @@ use super::setup_macos;
 
 /// Initializes the kira audio manager with required settings.
 pub fn initialise_kira_audio_manager() -> Arc<Mutex<Option<KiraManager>>> {
-    match AudioManager::<DefaultBackend>::new(AudioManagerSettings::default()){
-        Ok(audio_manager) => {
-            Arc::new(Mutex::new(Some(KiraManager {
-                manager: audio_manager,
-                instance_handle: None,
-                volume: 0.0,
-                crossfade: false,
-                duration: None,
-            })))
-        }
-        Err(_) => {
-            Arc::new(Mutex::new(None))
-        }
+    match AudioManager::<DefaultBackend>::new(AudioManagerSettings::default()) {
+        Ok(audio_manager) => Arc::new(Mutex::new(Some(KiraManager {
+            manager: audio_manager,
+            instance_handle: None,
+            volume: 0.0,
+            crossfade: false,
+            duration: None,
+        }))),
+        Err(_) => Arc::new(Mutex::new(None)),
     }
 }
 
@@ -123,14 +121,14 @@ pub fn create_image_route_for_covers(
         .map(move |uuid: String| {
             match shared_db_manager.lock() {
                 Ok(db_manager) => {
-                    if uuid.starts_with("NULL"){
+                    if uuid.starts_with("NULL") {
                         warp::reply::with_header(
                             get_null_cover_from_tree(db_manager, uuid.as_str()),
                             "Content-Type",
                             "image/png",
                         )
                         .into_response()
-                    } else{
+                    } else {
                         warp::reply::with_header(
                             get_image_from_tree(db_manager, uuid.as_str()),
                             "Content-Type",
@@ -157,14 +155,14 @@ pub fn create_image_route_with_uuid(
         .map(move |uuid: String| {
             match shared_db_manager.lock() {
                 Ok(db_manager) => {
-                    if uuid.starts_with("NULL"){
+                    if uuid.starts_with("NULL") {
                         warp::reply::with_header(
                             get_null_cover_from_tree(db_manager, uuid.as_str()),
                             "Content-Type",
                             "image/png",
                         )
                         .into_response()
-                    } else{
+                    } else {
                         warp::reply::with_header(
                             get_image_from_tree(db_manager, uuid.as_str()),
                             "Content-Type",

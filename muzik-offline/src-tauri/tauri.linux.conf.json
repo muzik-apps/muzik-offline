@@ -38,12 +38,17 @@
         "depends": [
           "libasound2-dev"
         ]
+      },
+      "rpm": {
+        "depends": [
+          "libasound2-dev"
+        ]
       }
     }
   },
   "productName": "muzik-offline",
   "mainBinaryName": "muzik-offline",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "identifier": "com.muzik-offline.dev",
   "plugins": {},
   "app": {

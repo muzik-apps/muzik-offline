@@ -548,13 +548,11 @@ pub async fn create_playlist_cover(
     let dbm = Arc::clone(&db_manager);
     if compress_image {
         match resize_and_compress_image(&image_as_bytes, &250) {
-            Some(thumbnail) => {
-                match insert_into_covers_tree(dbm, thumbnail, &playlist_name) {
-                    uuid => {
-                        return Ok(uuid.to_string());
-                    }
+            Some(thumbnail) => match insert_into_covers_tree(dbm, thumbnail, &playlist_name) {
+                uuid => {
+                    return Ok(uuid.to_string());
                 }
-            }
+            },
             None => {
                 return Err(String::from("error resizing image"));
             }
@@ -924,7 +922,10 @@ pub fn song_exists_in_tree(db_manager: Arc<Mutex<DbManager>>, path: &str) -> boo
     }
 }
 
-pub fn get_songs_in_tree(db_manager: State<'_, Arc<Mutex<DbManager>>>, uuids: Vec<String>) -> Vec<Song>{
+pub fn get_songs_in_tree(
+    db_manager: State<'_, Arc<Mutex<DbManager>>>,
+    uuids: Vec<String>,
+) -> Vec<Song> {
     match db_manager.lock() {
         Ok(dbm) => {
             let song_tree = match dbm.song_tree.read() {

@@ -12,10 +12,12 @@ import AboutSettings from './AboutSettings';
 import AudioLabSettings from './AudioLabSettings';
 import MusicFoldersSettings from './MusicFoldersSettings';
 import ExportSettings from './ExportSettings';
+import PackagesSettings from './PackagesSettings';
 
 export {
     GeneralSettings, AppearanceSettings, HistoryNextFloating,
     SearchSongs, SearchArtists, SearchAlbums, SearchGenres,
     SearchPlaylists, AdvancedSettings, SecuritySettings, AboutSettings,
-    AudioLabSettings, MusicFoldersSettings, ExportSettings
+    AudioLabSettings, MusicFoldersSettings, ExportSettings,
+    PackagesSettings
 }

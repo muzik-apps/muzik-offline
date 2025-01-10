@@ -17,7 +17,7 @@ const DeleteDiretoryModal: FunctionComponent<DeleteDiretoryModalProps> = (props:
     function deleteDirectory(){
         const newDir = new Set(dir.Dir);
         newDir.delete(props.path);
-        setDir({Dir: newDir});
+        setDir({Dir: Array.from(newDir)});
         props.closeModal();
     }
 

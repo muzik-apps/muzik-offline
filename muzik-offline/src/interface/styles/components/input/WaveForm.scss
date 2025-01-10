@@ -1,0 +1,23 @@
+@import "../../constants/constants";
+
+.WaveForm{
+    width: calc(100vw/4.0);
+    height: 30px;
+    display: flex;
+    align-items: center;
+
+    line{
+        stroke: $app-theme-col;
+        opacity: 0.5;
+        stroke-width: 2;
+        stroke-linecap: round;
+    }
+
+    .line_active{
+        opacity: 1.0;
+    }
+
+    .line_current{
+        stroke: $white-900;
+    }
+}

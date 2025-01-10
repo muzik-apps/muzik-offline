@@ -91,18 +91,25 @@ export async function startPlayingNewSong(song: Song){
     temp.playingSongMetadata = song;
     temp.lengthOfSongInSeconds = song.duration_seconds;
     temp.isPlaying = true;
+    temp.WaveFormPath = null;
+    usePlayerStore.getState().setPlayer(temp);
     const volume = (useSavedObjectStore.getState().local_store.Volume / 100);
-    await invoke("load_and_play_song_from_path", { 
+    invoke<string>("load_and_play_song_from_path", { 
         soundPath: song.path, 
         player: useSavedObjectStore.getState().local_store.player, 
         volume: volume,
         duration: song.duration_seconds,
         playBackSpeed: parseInt(useSavedObjectStore.getState().local_store.PlayBackSpeed),
         fadeInOut: useSavedObjectStore.getState().local_store.AudioTransition === "Yes" ? true : false
+    }).then((wave_form_path) => {
+        temp.WaveFormPath = wave_form_path;
+        usePlayerStore.getState().setPlayer(temp);
+    }).catch(() => {
+        temp.WaveFormPath = null;
+        usePlayerStore.getState().setPlayer(temp);
     });
     await invoke("update_metadata", { uuid: (song.cover_uuid !== null ? song.uuid : getNullRandomCover(song.id)) });
     await invoke("set_player_state", { state: playerState.Playing});
-    usePlayerStore.getState().setPlayer(temp);
     setDiscordActivityWithTimestamps(song, 0);
 }
 
@@ -111,17 +118,24 @@ export async function loadNewSong(song: Song){
     temp.playingSongMetadata = song;
     temp.lengthOfSongInSeconds = song.duration_seconds;
     temp.isPlaying = false;
+    temp.WaveFormPath = null;
+    usePlayerStore.getState().setPlayer(temp);
     const volume = (useSavedObjectStore.getState().local_store.Volume / 100);
-    await invoke("load_a_song_from_path", { 
+    invoke<string>("load_a_song_from_path", { 
         soundPath: song.path, 
         player: useSavedObjectStore.getState().local_store.player, 
         volume: volume,
         duration: song.duration_seconds,
         playBackSpeed: parseInt(useSavedObjectStore.getState().local_store.PlayBackSpeed),
         fadeInOut: useSavedObjectStore.getState().local_store.AudioTransition === "Yes" ? true : false
+    }).then((wave_form_path) => {
+        temp.WaveFormPath = wave_form_path;
+        usePlayerStore.getState().setPlayer(temp);
+    }).catch(() => {
+        temp.WaveFormPath = null;
+        usePlayerStore.getState().setPlayer(temp);
     });
     await invoke("update_metadata", { uuid: (song.cover_uuid !== null ? song.uuid : getNullRandomCover(song.id)) });
-    usePlayerStore.getState().setPlayer(temp);
     setDiscordActivity(song);
 }
 
@@ -158,6 +172,7 @@ export async function stopSong(){
         temp.lengthOfSongInSeconds = 0;
         temp.isPlaying = false;
         temp.wasPlayingBeforePause = false;
+        temp.WaveFormPath = null;
         usePlayerStore.getState().setPlayer(temp);
         setDiscordActivityWithTimestamps(null);
     }

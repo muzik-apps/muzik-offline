@@ -1,11 +1,12 @@
 import { motion } from "framer-motion"
 import { SavedObject } from "@database/index";
 import "@styles/layouts/AppearanceSettings.scss"; 
-import { ArrowRefresh, CancelRight } from "@assets/icons";
+import { ArrowRefresh, BarWave, CancelRight, FloatingBarWave, LineBar, RoundedWave, SineWave } from "@assets/icons";
 import { useSavedObjectStore, useWallpaperStore } from "@store/index";
 import { OSTYPEenum } from "@muziktypes/index";
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { getThumbnailURL } from "@utils/index";
+import { invoke } from "@tauri-apps/api/core";
 
 const accentColurs: string[] = ["saucy", "salmon", "violet","gloss", "lipstick", "lime", "grass",
     "sunny", "ubuntu", "blueberry", "sky", "midnight", "blinding"]
@@ -19,6 +20,7 @@ type AppearanceSettingsProps = {
 const AppearanceSettings: FunctionComponent<AppearanceSettingsProps> = (props: AppearanceSettingsProps) => {
     const {local_store, setStore} = useSavedObjectStore((state) => { return { local_store: state.local_store, setStore: state.setStore}; });
     const { wallpaperUUID, unsetWallpaper } = useWallpaperStore((state) => { return { wallpaperUUID: state.wallpaperUUID, unsetWallpaper: state.unsetWallpaper }; });
+    const [isAudioWaveformInstalled, setIsAudioWaveformInstalled] = useState<boolean>(false);
 
     function changeToBgCCOL(obj: string){
         let temp: SavedObject = local_store;
@@ -62,6 +64,18 @@ const AppearanceSettings: FunctionComponent<AppearanceSettingsProps> = (props: A
         temp.Animations = arg;
         setStore(temp);
     }
+
+    function SetPlaybackFeedback(arg: "BarWave" | "FloatingBarWave" | "LineBar" | "RoundedWave" | "SineWave"){
+        let temp: SavedObject = local_store;
+        temp.PlaybackFeedback = arg;
+        setStore(temp);
+    }
+
+    useEffect(() => {
+        invoke<boolean>("check_if_audio_waveform_is_installed").then((res) => {
+            setIsAudioWaveformInstalled(res);
+        });
+    }, []);
 
     return (
         <div className="AppearanceSettings">
@@ -162,6 +176,38 @@ const AppearanceSettings: FunctionComponent<AppearanceSettingsProps> = (props: A
                         onClick={() => {SetPlayerBar(false)}}>
                             <h4>album cover blur</h4>
                     </motion.div>
+                </div>
+                <h3>Player feedback appearance</h3>
+                <div className="player_feedback">
+                    {
+                        ["LineBar", "BarWave", "FloatingBarWave"].map((feedback, index) => 
+                            <>
+                            { (isAudioWaveformInstalled || feedback === "LineBar") ?
+                                <motion.div key={index} className={"button_select glass " + (local_store.PlaybackFeedback === feedback ? "button_selected" : "")}
+                                    whileHover={{scale: 1.03}} whileTap={{scale: 0.98}} onClick={
+                                        () => SetPlaybackFeedback(feedback as "BarWave" | "FloatingBarWave" | "LineBar" | "RoundedWave" | "SineWave")
+                                    }>
+                                        {
+                                            feedback === "LineBar" ? <LineBar />
+                                            : feedback === "BarWave" ? <BarWave />
+                                            : feedback === "FloatingBarWave" ? <FloatingBarWave />
+                                            : feedback === "RoundedWave" ? <RoundedWave />
+                                            : <SineWave />
+                                        }
+                                </motion.div>
+                                :
+                                <div key={index} className="button_select glass not-clickable">
+                                    {
+                                        feedback === "BarWave" ? <BarWave />
+                                        : feedback === "FloatingBarWave" ? <FloatingBarWave />
+                                        : feedback === "RoundedWave" ? <RoundedWave />
+                                        : <SineWave />
+                                    }
+                                </div>
+                            }
+                            </>
+                        )
+                    }
                 </div>
                 <h3>Allow application wide animations</h3>
                 <div className="animations_select">

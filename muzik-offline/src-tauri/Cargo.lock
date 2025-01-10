@@ -2980,7 +2980,7 @@ dependencies = [
 
 [[package]]
 name = "muzik-offline"
-version = "0.7.1"
+version = "0.8.0"
 dependencies = [
  "base64 0.21.7",
  "cocoa 0.26.0",
@@ -2992,6 +2992,7 @@ dependencies = [
  "image",
  "kira",
  "lofty",
+ "os_info",
  "printpdf",
  "rand 0.8.5",
  "rayon",
@@ -3005,10 +3006,12 @@ dependencies = [
  "tauri-build",
  "tauri-plugin-autostart",
  "tauri-plugin-dialog",
+ "tauri-plugin-fs",
  "tauri-plugin-http",
  "tauri-plugin-notification",
  "tauri-plugin-os",
  "tauri-plugin-shell",
+ "tauri-plugin-window-state",
  "tokio",
  "trash",
  "uuid 1.11.0",
@@ -3498,9 +3501,9 @@ dependencies = [
 
 [[package]]
 name = "os_info"
-version = "3.8.2"
+version = "3.9.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ae99c7fa6dd38c7cafe1ec085e804f8f555a2f8659b0dbe03f1f9963a9b51092"
+checksum = "6e6520c8cc998c5741ee68ec1dc369fc47e5f0ea5320018ecf2a1ccd6328f48b"
 dependencies = [
  "log",
  "serde",
@@ -5459,6 +5462,21 @@ dependencies = [
  "tauri-plugin",
  "thiserror 1.0.69",
  "tokio",
+]
+
+[[package]]
+name = "tauri-plugin-window-state"
+version = "2.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "234dd891cc7960fa28f93ea911f3e0d9ce8375ebf9ff303831bdd7a3443d5714"
+dependencies = [
+ "bitflags 2.6.0",
+ "log",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-plugin",
+ "thiserror 2.0.3",
 ]
 
 [[package]]

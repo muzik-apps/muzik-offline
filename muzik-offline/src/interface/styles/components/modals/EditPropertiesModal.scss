@@ -110,7 +110,7 @@
                 }
             }
             
-            .save_button, .cancel_button{
+            .save_button, .cancel_button, .loading_save_button, .loading_cancel_button{
                 display: flex;
                 width: 228px;
                 height: 34px;
@@ -132,11 +132,28 @@
                 opacity: 0.8;
             }
 
-            .cancel_button{
+            .cancel_button, .loading_cancel_button{
                 background: $on-hover-song;
                 h3{
                     color: $white-900;
                 }
+            }
+            
+            .loading_save_button{
+                opacity: 0.5;
+                display: flex;
+                justify-content: center;
+                gap: 5px;
+                cursor: not-allowed;
+                svg{
+                    width: 28px;
+                    height: 28px;
+                }
+            }
+
+            .loading_cancel_button{ 
+                opacity: 0.5;
+                cursor: not-allowed;
             }
         }
 

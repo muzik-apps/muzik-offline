@@ -27,7 +27,7 @@ pub struct Song {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct ExportSong{
+pub struct ExportSong {
     pub title: String,
     pub artist: String,
     pub album: String,

@@ -65,7 +65,9 @@ impl DbManager {
 fn insert_null_cover(null_covers_tree: &Tree, key: &str, cover_data: &str) -> Result<(), String> {
     if !key_exists_in_tree(&null_covers_tree, key.to_string()) {
         let cover = decode_image_in_parallel(&cover_data.to_owned()).map_err(|e| e.to_string())?;
-        null_covers_tree.insert(key, cover).map_err(|e| e.to_string())?;
+        null_covers_tree
+            .insert(key, cover)
+            .map_err(|e| e.to_string())?;
     }
     Ok(())
 }

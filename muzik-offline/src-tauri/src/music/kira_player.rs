@@ -6,7 +6,10 @@ use kira::{
     },
     tween::Tween,
 };
-use std::{sync::{Arc, Mutex}, time::Duration};
+use std::{
+    sync::{Arc, Mutex},
+    time::Duration,
+};
 use tauri::State;
 
 pub fn load_and_play_song_from_path_kira(
@@ -55,7 +58,7 @@ pub fn load_and_play_song_from_path_kira(
             match StreamingSoundData::from_file(sound_path, StreamingSoundSettings::default()) {
                 Ok(sound_data) => {
                     if fade_in_out {
-                        sound_data.settings.fade_in_tween(Tween{
+                        sound_data.settings.fade_in_tween(Tween {
                             duration: Duration::from_secs(6),
                             start_time: kira::StartTime::Immediate,
                             easing: kira::tween::Easing::Linear,
@@ -69,7 +72,9 @@ pub fn load_and_play_song_from_path_kira(
                             //set playback speed
                             match &mut manager.instance_handle {
                                 Some(handle) => {
-                                    match handle.set_playback_rate(play_back_speed as f64, Tween::default()) {
+                                    match handle
+                                        .set_playback_rate(play_back_speed as f64, Tween::default())
+                                    {
                                         Ok(_) => {
                                             //set speed
                                         }
@@ -82,7 +87,7 @@ pub fn load_and_play_song_from_path_kira(
                                     //no song is currently playing
                                 }
                             }
-                        
+
                             if !fade_in_out {
                                 //set volume
                                 match &mut manager.instance_handle {
@@ -164,7 +169,7 @@ pub fn load_a_song_from_path_kira(
             match StreamingSoundData::from_file(sound_path, StreamingSoundSettings::default()) {
                 Ok(sound_data) => {
                     if fade_in_out {
-                        sound_data.settings.fade_in_tween(Tween{
+                        sound_data.settings.fade_in_tween(Tween {
                             duration: Duration::from_secs(6),
                             ..Default::default()
                         });
@@ -193,7 +198,9 @@ pub fn load_a_song_from_path_kira(
                             //set playback speed
                             match &mut manager.instance_handle {
                                 Some(handle) => {
-                                    match handle.set_playback_rate(play_back_speed as f64, Tween::default()) {
+                                    match handle
+                                        .set_playback_rate(play_back_speed as f64, Tween::default())
+                                    {
                                         Ok(_) => {
                                             //set speed
                                         }
@@ -413,22 +420,39 @@ pub fn get_song_position_kira(audio_manager: State<'_, Arc<Mutex<Option<KiraMana
             match &mut manager.instance_handle {
                 Some(handle) => {
                     let song_position = handle.position();
-                    (std::time::Duration::from_secs_f64(song_position), manager.duration.unwrap_or(std::time::Duration::from_secs(0)), manager.crossfade)
+                    (
+                        std::time::Duration::from_secs_f64(song_position),
+                        manager
+                            .duration
+                            .unwrap_or(std::time::Duration::from_secs(0)),
+                        manager.crossfade,
+                    )
                 }
                 None => {
                     //no song is currently paused or playing
-                    (std::time::Duration::from_secs(0), std::time::Duration::from_secs(0), false)
+                    (
+                        std::time::Duration::from_secs(0),
+                        std::time::Duration::from_secs(0),
+                        false,
+                    )
                 }
             }
         }
         Err(_) => {
             //failed to lock audio manager
-            (std::time::Duration::from_secs(0), std::time::Duration::from_secs(0), false)
+            (
+                std::time::Duration::from_secs(0),
+                std::time::Duration::from_secs(0),
+                false,
+            )
         }
     };
 
     if cross_fade && pos > duration.saturating_sub(Duration::from_secs(6)) {
-        set_volume_kira(audio_manager, calculate_volume(duration.saturating_sub(pos)));
+        set_volume_kira(
+            audio_manager,
+            calculate_volume(duration.saturating_sub(pos)),
+        );
     }
     return pos.as_secs_f64().floor();
 }
@@ -523,7 +547,10 @@ fn handle_true_seeking(handle: &mut StreamingSoundHandle<FromFileError>, volume:
     }
 }
 
-pub fn set_playback_speed_kira(audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>, speed: f64) {
+pub fn set_playback_speed_kira(
+    audio_manager: State<'_, Arc<Mutex<Option<KiraManager>>>>,
+    speed: f64,
+) {
     match audio_manager.lock() {
         Ok(mut manager) => {
             let manager = match manager.as_mut() {

@@ -184,8 +184,9 @@
             }
         }
 
-        .playerbar_select, .animations_select, .Themeblur_select, .wallpaper_blur_or_gradient_select{
+        .playerbar_select, .animations_select, .Themeblur_select, .wallpaper_blur_or_gradient_select, .player_feedback{
             display: flex;
+            flex-wrap: wrap;
             margin-bottom: 10px;
 
             .button_select{
@@ -225,7 +226,7 @@
             .not-clickable{
                 background: $btn-clickable;
                 mix-blend-mode: overlay;
-                opacity: 0.8;
+                opacity: 0.5;
             }
 
             .button_selected{
@@ -244,5 +245,28 @@
                 }
             }
         }
+
+        .player_feedback{
+            .button_select{
+                justify-content: center;
+                overflow: hidden;
+            }
+
+            svg{
+                line{
+                    stroke: $app-theme-col;
+                }
+
+                .fill_this{
+                    fill: $app-theme-col;
+                }
+
+                .stroke_fill{
+                    stroke: $app-theme-col;
+                }
+            }
+        }
+
+
     }
 }

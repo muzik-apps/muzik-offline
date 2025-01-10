@@ -1,4 +1,4 @@
-import { EditImage } from "@assets/icons";
+import { EditImage, Spinner } from "@assets/icons";
 import { playlist, toastType } from "@muziktypes/index";
 import { motion } from "framer-motion";
 import { FunctionComponent, useEffect, useState } from "react";
@@ -18,13 +18,13 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
     const { setToast } = useToastStore((state) => { return { setToast: state.setToast }; });
     const [cover, setCover] = useState<string | null>(null);
     const {local_store} = useSavedObjectStore((state) => { return { local_store: state.local_store}; });
+    const [loading, setLoading] = useState<boolean>(false);
 
     function uploadImg(e: React.ChangeEvent<HTMLInputElement>){
-        console.log(e.target.files);
         if(e.target.files === null)return;
         const image = e.target.files[0];
         const reader = new FileReader();
-
+        
         reader.onload = async (e) => {
             if(e.target?.result){
                 const originalData = e.target.result as string;
@@ -33,12 +33,13 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
         };
         reader.readAsDataURL(image);
     }
-
+    
     async function createPlaylistAndCloseModal(){
         if(playlistTitle === ""){
             setToast({title: "Playlist title", message: "Playlist title cannot be empty", type: toastType.warning, timeout: 3000});
             return;
         }
+        setLoading(true);
         //set key of PLobj as the last key in the database + 1 or 1 if the database is empty
         const count = await local_playlists_db.playlists.count();
         const last_key = await local_playlists_db.playlists.orderBy("key").last();
@@ -51,10 +52,14 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
             dateEdited: new Date().toLocaleDateString(),
             tracksPaths: []
         }
-        await local_playlists_db.playlists.add(playlistObj);
-        props.closeModal(playlistObj.key);
-        if(cover === null)return;
-
+        if(cover === null){
+            await local_playlists_db.playlists.add(playlistObj);
+            setLoading(false);
+            props.closeModal(playlistObj.key);
+            setToast({title: "Playlist cover", message: "Playlist created without cover", type: toastType.info, timeout: 3000});
+            return;
+        }
+        
         let toSend = "";
         
         if(cover.startsWith("data:image/jpeg;base64,")){
@@ -68,16 +73,22 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
         // Compress the image to a maximum size of 250x250
         if(toSend === ""){
             setToast({title: "Processing error...", message: "Could not process this image, please try another image", type: toastType.error, timeout: 3000});
+            setLoading(false);
             return;
         }
-
+        
         invoke("create_playlist_cover", {playlistName: playlistTitle, cover: toSend, compressImage: local_store.CompressImage === "Yes" ? true : false})
-            .then((cover_uuid: any) => {
-                local_playlists_db.playlists.update(playlistObj.key, {cover: cover_uuid, uuid: cover_uuid});
+        .then(async(cover_uuid: any) => {
+                playlistObj.cover = cover_uuid;
+                playlistObj.uuid = cover_uuid;
+                await local_playlists_db.playlists.add(playlistObj);
+                setLoading(false);
+                props.closeModal(playlistObj.key);
                 setToast({title: "Playlist cover", message: "Successfully created playlist", type: toastType.success, timeout: 3000});
             })
             .catch((error: any) => {
                 console.log(error);
+                setLoading(false);
                 setToast({title: "Playlist cover", message: "Failed to set playlist cover", type: toastType.error, timeout: 3000});
             });
     }
@@ -87,7 +98,7 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
     return (
         <div className={"CreatePlaylistModal" + (props.isOpen ? " CreatePlaylistModal-visible" : "")} onClick={
             (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => 
-                {if(e.target === e.currentTarget)props.closeModal(undefined)}}>
+                {if(e.target === e.currentTarget && !loading)props.closeModal(undefined)}}>
             <motion.div 
             animate={props.isOpen ? "open" : "closed"}
             variants={modal_variants}
@@ -104,8 +115,21 @@ const CreatePlaylistModal : FunctionComponent<CreatePlaylistModalProps> = (props
                 </div>
                 <h3>Playlist name</h3>
                 <input type="text" id="input-field" placeholder="enter playlist name here" value={playlistTitle} onChange={(e) => setPlaylistTitle(e.target.value)}/>
-                <motion.div className="create_playlist" whileTap={{scale: 0.98}} onClick={createPlaylistAndCloseModal}>create playlist</motion.div>
-                <motion.div className="cancel_creation" whileTap={{scale: 0.98}} onClick={() => props.closeModal(undefined)}>cancel</motion.div>
+                { !loading ?
+                    <motion.div className="create_playlist" whileTap={{scale: 0.98}} onClick={createPlaylistAndCloseModal}>create playlist</motion.div>
+                    :
+                    <div className="loading_create_playlist">
+                        <h4>create playlist</h4>
+                        <Spinner />
+                    </div>
+                }
+                { !loading ?
+                    <motion.div className="cancel_creation" whileTap={{scale: 0.98}} onClick={() => props.closeModal(undefined)}>cancel</motion.div>
+                    :
+                    <div className="loading_cancel_creation">
+                        <h4>cancel</h4>
+                    </div>
+                }
             </motion.div>
         </div>
     )
