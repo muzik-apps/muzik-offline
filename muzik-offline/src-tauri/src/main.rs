@@ -9,15 +9,12 @@ mod database;
 mod export;
 mod import;
 mod music;
+mod packages;
 mod socials;
 mod utils;
 mod windows;
-mod packages;
 
-use packages::audio_waveform::{
-    attempt_to_download_audio_waveform, check_if_audio_waveform_is_installed,
-};
-use commands::general_commands::{collect_env_args, get_server_port};
+use commands::general_commands::{collect_env_args, get_logs_dir, get_server_port};
 use commands::refresh_paths_at_start::{detect_deleted_songs, refresh_paths};
 use database::db_api::{
     add_new_wallpaper_to_db, create_playlist_cover, delete_playlist_cover,
@@ -31,6 +28,9 @@ use export::{
     export_xml::export_songs_as_xml,
 };
 use music::player::{get_available_audio_backends, set_playback_speed};
+use packages::audio_waveform::{
+    attempt_to_download_audio_waveform, check_if_audio_waveform_is_installed,
+};
 use packages::manager::{get_packages, install_package, uninstall_package};
 //use export::export_pdf::export_songs_as_pdf;
 use socials::discord_rpc::{set_discord_rpc_activity_with_timestamps, DiscordRpc};
@@ -72,6 +72,20 @@ use app::setup::{
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_log::Builder::new().build())
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .target(tauri_plugin_log::Target::new(
+                    tauri_plugin_log::TargetKind::Folder {
+                        path: get_logs_dir().expect("failed to get logs dir").into(),
+                        file_name: Some("muzik-offline.log".to_string()),
+                    },
+                ))
+                .max_file_size(50_000_000 /* bytes */) // 50 MB
+                .rotation_strategy(tauri_plugin_log::RotationStrategy::KeepAll)
+                .level(log::LevelFilter::Info)
+                .build(),
+        )
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_window_state::Builder::new().build())
         .plugin(tauri_plugin_autostart::init(

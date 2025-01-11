@@ -217,15 +217,15 @@ pub fn get_file_name_from_path(path: &str) -> String {
         Some(file_name) => {
             // Convert file name to a String
             let file_name = file_name.to_string_lossy();
-            
+
             // Split on dots and remove the last segment (the extension)
             let mut parts: Vec<&str> = file_name.split('.').collect();
-            
+
             // Remove the last segment if there is one
             if parts.len() > 1 {
                 parts.pop();
             }
-            
+
             // Join the remaining parts with dots
             return parts.join(".");
         }

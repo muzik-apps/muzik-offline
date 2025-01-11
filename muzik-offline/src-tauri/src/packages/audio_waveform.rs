@@ -18,7 +18,12 @@ pub fn check_if_audio_waveform_is_installed() -> bool {
         let path = format!("{}/audiowaveform.exe", lib_dir);
 
         // check that the file is executable by getting the version
-        if Command::new(path).creation_flags(CREATE_NO_WINDOW).arg("--version").status().is_err() {
+        if Command::new(path)
+            .creation_flags(CREATE_NO_WINDOW)
+            .arg("--version")
+            .status()
+            .is_err()
+        {
             return false;
         }
 
@@ -90,7 +95,8 @@ pub async fn attempt_to_download_audio_waveform() -> Result<String, String> {
         }
 
         // delete the zip file
-        if let Err(_) = std::fs::remove_file(format!("{}/audiowaveform-1.10.1.win64.zip", lib_dir)) {
+        if let Err(_) = std::fs::remove_file(format!("{}/audiowaveform-1.10.1.win64.zip", lib_dir))
+        {
             // intentionally ignore error
         }
 
@@ -209,7 +215,7 @@ pub async fn uninstall_audio_waveform() -> Result<String, String> {
     #[cfg(target_os = "linux")]
     {
         use crate::constants::constants::{
-            UBUNTU_UNINSTALL_COMMANDS, DEBIAN_UNINSTALL_COMMANDS, RPM_UNINSTALL_COMMANDS
+            DEBIAN_UNINSTALL_COMMANDS, RPM_UNINSTALL_COMMANDS, UBUNTU_UNINSTALL_COMMANDS,
         };
         use os_info;
 

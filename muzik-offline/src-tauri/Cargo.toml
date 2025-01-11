@@ -44,6 +44,8 @@ rodio = "0.20.1"
 trash = "5.2.0"
 os_info = "3.9.2"
 tauri-plugin-fs = "2"
+tauri-plugin-log = "2"
+log = "0.4.24"
 
 [dependencies.uuid]
 version = "1.11.0"

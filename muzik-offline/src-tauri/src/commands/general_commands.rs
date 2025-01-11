@@ -138,6 +138,30 @@ pub fn get_waveform_dir() -> Result<String, String> {
 }
 
 #[tauri::command]
+pub fn get_logs_dir() -> Result<String, String> {
+    let mut lib_path = PathBuf::new();
+    match home_dir() {
+        Some(path) => lib_path.push(path),
+        None => return Err("Could not find home directory".to_string()),
+    }
+    lib_path.push("muzik-offline-local-data");
+    lib_path.push("logs");
+
+    // ensure logs directory exists otherwise create it
+    if !lib_path.exists() {
+        match std::fs::create_dir_all(&lib_path) {
+            Ok(_) => {}
+            Err(_) => return Err("Could not create logs directory".to_string()),
+        }
+    }
+
+    match lib_path.to_str() {
+        Some(path) => Ok(String::from(path)),
+        None => Err("Could not find logs directory".to_string()),
+    }
+}
+
+#[tauri::command]
 pub async fn delete_song_metadata(
     db_manager: State<'_, Arc<Mutex<DbManager>>>,
     path: String,

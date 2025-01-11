@@ -43,6 +43,7 @@
     "dialog:default",
     "http:default",
     "os:default",
-    "fs:allow-home-read-recursive"
+    "fs:allow-home-read-recursive",
+    "log:allow-log"
   ]
 }
