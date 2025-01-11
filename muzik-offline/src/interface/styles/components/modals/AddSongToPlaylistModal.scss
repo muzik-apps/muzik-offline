@@ -102,6 +102,7 @@
             background: $app-theme-col;
             margin-top: 10px;
             transition: opacity 0.3s ease-in-out;
+            color: $root-app-navigator-hover-col;
         }
 
         .create_playlist:hover{

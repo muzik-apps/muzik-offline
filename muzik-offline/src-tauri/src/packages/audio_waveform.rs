@@ -1,4 +1,4 @@
-use std::process::Command;
+use std::{os::windows::process::CommandExt, process::Command};
 
 use crate::commands::general_commands::get_waveform_dir;
 
@@ -8,6 +8,7 @@ pub fn check_if_audio_waveform_is_installed() -> bool {
     #[cfg(windows)]
     {
         use crate::commands::general_commands::get_lib_dir;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
 
         let lib_dir = match get_lib_dir() {
             Ok(lib_dir) => lib_dir,
@@ -17,7 +18,7 @@ pub fn check_if_audio_waveform_is_installed() -> bool {
         let path = format!("{}/audiowaveform.exe", lib_dir);
 
         // check that the file is executable by getting the version
-        if Command::new(path).arg("--version").status().is_err() {
+        if Command::new(path).creation_flags(CREATE_NO_WINDOW).arg("--version").status().is_err() {
             return false;
         }
 
@@ -45,6 +46,7 @@ pub async fn attempt_to_download_audio_waveform() -> Result<String, String> {
     #[cfg(windows)]
     {
         use crate::commands::general_commands::get_lib_dir;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
 
         let lib_dir = match get_lib_dir() {
             Ok(lib_dir) => lib_dir,
@@ -54,6 +56,7 @@ pub async fn attempt_to_download_audio_waveform() -> Result<String, String> {
         // check if zip file already exists and skip the below command
         if !std::path::Path::new(&format!("{}/audiowaveform-1.10.1.win64.zip", lib_dir)).exists() {
             let command = Command::new("curl")
+                .creation_flags(CREATE_NO_WINDOW)
                 .args([
                     "-L",
                     "-o",
@@ -174,9 +177,6 @@ pub async fn uninstall_audio_waveform() -> Result<String, String> {
             Err(_) => return Err("Error getting lib directory".to_string()),
         };
 
-        let command_string = format!("del /Q \"{}\\audiowaveform.exe\"", lib_dir);
-        println!("Command: {}", command_string);
-
         if let Err(error) = std::fs::remove_file(format!("{}/audiowaveform.exe", lib_dir)) {
             println!("Error: {}", error);
             return Err(format!("Error deleting audiowaveform.exe: {}", error));
@@ -267,6 +267,7 @@ pub async fn decode_waveform(audio_path: &str, audio_name: &str) -> Result<Strin
     #[cfg(windows)]
     {
         use crate::commands::general_commands::get_lib_dir;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
 
         let lib_dir = match get_lib_dir() {
             Ok(lib_dir) => lib_dir,
@@ -274,6 +275,7 @@ pub async fn decode_waveform(audio_path: &str, audio_name: &str) -> Result<Strin
         };
 
         let command = Command::new(format!("{}/audiowaveform.exe", lib_dir))
+            .creation_flags(CREATE_NO_WINDOW)
             .args([
                 "-i",
                 audio_path,

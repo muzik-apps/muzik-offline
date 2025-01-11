@@ -2980,7 +2980,7 @@ dependencies = [
 
 [[package]]
 name = "muzik-offline"
-version = "0.8.0"
+version = "0.9.0"
 dependencies = [
  "base64 0.21.7",
  "cocoa 0.26.0",
